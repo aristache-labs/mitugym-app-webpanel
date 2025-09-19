@@ -18,7 +18,7 @@ import type { Member, MembershipPlan } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { CustomSelect } from "@/components/ui/custom-select";
 import { cn } from "@/lib/utils";
 
 interface MemberFormProps {
@@ -138,18 +138,18 @@ export function MemberForm({ plans, member }: MemberFormProps) {
               <FormItem>
                 <FormLabel>Gender</FormLabel>
                 <FormControl>
-                  <Select 
-                    {...field} 
-                    value={field.value ?? ""} 
-                    onChange={(e) => field.onChange(e.target.value || null)}
-                  >
-                    <option value="">Select gender</option>
-                    {memberGenderEnum.options.map((gender) => (
-                      <option key={gender} value={gender}>
-                        {gender.charAt(0).toUpperCase() + gender.slice(1)}
-                      </option>
-                    ))}
-                  </Select>
+                  <CustomSelect
+                    value={field.value ?? ""}
+                    onChange={(value) => field.onChange(value || null)}
+                    placeholder="Select gender"
+                    options={[
+                      { value: "", label: "Select gender" },
+                      ...memberGenderEnum.options.map((gender) => ({
+                        value: gender,
+                        label: gender.charAt(0).toUpperCase() + gender.slice(1)
+                      }))
+                    ]}
+                  />
                 </FormControl>
                 <FormMessage>{form.formState.errors.gender?.message}</FormMessage>
               </FormItem>
@@ -192,17 +192,15 @@ export function MemberForm({ plans, member }: MemberFormProps) {
               <FormItem>
                 <FormLabel>Status</FormLabel>
                 <FormControl>
-                  <Select 
-                    {...field} 
-                    value={field.value} 
-                    onChange={(e) => field.onChange(e.target.value)}
-                  >
-                    {memberStatusEnum.options.map((status) => (
-                      <option key={status} value={status}>
-                        {status.charAt(0).toUpperCase() + status.slice(1)}
-                      </option>
-                    ))}
-                  </Select>
+                  <CustomSelect
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select status"
+                    options={memberStatusEnum.options.map((status) => ({
+                      value: status,
+                      label: status.charAt(0).toUpperCase() + status.slice(1)
+                    }))}
+                  />
                 </FormControl>
                 <FormMessage>{form.formState.errors.status?.message}</FormMessage>
               </FormItem>
@@ -215,18 +213,18 @@ export function MemberForm({ plans, member }: MemberFormProps) {
               <FormItem>
                 <FormLabel>Membership plan</FormLabel>
                 <FormControl>
-                  <Select 
-                    {...field} 
-                    value={field.value ?? ""} 
-                    onChange={(e) => field.onChange(e.target.value || null)}
-                  >
-                    <option value="">Unassigned</option>
-                    {plans.map((plan) => (
-                      <option key={plan.id} value={plan.id}>
-                        {plan.name}
-                      </option>
-                    ))}
-                  </Select>
+                  <CustomSelect
+                    value={field.value ?? ""}
+                    onChange={(value) => field.onChange(value || null)}
+                    placeholder="Unassigned"
+                    options={[
+                      { value: "", label: "Unassigned" },
+                      ...plans.map((plan) => ({
+                        value: plan.id,
+                        label: plan.name
+                      }))
+                    ]}
+                  />
                 </FormControl>
                 <FormMessage>{form.formState.errors.plan_id?.message}</FormMessage>
               </FormItem>
