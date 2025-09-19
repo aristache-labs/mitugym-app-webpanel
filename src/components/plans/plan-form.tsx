@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { createPlanAction, updatePlanAction, type ActionResult } from "@/app/(protected)/actions";
 import { planSchema, type PlanInput } from "@/schemas/plans";
@@ -27,11 +27,32 @@ export function PlanForm({ plan, onCompleted }: PlanFormProps) {
     defaultValues: plan ?? {
       name: "",
       price: 0,
-      duration_days: 30,
-      description: "",
+      duration_months: 0,
+      features: [],
       is_active: true,
     },
   });
+
+  // Reset form when plan changes
+  useEffect(() => {
+    if (plan) {
+      form.reset({
+        name: plan.name,
+        price: plan.price,
+        duration_months: plan.duration_months,
+        features: plan.features || [],
+        is_active: plan.is_active,
+      });
+    } else {
+      form.reset({
+        name: "",
+        price: 0,
+        duration_months: 0,
+        features: [],
+        is_active: true,
+      });
+    }
+  }, [plan, form]);
 
   const handleResult = (result: ActionResult) => {
     if (!result.success) {
@@ -83,27 +104,32 @@ export function PlanForm({ plan, onCompleted }: PlanFormProps) {
         />
         <FormField
           control={form.control}
-          name="duration_days"
+          name="duration_months"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Duration (days)</FormLabel>
+              <FormLabel>Duration (0 = 1 day, 1+ = months)</FormLabel>
               <FormControl>
-                <Input type="number" min={1} step="1" {...field} />
+                <Input type="number" min={0} step="1" {...field} />
               </FormControl>
-              <FormMessage>{form.formState.errors.duration_days?.message}</FormMessage>
+              <FormMessage>{form.formState.errors.duration_months?.message}</FormMessage>
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="description"
+          name="features"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Features</FormLabel>
               <FormControl>
-                <Textarea rows={3} placeholder="What is included?" {...field} />
+                <Textarea 
+                  rows={3} 
+                  placeholder="Enter features, one per line" 
+                  value={field.value?.join('\n') || ''}
+                  onChange={(e) => field.onChange(e.target.value.split('\n').filter(f => f.trim()))}
+                />
               </FormControl>
-              <FormMessage>{form.formState.errors.description?.message}</FormMessage>
+              <FormMessage>{form.formState.errors.features?.message}</FormMessage>
             </FormItem>
           )}
         />

@@ -48,17 +48,18 @@ export async function requireStaff(): Promise<StaffContext> {
   }
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
 
-  if (!session?.user) {
+  if (userError || !user) {
     redirect("/login");
   }
 
   const { data: profile, error } = await supabase
     .from("staff_profiles")
     .select("id, role_id, full_name")
-    .eq("user_id", session.user.id)
+    .eq("id", user.id)
     .maybeSingle();
 
   if (error) {
@@ -69,5 +70,5 @@ export async function requireStaff(): Promise<StaffContext> {
     redirect("/login");
   }
 
-  return { user: session.user, profile };
+  return { user, profile };
 }

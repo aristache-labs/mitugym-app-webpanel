@@ -22,12 +22,12 @@ export function NewsEditor({ value, onChange }: NewsEditorProps) {
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      onChange(editor.getText()); // Use getText() instead of getHTML() for plain text
     },
   });
 
   useEffect(() => {
-    if (editor && value !== editor.getHTML()) {
+    if (editor && value !== editor.getText()) {
       editor.commands.setContent(value, false);
     }
   }, [editor, value]);

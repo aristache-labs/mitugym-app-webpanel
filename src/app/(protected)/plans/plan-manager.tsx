@@ -5,7 +5,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { downloadCsv, generateCsv } from "@/lib/csv";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDuration } from "@/lib/utils";
 import type { MembershipPlan } from "@/types";
 import { deletePlanAction } from "@/app/(protected)/actions";
 import { PlanForm } from "@/components/plans/plan-form";
@@ -18,7 +18,7 @@ interface PlanManagerProps {
 const csvColumns = [
   { header: "Name", accessor: (plan: MembershipPlan) => plan.name },
   { header: "Price", accessor: (plan: MembershipPlan) => plan.price },
-  { header: "Duration", accessor: (plan: MembershipPlan) => plan.duration_days },
+  { header: "Duration", accessor: (plan: MembershipPlan) => formatDuration(plan.duration_months) },
   { header: "Status", accessor: (plan: MembershipPlan) => (plan.is_active ? "active" : "inactive") },
 ];
 
@@ -38,9 +38,9 @@ export function PlanManager({ plans }: PlanManagerProps) {
         cell: ({ row }) => formatCurrency(row.original.price),
       },
       {
-        accessorKey: "duration_days",
+        accessorKey: "duration_months",
         header: "Duration",
-        cell: ({ row }) => `${row.original.duration_days} days`,
+        cell: ({ row }) => formatDuration(row.original.duration_months),
       },
       {
         accessorKey: "is_active",

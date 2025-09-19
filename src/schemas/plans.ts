@@ -6,14 +6,13 @@ export const planSchema = z.object({
   price: z.coerce
     .number({ invalid_type_error: "Price must be a number" })
     .min(0, "Price cannot be negative"),
-  duration_days: z.coerce
+  duration_months: z.coerce
     .number({ invalid_type_error: "Duration must be a number" })
-    .min(1, "Duration must be at least one day"),
-  description: z
-    .string()
-    .max(2000, "Description is limited to 2000 characters")
+    .min(0, "Duration cannot be negative"),
+  features: z
+    .array(z.string())
     .optional()
-    .nullable(),
+    .default([]),
   is_active: z.coerce.boolean().optional().default(true),
 });
 

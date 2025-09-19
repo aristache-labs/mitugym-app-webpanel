@@ -17,8 +17,8 @@ export type MembershipPlan = {
   id: string;
   name: string;
   price: number;
-  duration_days: number;
-  description?: string | null;
+  duration_months: number;
+  features?: string[];
   is_active: boolean;
 };
 
@@ -27,6 +27,8 @@ export type CheckIn = {
   member_id: string;
   member_name?: string | null;
   checked_in_at: string;
+  checked_out_at?: string | null;
+  duration_minutes?: number | null;
   method: string | null;
 };
 

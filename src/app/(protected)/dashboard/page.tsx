@@ -68,7 +68,7 @@ export default async function DashboardPage() {
                       {item.priority}
                     </Badge>
                   </div>
-                  <p className="mt-2 text-sm text-muted" dangerouslySetInnerHTML={{ __html: item.content }} />
+                  <p className="mt-2 text-sm text-muted">{item.content}</p>
                   <p className="mt-3 text-xs text-muted">
                     Expires {item.expires_at ? formatDate(item.expires_at) : "No expiry"}
                   </p>

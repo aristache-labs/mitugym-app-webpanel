@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { createNewsAction, updateNewsAction, type ActionResult } from "@/app/(protected)/actions";
 import { newsSchema, type NewsInput } from "@/schemas/news";
@@ -32,6 +32,25 @@ export function NewsForm({ item, onCompleted }: NewsFormProps) {
       expires_at: null,
     },
   });
+
+  // Reset form when item changes
+  useEffect(() => {
+    if (item) {
+      form.reset({
+        title: item.title,
+        content: item.content,
+        priority: item.priority,
+        expires_at: item.expires_at,
+      });
+    } else {
+      form.reset({
+        title: "",
+        content: "<p>Welcome to MITUGYM.</p>",
+        priority: "medium",
+        expires_at: null,
+      });
+    }
+  }, [item, form]);
 
   const handleResult = (result: ActionResult) => {
     if (!result.success) {

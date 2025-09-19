@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -38,10 +39,21 @@ export function LoginForm() {
   });
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-6">
+    <div className="flex min-h-screen flex-col items-center justify-center px-6">
+      {/* Logo */}
+      <div className="mb-8">
+        <Image
+          src="/logo.png"
+          alt="MITUGYM Logo"
+          width={150}
+          height={150}
+          className="mx-auto"
+        />
+      </div>
+      
       <Card className="w-full max-w-md border-primary/20 bg-surface/80">
         <CardHeader>
-          <CardTitle className="text-center text-2xl font-semibold text-primary">Staff portal</CardTitle>
+          <CardTitle className="text-center text-2xl font-semibold text-primary">Staff Portal</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>

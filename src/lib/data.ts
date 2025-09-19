@@ -50,19 +50,27 @@ const sampleMembers: Member[] = [
 
 const samplePlans: MembershipPlan[] = [
   {
+    id: "plan-day",
+    name: "Day Pass",
+    price: 15,
+    duration_months: 0,
+    features: ["Single day access", "All equipment", "Valid for 24 hours"],
+    is_active: true,
+  },
+  {
     id: "plan-basic",
-    name: "Unlimited",
+    name: "Monthly Unlimited",
     price: 79,
-    duration_days: 30,
-    description: "Unlimited access, billed monthly",
+    duration_months: 1,
+    features: ["Unlimited access", "All equipment", "Monthly billing"],
     is_active: true,
   },
   {
     id: "plan-flex",
-    name: "Flex 12",
-    price: 249,
-    duration_days: 90,
-    description: "12 sessions you can use anytime within 3 months",
+    name: "Quarterly Plan",
+    price: 199,
+    duration_months: 3,
+    features: ["3 month access", "All equipment", "Flexible timing"],
     is_active: true,
   },
 ];
@@ -73,6 +81,8 @@ const sampleCheckIns: CheckIn[] = [
     member_id: sampleMembers[0].id,
     member_name: sampleMembers[0].full_name,
     checked_in_at: new Date().toISOString(),
+    checked_out_at: null,
+    duration_minutes: null,
     method: "qr",
   },
   {
@@ -80,6 +90,8 @@ const sampleCheckIns: CheckIn[] = [
     member_id: sampleMembers[1].id,
     member_name: sampleMembers[1].full_name,
     checked_in_at: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    checked_out_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
+    duration_minutes: 10,
     method: "manual",
   },
 ];
@@ -121,8 +133,8 @@ export async function fetchMembers(): Promise<Member[]> {
   }
 
   const { data, error } = await admin
-    .from("members")
-    .select("id, full_name, email, phone, status, plan_id, expires_at, created_at, notes, membership_plans(name)")
+    .from("profiles")
+    .select("id, first_name, last_name, email, phone, membership_status, membership_plan, expiry_date, created_at, address")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -133,9 +145,17 @@ export async function fetchMembers(): Promise<Member[]> {
   const rows = (data as SupabaseMemberRow[] | null) ?? [];
 
   return rows.length
-    ? rows.map<Member>((member) => ({
-        ...member,
-        plan_name: member.membership_plans?.name ?? null,
+    ? rows.map<Member>((profile) => ({
+        id: profile.id,
+        full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || null,
+        email: profile.email,
+        phone: profile.phone,
+        status: profile.membership_status as Member['status'] || 'active',
+        plan_id: profile.membership_plan || null,
+        plan_name: profile.membership_plan,
+        expires_at: profile.expiry_date,
+        created_at: profile.created_at,
+        notes: profile.address // Using address field for notes
       }))
     : sampleMembers;
 }
@@ -147,8 +167,8 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
   }
 
   const { data, error } = await admin
-    .from("members")
-    .select("id, full_name, email, phone, status, plan_id, expires_at, created_at, notes, membership_plans(name)")
+    .from("profiles")
+    .select("id, first_name, last_name, email, phone, membership_status, membership_plan, expiry_date, created_at, address")
     .eq("id", id)
     .maybeSingle();
 
@@ -161,11 +181,19 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
     return null;
   }
 
-  const row = data as SupabaseMemberRow;
+  const profile = data as any;
 
   return {
-    ...row,
-    plan_name: row.membership_plans?.name ?? null,
+    id: profile.id,
+    full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || null,
+    email: profile.email,
+    phone: profile.phone,
+    status: profile.membership_status as Member['status'] || 'active',
+    plan_id: profile.membership_plan || null,
+    plan_name: profile.membership_plan,
+    expires_at: profile.expiry_date,
+    created_at: profile.created_at,
+    notes: profile.address
   } as Member;
 }
 
@@ -177,7 +205,7 @@ export async function fetchPlans(): Promise<MembershipPlan[]> {
 
   const { data, error } = await admin
     .from("membership_plans")
-    .select("id, name, price, duration_days, description, is_active")
+    .select("id, name, price, duration_months, features, is_active")
     .order("price");
 
   if (error) {
@@ -185,7 +213,14 @@ export async function fetchPlans(): Promise<MembershipPlan[]> {
     return samplePlans;
   }
 
-  return data ?? samplePlans;
+  return data ? data.map((plan: any) => ({
+    id: plan.id,
+    name: plan.name,
+    price: plan.price,
+    duration_months: plan.duration_months ?? 1, // Use nullish coalescing to preserve 0
+    features: plan.features || [],
+    is_active: plan.is_active
+  })) : samplePlans;
 }
 
 export async function fetchCheckIns(): Promise<CheckIn[]> {
@@ -194,25 +229,52 @@ export async function fetchCheckIns(): Promise<CheckIn[]> {
     return sampleCheckIns;
   }
 
-  const { data, error } = await admin
-    .from("check_ins")
-    .select("id, member_id, checked_in_at, method, members(full_name)")
-    .order("checked_in_at", { ascending: false })
+  // Get checkins data
+  const { data: checkinsData, error: checkinsError } = await admin
+    .from("checkins")
+    .select("id, user_id, check_in_time, check_out_time, duration_minutes, membership_plan_name")
+    .order("check_in_time", { ascending: false })
     .limit(200);
 
-  if (error) {
-    console.error("Failed to load check-ins", error);
+  if (checkinsError) {
+    console.error("Failed to load check-ins", checkinsError);
     return sampleCheckIns;
   }
 
-  const rows = (data as SupabaseCheckInRow[] | null) ?? [];
+  if (!checkinsData || checkinsData.length === 0) {
+    return sampleCheckIns;
+  }
 
-  return rows.length
-    ? rows.map<CheckIn>((checkIn) => ({
-        ...checkIn,
-        member_name: checkIn.members?.full_name ?? null,
-      }))
-    : sampleCheckIns;
+  // Get unique user IDs from checkins
+  const userIds = [...new Set(checkinsData.map(c => c.user_id))];
+
+  // Get member names for these users
+  const { data: profilesData, error: profilesError } = await admin
+    .from("profiles")
+    .select("id, first_name, last_name")
+    .in("id", userIds);
+
+  if (profilesError) {
+    console.error("Failed to load member profiles", profilesError);
+  }
+
+  // Create a map of user_id to member name
+  const memberNames: Record<string, string> = {};
+  if (profilesData) {
+    profilesData.forEach(profile => {
+      memberNames[profile.id] = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unknown Member';
+    });
+  }
+
+  return checkinsData.map<CheckIn>((checkIn: any) => ({
+    id: checkIn.id,
+    member_id: checkIn.user_id,
+    member_name: memberNames[checkIn.user_id] || 'Unknown Member',
+    checked_in_at: checkIn.check_in_time,
+    checked_out_at: checkIn.check_out_time,
+    duration_minutes: checkIn.duration_minutes,
+    method: 'manual' // Default since method isn't in the current schema
+  }));
 }
 
 export async function fetchNews(): Promise<NewsItem[]> {
@@ -222,8 +284,9 @@ export async function fetchNews(): Promise<NewsItem[]> {
   }
 
   const { data, error } = await admin
-    .from("news")
-    .select("id, title, content, priority, expires_at, created_at, staff_profiles(full_name)")
+    .from("announcements")
+    .select("id, title, content, priority, end_date, created_at, created_by")
+    .eq("is_active", true)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -231,12 +294,17 @@ export async function fetchNews(): Promise<NewsItem[]> {
     return sampleNews;
   }
 
-  const rows = (data as SupabaseNewsRow[] | null) ?? [];
+  const rows = (data as any[] | null) ?? [];
 
   return rows.length
     ? rows.map<NewsItem>((item) => ({
-        ...item,
-        author_name: item.staff_profiles?.full_name ?? null,
+        id: item.id,
+        title: item.title,
+        content: item.content,
+        priority: item.priority === 1 ? 'low' : item.priority === 2 ? 'medium' : 'high',
+        expires_at: item.end_date,
+        created_at: item.created_at,
+        author_name: 'Admin', // No relationship exists, using default
       }))
     : sampleNews;
 }
@@ -247,7 +315,7 @@ export async function fetchSchedule(): Promise<ScheduleDay[]> {
     return sampleSchedule;
   }
 
-  const { data, error } = await admin.from("gym_schedule").select("weekday, opens_at, closes_at, is_closed");
+  const { data, error } = await admin.from("gym_schedule").select("day_of_week, open_time, close_time, is_active");
 
   if (error) {
     console.error("Failed to load schedule", error);
@@ -258,7 +326,12 @@ export async function fetchSchedule(): Promise<ScheduleDay[]> {
     return sampleSchedule;
   }
 
-  return data as ScheduleDay[];
+  return data.map((row: any) => ({
+    weekday: row.day_of_week,
+    opens_at: row.open_time,
+    closes_at: row.close_time,
+    is_closed: !row.is_active // Convert is_active to is_closed (inverse)
+  })) as ScheduleDay[];
 }
 
 export async function fetchAuditLogs(): Promise<AuditLogEntry[]> {

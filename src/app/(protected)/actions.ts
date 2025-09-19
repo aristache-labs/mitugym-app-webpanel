@@ -186,7 +186,15 @@ export async function saveScheduleAction(values: ScheduleDay[]): Promise<ActionR
 
   const staff = await requireStaff();
 
-  const { error } = await admin.from("gym_schedule").upsert(parsed.data, { onConflict: "weekday" });
+  // Convert ScheduleDay format to database schema
+  const dbScheduleData = parsed.data.map((day) => ({
+    day_of_week: day.weekday,
+    open_time: day.opens_at,
+    close_time: day.closes_at,
+    is_active: !day.is_closed, // Convert is_closed to is_active (inverse)
+  }));
+
+  const { error } = await admin.from("gym_schedule").upsert(dbScheduleData, { onConflict: "day_of_week" });
 
   if (error) {
     console.error("Failed to save schedule", error);
@@ -215,18 +223,20 @@ export async function createNewsAction(values: unknown): Promise<ActionResult> {
   const payload = {
     title: parsed.data.title,
     content: parsed.data.content,
-    priority: parsed.data.priority,
-    expires_at: parsed.data.expires_at,
+    priority: parsed.data.priority === 'low' ? 1 : parsed.data.priority === 'medium' ? 2 : 3, // Convert to numeric
+    end_date: parsed.data.expires_at,
+    created_by: staff.user.id,
+    is_active: true,
   };
 
-  const { error } = await admin.from("news").insert(payload);
+  const { error } = await admin.from("announcements").insert(payload);
 
   if (error) {
     console.error("Failed to create news", error);
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "news.create", "news", { title: parsed.data.title });
+  await appendAuditLog(staff.profile.id, "news.create", "announcements", { title: parsed.data.title });
   revalidatePath("/news");
 
   return { success: true, message: "News item created" };
@@ -250,14 +260,20 @@ export async function updateNewsAction(values: unknown): Promise<ActionResult> {
   const staff = await requireStaff();
 
   const { id, ...rest } = parsed.data;
-  const { error } = await admin.from("news").update(rest).eq("id", id);
+  const updatePayload = {
+    title: rest.title,
+    content: rest.content,
+    priority: rest.priority === 'low' ? 1 : rest.priority === 'medium' ? 2 : 3, // Convert to numeric
+    end_date: rest.expires_at,
+  };
+  const { error } = await admin.from("announcements").update(updatePayload).eq("id", id);
 
   if (error) {
     console.error("Failed to update news", error);
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "news.update", "news", { id });
+  await appendAuditLog(staff.profile.id, "news.update", "announcements", { id });
   revalidatePath("/news");
 
   return { success: true, message: "News item updated" };
@@ -271,14 +287,14 @@ export async function deleteNewsAction(id: string): Promise<ActionResult> {
 
   const staff = await requireStaff();
 
-  const { error } = await admin.from("news").delete().eq("id", id);
+  const { error } = await admin.from("announcements").delete().eq("id", id);
 
   if (error) {
     console.error("Failed to delete news", error);
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "news.delete", "news", { id });
+  await appendAuditLog(staff.profile.id, "news.delete", "announcements", { id });
   revalidatePath("/news");
 
   return { success: true, message: "News item deleted" };

@@ -6,7 +6,7 @@ import { DataTable } from "@/components/data-table/data-table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import type { CheckIn } from "@/types";
-import { formatDate } from "@/lib/utils";
+import { formatDateTime } from "@/lib/utils";
 
 interface CheckinsTableProps {
   data: CheckIn[];
@@ -26,7 +26,26 @@ export function CheckinsTable({ data }: CheckinsTableProps) {
       {
         accessorKey: "checked_in_at",
         header: "Checked in",
-        cell: ({ row }) => formatDate(row.original.checked_in_at),
+        cell: ({ row }) => formatDateTime(row.original.checked_in_at),
+      },
+      {
+        accessorKey: "checked_out_at",
+        header: "Checked out",
+        cell: ({ row }) => 
+          row.original.checked_out_at 
+            ? formatDateTime(row.original.checked_out_at)
+            : "Still in gym",
+      },
+      {
+        accessorKey: "duration_minutes",
+        header: "Duration",
+        cell: ({ row }) => {
+          const minutes = row.original.duration_minutes;
+          if (!minutes) return "—";
+          const hours = Math.floor(minutes / 60);
+          const mins = minutes % 60;
+          return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+        },
       },
       {
         accessorKey: "method",
