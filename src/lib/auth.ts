@@ -30,11 +30,19 @@ export async function getSupabaseServerClient() {
       get(name) {
         return cookieStore.get(name)?.value;
       },
-      set() {
-        /* cookies cannot be set in a server component */
+      set(name, value, options) {
+        try {
+          cookieStore.set(name, value, options);
+        } catch (error) {
+          // This can be called from a Server Component, ignore the error
+        }
       },
-      remove() {
-        /* cookies cannot be removed in a server component */
+      remove(name, options) {
+        try {
+          cookieStore.set(name, '', { ...options, maxAge: 0 });
+        } catch (error) {
+          // This can be called from a Server Component, ignore the error
+        }
       },
     },
   });

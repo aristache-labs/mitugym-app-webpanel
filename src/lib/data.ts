@@ -121,7 +121,8 @@ const sampleAudit: AuditLogEntry[] = [
     actor_id: sampleMembers[0].id,
     action: "member.create",
     entity: "members",
-    metadata: { email: "avery@mitugym.dev" },
+    entity_id: sampleMembers[0].id,
+    meta: { email: "avery@mitugym.dev" },
     created_at: new Date().toISOString(),
   },
 ];
@@ -345,7 +346,7 @@ export async function fetchAuditLogs(): Promise<AuditLogEntry[]> {
 
   const { data, error } = await admin
     .from("audit_logs")
-    .select("id, actor_id, action, entity, metadata, created_at")
+    .select("id, actor_id, action, entity, entity_id, meta, created_at")
     .order("created_at", { ascending: false })
     .limit(200);
 

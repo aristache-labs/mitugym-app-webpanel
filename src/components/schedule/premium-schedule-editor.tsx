@@ -90,8 +90,10 @@ export function PremiumScheduleEditor({ schedule }: PremiumScheduleEditorProps) 
       </div>
 
       {/* Days Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {state.map((day) => {
+      <div className="space-y-4">
+        {/* Top row: Monday - Thursday */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {state.filter(day => [1, 2, 3, 4].includes(day.weekday)).map((day) => {
           const label = weekdayLabel(day.weekday);
           const dayStatus = getDayStatus(day);
           const StatusIcon = dayStatus.icon;
@@ -165,6 +167,87 @@ export function PremiumScheduleEditor({ schedule }: PremiumScheduleEditorProps) 
             </Card>
           );
         })}
+        </div>
+        
+        {/* Bottom row: Friday - Sunday (centered) */}
+        <div className="flex justify-center">
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-3 max-w-4xl">
+            {state.filter(day => [5, 6, 0].includes(day.weekday)).map((day) => {
+              const label = weekdayLabel(day.weekday);
+              const dayStatus = getDayStatus(day);
+              const StatusIcon = dayStatus.icon;
+              const isToday = new Date().getDay() === day.weekday;
+
+              return (
+                <Card key={day.weekday} className={`bg-card/90 border-surface/50 transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 ${isToday ? 'ring-2 ring-primary/20' : ''}`}>
+                  <CardContent className="p-6">
+                    {/* Day Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-lg text-text">{label}</h3>
+                        {isToday && (
+                          <Badge variant="default" className="text-xs px-2 py-1">
+                            Today
+                          </Badge>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => toggleDayStatus(day.weekday)}
+                        className="p-2 rounded-full hover:bg-surface/60 transition-colors"
+                        title={day.is_closed ? "Mark as open" : "Mark as closed"}
+                      >
+                        <StatusIcon className="w-5 h-5 text-muted hover:text-text transition-colors" />
+                      </button>
+                    </div>
+
+                    {/* Status Badge */}
+                    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border mb-4 ${dayStatus.color}`}>
+                      <Clock className="w-4 h-4" />
+                      <span className="text-sm font-medium">{dayStatus.label}</span>
+                    </div>
+
+                    {/* Time Inputs */}
+                    {!day.is_closed && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-2">
+                            Opening Time
+                          </label>
+                          <TimePicker
+                            value={day.opens_at ?? ""}
+                            onChange={(value) => updateDay(day.weekday, { opens_at: value })}
+                            placeholder="Select opening time"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-2">
+                            Closing Time
+                          </label>
+                          <TimePicker
+                            value={day.closes_at ?? ""}
+                            onChange={(value) => updateDay(day.weekday, { closes_at: value })}
+                            placeholder="Select closing time"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {day.is_closed && (
+                      <div className="text-center py-4">
+                        <p className="text-sm text-muted">
+                          Gym is closed on {label}s
+                        </p>
+                        <p className="text-xs text-muted mt-1">
+                          Mobile booking disabled
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Error Display */}

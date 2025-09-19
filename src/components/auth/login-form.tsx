@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+import { useSupabase } from "@/components/providers/supabase-provider";
 import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 
 export function LoginForm() {
   const router = useRouter();
+  const { supabase } = useSupabase();
   const [error, setError] = useState<string | null>(null);
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -23,7 +24,6 @@ export function LoginForm() {
 
   const onSubmit = form.handleSubmit(async (values) => {
     setError(null);
-    const supabase = createSupabaseBrowserClient();
     if (!supabase) {
       setError("Supabase is not configured");
       return;

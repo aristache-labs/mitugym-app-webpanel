@@ -14,14 +14,15 @@ export type ActionResult<T = undefined> =
   | { success: true; data?: T; message?: string }
   | { success: false; error: string; issues?: Record<string, string[]> };
 
-async function appendAuditLog(actorId: string, action: string, entity: string, metadata?: Record<string, unknown>) {
+async function appendAuditLog(actorId: string, action: string, entity: string, entityId?: string, meta?: Record<string, unknown>) {
   const supabase = getSupabaseAdmin();
   if (!supabase) return;
   await supabase.from("audit_logs").insert({
     actor_id: actorId,
     action,
     entity,
-    metadata: metadata ?? null,
+    entity_id: entityId ?? null,
+    meta: meta ?? null,
   });
 }
 
@@ -45,27 +46,81 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
   }
 
   const staff = await requireStaff();
-  const payload = {
-    full_name: parsed.data.full_name,
-    email: parsed.data.email,
-    phone: parsed.data.phone,
-    status: parsed.data.status,
-    plan_id: parsed.data.plan_id,
-    expires_at: parsed.data.expires_at,
-    notes: parsed.data.notes,
-  };
 
-  const { error } = await admin.from("members").insert(payload);
+  // Split full_name into first_name and last_name
+  const nameParts = parsed.data.full_name.trim().split(' ');
+  const first_name = nameParts[0] || '';
+  const last_name = nameParts.slice(1).join(' ') || '';
 
-  if (error) {
-    console.error("Failed to create member", error);
-    return { success: false, error: error.message };
+  try {
+    // 1. Create Supabase auth user
+    const { data: authUser, error: authError } = await admin.auth.admin.createUser({
+      email: parsed.data.email,
+      password: parsed.data.password || generateRandomPassword(),
+      email_confirm: true, // Auto-confirm email
+      user_metadata: {
+        full_name: parsed.data.full_name,
+        display_name: parsed.data.full_name,
+        first_name,
+        last_name,
+      }
+    });
+
+    if (authError) {
+      console.error("Failed to create auth user", authError);
+      return { success: false, error: `Failed to create user account: ${authError.message}` };
+    }
+
+    if (!authUser.user) {
+      return { success: false, error: "Failed to create user account" };
+    }
+
+    // 2. Create/update profile record with correct field mapping
+    const profilePayload = {
+      id: authUser.user.id, // Use the auth user ID
+      first_name,
+      last_name,
+      email: parsed.data.email,
+      phone: parsed.data.phone,
+      membership_status: parsed.data.status,
+      membership_plan: parsed.data.plan_id,
+      expiry_date: parsed.data.expires_at,
+      address: parsed.data.notes, // Using address field for notes
+    };
+
+    const { error: profileError } = await admin
+      .from("profiles")
+      .upsert(profilePayload, { onConflict: "id" });
+
+    if (profileError) {
+      console.error("Failed to create profile", profileError);
+      // If profile creation fails, clean up the auth user
+      await admin.auth.admin.deleteUser(authUser.user.id);
+      return { success: false, error: `Failed to create profile: ${profileError.message}` };
+    }
+
+    await appendAuditLog(staff.profile.id, "member.create", "profiles", authUser.user.id, { 
+      email: parsed.data.email,
+      full_name: parsed.data.full_name 
+    });
+    revalidatePath("/members");
+
+    return { success: true, message: "Member created successfully" };
+
+  } catch (error) {
+    console.error("Unexpected error creating member", error);
+    return { success: false, error: "An unexpected error occurred" };
   }
+}
 
-  await appendAuditLog(staff.profile.id, "member.create", "members", { email: parsed.data.email });
-  revalidatePath("/members");
-
-  return { success: true, message: "Member created" };
+// Helper function to generate a random password
+function generateRandomPassword(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+  let password = '';
+  for (let i = 0; i < 12; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
 }
 
 export async function updateMemberAction(values: unknown): Promise<ActionResult> {
@@ -81,16 +136,38 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
 
   const staff = await requireStaff();
 
-  const { id, ...rest } = parsed.data;
-  const { error } = await admin.from("members").update(rest).eq("id", id);
+  // Split full_name into first_name and last_name
+  const nameParts = parsed.data.full_name.trim().split(' ');
+  const first_name = nameParts[0] || '';
+  const last_name = nameParts.slice(1).join(' ') || '';
+
+  // Map fields to profiles table structure
+  const profilePayload = {
+    first_name,
+    last_name,
+    email: parsed.data.email,
+    phone: parsed.data.phone,
+    membership_status: parsed.data.status,
+    membership_plan: parsed.data.plan_id,
+    expiry_date: parsed.data.expires_at,
+    address: parsed.data.notes, // Using address field for notes
+  };
+
+  const { error } = await admin
+    .from("profiles")
+    .update(profilePayload)
+    .eq("id", parsed.data.id);
 
   if (error) {
     console.error("Failed to update member", error);
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "member.update", "members", { id });
-  revalidatePath(`/members/${id}`);
+  await appendAuditLog(staff.profile.id, "member.update", "profiles", parsed.data.id, { 
+    id: parsed.data.id,
+    full_name: parsed.data.full_name 
+  });
+  revalidatePath(`/members/${parsed.data.id}`);
   revalidatePath("/members");
 
   return { success: true, message: "Member updated" };
@@ -116,7 +193,7 @@ export async function createPlanAction(values: unknown): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "plan.create", "membership_plans", { name: parsed.data.name });
+  await appendAuditLog(staff.profile.id, "plan.create", "membership_plans", undefined, { name: parsed.data.name });
   revalidatePath("/plans");
 
   return { success: true, message: "Plan created" };
@@ -147,7 +224,7 @@ export async function updatePlanAction(values: unknown): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "plan.update", "membership_plans", { id });
+  await appendAuditLog(staff.profile.id, "plan.update", "membership_plans", id, { id });
   revalidatePath("/plans");
 
   return { success: true, message: "Plan updated" };
@@ -167,7 +244,7 @@ export async function deletePlanAction(id: string): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "plan.delete", "membership_plans", { id });
+  await appendAuditLog(staff.profile.id, "plan.delete", "membership_plans", id, { id });
   revalidatePath("/plans");
 
   return { success: true, message: "Plan deleted" };
@@ -242,7 +319,7 @@ export async function saveScheduleAction(values: ScheduleDay[]): Promise<ActionR
     }
   }
 
-  await appendAuditLog(staff.profile.id, "schedule.save", "gym_schedule", {});
+  await appendAuditLog(staff.profile.id, "schedule.save", "gym_schedule", undefined, {});
   revalidatePath("/schedule");
 
   return { success: true, message: "Schedule updated" };
@@ -277,7 +354,7 @@ export async function createNewsAction(values: unknown): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "news.create", "announcements", { title: parsed.data.title });
+  await appendAuditLog(staff.profile.id, "news.create", "announcements", undefined, { title: parsed.data.title });
   revalidatePath("/news");
 
   return { success: true, message: "News item created" };
@@ -314,7 +391,7 @@ export async function updateNewsAction(values: unknown): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "news.update", "announcements", { id });
+  await appendAuditLog(staff.profile.id, "news.update", "announcements", id, { id });
   revalidatePath("/news");
 
   return { success: true, message: "News item updated" };
@@ -335,7 +412,7 @@ export async function deleteNewsAction(id: string): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "news.delete", "announcements", { id });
+  await appendAuditLog(staff.profile.id, "news.delete", "announcements", id, { id });
   revalidatePath("/news");
 
   return { success: true, message: "News item deleted" };
@@ -385,7 +462,7 @@ export async function manualCheckoutAction(checkinId: string): Promise<ActionRes
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "checkin.manual_checkout", "checkins", { 
+  await appendAuditLog(staff.profile.id, "checkin.manual_checkout", "checkins", checkinId, { 
     checkin_id: checkinId,
     duration_minutes: durationMinutes 
   });

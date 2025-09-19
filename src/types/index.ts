@@ -54,7 +54,8 @@ export type AuditLogEntry = {
   actor_id: string | null;
   action: string;
   entity: string | null;
-  metadata: Record<string, unknown> | null;
+  entity_id: string | null;
+  meta: Record<string, unknown> | null;
   created_at: string;
 };
 
