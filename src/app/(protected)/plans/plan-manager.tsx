@@ -10,6 +10,7 @@ import type { MembershipPlan } from "@/types";
 import { deletePlanAction } from "@/app/(protected)/actions";
 import { PlanForm } from "@/components/plans/plan-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ConfirmationModal } from "@/components/ui/modal";
 
 interface PlanManagerProps {
   plans: MembershipPlan[];
@@ -25,6 +26,8 @@ const csvColumns = [
 export function PlanManager({ plans }: PlanManagerProps) {
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
   const [isDeleting, startTransition] = useTransition();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [planToDelete, setPlanToDelete] = useState<MembershipPlan | null>(null);
 
   const columns = useMemo<ColumnDef<MembershipPlan>[]>(
     () => [
@@ -60,18 +63,10 @@ export function PlanManager({ plans }: PlanManagerProps) {
               size="sm"
               className="text-error hover:text-error"
               disabled={isDeleting}
-              onClick={() =>
-                startTransition(async () => {
-                  const confirmed = window.confirm(
-                    `Delete ${row.original.name}? This action cannot be undone.`
-                  );
-                  if (!confirmed) return;
-                  const result = await deletePlanAction(row.original.id);
-                  if (!result.success) {
-                    alert(result.error);
-                  }
-                })
-              }
+              onClick={() => {
+                setPlanToDelete(row.original);
+                setShowDeleteModal(true);
+              }}
             >
               Delete
             </Button>
@@ -85,6 +80,19 @@ export function PlanManager({ plans }: PlanManagerProps) {
   const handleExport = () => {
     const csv = generateCsv(plans, csvColumns);
     downloadCsv(csv, `membership-plans-${new Date().toISOString()}.csv`);
+  };
+
+  const handleDelete = async () => {
+    if (!planToDelete) return;
+    
+    startTransition(async () => {
+      const result = await deletePlanAction(planToDelete.id);
+      if (!result.success) {
+        console.error("Delete plan failed:", result.error);
+        // The action will handle the error display through revalidation
+      }
+      setPlanToDelete(null);
+    });
   };
 
   return (
@@ -116,6 +124,19 @@ export function PlanManager({ plans }: PlanManagerProps) {
           ) : null}
         </CardContent>
       </Card>
+
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setPlanToDelete(null);
+        }}
+        onConfirm={handleDelete}
+        title="Delete Membership Plan"
+        description={`Are you sure you want to delete "${planToDelete?.name}"? This action cannot be undone and may affect existing members with this plan.`}
+        confirmText="Delete Plan"
+        variant="destructive"
+      />
     </div>
   );
 }

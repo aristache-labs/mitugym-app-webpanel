@@ -18,7 +18,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <section className="grid gap-4 md:grid-cols-3">
-        <MetricCard title="Occupancy now" value={metrics.occupancy} description="Live floor traffic" />
+        <MetricCard title="In Gym Now" value={metrics.occupancy} description="Live floor traffic" />
         <MetricCard title="Active members" value={metrics.activeMembers} description="Members in good standing" />
         <MetricCard title="Expiring this week" value={metrics.expiringSoon} description="Memberships to renew" />
       </section>

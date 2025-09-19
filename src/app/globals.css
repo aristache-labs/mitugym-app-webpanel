@@ -59,3 +59,24 @@ a:hover {
 * {
   border-color: var(--surface);
 }
+
+/* Shine animation for animated button */
+@keyframes shine {
+  from {
+    opacity: 0;
+    left: 0%;
+  }
+  
+  50% {
+    opacity: 1;
+  }
+  
+  to {
+    opacity: 0;
+    left: 100%;
+  }
+}
+
+.animate-shine {
+  animation: shine 0.5s 0s linear;
+}

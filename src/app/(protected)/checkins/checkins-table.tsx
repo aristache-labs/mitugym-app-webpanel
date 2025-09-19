@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import type { CheckIn } from "@/types";
 import { formatDateTime } from "@/lib/utils";
+import { CheckoutButton } from "@/components/checkins/checkout-button";
 
 interface CheckinsTableProps {
   data: CheckIn[];
@@ -51,6 +52,17 @@ export function CheckinsTable({ data }: CheckinsTableProps) {
         accessorKey: "method",
         header: "Method",
         cell: ({ row }) => row.original.method ?? "manual",
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => (
+          <CheckoutButton
+            checkinId={row.original.id}
+            memberName={row.original.member_name ?? "Walk-in"}
+            isCheckedOut={!!row.original.checked_out_at}
+          />
+        ),
       },
     ],
     []

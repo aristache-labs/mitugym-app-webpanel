@@ -188,17 +188,58 @@ export async function saveScheduleAction(values: ScheduleDay[]): Promise<ActionR
 
   // Convert ScheduleDay format to database schema
   const dbScheduleData = parsed.data.map((day) => ({
-    day_of_week: day.weekday,
-    open_time: day.opens_at,
-    close_time: day.closes_at,
+    // Convert from JS Date format (0=Sunday, 1=Monday) to database format (0=Monday, 6=Sunday)
+    // JS: 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+    // DB: 0=Mon,1=Tue,2=Wed,3=Thu,4=Fri,5=Sat,6=Sun
+    day_of_week: day.weekday === 0 ? 6 : day.weekday - 1, // JS Sun(0)→DB Sun(6), JS Mon(1)→DB Mon(0)
+    // Database requires non-null times, use defaults for closed days
+    open_time: day.is_closed ? "00:00" : (day.opens_at || "06:00"),
+    close_time: day.is_closed ? "00:00" : (day.closes_at || "22:00"),
     is_active: !day.is_closed, // Convert is_closed to is_active (inverse)
   }));
 
-  const { error } = await admin.from("gym_schedule").upsert(dbScheduleData, { onConflict: "day_of_week" });
+  console.log("Saving schedule data:", dbScheduleData);
 
-  if (error) {
-    console.error("Failed to save schedule", error);
-    return { success: false, error: error.message };
+  // Get existing records to update by ID
+  const { data: existingRecords, error: fetchError } = await admin
+    .from("gym_schedule")
+    .select("id, day_of_week");
+
+  if (fetchError) {
+    console.error("Failed to fetch existing schedule", fetchError);
+    return { success: false, error: fetchError.message };
+  }
+
+  // Update each day individually
+  for (const dayData of dbScheduleData) {
+    const existingRecord = existingRecords?.find(record => record.day_of_week === dayData.day_of_week);
+    
+    if (existingRecord) {
+      // Update existing record
+      const { error: updateError } = await admin
+        .from("gym_schedule")
+        .update({
+          open_time: dayData.open_time,
+          close_time: dayData.close_time,
+          is_active: dayData.is_active
+        })
+        .eq("id", existingRecord.id);
+        
+      if (updateError) {
+        console.error(`Failed to update day ${dayData.day_of_week}`, updateError);
+        return { success: false, error: updateError.message };
+      }
+    } else {
+      // Insert new record
+      const { error: insertError } = await admin
+        .from("gym_schedule")
+        .insert(dayData);
+        
+      if (insertError) {
+        console.error(`Failed to insert day ${dayData.day_of_week}`, insertError);
+        return { success: false, error: insertError.message };
+      }
+    }
   }
 
   await appendAuditLog(staff.profile.id, "schedule.save", "gym_schedule", {});
@@ -298,4 +339,57 @@ export async function deleteNewsAction(id: string): Promise<ActionResult> {
   revalidatePath("/news");
 
   return { success: true, message: "News item deleted" };
+}
+
+export async function manualCheckoutAction(checkinId: string): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+
+  // Get the checkin record to calculate duration
+  const { data: checkin, error: getError } = await admin
+    .from("checkins")
+    .select("id, check_in_time, check_out_time")
+    .eq("id", checkinId)
+    .single();
+
+  if (getError || !checkin) {
+    console.error("Failed to get checkin", getError);
+    return { success: false, error: "Check-in record not found" };
+  }
+
+  // Check if already checked out
+  if (checkin.check_out_time) {
+    return { success: false, error: "Member has already checked out" };
+  }
+
+  const now = new Date();
+  const checkInTime = new Date(checkin.check_in_time);
+  const durationMinutes = Math.floor((now.getTime() - checkInTime.getTime()) / (1000 * 60));
+
+  // Update the checkin record with checkout time and duration
+  const { error } = await admin
+    .from("checkins")
+    .update({
+      check_out_time: now.toISOString(),
+      duration_minutes: durationMinutes,
+      updated_at: now.toISOString()
+    })
+    .eq("id", checkinId);
+
+  if (error) {
+    console.error("Failed to checkout member", error);
+    return { success: false, error: error.message };
+  }
+
+  await appendAuditLog(staff.profile.id, "checkin.manual_checkout", "checkins", { 
+    checkin_id: checkinId,
+    duration_minutes: durationMinutes 
+  });
+  revalidatePath("/checkins");
+
+  return { success: true, message: "Member checked out successfully" };
 }

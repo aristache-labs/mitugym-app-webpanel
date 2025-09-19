@@ -1,4 +1,4 @@
-import { CheckinsTable } from "@/app/(protected)/checkins/checkins-table";
+import { CheckinsWithTabs } from "@/components/checkins/checkins-with-tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchCheckIns, fetchOccupancy } from "@/lib/data";
@@ -13,17 +13,16 @@ export default async function CheckinsPage() {
     <div className="space-y-6">
       <Card className="bg-card/90">
         <CardHeader className="flex items-center justify-between">
-          <CardTitle className="text-lg">Occupancy now</CardTitle>
-          <Badge variant="success" className="text-base">
-            {occupancy.total} {occupancy.capacity ? `/ ${occupancy.capacity}` : ""}
+          <CardTitle className="text-lg">In Gym Now</CardTitle>
+          <Badge variant="success" className="text-4xl px-6 py-3 font-bold">
+            {occupancy.total}
           </Badge>
         </CardHeader>
         <CardContent className="text-sm text-muted">
-          Occupancy updates every few seconds based on the floor scanners and manual overrides. Use this card to manage peak
-          hours.
+          Live count of people currently in the gym, updated every few seconds based on floor scanners and manual overrides. Use this card to monitor current capacity.
         </CardContent>
       </Card>
-      <CheckinsTable data={checkIns} />
+      <CheckinsWithTabs data={checkIns} />
     </div>
   );
 }

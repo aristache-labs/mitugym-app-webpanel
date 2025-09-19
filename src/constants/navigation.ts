@@ -13,7 +13,7 @@ export const NAVIGATION = [
 export const SECONDARY_NAVIGATION = [{ label: "Sign out", href: "/logout", icon: LogOut }];
 
 export const DASHBOARD_METRICS = [
-  { key: "occupancy", label: "Occupancy now" },
+  { key: "occupancy", label: "In Gym Now" },
   { key: "activeMembers", label: "Active members" },
   { key: "expiringSoon", label: "Expiring this week" },
 ];

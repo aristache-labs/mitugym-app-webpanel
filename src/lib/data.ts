@@ -327,9 +327,12 @@ export async function fetchSchedule(): Promise<ScheduleDay[]> {
   }
 
   return data.map((row: any) => ({
-    weekday: row.day_of_week,
-    opens_at: row.open_time,
-    closes_at: row.close_time,
+    // Convert from database format (0=Monday, 6=Sunday) to JS Date format (0=Sunday, 1=Monday)
+    // DB: 0=Mon,1=Tue,2=Wed,3=Thu,4=Fri,5=Sat,6=Sun
+    // JS: 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+    weekday: (row.day_of_week + 1) % 7, // DB Mon(0)→JS Mon(1), DB Sun(6)→JS Sun(0)
+    opens_at: row.open_time ? row.open_time.substring(0, 5) : null, // Remove seconds from time
+    closes_at: row.close_time ? row.close_time.substring(0, 5) : null, // Remove seconds from time
     is_closed: !row.is_active // Convert is_active to is_closed (inverse)
   })) as ScheduleDay[];
 }

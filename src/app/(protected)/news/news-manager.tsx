@@ -9,6 +9,7 @@ import { deleteNewsAction } from "@/app/(protected)/actions";
 import { NewsForm } from "@/components/news/news-form";
 import type { NewsItem } from "@/types";
 import { formatDate } from "@/lib/utils";
+import { ConfirmationModal } from "@/components/ui/modal";
 
 interface NewsManagerProps {
   items: NewsItem[];
@@ -17,6 +18,21 @@ interface NewsManagerProps {
 export function NewsManager({ items }: NewsManagerProps) {
   const [selected, setSelected] = useState<NewsItem | null>(null);
   const [isDeleting, startTransition] = useTransition();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<NewsItem | null>(null);
+
+  const handleDelete = async () => {
+    if (!itemToDelete) return;
+    
+    startTransition(async () => {
+      const result = await deleteNewsAction(itemToDelete.id);
+      if (!result.success) {
+        console.error("Delete news failed:", result.error);
+        // The action will handle the error display through revalidation
+      }
+      setItemToDelete(null);
+    });
+  };
 
   const columns = useMemo<ColumnDef<NewsItem>[]>(
     () => [
@@ -52,18 +68,10 @@ export function NewsManager({ items }: NewsManagerProps) {
               size="sm"
               className="text-error hover:text-error"
               disabled={isDeleting}
-              onClick={() =>
-                startTransition(async () => {
-                  const confirmed = window.confirm(
-                    `Delete announcement "${row.original.title}"?`
-                  );
-                  if (!confirmed) return;
-                  const result = await deleteNewsAction(row.original.id);
-                  if (!result.success) {
-                    alert(result.error);
-                  }
-                })
-              }
+              onClick={() => {
+                setItemToDelete(row.original);
+                setShowDeleteModal(true);
+              }}
             >
               Delete
             </Button>
@@ -101,6 +109,19 @@ export function NewsManager({ items }: NewsManagerProps) {
           ) : null}
         </CardContent>
       </Card>
+
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setItemToDelete(null);
+        }}
+        onConfirm={handleDelete}
+        title="Delete Announcement"
+        description={`Are you sure you want to delete "${itemToDelete?.title}"? This action cannot be undone and will remove the announcement from all displays.`}
+        confirmText="Delete Announcement"
+        variant="destructive"
+      />
     </div>
   );
 }
