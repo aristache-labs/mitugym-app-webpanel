@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { saveScheduleAction, type ActionResult } from "@/app/(protected)/actions";
 import { AnimatedButton } from "@/components/ui/animated-button";
-import { Input } from "@/components/ui/input";
+import { TimePicker } from "@/components/ui/time-picker";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { ScheduleDay } from "@/types";
@@ -132,22 +132,20 @@ export function PremiumScheduleEditor({ schedule }: PremiumScheduleEditorProps) 
                       <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-2">
                         Opening Time
                       </label>
-                      <Input
-                        type="time"
+                      <TimePicker
                         value={day.opens_at ?? ""}
-                        onChange={(event) => updateDay(day.weekday, { opens_at: event.target.value })}
-                        className="bg-surface/40 border-surface/60 focus:border-primary/50 focus:ring-primary/20"
+                        onChange={(value) => updateDay(day.weekday, { opens_at: value })}
+                        placeholder="Select opening time"
                       />
                     </div>
                     <div>
                       <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-2">
                         Closing Time
                       </label>
-                      <Input
-                        type="time"
+                      <TimePicker
                         value={day.closes_at ?? ""}
-                        onChange={(event) => updateDay(day.weekday, { closes_at: event.target.value })}
-                        className="bg-surface/40 border-surface/60 focus:border-primary/50 focus:ring-primary/20"
+                        onChange={(value) => updateDay(day.weekday, { closes_at: value })}
+                        placeholder="Select closing time"
                       />
                     </div>
                   </div>
