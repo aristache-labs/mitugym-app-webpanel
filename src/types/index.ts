@@ -1,0 +1,62 @@
+export type MemberStatus = "active" | "inactive" | "frozen";
+
+export type Member = {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  status: MemberStatus;
+  plan_id: string | null;
+  plan_name?: string | null;
+  expires_at: string | null;
+  created_at: string;
+  notes?: string | null;
+};
+
+export type MembershipPlan = {
+  id: string;
+  name: string;
+  price: number;
+  duration_days: number;
+  description?: string | null;
+  is_active: boolean;
+};
+
+export type CheckIn = {
+  id: string;
+  member_id: string;
+  member_name?: string | null;
+  checked_in_at: string;
+  method: string | null;
+};
+
+export type NewsItem = {
+  id: string;
+  title: string;
+  content: string;
+  priority: "low" | "medium" | "high";
+  expires_at: string | null;
+  created_at: string;
+  author_name?: string | null;
+};
+
+export type ScheduleDay = {
+  weekday: number; // 0-6
+  opens_at: string | null;
+  closes_at: string | null;
+  is_closed: boolean;
+};
+
+export type AuditLogEntry = {
+  id: string;
+  actor_id: string | null;
+  action: string;
+  entity: string | null;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+};
+
+export type OccupancySnapshot = {
+  total: number;
+  capacity?: number | null;
+};
