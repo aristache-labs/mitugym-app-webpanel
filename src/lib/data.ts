@@ -27,24 +27,24 @@ const sampleMembers: Member[] = [
     full_name: "Avery Carter",
     email: "avery@mitugym.dev",
     phone: "+1 555-0110",
+    gender: "other",
     status: "active",
     plan_id: "plan-basic",
     plan_name: "Unlimited",
     expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString(),
-    notes: "Prefers morning classes",
   },
   {
     id: "22222222-2222-2222-2222-222222222222",
     full_name: "Jordan Smith",
     email: "jordan@mitugym.dev",
     phone: "+1 555-0124",
+    gender: "male",
     status: "frozen",
     plan_id: "plan-flex",
     plan_name: "Flex 12",
     expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2).toISOString(),
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 60).toISOString(),
-    notes: null,
   },
 ];
 
@@ -135,7 +135,7 @@ export async function fetchMembers(): Promise<Member[]> {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, first_name, last_name, email, phone, membership_status, membership_plan, expiry_date, created_at, address")
+    .select("id, first_name, last_name, gender, email, phone, membership_status, membership_plan, expiry_date, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -151,12 +151,12 @@ export async function fetchMembers(): Promise<Member[]> {
         full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || null,
         email: profile.email,
         phone: profile.phone,
+        gender: profile.gender as Member['gender'] || null,
         status: profile.membership_status as Member['status'] || 'active',
         plan_id: profile.membership_plan || null,
         plan_name: profile.membership_plan,
         expires_at: profile.expiry_date,
         created_at: profile.created_at,
-        notes: profile.address // Using address field for notes
       }))
     : sampleMembers;
 }
@@ -169,7 +169,7 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, first_name, last_name, email, phone, membership_status, membership_plan, expiry_date, created_at, address")
+    .select("id, first_name, last_name, gender, email, phone, membership_status, membership_plan, expiry_date, created_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -189,12 +189,12 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
     full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || null,
     email: profile.email,
     phone: profile.phone,
+    gender: profile.gender as Member['gender'] || null,
     status: profile.membership_status as Member['status'] || 'active',
     plan_id: profile.membership_plan || null,
     plan_name: profile.membership_plan,
     expires_at: profile.expiry_date,
     created_at: profile.created_at,
-    notes: profile.address
   } as Member;
 }
 

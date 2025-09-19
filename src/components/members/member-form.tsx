@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import {
   createMemberSchema,
   memberStatusEnum,
+  memberGenderEnum,
   type CreateMemberInput,
   type UpdateMemberInput,
   updateMemberSchema,
@@ -17,7 +18,6 @@ import type { Member, MembershipPlan } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
@@ -39,25 +39,43 @@ export function MemberForm({ plans, member }: MemberFormProps) {
     defaultValues: member
       ? {
           id: member.id,
-          full_name: member.full_name,
+          first_name: member.full_name?.split(' ')[0] || '',
+          last_name: member.full_name?.split(' ').slice(1).join(' ') || '',
           email: member.email,
           phone: member.phone ?? "",
           status: member.status,
           plan_id: member.plan_id ?? "",
           expires_at: member.expires_at ? member.expires_at.split("T")[0] : "",
-          notes: member.notes ?? "",
         }
       : {
-          full_name: "",
+          first_name: "",
+          last_name: "",
+          gender: null,
           email: "",
           phone: "",
           status: "active",
           plan_id: null,
           expires_at: "",
-          notes: "",
           password: "",
         },
   });
+
+  // Reset form when member prop changes (for editing)
+  useEffect(() => {
+    if (member) {
+      form.reset({
+        id: member.id,
+        first_name: member.full_name?.split(' ')[0] || '',
+        last_name: member.full_name?.split(' ').slice(1).join(' ') || '',
+        gender: member.gender ?? null,
+        email: member.email,
+        phone: member.phone ?? "",
+        status: member.status,
+        plan_id: member.plan_id ?? "",
+        expires_at: member.expires_at ? member.expires_at.split("T")[0] : "",
+      });
+    }
+  }, [member, form]);
 
   const handleResult = (result: ActionResult) => {
     if (!result.success) {
@@ -89,14 +107,51 @@ export function MemberForm({ plans, member }: MemberFormProps) {
         <div className="grid gap-4 md:grid-cols-2">
           <FormField
             control={form.control}
-            name="full_name"
+            name="first_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Full name</FormLabel>
+                <FormLabel>First name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Alex Johnson" {...field} />
+                  <Input placeholder="Alex" {...field} />
                 </FormControl>
-                <FormMessage>{form.formState.errors.full_name?.message}</FormMessage>
+                <FormMessage>{form.formState.errors.first_name?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="last_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Johnson" {...field} />
+                </FormControl>
+                <FormMessage>{form.formState.errors.last_name?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Gender</FormLabel>
+                <FormControl>
+                  <Select 
+                    {...field} 
+                    value={field.value ?? ""} 
+                    onChange={(e) => field.onChange(e.target.value || null)}
+                  >
+                    <option value="">Select gender</option>
+                    {memberGenderEnum.options.map((gender) => (
+                      <option key={gender} value={gender}>
+                        {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormMessage>{form.formState.errors.gender?.message}</FormMessage>
               </FormItem>
             )}
           />
@@ -120,7 +175,11 @@ export function MemberForm({ plans, member }: MemberFormProps) {
               <FormItem>
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="+1 555-0100" {...field} />
+                  <Input 
+                    placeholder="0712345678" 
+                    {...field} 
+                    value={field.value ?? ""} 
+                  />
                 </FormControl>
                 <FormMessage>{form.formState.errors.phone?.message}</FormMessage>
               </FormItem>
@@ -133,10 +192,14 @@ export function MemberForm({ plans, member }: MemberFormProps) {
               <FormItem>
                 <FormLabel>Status</FormLabel>
                 <FormControl>
-                  <Select value={field.value} onChange={field.onChange}>
+                  <Select 
+                    {...field} 
+                    value={field.value} 
+                    onChange={(e) => field.onChange(e.target.value)}
+                  >
                     {memberStatusEnum.options.map((status) => (
-                      <option key={status} value={status} className="bg-surface text-text">
-                        {status}
+                      <option key={status} value={status}>
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
                       </option>
                     ))}
                   </Select>
@@ -152,12 +215,14 @@ export function MemberForm({ plans, member }: MemberFormProps) {
               <FormItem>
                 <FormLabel>Membership plan</FormLabel>
                 <FormControl>
-                  <Select value={field.value ?? ""} onChange={(event) => field.onChange(event.target.value || null)}>
-                    <option value="" className="bg-surface text-text">
-                      Unassigned
-                    </option>
+                  <Select 
+                    {...field} 
+                    value={field.value ?? ""} 
+                    onChange={(e) => field.onChange(e.target.value || null)}
+                  >
+                    <option value="">Unassigned</option>
                     {plans.map((plan) => (
-                      <option key={plan.id} value={plan.id} className="bg-surface text-text">
+                      <option key={plan.id} value={plan.id}>
                         {plan.name}
                       </option>
                     ))}
@@ -174,7 +239,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
               <FormItem>
                 <FormLabel>Expires at</FormLabel>
                 <FormControl>
-                  <Input type="date" value={field.value ?? ""} onChange={field.onChange} />
+                  <Input type="date" {...field} value={field.value ?? ""} />
                 </FormControl>
                 <FormMessage>{form.formState.errors.expires_at?.message}</FormMessage>
               </FormItem>
@@ -191,29 +256,18 @@ export function MemberForm({ plans, member }: MemberFormProps) {
                 <FormControl>
                   <Input type="password" placeholder="Optional" {...field} />
                 </FormControl>
-                <FormMessage>{form.formState.errors.password?.message}</FormMessage>
+                <FormMessage>
+                  {!member && form.formState.errors && 'password' in form.formState.errors 
+                    ? form.formState.errors.password?.message 
+                    : undefined}
+                </FormMessage>
               </FormItem>
             )}
           />
         )}
-        <FormField
-          control={form.control}
-          name="notes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Notes</FormLabel>
-              <FormControl>
-                <Textarea rows={4} placeholder="Context for front desk or coaches" {...field} />
-              </FormControl>
-              <FormMessage>{form.formState.errors.notes?.message}</FormMessage>
-            </FormItem>
-          )}
-        />
         {serverError ? <p className="text-sm text-error">{serverError}</p> : null}
         <div className="flex items-center justify-between">
-          <p className="text-xs text-muted">
-            Member actions trigger an audit log entry. Passwords sync to the mobile app authentication service.
-          </p>
+
           <Button type="submit" disabled={isPending} className={cn(isPending && "opacity-70")}> 
             {member ? "Save changes" : "Create member"}
           </Button>

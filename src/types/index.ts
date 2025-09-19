@@ -1,16 +1,17 @@
 export type MemberStatus = "active" | "inactive" | "frozen";
+export type MemberGender = "male" | "female" | "other";
 
 export type Member = {
   id: string;
   full_name: string;
   email: string;
   phone: string | null;
+  gender?: MemberGender | null;
   status: MemberStatus;
   plan_id: string | null;
   plan_name?: string | null;
   expires_at: string | null;
   created_at: string;
-  notes?: string | null;
 };
 
 export type MembershipPlan = {

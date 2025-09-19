@@ -47,10 +47,8 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
 
   const staff = await requireStaff();
 
-  // Split full_name into first_name and last_name
-  const nameParts = parsed.data.full_name.trim().split(' ');
-  const first_name = nameParts[0] || '';
-  const last_name = nameParts.slice(1).join(' ') || '';
+  // Combine first_name and last_name for display purposes
+  const full_name = `${parsed.data.first_name} ${parsed.data.last_name}`.trim();
 
   try {
     // 1. Create Supabase auth user
@@ -59,10 +57,10 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
       password: parsed.data.password || generateRandomPassword(),
       email_confirm: true, // Auto-confirm email
       user_metadata: {
-        full_name: parsed.data.full_name,
-        display_name: parsed.data.full_name,
-        first_name,
-        last_name,
+        full_name,
+        display_name: full_name,
+        first_name: parsed.data.first_name,
+        last_name: parsed.data.last_name,
       }
     });
 
@@ -78,14 +76,14 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
     // 2. Create/update profile record with correct field mapping
     const profilePayload = {
       id: authUser.user.id, // Use the auth user ID
-      first_name,
-      last_name,
+      first_name: parsed.data.first_name,
+      last_name: parsed.data.last_name,
+      gender: parsed.data.gender,
       email: parsed.data.email,
       phone: parsed.data.phone,
       membership_status: parsed.data.status,
       membership_plan: parsed.data.plan_id,
       expiry_date: parsed.data.expires_at,
-      address: parsed.data.notes, // Using address field for notes
     };
 
     const { error: profileError } = await admin
@@ -101,7 +99,7 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
 
     await appendAuditLog(staff.profile.id, "member.create", "profiles", authUser.user.id, { 
       email: parsed.data.email,
-      full_name: parsed.data.full_name 
+      full_name 
     });
     revalidatePath("/members");
 
@@ -136,21 +134,19 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
 
   const staff = await requireStaff();
 
-  // Split full_name into first_name and last_name
-  const nameParts = parsed.data.full_name.trim().split(' ');
-  const first_name = nameParts[0] || '';
-  const last_name = nameParts.slice(1).join(' ') || '';
+  // Combine first_name and last_name for audit logs
+  const full_name = `${parsed.data.first_name} ${parsed.data.last_name}`.trim();
 
   // Map fields to profiles table structure
   const profilePayload = {
-    first_name,
-    last_name,
+    first_name: parsed.data.first_name,
+    last_name: parsed.data.last_name,
+    gender: parsed.data.gender,
     email: parsed.data.email,
     phone: parsed.data.phone,
     membership_status: parsed.data.status,
     membership_plan: parsed.data.plan_id,
     expiry_date: parsed.data.expires_at,
-    address: parsed.data.notes, // Using address field for notes
   };
 
   const { error } = await admin
@@ -165,7 +161,7 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
 
   await appendAuditLog(staff.profile.id, "member.update", "profiles", parsed.data.id, { 
     id: parsed.data.id,
-    full_name: parsed.data.full_name 
+    full_name 
   });
   revalidatePath(`/members/${parsed.data.id}`);
   revalidatePath("/members");

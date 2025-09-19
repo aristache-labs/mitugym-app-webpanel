@@ -1,9 +1,12 @@
 import { z } from "zod";
 
 export const memberStatusEnum = z.enum(["active", "inactive", "frozen"]);
+export const memberGenderEnum = z.enum(["male", "female", "other"]);
 
 export const memberBaseSchema = z.object({
-  full_name: z.string().min(2, "Name is required"),
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
+  gender: memberGenderEnum.optional().nullable(),
   email: z.string().email("Valid email is required"),
   phone: z
     .string()
@@ -30,11 +33,6 @@ export const memberBaseSchema = z.object({
       }
       return date.toISOString();
     }),
-  notes: z
-    .string()
-    .max(2000, "Notes are limited to 2000 characters")
-    .optional()
-    .nullable(),
 });
 
 export const createMemberSchema = memberBaseSchema.extend({
