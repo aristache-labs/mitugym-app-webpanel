@@ -29,7 +29,15 @@ export const bookingStatusSchema = z.enum(["upcoming", "completed", "cancelled"]
 export const serviceBookingBaseSchema = z.object({
   service_id: z.string().uuid("Invalid service ID"),
   member_id: z.string().uuid("Invalid member ID"),
-  booking_date: z.string().datetime("Invalid booking date"),
+  booking_date: z.string().min(1, "Booking date is required").refine(
+    (val) => {
+      // Allow both datetime-local format (YYYY-MM-DDTHH:mm) and ISO format
+      const datetimeLocalRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+      const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/;
+      return datetimeLocalRegex.test(val) || isoRegex.test(val) || !isNaN(Date.parse(val));
+    },
+    { message: "Invalid booking date format" }
+  ),
   status: bookingStatusSchema.default("upcoming"),
   sessions_remaining: z.number().min(0, "Sessions remaining cannot be negative").optional(),
   notes: z.string().max(1000, "Notes too long").optional(),

@@ -10,6 +10,7 @@ import { newsSchema } from "@/schemas/news";
 import { scheduleSchema } from "@/schemas/schedule";
 import { createServiceSchema, updateServiceSchema, createServiceBookingSchema, updateServiceBookingSchema } from "@/schemas/services";
 import type { ScheduleDay } from "@/types";
+import { format } from "date-fns";
 
 export type ActionResult<T = undefined> =
   | { success: true; data?: T; message?: string }
@@ -1279,4 +1280,72 @@ export async function updateServiceBookingAction(formData: FormData): Promise<Ac
 
   revalidatePath("/services");
   return { success: true, message: "Service booking updated successfully", data };
+}
+
+export async function deleteServiceBookingAction(formData: FormData): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+  const id = formData.get("id") as string;
+
+  if (!id) {
+    return { success: false, error: "Booking ID is required" };
+  }
+
+  // Fetch booking details before deletion for audit log
+  const { data: bookingToDelete, error: fetchError } = await admin
+    .from("service_bookings")
+    .select(`
+      *,
+      services (name),
+      profiles (first_name, last_name, email)
+    `)
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !bookingToDelete) {
+    return { success: false, error: "Booking not found" };
+  }
+
+  // Only allow deletion of cancelled bookings
+  if (bookingToDelete.status !== "cancelled") {
+    return { success: false, error: "Only cancelled bookings can be deleted" };
+  }
+
+  const { error } = await admin
+    .from("service_bookings")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("Failed to delete service booking", error);
+    return { success: false, error: error.message };
+  }
+
+  // Construct member full name
+  const memberName = (bookingToDelete as any).profiles ? 
+    `${(bookingToDelete as any).profiles.first_name || ""} ${(bookingToDelete as any).profiles.last_name || ""}`.trim() :
+    "Unknown Member";
+
+  // Log the booking deletion
+  await appendAuditLog(
+    staff.profile.id,
+    "booking.delete",
+    "service_bookings",
+    id,
+    { status: bookingToDelete.status },
+    `Service Booking - ${(bookingToDelete as any).services?.name} for ${memberName}`,
+    {
+      booking_deleted: {
+        before: `${(bookingToDelete as any).services?.name} booking for ${memberName} on ${format(new Date(bookingToDelete.booking_date), "PPp")}`,
+        after: "Deleted"
+      }
+    }
+  );
+
+  revalidatePath("/services");
+  return { success: true, message: "Service booking deleted successfully" };
 }
