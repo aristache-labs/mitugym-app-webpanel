@@ -99,7 +99,7 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
         } else {
           setError(result.error);
         }
-      } catch (err) {
+      } catch {
         setError("An unexpected error occurred");
       }
     });
@@ -140,7 +140,7 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
             <Label htmlFor="service_type">Service Type *</Label>
             <CustomSelect
               value={form.watch("service_type")}
-              onValueChange={(value) => form.setValue("service_type", value as ServiceType)}
+              onChange={(value: string) => form.setValue("service_type", value as ServiceType)}
               options={SERVICE_TYPE_OPTIONS}
               placeholder="Select service type"
             />
@@ -154,7 +154,7 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
             <Label htmlFor="session_type">Session Type</Label>
             <CustomSelect
               value={form.watch("session_type") || ""}
-              onValueChange={(value) => form.setValue("session_type", value)}
+              onChange={(value: string) => form.setValue("session_type", value)}
               options={SESSION_TYPE_OPTIONS}
               placeholder="Select session type (optional)"
             />

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 export type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
-  variant?: "default" | "success" | "warning" | "destructive";
+  variant?: "default" | "success" | "warning" | "destructive" | "outline" | "secondary";
 };
 
 export function Badge({ className, variant = "default", ...props }: BadgeProps) {
@@ -10,6 +10,8 @@ export function Badge({ className, variant = "default", ...props }: BadgeProps) 
     success: "bg-success/20 text-success",
     warning: "bg-warning/20 text-warning",
     destructive: "bg-error/20 text-error",
+    outline: "border border-border bg-transparent text-foreground",
+    secondary: "bg-muted text-muted-foreground",
   }[variant];
 
   return (

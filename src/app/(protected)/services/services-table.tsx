@@ -37,9 +37,9 @@ export function ServicesTable({ services }: ServicesTableProps) {
       } else {
         alert(result.error);
       }
-    } catch (error) {
-      alert("Failed to delete service");
-    } finally {
+      } catch {
+        alert("Failed to delete service");
+      } finally {
       setIsDeleting(false);
     }
   };
@@ -153,8 +153,7 @@ export function ServicesTable({ services }: ServicesTableProps) {
       <DataTable
         columns={columns}
         data={services}
-        searchKey="name"
-        searchPlaceholder="Search services..."
+        filterKey="name"
       />
 
       <Modal
@@ -165,7 +164,7 @@ export function ServicesTable({ services }: ServicesTableProps) {
         {serviceToDelete && (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Are you sure you want to delete the service "<strong>{serviceToDelete.name}</strong>"? 
+              Are you sure you want to delete the service &ldquo;<strong>{serviceToDelete.name}</strong>&rdquo;? 
               This action cannot be undone.
             </p>
             {serviceToDelete.requires_advance_booking && (

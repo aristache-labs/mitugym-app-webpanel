@@ -145,8 +145,6 @@ export function BookingsTable({ bookings }: BookingsTableProps) {
     <DataTable
       columns={columns}
       data={bookings}
-      searchKey="member.full_name"
-      searchPlaceholder="Search by member name..."
     />
   );
 }
