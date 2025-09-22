@@ -368,8 +368,8 @@ export async function fetchAuditLogs(): Promise<AuditLogEntry[]> {
   }
 
   const { data, error } = await admin
-    .from("audit_logs")
-    .select("id, actor_id, action, entity, entity_id, meta, created_at")
+    .from("audit_logs_enhanced")
+    .select("id, actor_id, actor_name, actor_role, action, entity, entity_id, resource_name, meta, changes, created_at")
     .order("created_at", { ascending: false })
     .limit(200);
 

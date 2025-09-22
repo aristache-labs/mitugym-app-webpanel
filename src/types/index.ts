@@ -54,10 +54,14 @@ export type ScheduleDay = {
 export type AuditLogEntry = {
   id: string;
   actor_id: string | null;
+  actor_name?: string | null;
+  actor_role?: string | null;
   action: string;
   entity: string | null;
   entity_id: string | null;
+  resource_name?: string | null;
   meta: Record<string, unknown> | null;
+  changes?: Record<string, { before: unknown; after: unknown }> | string | null;
   created_at: string;
 };
 

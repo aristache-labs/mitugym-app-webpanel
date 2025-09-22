@@ -14,15 +14,28 @@ export type ActionResult<T = undefined> =
   | { success: true; data?: T; message?: string }
   | { success: false; error: string; issues?: Record<string, string[]> };
 
-async function appendAuditLog(actorId: string, action: string, entity: string, entityId?: string, meta?: Record<string, unknown>) {
+async function appendAuditLog(
+  actorId: string, 
+  action: string, 
+  entity: string, 
+  entityId?: string, 
+  meta?: Record<string, unknown>,
+  resourceName?: string,
+  changes?: Record<string, { before: unknown, after: unknown }>
+) {
   const supabase = getSupabaseAdmin();
   if (!supabase) return;
-  await supabase.from("audit_logs").insert({
-    actor_id: actorId,
-    action,
-    entity,
-    entity_id: entityId ?? null,
-    meta: meta ?? null,
+  
+  await supabase.rpc('log_detailed_audit', {
+    p_actor_id: actorId,
+    p_action: action,
+    p_entity: entity,
+    p_entity_id: entityId ?? null,
+    p_resource_name: resourceName ?? null,
+    p_changes: changes ? changes : null, // Send as object, not JSON string
+    p_meta: meta ? meta : null, // Send as object, not JSON string
+    p_ip_address: null, // We can add this later with request headers
+    p_user_agent: null  // We can add this later with request headers
   });
 }
 
@@ -109,10 +122,29 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
       // Don't fail the whole operation, just log the warning
     }
 
-    await appendAuditLog(staff.profile.id, "member.create", "profiles", authUser.user.id, { 
-      email: parsed.data.email,
-      full_name 
-    });
+    await appendAuditLog(
+      staff.profile.id, 
+      "member.create", 
+      "profiles", 
+      authUser.user.id, 
+      { 
+        email: parsed.data.email,
+        plan_id: parsed.data.plan_id,
+        status: parsed.data.status
+      },
+      full_name, // resource name
+      {
+        member_created: {
+          before: null,
+          after: {
+            name: full_name,
+            email: parsed.data.email,
+            status: parsed.data.status,
+            plan_start: parsed.data.starts_at
+          }
+        }
+      }
+    );
     revalidatePath("/members");
 
     return { success: true, message: "Member created successfully" };
@@ -145,6 +177,18 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
   }
 
   const staff = await requireStaff();
+
+  // Get current member data for comparison
+  const { data: currentMember, error: fetchError } = await admin
+    .from("profiles")
+    .select("first_name, last_name, gender, email, phone, membership_status, membership_plan, plan_start_date, expiry_date")
+    .eq("id", parsed.data.id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch current member data", fetchError);
+    return { success: false, error: "Failed to fetch current member data" };
+  }
 
   // Combine first_name and last_name for audit logs
   const full_name = `${parsed.data.first_name} ${parsed.data.last_name}`.trim();
@@ -183,10 +227,50 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
     // Don't fail the whole operation, just log the warning
   }
 
-  await appendAuditLog(staff.profile.id, "member.update", "profiles", parsed.data.id, { 
-    id: parsed.data.id,
-    full_name 
-  });
+  // Create detailed change tracking
+  const changes: Record<string, { before: unknown, after: unknown }> = {};
+  
+  if (currentMember.first_name !== parsed.data.first_name) {
+    changes.first_name = { before: currentMember.first_name, after: parsed.data.first_name };
+  }
+  if (currentMember.last_name !== parsed.data.last_name) {
+    changes.last_name = { before: currentMember.last_name, after: parsed.data.last_name };
+  }
+  if (currentMember.email !== parsed.data.email) {
+    changes.email = { before: currentMember.email, after: parsed.data.email };
+  }
+  if (currentMember.phone !== parsed.data.phone) {
+    changes.phone = { before: currentMember.phone, after: parsed.data.phone };
+  }
+  if (currentMember.gender !== parsed.data.gender) {
+    changes.gender = { before: currentMember.gender, after: parsed.data.gender };
+  }
+  if (currentMember.membership_status !== parsed.data.status) {
+    changes.status = { before: currentMember.membership_status, after: parsed.data.status };
+  }
+  if (currentMember.membership_plan !== parsed.data.plan_id) {
+    changes.plan = { before: currentMember.membership_plan, after: parsed.data.plan_id };
+  }
+  if (currentMember.plan_start_date !== parsed.data.starts_at) {
+    changes.plan_start = { before: currentMember.plan_start_date, after: parsed.data.starts_at };
+  }
+  if (currentMember.expiry_date !== parsed.data.expires_at) {
+    changes.plan_expiry = { before: currentMember.expiry_date, after: parsed.data.expires_at };
+  }
+
+  await appendAuditLog(
+    staff.profile.id, 
+    "member.update", 
+    "profiles", 
+    parsed.data.id, 
+    { 
+      id: parsed.data.id,
+      changes_count: Object.keys(changes).length
+    },
+    full_name, // resource name
+    changes // detailed changes
+  );
+  
   revalidatePath(`/members/${parsed.data.id}`);
   revalidatePath("/members");
 
@@ -213,7 +297,29 @@ export async function createPlanAction(values: unknown): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "plan.create", "membership_plans", undefined, { name: parsed.data.name });
+  await appendAuditLog(
+    staff.profile.id, 
+    "plan.create", 
+    "membership_plans", 
+    undefined, 
+    { 
+      name: parsed.data.name,
+      price: parsed.data.price,
+      duration_months: parsed.data.duration_months
+    },
+    parsed.data.name, // resource name
+    {
+      plan_created: {
+        before: null,
+        after: {
+          name: parsed.data.name,
+          price: parsed.data.price,
+          duration_months: parsed.data.duration_months,
+          features: parsed.data.features
+        }
+      }
+    }
+  );
   revalidatePath("/plans");
 
   return { success: true, message: "Plan created" };
@@ -374,7 +480,27 @@ export async function createNewsAction(values: unknown): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "news.create", "announcements", undefined, { title: parsed.data.title });
+  await appendAuditLog(
+    staff.profile.id, 
+    "news.create", 
+    "announcements", 
+    undefined, 
+    { 
+      title: parsed.data.title,
+      priority: parsed.data.priority
+    },
+    parsed.data.title, // resource name
+    {
+      announcement_created: {
+        before: null,
+        after: {
+          title: parsed.data.title,
+          priority: parsed.data.priority,
+          expires_at: parsed.data.expires_at
+        }
+      }
+    }
+  );
   revalidatePath("/news");
 
   return { success: true, message: "News item created" };
