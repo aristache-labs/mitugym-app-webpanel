@@ -1349,3 +1349,71 @@ export async function deleteServiceBookingAction(formData: FormData): Promise<Ac
   revalidatePath("/services");
   return { success: true, message: "Service booking deleted successfully" };
 }
+
+export async function cancelServiceBookingAction(formData: FormData): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+  const id = formData.get("id") as string;
+
+  if (!id) {
+    return { success: false, error: "Booking ID is required" };
+  }
+
+  // Fetch booking details before cancellation for audit log
+  const { data: bookingToCancel, error: fetchError } = await admin
+    .from("service_bookings")
+    .select(`
+      *,
+      services (name),
+      profiles (first_name, last_name, email)
+    `)
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !bookingToCancel) {
+    return { success: false, error: "Booking not found" };
+  }
+
+  // Only allow cancellation of upcoming bookings
+  if (bookingToCancel.status !== "upcoming") {
+    return { success: false, error: "Only upcoming bookings can be cancelled" };
+  }
+
+  const { error } = await admin
+    .from("service_bookings")
+    .update({ status: "cancelled", updated_at: new Date().toISOString() })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Failed to cancel service booking", error);
+    return { success: false, error: error.message };
+  }
+
+  // Construct member full name
+  const memberName = (bookingToCancel as any).profiles ? 
+    `${(bookingToCancel as any).profiles.first_name || ""} ${(bookingToCancel as any).profiles.last_name || ""}`.trim() :
+    "Unknown Member";
+
+  // Log the booking cancellation
+  await appendAuditLog(
+    staff.profile.id,
+    "booking.cancel",
+    "service_bookings",
+    id,
+    { status: bookingToCancel.status },
+    `Service Booking - ${(bookingToCancel as any).services?.name} for ${memberName}`,
+    {
+      booking_cancelled: {
+        before: `Status: upcoming`,
+        after: `Status: cancelled`
+      }
+    }
+  );
+
+  revalidatePath("/services");
+  return { success: true, message: "Service booking cancelled successfully" };
+}

@@ -9,7 +9,7 @@ import { ServiceBooking, Service } from "@/types";
 import { Calendar, User, Clock, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
-import { deleteServiceBookingAction } from "@/app/(protected)/actions";
+import { deleteServiceBookingAction, cancelServiceBookingAction } from "@/app/(protected)/actions";
 
 interface BookingsTableProps {
   bookings: ServiceBooking[];
@@ -18,13 +18,21 @@ interface BookingsTableProps {
 
 export function BookingsTable({ bookings }: BookingsTableProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [bookingToDelete, setBookingToDelete] = useState<ServiceBooking | null>(null);
+  const [bookingToCancel, setBookingToCancel] = useState<ServiceBooking | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const handleDeleteClick = (booking: ServiceBooking) => {
     setBookingToDelete(booking);
     setDeleteModalOpen(true);
+    setError(null);
+  };
+
+  const handleCancelClick = (booking: ServiceBooking) => {
+    setBookingToCancel(booking);
+    setCancelModalOpen(true);
     setError(null);
   };
 
@@ -41,6 +49,28 @@ export function BookingsTable({ bookings }: BookingsTableProps) {
         if (result.success) {
           setDeleteModalOpen(false);
           setBookingToDelete(null);
+        } else {
+          setError(result.error);
+        }
+      } catch {
+        setError("An unexpected error occurred");
+      }
+    });
+  };
+
+  const handleCancelConfirm = async () => {
+    if (!bookingToCancel) return;
+
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("id", bookingToCancel.id);
+
+      try {
+        const result = await cancelServiceBookingAction(formData);
+        
+        if (result.success) {
+          setCancelModalOpen(false);
+          setBookingToCancel(null);
         } else {
           setError(result.error);
         }
@@ -170,7 +200,12 @@ export function BookingsTable({ bookings }: BookingsTableProps) {
                     Edit
                   </Button>
                 </Link>
-                <Button variant="ghost" size="sm" className="text-destructive">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-destructive hover:bg-destructive/10"
+                  onClick={() => handleCancelClick(booking)}
+                >
                   Cancel
                 </Button>
               </>
@@ -255,6 +290,65 @@ export function BookingsTable({ bookings }: BookingsTableProps) {
               disabled={isPending}
             >
               {isPending ? "Deleting..." : "Delete Booking"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Cancel Confirmation Modal */}
+      <Modal
+        isOpen={cancelModalOpen}
+        onClose={() => {
+          setCancelModalOpen(false);
+          setBookingToCancel(null);
+          setError(null);
+        }}
+        title="Cancel Booking"
+      >
+        <div className="space-y-4">
+          {error && (
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
+              <p className="text-sm text-destructive">{error}</p>
+            </div>
+          )}
+
+          <p className="text-sm text-muted-foreground">
+            Are you sure you want to cancel this booking?
+          </p>
+
+          {bookingToCancel && (
+            <div className="bg-muted/50 border border-border rounded-lg p-3">
+              <div className="space-y-2 text-sm">
+                <div><strong>Service:</strong> {bookingToCancel.service?.name}</div>
+                <div><strong>Member:</strong> {bookingToCancel.member?.full_name}</div>
+                <div><strong>Date:</strong> {format(new Date(bookingToCancel.booking_date), "PPp")}</div>
+                <div><strong>Status:</strong> <Badge className="bg-blue-500 text-white">Upcoming</Badge></div>
+              </div>
+            </div>
+          )}
+
+          <p className="text-sm font-medium text-amber-600">
+            The booking will be marked as cancelled and can be deleted later if needed.
+          </p>
+
+          <div className="flex justify-end gap-3">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setCancelModalOpen(false);
+                setBookingToCancel(null);
+                setError(null);
+              }}
+              disabled={isPending}
+            >
+              Keep Booking
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleCancelConfirm}
+              disabled={isPending}
+            >
+              {isPending ? "Cancelling..." : "Cancel Booking"}
             </Button>
           </div>
         </div>
