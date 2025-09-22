@@ -29,6 +29,10 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[]) {
     return checkInDate >= todayStart;
   });
 
+  // Get current hour to limit data display
+  const currentHour = today.getHours();
+  const isToday = today.toDateString() === todayStart.toDateString();
+  
   // Create hourly buckets from opening hour to closing hour
   const hourlyOccupancy = [];
   
@@ -46,20 +50,24 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[]) {
       currentTime.setMinutes(closeMinute);
     }
     
-    // Count people who are in the gym at this hour
-    let occupancy = 0;
-    
-    todaysCheckIns.forEach(checkIn => {
-      const checkInTime = new Date(checkIn.checked_in_at);
-      const checkOutTime = checkIn.checked_out_at ? new Date(checkIn.checked_out_at) : null;
+    // Only show data up to current hour if viewing today
+    let occupancy = null;
+    if (!isToday || hour <= currentHour) {
+      // Count people who are in the gym at this hour
+      occupancy = 0;
       
-      // Person is in gym if they checked in before/at this hour AND haven't checked out yet OR checked out after this hour
-      if (checkInTime <= currentTime) {
-        if (!checkOutTime || checkOutTime > currentTime) {
-          occupancy++;
+      todaysCheckIns.forEach(checkIn => {
+        const checkInTime = new Date(checkIn.checked_in_at);
+        const checkOutTime = checkIn.checked_out_at ? new Date(checkIn.checked_out_at) : null;
+        
+        // Person is in gym if they checked in before/at this hour AND haven't checked out yet OR checked out after this hour
+        if (checkInTime <= currentTime) {
+          if (!checkOutTime || checkOutTime > currentTime) {
+            occupancy++;
+          }
         }
-      }
-    });
+      });
+    }
     
     hourlyOccupancy.push({ time: hourKey, total: occupancy });
   }
@@ -69,6 +77,7 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[]) {
 
 export function OccupancyChart({ checkIns, schedule }: { checkIns: CheckIn[]; schedule: ScheduleDay[] }) {
   const data = buildTrend(checkIns, schedule);
+  
   return (
     <Card className="bg-card/90">
       <CardHeader>
@@ -88,10 +97,20 @@ export function OccupancyChart({ checkIns, schedule }: { checkIns: CheckIn[]; sc
             <Tooltip
               contentStyle={{ background: "#141A1A", borderRadius: 12, border: "1px solid rgba(77,212,212,0.3)" }}
               labelStyle={{ color: "#4dd4d4" }}
-              formatter={(value: number) => [`${value} people`, "In Gym"]}
+              formatter={(value: number | null) => {
+                if (value === null) return ["No data yet", "Future"];
+                return [`${value} people`, "In Gym"];
+              }}
               labelFormatter={(label: string) => `Time: ${label}`}
             />
-            <Area type="monotone" dataKey="total" stroke="#4dd4d4" fill="url(#occupancyGradient)" strokeWidth={2} />
+            <Area 
+              type="monotone" 
+              dataKey="total" 
+              stroke="#4dd4d4" 
+              fill="url(#occupancyGradient)" 
+              strokeWidth={2}
+              connectNulls={false}
+            />
           </AreaChart>
         </ResponsiveContainer>
       </CardContent>
