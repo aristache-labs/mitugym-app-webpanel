@@ -49,15 +49,15 @@ export function Modal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      {/* Full Page Backdrop */}
       <div 
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/70 backdrop-blur-md"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-md mx-4">
+      <div className="relative z-[10000] w-full max-w-lg mx-auto">
         <div className="bg-surface border border-surface/50 rounded-lg shadow-lg">
           {/* Header */}
           <div className="px-6 py-4 border-b border-surface/50">

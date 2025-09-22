@@ -7,6 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import type { AuditLogEntry } from "@/types";
 import { formatDate, formatDateTime } from "@/lib/utils";
 
+// Special entity IDs for system-wide operations (must match backend)
+const SYSTEM_ENTITY_IDS = {
+  GYM_SCHEDULE: "00000000-0000-0000-0000-000000000001",
+  SYSTEM_SETTINGS: "00000000-0000-0000-0000-000000000002",
+  BULK_OPERATIONS: "00000000-0000-0000-0000-000000000003",
+} as const;
+
 interface AuditLogTableProps {
   entries: AuditLogEntry[];
 }
@@ -51,6 +58,23 @@ function formatActionDescription(entry: AuditLogEntry): string {
 
 function formatValue(value: unknown): string {
   if (value === null || value === undefined) return 'None';
+  
+  // Handle objects (like deletion records)
+  if (typeof value === 'object' && value !== null) {
+    const obj = value as Record<string, unknown>;
+    
+    // Handle deletion/creation objects
+    if ('name' in obj || 'title' in obj) {
+      const name = obj.name || obj.title;
+      const price = obj.price ? ` (${obj.price})` : '';
+      const duration = obj.duration ? ` - ${obj.duration}` : '';
+      return `${name}${price}${duration}`;
+    }
+    
+    // For other objects, show a summary
+    return `{${Object.keys(obj).length} properties}`;
+  }
+  
   if (typeof value === 'string') {
     // Check if it's a date string and format it nicely
     const dateRegex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}.*)?$/;
@@ -68,11 +92,13 @@ function formatValue(value: unknown): string {
     }
     return value;
   }
+  
   return String(value);
 }
 
 function formatFieldName(field: string): string {
   const fieldMappings: Record<string, string> = {
+    // Member fields
     'first_name': 'First Name',
     'last_name': 'Last Name', 
     'plan_start': 'Plan Start Date',
@@ -82,7 +108,58 @@ function formatFieldName(field: string): string {
     'phone': 'Phone Number',
     'email': 'Email Address',
     'gender': 'Gender',
-    'status': 'Member Status'
+    'status': 'Member Status',
+    
+    // Schedule fields
+    'monday_open': 'Monday Opening',
+    'monday_close': 'Monday Closing',
+    'monday_status': 'Monday Status',
+    'tuesday_open': 'Tuesday Opening',
+    'tuesday_close': 'Tuesday Closing',
+    'tuesday_status': 'Tuesday Status',
+    'wednesday_open': 'Wednesday Opening',
+    'wednesday_close': 'Wednesday Closing',
+    'wednesday_status': 'Wednesday Status',
+    'thursday_open': 'Thursday Opening',
+    'thursday_close': 'Thursday Closing',
+    'thursday_status': 'Thursday Status',
+    'friday_open': 'Friday Opening',
+    'friday_close': 'Friday Closing',
+    'friday_status': 'Friday Status',
+    'saturday_open': 'Saturday Opening',
+    'saturday_close': 'Saturday Closing',
+    'saturday_status': 'Saturday Status',
+    'sunday_open': 'Sunday Opening',
+    'sunday_close': 'Sunday Closing',
+    'sunday_status': 'Sunday Status',
+    'monday_created': 'Monday Schedule',
+    'tuesday_created': 'Tuesday Schedule',
+    'wednesday_created': 'Wednesday Schedule',
+    'thursday_created': 'Thursday Schedule',
+    'friday_created': 'Friday Schedule',
+    'saturday_created': 'Saturday Schedule',
+    'sunday_created': 'Sunday Schedule',
+    
+    // Plan fields
+    'name': 'Plan Name',
+    'price': 'Price',
+    'duration': 'Duration',
+    'features': 'Features',
+    'display_order': 'Display Order',
+    'plan_deleted': 'Plan Deletion',
+    
+    // News/Announcement fields
+    'title': 'Title',
+    'content': 'Content',
+    'priority': 'Priority Level',
+    'expires_at': 'Expiry Date',
+    'announcement_deleted': 'Announcement Deletion',
+    
+    // System/Common fields
+    'member_created': 'Member Creation',
+    'member_deleted': 'Member Deletion',
+    'plan_created': 'Plan Creation',
+    'announcement_created': 'Announcement Creation',
   };
   
   return fieldMappings[field] || field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -199,13 +276,44 @@ export function AuditLogTable({ entries }: AuditLogTableProps) {
       {
         accessorKey: "entity_id",
         header: "ID",
-        cell: ({ row }) => (
-          row.original.entity_id ? (
+        cell: ({ row }) => {
+          const { entity_id, action, entity } = row.original;
+          
+          if (!entity_id) {
+            return "—";
+          }
+          
+          // Handle special system identifiers
+          if (entity_id === SYSTEM_ENTITY_IDS.GYM_SCHEDULE) {
+            return (
+              <code className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
+                SCHEDULE
+              </code>
+            );
+          }
+          
+          if (entity_id === SYSTEM_ENTITY_IDS.SYSTEM_SETTINGS) {
+            return (
+              <code className="text-xs bg-warning/10 text-warning px-2 py-1 rounded">
+                SETTINGS
+              </code>
+            );
+          }
+          
+          if (entity_id === SYSTEM_ENTITY_IDS.BULK_OPERATIONS) {
+            return (
+              <code className="text-xs bg-info/10 text-info px-2 py-1 rounded">
+                BULK
+              </code>
+            );
+          }
+          
+          return (
             <code className="text-xs bg-surface/50 px-2 py-1 rounded">
-              {row.original.entity_id.substring(0, 8)}...
+              {entity_id.substring(0, 8)}...
             </code>
-          ) : "—"
-        ),
+          );
+        },
         size: 80,
       },
     ],

@@ -14,6 +14,13 @@ export type ActionResult<T = undefined> =
   | { success: true; data?: T; message?: string }
   | { success: false; error: string; issues?: Record<string, string[]> };
 
+// Special entity IDs for system-wide operations
+const SYSTEM_ENTITY_IDS = {
+  GYM_SCHEDULE: "00000000-0000-0000-0000-000000000001",
+  SYSTEM_SETTINGS: "00000000-0000-0000-0000-000000000002",
+  BULK_OPERATIONS: "00000000-0000-0000-0000-000000000003",
+} as const;
+
 async function appendAuditLog(
   actorId: string, 
   action: string, 
@@ -342,6 +349,18 @@ export async function updatePlanAction(values: unknown): Promise<ActionResult> {
 
   const staff = await requireStaff();
 
+  // Get current plan data for comparison
+  const { data: currentPlan, error: fetchError } = await admin
+    .from("membership_plans")
+    .select("name, price, duration_months, features, is_active, display_order")
+    .eq("id", parsed.data.id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch current plan data", fetchError);
+    return { success: false, error: "Failed to fetch current plan data" };
+  }
+
   const { id, ...rest } = parsed.data;
   const { error } = await admin.from("membership_plans").update(rest).eq("id", id);
 
@@ -350,7 +369,59 @@ export async function updatePlanAction(values: unknown): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "plan.update", "membership_plans", id, { id });
+  // Create detailed change tracking
+  const changes: Record<string, { before: unknown, after: unknown }> = {};
+  
+  if (currentPlan.name !== rest.name) {
+    changes.name = { before: currentPlan.name, after: rest.name };
+  }
+  if (currentPlan.price !== rest.price) {
+    changes.price = { before: `$${currentPlan.price}`, after: `$${rest.price}` };
+  }
+  if (currentPlan.duration_months !== rest.duration_months) {
+    changes.duration = { 
+      before: currentPlan.duration_months === 0 ? "1 day" : `${currentPlan.duration_months} month(s)`,
+      after: rest.duration_months === 0 ? "1 day" : `${rest.duration_months} month(s)`
+    };
+  }
+  if (JSON.stringify(currentPlan.features) !== JSON.stringify(rest.features)) {
+    const beforeFeatures = currentPlan.features || [];
+    const afterFeatures = rest.features || [];
+    
+    // Show actual feature lists (truncated if too long)
+    const formatFeatures = (features: string[]) => {
+      if (features.length === 0) return "No features";
+      if (features.length <= 3) return features.join(", ");
+      return `${features.slice(0, 3).join(", ")} (+${features.length - 3} more)`;
+    };
+    
+    changes.features = { 
+      before: formatFeatures(beforeFeatures),
+      after: formatFeatures(afterFeatures)
+    };
+  }
+  if (currentPlan.is_active !== rest.is_active) {
+    changes.status = { 
+      before: currentPlan.is_active ? "Active" : "Inactive",
+      after: rest.is_active ? "Active" : "Inactive"
+    };
+  }
+  if (currentPlan.display_order !== rest.display_order) {
+    changes.display_order = { before: currentPlan.display_order, after: rest.display_order };
+  }
+
+  await appendAuditLog(
+    staff.profile.id, 
+    "plan.update", 
+    "membership_plans", 
+    id, 
+    { 
+      id,
+      changes_count: Object.keys(changes).length
+    },
+    rest.name, // resource name
+    changes // detailed changes
+  );
   revalidatePath("/plans");
 
   return { success: true, message: "Plan updated" };
@@ -363,6 +434,18 @@ export async function deletePlanAction(id: string): Promise<ActionResult> {
   }
   const staff = await requireStaff();
 
+  // Get plan details before deletion for audit log
+  const { data: planToDelete, error: fetchError } = await admin
+    .from("membership_plans")
+    .select("name, price, duration_months")
+    .eq("id", id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch plan for deletion", fetchError);
+    return { success: false, error: "Failed to fetch plan data" };
+  }
+
   const { error } = await admin.from("membership_plans").delete().eq("id", id);
 
   if (error) {
@@ -370,7 +453,25 @@ export async function deletePlanAction(id: string): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "plan.delete", "membership_plans", id, { id });
+  await appendAuditLog(
+    staff.profile.id, 
+    "plan.delete", 
+    "membership_plans", 
+    id, 
+    { id },
+    planToDelete.name, // resource name
+    {
+      plan_deleted: {
+        before: {
+          name: planToDelete.name,
+          price: `$${planToDelete.price}`,
+          duration: planToDelete.duration_months === 0 ? "1 day" : `${planToDelete.duration_months} month(s)`,
+          status: "active"
+        },
+        after: null
+      }
+    }
+  );
   revalidatePath("/plans");
 
   return { success: true, message: "Plan deleted" };
@@ -389,6 +490,29 @@ export async function saveScheduleAction(values: ScheduleDay[]): Promise<ActionR
 
   const staff = await requireStaff();
 
+  // Get current schedule for change tracking
+  const { data: currentSchedule, error: currentFetchError } = await admin
+    .from("gym_schedule")
+    .select("day_of_week, open_time, close_time, is_active")
+    .order("day_of_week");
+
+  if (currentFetchError) {
+    console.error("Failed to fetch current schedule", currentFetchError);
+    return { success: false, error: currentFetchError.message };
+  }
+
+  // Helper function to get day name
+  const getDayName = (dbDayOfWeek: number): string => {
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    return days[dbDayOfWeek] || `Day ${dbDayOfWeek}`;
+  };
+
+  // Helper function to format time for display
+  const formatTime = (time: string, isActive: boolean): string => {
+    if (!isActive) return "Closed";
+    return time === "00:00" ? "Closed" : time.substring(0, 5);
+  };
+
   // Convert ScheduleDay format to database schema
   const dbScheduleData = parsed.data.map((day) => ({
     // Convert from JS Date format (0=Sunday, 1=Monday) to database format (0=Monday, 6=Sunday)
@@ -401,7 +525,9 @@ export async function saveScheduleAction(values: ScheduleDay[]): Promise<ActionR
     is_active: !day.is_closed, // Convert is_closed to is_active (inverse)
   }));
 
-  console.log("Saving schedule data:", dbScheduleData);
+  // Track changes for audit log
+  const changes: Record<string, { before: unknown, after: unknown }> = {};
+  let changedDaysCount = 0;
 
   // Get existing records to update by ID
   const { data: existingRecords, error: fetchError } = await admin
@@ -413,9 +539,55 @@ export async function saveScheduleAction(values: ScheduleDay[]): Promise<ActionR
     return { success: false, error: fetchError.message };
   }
 
-  // Update each day individually
+  // Update each day individually and track changes
   for (const dayData of dbScheduleData) {
     const existingRecord = existingRecords?.find(record => record.day_of_week === dayData.day_of_week);
+    const currentDaySchedule = currentSchedule?.find(record => record.day_of_week === dayData.day_of_week);
+    
+    // Check if this day has changes
+    if (currentDaySchedule) {
+      const dayName = getDayName(dayData.day_of_week);
+      let dayChanged = false;
+
+      // Check if opening time changed
+      if (currentDaySchedule.open_time !== dayData.open_time || currentDaySchedule.is_active !== dayData.is_active) {
+        const beforeTime = formatTime(currentDaySchedule.open_time, currentDaySchedule.is_active);
+        const afterTime = formatTime(dayData.open_time, dayData.is_active);
+        if (beforeTime !== afterTime) {
+          changes[`${dayName.toLowerCase()}_open`] = {
+            before: beforeTime,
+            after: afterTime
+          };
+          dayChanged = true;
+        }
+      }
+
+      // Check if closing time changed
+      if (currentDaySchedule.close_time !== dayData.close_time || currentDaySchedule.is_active !== dayData.is_active) {
+        const beforeTime = formatTime(currentDaySchedule.close_time, currentDaySchedule.is_active);
+        const afterTime = formatTime(dayData.close_time, dayData.is_active);
+        if (beforeTime !== afterTime) {
+          changes[`${dayName.toLowerCase()}_close`] = {
+            before: beforeTime,
+            after: afterTime
+          };
+          dayChanged = true;
+        }
+      }
+
+      // Check if status changed (open/closed)
+      if (currentDaySchedule.is_active !== dayData.is_active) {
+        changes[`${dayName.toLowerCase()}_status`] = {
+          before: currentDaySchedule.is_active ? "Open" : "Closed",
+          after: dayData.is_active ? "Open" : "Closed"
+        };
+        dayChanged = true;
+      }
+
+      if (dayChanged) {
+        changedDaysCount++;
+      }
+    }
     
     if (existingRecord) {
       // Update existing record
@@ -442,10 +614,29 @@ export async function saveScheduleAction(values: ScheduleDay[]): Promise<ActionR
         console.error(`Failed to insert day ${dayData.day_of_week}`, insertError);
         return { success: false, error: insertError.message };
       }
+
+      // Track new day creation
+      const dayName = getDayName(dayData.day_of_week);
+      changes[`${dayName.toLowerCase()}_created`] = {
+        before: null,
+        after: `${formatTime(dayData.open_time, dayData.is_active)} - ${formatTime(dayData.close_time, dayData.is_active)}`
+      };
+      changedDaysCount++;
     }
   }
 
-  await appendAuditLog(staff.profile.id, "schedule.save", "gym_schedule", undefined, {});
+  await appendAuditLog(
+    staff.profile.id, 
+    "schedule.save", 
+    "gym_schedule", 
+    SYSTEM_ENTITY_IDS.GYM_SCHEDULE, // Special UUID for gym schedule
+    { 
+      days_changed: changedDaysCount,
+      total_changes: Object.keys(changes).length
+    },
+    "Weekly Schedule", // resource name
+    changes // detailed changes
+  );
   revalidatePath("/schedule");
 
   return { success: true, message: "Schedule updated" };
@@ -523,6 +714,18 @@ export async function updateNewsAction(values: unknown): Promise<ActionResult> {
 
   const staff = await requireStaff();
 
+  // Get current announcement data for comparison
+  const { data: currentNews, error: fetchError } = await admin
+    .from("announcements")
+    .select("title, content, priority, end_date")
+    .eq("id", parsed.data.id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch current news data", fetchError);
+    return { success: false, error: "Failed to fetch current news data" };
+  }
+
   const { id, ...rest } = parsed.data;
   const updatePayload = {
     title: rest.title,
@@ -530,6 +733,7 @@ export async function updateNewsAction(values: unknown): Promise<ActionResult> {
     priority: rest.priority === 'low' ? 1 : rest.priority === 'medium' ? 2 : 3, // Convert to numeric
     end_date: rest.expires_at,
   };
+
   const { error } = await admin.from("announcements").update(updatePayload).eq("id", id);
 
   if (error) {
@@ -537,7 +741,41 @@ export async function updateNewsAction(values: unknown): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "news.update", "announcements", id, { id });
+  // Create detailed change tracking
+  const changes: Record<string, { before: unknown, after: unknown }> = {};
+  
+  if (currentNews.title !== rest.title) {
+    changes.title = { before: currentNews.title, after: rest.title };
+  }
+  if (currentNews.content !== rest.content) {
+    changes.content = { 
+      before: currentNews.content?.substring(0, 100) + (currentNews.content?.length > 100 ? "..." : ""), 
+      after: rest.content?.substring(0, 100) + (rest.content?.length > 100 ? "..." : "")
+    };
+  }
+  
+  // Convert numeric priority back to string for comparison
+  const currentPriorityText = currentNews.priority === 1 ? 'low' : currentNews.priority === 2 ? 'medium' : 'high';
+  if (currentPriorityText !== rest.priority) {
+    changes.priority = { before: currentPriorityText, after: rest.priority };
+  }
+  
+  if (currentNews.end_date !== rest.expires_at) {
+    changes.expires_at = { before: currentNews.end_date, after: rest.expires_at };
+  }
+
+  await appendAuditLog(
+    staff.profile.id, 
+    "news.update", 
+    "announcements", 
+    id, 
+    { 
+      id,
+      changes_count: Object.keys(changes).length
+    },
+    rest.title, // resource name
+    changes // detailed changes
+  );
   revalidatePath("/news");
 
   return { success: true, message: "News item updated" };
@@ -551,6 +789,18 @@ export async function deleteNewsAction(id: string): Promise<ActionResult> {
 
   const staff = await requireStaff();
 
+  // Get news title before deletion for audit log
+  const { data: newsToDelete, error: fetchError } = await admin
+    .from("announcements")
+    .select("title")
+    .eq("id", id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch news for deletion", fetchError);
+    return { success: false, error: "Failed to fetch news data" };
+  }
+
   const { error } = await admin.from("announcements").delete().eq("id", id);
 
   if (error) {
@@ -558,7 +808,23 @@ export async function deleteNewsAction(id: string): Promise<ActionResult> {
     return { success: false, error: error.message };
   }
 
-  await appendAuditLog(staff.profile.id, "news.delete", "announcements", id, { id });
+  await appendAuditLog(
+    staff.profile.id, 
+    "news.delete", 
+    "announcements", 
+    id, 
+    { id },
+    newsToDelete.title, // resource name
+    {
+      announcement_deleted: {
+        before: {
+          title: newsToDelete.title,
+          status: "active"
+        },
+        after: null
+      }
+    }
+  );
   revalidatePath("/news");
 
   return { success: true, message: "News item deleted" };
@@ -615,4 +881,61 @@ export async function manualCheckoutAction(checkinId: string): Promise<ActionRes
   revalidatePath("/checkins");
 
   return { success: true, message: "Member checked out successfully" };
+}
+
+export async function clearAuditLogsAction(): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+
+  // Only allow admin/owner to clear audit logs
+  if (staff.profile.role_id !== 'admin' && staff.profile.role_id !== 'owner') {
+    return { success: false, error: "Insufficient permissions. Only admins can clear audit logs." };
+  }
+
+  // Get count of logs before deletion for reporting
+  const { count: totalLogs, error: countError } = await admin
+    .from("audit_logs")
+    .select("*", { count: 'exact', head: true });
+
+  if (countError) {
+    console.error("Failed to count audit logs", countError);
+    return { success: false, error: "Failed to count audit logs" };
+  }
+
+  // Clear all audit logs
+  const { error } = await admin.from("audit_logs").delete().neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
+
+  if (error) {
+    console.error("Failed to clear audit logs", error);
+    return { success: false, error: error.message };
+  }
+
+  // Log the clearing action itself (meta operation)
+  await appendAuditLog(
+    staff.profile.id,
+    "system.clear_audit_logs",
+    "audit_logs",
+    SYSTEM_ENTITY_IDS.SYSTEM_SETTINGS,
+    {
+      logs_cleared: totalLogs || 0,
+      action_type: "maintenance"
+    },
+    "Audit Logs",
+    {
+      system_maintenance: {
+        before: `${totalLogs || 0} audit log entries`,
+        after: "0 audit log entries"
+      }
+    }
+  );
+
+  return { 
+    success: true, 
+    message: `Successfully cleared ${totalLogs || 0} audit log entries`,
+    data: { cleared_count: totalLogs || 0 }
+  };
 }

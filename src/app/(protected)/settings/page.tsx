@@ -1,4 +1,5 @@
 import { AuditLogTable } from "@/components/settings/audit-log-table";
+import { ClearAuditLogsButton } from "@/components/settings/clear-audit-logs-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchAuditLogs } from "@/lib/data";
 
@@ -11,8 +12,9 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <Card className="bg-card/90">
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle>Audit log</CardTitle>
+          <ClearAuditLogsButton />
         </CardHeader>
         <CardContent>
           <AuditLogTable entries={logs} />
