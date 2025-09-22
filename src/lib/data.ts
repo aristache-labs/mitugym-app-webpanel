@@ -8,6 +8,8 @@ import type {
   NewsItem,
   OccupancySnapshot,
   ScheduleDay,
+  Service,
+  ServiceBooking,
 } from "@/types";
 
 type SupabaseMemberRow = Omit<Member, "plan_name"> & {
@@ -422,4 +424,141 @@ export async function fetchDashboardMetrics() {
     activeMembers,
     expiringSoon,
   };
+}
+
+// ===== SERVICE DATA FUNCTIONS =====
+
+export async function fetchServices(): Promise<Service[]> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    console.error("Supabase admin client not available");
+    return [];
+  }
+
+  const { data, error } = await admin
+    .from("services")
+    .select("*")
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to fetch services", error);
+    return [];
+  }
+
+  return data.map((service) => ({
+    id: service.id,
+    name: service.name,
+    service_type: service.service_type,
+    session_type: service.session_type,
+    duration_minutes: service.duration_minutes,
+    price: parseFloat(service.price),
+    description: service.description,
+    requires_advance_booking: service.requires_advance_booking,
+    advance_booking_hours: service.advance_booking_hours,
+    max_sessions: service.max_sessions,
+    is_active: service.is_active,
+    display_order: service.display_order,
+    created_at: service.created_at,
+    updated_at: service.updated_at,
+  }));
+}
+
+export async function fetchServiceById(id: string): Promise<Service | null> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    console.error("Supabase admin client not available");
+    return null;
+  }
+
+  const { data, error } = await admin
+    .from("services")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error("Failed to fetch service", error);
+    return null;
+  }
+
+  return {
+    id: data.id,
+    name: data.name,
+    service_type: data.service_type,
+    session_type: data.session_type,
+    duration_minutes: data.duration_minutes,
+    price: parseFloat(data.price),
+    description: data.description,
+    requires_advance_booking: data.requires_advance_booking,
+    advance_booking_hours: data.advance_booking_hours,
+    max_sessions: data.max_sessions,
+    is_active: data.is_active,
+    display_order: data.display_order,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  };
+}
+
+export async function fetchServiceBookings(): Promise<ServiceBooking[]> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    console.error("Supabase admin client not available");
+    return [];
+  }
+
+  const { data, error } = await admin
+    .from("service_bookings")
+    .select(`
+      *,
+      services (*),
+      profiles (*)
+    `)
+    .order("booking_date", { ascending: false })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to fetch service bookings", error);
+    return [];
+  }
+
+  return data.map((booking) => ({
+    id: booking.id,
+    member_id: booking.member_id,
+    service_id: booking.service_id,
+    booking_date: booking.booking_date,
+    status: booking.status,
+    sessions_remaining: booking.sessions_remaining,
+    notes: booking.notes,
+    created_at: booking.created_at,
+    updated_at: booking.updated_at,
+    service: booking.services ? {
+      id: booking.services.id,
+      name: booking.services.name,
+      service_type: booking.services.service_type,
+      session_type: booking.services.session_type,
+      duration_minutes: booking.services.duration_minutes,
+      price: parseFloat(booking.services.price),
+      description: booking.services.description,
+      requires_advance_booking: booking.services.requires_advance_booking,
+      advance_booking_hours: booking.services.advance_booking_hours,
+      max_sessions: booking.services.max_sessions,
+      is_active: booking.services.is_active,
+      display_order: booking.services.display_order,
+      created_at: booking.services.created_at,
+      updated_at: booking.services.updated_at,
+    } : undefined,
+    member: booking.profiles ? {
+      id: booking.profiles.id,
+      full_name: `${booking.profiles.first_name || ""} ${booking.profiles.last_name || ""}`.trim(),
+      email: booking.profiles.email,
+      phone: booking.profiles.phone,
+      gender: booking.profiles.gender,
+      status: booking.profiles.membership_status,
+      plan_id: null, // Not needed for bookings
+      starts_at: booking.profiles.plan_start_date,
+      expires_at: booking.profiles.expiry_date,
+      created_at: booking.profiles.created_at,
+    } : undefined,
+  }));
 }

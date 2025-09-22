@@ -11,6 +11,7 @@ import { deletePlanAction } from "@/app/(protected)/actions";
 import { PlanForm } from "@/components/plans/plan-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmationModal } from "@/components/ui/modal";
+import { Banknote } from "lucide-react";
 
 interface PlanManagerProps {
   plans: MembershipPlan[];
@@ -38,7 +39,12 @@ export function PlanManager({ plans }: PlanManagerProps) {
       {
         accessorKey: "price",
         header: "Price",
-        cell: ({ row }) => formatCurrency(row.original.price),
+        cell: ({ row }) => (
+          <div className="flex items-center gap-1">
+            <Banknote className="h-4 w-4 text-muted-foreground" />
+            <span className="font-medium">{formatCurrency(row.original.price)}</span>
+          </div>
+        ),
       },
       {
         accessorKey: "duration_months",

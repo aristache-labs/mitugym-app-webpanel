@@ -69,3 +69,39 @@ export type OccupancySnapshot = {
   total: number;
   capacity?: number | null;
 };
+
+// Service related types
+export type ServiceType = "personal_trainer" | "professional_massage";
+export type BookingStatus = "upcoming" | "completed" | "cancelled";
+
+export type Service = {
+  id: string;
+  name: string;
+  service_type: ServiceType;
+  session_type?: string | null;
+  duration_minutes: number;
+  price: number;
+  description?: string | null;
+  requires_advance_booking: boolean;
+  advance_booking_hours: number;
+  max_sessions?: number | null;
+  is_active: boolean;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ServiceBooking = {
+  id: string;
+  member_id: string | null;
+  service_id: string | null;
+  booking_date: string;
+  status: BookingStatus;
+  sessions_remaining?: number | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+  // Relations
+  service?: Service;
+  member?: Member;
+};
