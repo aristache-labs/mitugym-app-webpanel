@@ -74,6 +74,7 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
     }
 
     // 2. Create/update profile record with correct field mapping
+    // Let the database trigger handle status calculation automatically
     const profilePayload = {
       id: authUser.user.id, // Use the auth user ID
       first_name: parsed.data.first_name,
@@ -81,8 +82,9 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
       gender: parsed.data.gender,
       email: parsed.data.email,
       phone: parsed.data.phone,
-      membership_status: parsed.data.status,
+      membership_status: parsed.data.status, // Send original status, let trigger calculate
       membership_plan: parsed.data.plan_id,
+      plan_start_date: parsed.data.starts_at,
       expiry_date: parsed.data.expires_at,
     };
 
@@ -95,6 +97,16 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
       // If profile creation fails, clean up the auth user
       await admin.auth.admin.deleteUser(authUser.user.id);
       return { success: false, error: `Failed to create profile: ${profileError.message}` };
+    }
+
+    // After successful creation, refresh the member's status based on plan timing
+    const { error: statusError } = await admin.rpc('refresh_member_status', {
+      member_id: authUser.user.id
+    });
+
+    if (statusError) {
+      console.warn("Failed to refresh member status", statusError);
+      // Don't fail the whole operation, just log the warning
     }
 
     await appendAuditLog(staff.profile.id, "member.create", "profiles", authUser.user.id, { 
@@ -138,14 +150,16 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
   const full_name = `${parsed.data.first_name} ${parsed.data.last_name}`.trim();
 
   // Map fields to profiles table structure
+  // Let the database trigger handle status calculation automatically
   const profilePayload = {
     first_name: parsed.data.first_name,
     last_name: parsed.data.last_name,
     gender: parsed.data.gender,
     email: parsed.data.email,
     phone: parsed.data.phone,
-    membership_status: parsed.data.status,
+    membership_status: parsed.data.status, // Send original status, let trigger calculate
     membership_plan: parsed.data.plan_id,
+    plan_start_date: parsed.data.starts_at,
     expiry_date: parsed.data.expires_at,
   };
 
@@ -157,6 +171,16 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
   if (error) {
     console.error("Failed to update member", error);
     return { success: false, error: error.message };
+  }
+
+  // After successful update, refresh the member's status based on plan timing
+  const { error: statusError } = await admin.rpc('refresh_member_status', {
+    member_id: parsed.data.id
+  });
+
+  if (statusError) {
+    console.warn("Failed to refresh member status", statusError);
+    // Don't fail the whole operation, just log the warning
   }
 
   await appendAuditLog(staff.profile.id, "member.update", "profiles", parsed.data.id, { 

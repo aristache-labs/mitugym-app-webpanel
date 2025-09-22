@@ -6,11 +6,11 @@ import { fetchCheckIns, fetchMemberById, fetchPlans } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 
 interface MemberDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function MemberDetailPage({ params }: MemberDetailPageProps) {
-  const { id } = params;
+  const { id } = await params;
   const member = await fetchMemberById(id);
 
   if (!member) {

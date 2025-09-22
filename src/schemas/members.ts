@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const memberStatusEnum = z.enum(["active", "inactive", "frozen"]);
+export const memberStatusEnum = z.enum(["active", "inactive", "frozen", "pending"]);
 export const memberGenderEnum = z.enum(["male", "female", "other"]);
 
 export const memberBaseSchema = z.object({
@@ -21,6 +21,18 @@ export const memberBaseSchema = z.object({
     .optional()
     .nullable()
     .transform((value) => (value ? value : null)),
+  starts_at: z
+    .string()
+    .optional()
+    .nullable()
+    .transform((value) => {
+      if (!value) return null;
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        throw new Error("Invalid date");
+      }
+      return date.toISOString();
+    }),
   expires_at: z
     .string()
     .optional()

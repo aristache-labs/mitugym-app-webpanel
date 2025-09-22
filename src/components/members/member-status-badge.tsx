@@ -5,6 +5,7 @@ const statusMap: Record<MemberStatus, { label: string; variant: "default" | "suc
   active: { label: "Active", variant: "success" },
   inactive: { label: "Inactive", variant: "destructive" },
   frozen: { label: "Frozen", variant: "warning" },
+  pending: { label: "Pending", variant: "default" },
 };
 
 export function MemberStatusBadge({ status }: { status: MemberStatus }) {

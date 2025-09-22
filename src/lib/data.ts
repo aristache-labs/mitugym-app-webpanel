@@ -1,4 +1,5 @@
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { calculateMemberStatus } from "@/lib/utils";
 import type {
   AuditLogEntry,
   CheckIn,
@@ -31,6 +32,7 @@ const sampleMembers: Member[] = [
     status: "active",
     plan_id: "plan-basic",
     plan_name: "Unlimited",
+    starts_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString(),
     expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString(),
   },
@@ -43,7 +45,8 @@ const sampleMembers: Member[] = [
     status: "frozen",
     plan_id: "plan-flex",
     plan_name: "Flex 12",
-    expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2).toISOString(),
+    starts_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 1).toISOString(), // Starts tomorrow
+    expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 32).toISOString(), // Expires in ~month
     created_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 60).toISOString(),
   },
 ];
@@ -135,7 +138,7 @@ export async function fetchMembers(): Promise<Member[]> {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, first_name, last_name, gender, email, phone, membership_status, membership_plan, expiry_date, created_at")
+    .select("id, first_name, last_name, gender, email, phone, membership_status, membership_plan, plan_start_date, expiry_date, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -145,20 +148,32 @@ export async function fetchMembers(): Promise<Member[]> {
 
   const rows = (data as SupabaseMemberRow[] | null) ?? [];
 
-  return rows.length
-    ? rows.map<Member>((profile) => ({
-        id: profile.id,
-        full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || null,
-        email: profile.email,
-        phone: profile.phone,
-        gender: profile.gender as Member['gender'] || null,
-        status: profile.membership_status as Member['status'] || 'active',
-        plan_id: profile.membership_plan || null,
-        plan_name: profile.membership_plan,
-        expires_at: profile.expiry_date,
-        created_at: profile.created_at,
-      }))
-    : sampleMembers;
+  if (!rows.length) {
+    return sampleMembers;
+  }
+
+  // Fetch plans to map plan IDs to names
+  const plansData = await fetchPlans();
+  const planLookup = new Map(plansData.map(plan => [plan.id, plan.name]));
+
+  return rows.map<Member>((profile) => {
+    const storedStatus = profile.membership_status as Member['status'] || 'active';
+    const actualStatus = calculateMemberStatus(storedStatus, profile.plan_start_date, profile.expiry_date);
+    
+    return {
+      id: profile.id,
+      full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || null,
+      email: profile.email,
+      phone: profile.phone,
+      gender: profile.gender as Member['gender'] || null,
+      status: actualStatus as Member['status'],
+      plan_id: profile.membership_plan || null,
+      plan_name: profile.membership_plan ? planLookup.get(profile.membership_plan) || null : null,
+      starts_at: profile.plan_start_date,
+      expires_at: profile.expiry_date,
+      created_at: profile.created_at,
+    };
+  });
 }
 
 export async function fetchMemberById(id: string): Promise<Member | null> {
@@ -169,7 +184,7 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, first_name, last_name, gender, email, phone, membership_status, membership_plan, expiry_date, created_at")
+    .select("id, first_name, last_name, gender, email, phone, membership_status, membership_plan, plan_start_date, expiry_date, created_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -184,15 +199,23 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
 
   const profile = data as any;
 
+  // Fetch plans to get the plan name
+  const plansData = await fetchPlans();
+  const planLookup = new Map(plansData.map(plan => [plan.id, plan.name]));
+  
+  const storedStatus = profile.membership_status as Member['status'] || 'active';
+  const actualStatus = calculateMemberStatus(storedStatus, profile.plan_start_date, profile.expiry_date);
+
   return {
     id: profile.id,
     full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || null,
     email: profile.email,
     phone: profile.phone,
     gender: profile.gender as Member['gender'] || null,
-    status: profile.membership_status as Member['status'] || 'active',
+    status: actualStatus as Member['status'],
     plan_id: profile.membership_plan || null,
-    plan_name: profile.membership_plan,
+    plan_name: profile.membership_plan ? planLookup.get(profile.membership_plan) || null : null,
+    starts_at: profile.plan_start_date,
     expires_at: profile.expiry_date,
     created_at: profile.created_at,
   } as Member;

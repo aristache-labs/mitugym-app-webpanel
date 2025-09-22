@@ -29,10 +29,26 @@ export function LoginForm() {
       return;
     }
 
-    const { error: signInError } = await supabase.auth.signInWithPassword(values);
+    const { data, error: signInError } = await supabase.auth.signInWithPassword(values);
     if (signInError) {
       setError(signInError.message);
       return;
+    }
+
+    // Check if user is staff after successful login
+    if (data.user) {
+      const { data: staffProfile } = await supabase
+        .from("staff_profiles")
+        .select("id, role_id")
+        .eq("id", data.user.id)
+        .maybeSingle();
+      
+      if (!staffProfile || !["staff", "admin"].includes(staffProfile.role_id)) {
+        // Sign out non-staff users
+        await supabase.auth.signOut();
+        setError("Access denied. This login is for staff members only.");
+        return;
+      }
     }
 
     router.replace("/dashboard");

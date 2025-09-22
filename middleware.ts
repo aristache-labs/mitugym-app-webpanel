@@ -57,20 +57,8 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  // Refresh session if expired - this resolves the refresh token issue
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  // Redirect to login if no user and trying to access protected routes
-  if (!user && !request.nextUrl.pathname.startsWith("/login")) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // Redirect to dashboard if user is logged in and trying to access login
-  if (user && request.nextUrl.pathname.startsWith("/login")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
+  // Just refresh the session - let individual pages handle authentication
+  await supabase.auth.getUser();
 
   return response;
 }

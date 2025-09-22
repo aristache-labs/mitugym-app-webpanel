@@ -9,12 +9,27 @@ export const metadata: Metadata = {
 
 export default async function LoginPage() {
   const supabase = await getSupabaseServerClient();
-  const {
-    data: { session },
-  } = (await supabase?.auth.getSession()) ?? { data: { session: null } };
+  
+  if (!supabase) {
+    return <LoginForm />;
+  }
 
-  if (session) {
-    redirect("/dashboard");
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    // Check if user is staff before redirecting to dashboard
+    const { data: staffProfile } = await supabase
+      .from("staff_profiles")
+      .select("id, role_id")
+      .eq("id", user.id)
+      .maybeSingle();
+    
+    // Only redirect to dashboard if user is staff
+    if (staffProfile && ["staff", "admin"].includes(staffProfile.role_id)) {
+      redirect("/dashboard");
+    }
   }
 
   return <LoginForm />;

@@ -1,4 +1,4 @@
-export type MemberStatus = "active" | "inactive" | "frozen";
+export type MemberStatus = "active" | "inactive" | "frozen" | "pending";
 export type MemberGender = "male" | "female" | "other";
 
 export type Member = {
@@ -10,6 +10,7 @@ export type Member = {
   status: MemberStatus;
   plan_id: string | null;
   plan_name?: string | null;
+  starts_at: string | null;
   expires_at: string | null;
   created_at: string;
 };

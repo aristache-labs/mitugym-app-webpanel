@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { CustomSelect } from "@/components/ui/custom-select";
-import { cn } from "@/lib/utils";
+import { cn, calculateExpirationDate, calculateMemberStatus } from "@/lib/utils";
 
 interface MemberFormProps {
   plans: MembershipPlan[];
@@ -45,7 +45,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
           phone: member.phone ?? "",
           status: member.status,
           plan_id: member.plan_id ?? "",
-          expires_at: member.expires_at ? member.expires_at.split("T")[0] : "",
+          starts_at: member.starts_at ? member.starts_at.split("T")[0] : "",
         }
       : {
           first_name: "",
@@ -55,6 +55,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
           phone: "",
           status: "active",
           plan_id: null,
+          starts_at: "",
           expires_at: "",
           password: "",
         },
@@ -72,10 +73,38 @@ export function MemberForm({ plans, member }: MemberFormProps) {
         phone: member.phone ?? "",
         status: member.status,
         plan_id: member.plan_id ?? "",
+        starts_at: member.starts_at ? member.starts_at.split("T")[0] : "",
         expires_at: member.expires_at ? member.expires_at.split("T")[0] : "",
       });
     }
   }, [member, form]);
+
+  // Calculate expiration date and status when plan or start date changes
+  useEffect(() => {
+    const subscription = form.watch((values, { name }) => {
+      if (name === 'plan_id' || name === 'starts_at') {
+        const { plan_id, starts_at } = values;
+        
+        if (plan_id && starts_at) {
+          const selectedPlan = plans.find(plan => plan.id === plan_id);
+          if (selectedPlan) {
+            const expirationDate = calculateExpirationDate(starts_at, selectedPlan.duration_months);
+            form.setValue('expires_at', expirationDate, { shouldValidate: true });
+            
+            // Calculate and set the appropriate status based on timing
+            const calculatedStatus = calculateMemberStatus('active', starts_at, expirationDate);
+            form.setValue('status', calculatedStatus, { shouldValidate: true });
+          }
+        } else if (!plan_id || !starts_at) {
+          // Clear expiration date and reset status if either plan or start date is removed
+          form.setValue('expires_at', '', { shouldValidate: true });
+          form.setValue('status', 'active', { shouldValidate: true });
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, plans]);
 
   const handleResult = (result: ActionResult) => {
     if (!result.success) {
@@ -91,12 +120,8 @@ export function MemberForm({ plans, member }: MemberFormProps) {
 
   const onSubmit = form.handleSubmit((values) => {
     startTransition(async () => {
-      let payload: Record<string, unknown> = values;
-      if (values.expires_at) {
-        payload = { ...values, expires_at: values.expires_at };
-      }
       const action = member ? updateMemberAction : createMemberAction;
-      const result = await action(payload);
+      const result = await action(values);
       handleResult(result);
     });
   });
@@ -188,23 +213,36 @@ export function MemberForm({ plans, member }: MemberFormProps) {
           <FormField
             control={form.control}
             name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Status</FormLabel>
-                <FormControl>
-                  <CustomSelect
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Select status"
-                    options={memberStatusEnum.options.map((status) => ({
-                      value: status,
-                      label: status.charAt(0).toUpperCase() + status.slice(1)
-                    }))}
-                  />
-                </FormControl>
-                <FormMessage>{form.formState.errors.status?.message}</FormMessage>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const planId = form.watch('plan_id');
+              const startsAt = form.watch('starts_at');
+              const isAutoCalculated = Boolean(planId && startsAt);
+              
+              return (
+                <FormItem>
+                  <FormLabel>
+                    Status
+                    {isAutoCalculated && (
+                      <span className="text-xs text-muted-foreground ml-2">(auto-calculated)</span>
+                    )}
+                  </FormLabel>
+                  <FormControl>
+                    <CustomSelect
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Select status"
+                      disabled={isAutoCalculated}
+                      options={memberStatusEnum.options.map((status) => ({
+                        value: status,
+                        label: status.charAt(0).toUpperCase() + status.slice(1)
+                      }))}
+                      className={isAutoCalculated ? "bg-muted/50 cursor-not-allowed" : ""}
+                    />
+                  </FormControl>
+                  <FormMessage>{form.formState.errors.status?.message}</FormMessage>
+                </FormItem>
+              );
+            }}
           />
           <FormField
             control={form.control}
@@ -232,12 +270,34 @@ export function MemberForm({ plans, member }: MemberFormProps) {
           />
           <FormField
             control={form.control}
+            name="starts_at"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Start from</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} value={field.value ?? ""} />
+                </FormControl>
+                <FormMessage>{form.formState.errors.starts_at?.message}</FormMessage>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="expires_at"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Expires at</FormLabel>
+                <FormLabel>
+                  Expires at
+                  <span className="text-xs text-muted-foreground ml-2">(auto-calculated)</span>
+                </FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} value={field.value ?? ""} />
+                  <Input 
+                    type="date" 
+                    {...field} 
+                    value={field.value ?? ""} 
+                    readOnly
+                    className="bg-muted/50 cursor-not-allowed"
+                  />
                 </FormControl>
                 <FormMessage>{form.formState.errors.expires_at?.message}</FormMessage>
               </FormItem>
