@@ -1,15 +1,18 @@
-import { fetchCheckIns, fetchDashboardMetrics, fetchNews } from "@/lib/data";
+import { fetchCheckIns, fetchDashboardMetrics, fetchNews, fetchTodaysServiceBookings, fetchSchedule } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { OccupancyChart } from "@/components/dashboard/occupancy-chart";
+import { UpcomingServicesCard } from "@/components/dashboard/upcoming-services-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export default async function DashboardPage() {
-  const [metrics, checkIns, news] = await Promise.all([
+  const [metrics, checkIns, news, todaysServices, schedule] = await Promise.all([
     fetchDashboardMetrics(),
     fetchCheckIns(),
     fetchNews(),
+    fetchTodaysServiceBookings(),
+    fetchSchedule(),
   ]);
 
   const latestCheckIns = checkIns.slice(0, 5);
@@ -23,7 +26,10 @@ export default async function DashboardPage() {
         <MetricCard title="Expiring this week" value={metrics.expiringSoon} description="Memberships to renew" />
       </section>
       <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <OccupancyChart checkIns={checkIns} />
+        <div className="space-y-6">
+          <OccupancyChart checkIns={checkIns} schedule={schedule} />
+          <UpcomingServicesCard bookings={todaysServices} />
+        </div>
         <Card className="bg-card/90">
           <CardHeader>
             <CardTitle className="text-lg">Latest check-ins</CardTitle>

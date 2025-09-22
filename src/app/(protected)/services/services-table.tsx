@@ -84,10 +84,10 @@ export function ServicesTable({ services }: ServicesTableProps) {
     {
       accessorKey: "duration_minutes",
       header: "Duration",
-      cell: ({ row }: { row: { original: Service } }) => (
+      cell: () => (
         <div className="flex items-center gap-1">
           <Clock className="h-4 w-4 text-muted-foreground" />
-          <span>{row.original.duration_minutes} min</span>
+          <span>1 hour</span>
         </div>
       ),
     },

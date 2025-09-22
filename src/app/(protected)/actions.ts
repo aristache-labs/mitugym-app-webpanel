@@ -955,7 +955,7 @@ export async function createServiceAction(formData: FormData): Promise<ActionRes
     name: formData.get("name"),
     service_type: formData.get("service_type"),
     session_type: formData.get("session_type") || undefined,
-    duration_minutes: parseInt(formData.get("duration_minutes") as string) || 60,
+    duration_minutes: 60, // Always 60 minutes
     price: parseFloat(formData.get("price") as string) || 0,
     description: formData.get("description") || undefined,
     requires_advance_booking: formData.get("requires_advance_booking") === "true",
@@ -1013,7 +1013,7 @@ export async function updateServiceAction(formData: FormData): Promise<ActionRes
     name: formData.get("name"),
     service_type: formData.get("service_type"),
     session_type: formData.get("session_type") || undefined,
-    duration_minutes: formData.get("duration_minutes") ? parseInt(formData.get("duration_minutes") as string) : undefined,
+    duration_minutes: 60, // Always 60 minutes
     price: formData.get("price") ? parseFloat(formData.get("price") as string) : undefined,
     description: formData.get("description") || undefined,
     requires_advance_booking: formData.get("requires_advance_booking") === "true",

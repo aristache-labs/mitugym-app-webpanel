@@ -562,3 +562,71 @@ export async function fetchServiceBookings(): Promise<ServiceBooking[]> {
     } : undefined,
   }));
 }
+
+export async function fetchTodaysServiceBookings(): Promise<ServiceBooking[]> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    console.error("Supabase admin client not available");
+    return [];
+  }
+
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split('T')[0];
+
+  const { data, error } = await admin
+    .from("service_bookings")
+    .select(`
+      *,
+      services (*),
+      profiles (*)
+    `)
+    .eq("status", "upcoming")
+    .gte("booking_date", `${today}T00:00:00Z`)
+    .lt("booking_date", `${today}T23:59:59Z`)
+    .order("booking_date", { ascending: true });
+
+  if (error) {
+    console.error("Failed to fetch today's service bookings", error);
+    return [];
+  }
+
+  return data.map((booking) => ({
+    id: booking.id,
+    member_id: booking.member_id,
+    service_id: booking.service_id,
+    booking_date: booking.booking_date,
+    status: booking.status,
+    sessions_remaining: booking.sessions_remaining,
+    notes: booking.notes,
+    created_at: booking.created_at,
+    updated_at: booking.updated_at,
+    service: booking.services ? {
+      id: booking.services.id,
+      name: booking.services.name,
+      service_type: booking.services.service_type,
+      session_type: booking.services.session_type,
+      duration_minutes: booking.services.duration_minutes,
+      price: parseFloat(booking.services.price),
+      description: booking.services.description,
+      requires_advance_booking: booking.services.requires_advance_booking,
+      advance_booking_hours: booking.services.advance_booking_hours,
+      max_sessions: booking.services.max_sessions,
+      is_active: booking.services.is_active,
+      display_order: booking.services.display_order,
+      created_at: booking.services.created_at,
+      updated_at: booking.services.updated_at,
+    } : undefined,
+    member: booking.profiles ? {
+      id: booking.profiles.id,
+      full_name: `${booking.profiles.first_name || ""} ${booking.profiles.last_name || ""}`.trim(),
+      email: booking.profiles.email,
+      phone: booking.profiles.phone,
+      gender: booking.profiles.gender,
+      status: booking.profiles.membership_status,
+      plan_id: null, // Not needed for bookings
+      starts_at: booking.profiles.plan_start_date,
+      expires_at: booking.profiles.expiry_date,
+      created_at: booking.profiles.created_at,
+    } : undefined,
+  }));
+}

@@ -29,7 +29,7 @@ const SERVICE_TYPE_OPTIONS = [
 ];
 
 const SESSION_TYPE_OPTIONS = [
-  { value: "1_hour", label: "1 Hour Session" },
+  { value: "1_session", label: "1 Session Package" },
   { value: "8_sessions", label: "8 Sessions Package" },
   { value: "12_sessions", label: "12 Sessions Package" },
   { value: "16_sessions", label: "16 Sessions Package" },
@@ -49,7 +49,7 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
     name: service.name,
     service_type: service.service_type as ServiceType,
     session_type: service.session_type || "",
-    duration_minutes: service.duration_minutes,
+    duration_minutes: 60, // Always 60 minutes
     price: service.price,
     description: service.description || "",
     requires_advance_booking: service.requires_advance_booking,
@@ -61,7 +61,7 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
     name: "",
     service_type: "personal_trainer" as ServiceType,
     session_type: "",
-    duration_minutes: 60,
+    duration_minutes: 60, // Always 60 minutes
     price: 0,
     description: "",
     requires_advance_booking: false,
@@ -160,37 +160,23 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Duration */}
-            <div className="space-y-2">
-              <Label htmlFor="duration_minutes">Duration (minutes) *</Label>
-              <Input
-                id="duration_minutes"
-                type="number"
-                min="15"
-                max="480"
-                {...form.register("duration_minutes", { valueAsNumber: true })}
-              />
-              {form.formState.errors.duration_minutes && (
-                <p className="text-sm text-destructive">{form.formState.errors.duration_minutes.message}</p>
-              )}
-            </div>
-
-            {/* Price */}
-            <div className="space-y-2">
-              <Label htmlFor="price">Price (RON) *</Label>
-              <Input
-                id="price"
-                type="number"
-                min="0"
-                step="0.01"
-                {...form.register("price", { valueAsNumber: true })}
-              />
-              {form.formState.errors.price && (
-                <p className="text-sm text-destructive">{form.formState.errors.price.message}</p>
-              )}
-            </div>
+          {/* Price */}
+          <div className="space-y-2">
+            <Label htmlFor="price">Price (RON) *</Label>
+            <Input
+              id="price"
+              type="number"
+              min="0"
+              step="0.01"
+              {...form.register("price", { valueAsNumber: true })}
+            />
+            {form.formState.errors.price && (
+              <p className="text-sm text-destructive">{form.formState.errors.price.message}</p>
+            )}
           </div>
+
+          {/* Duration (hidden, always 60 minutes) */}
+          <input type="hidden" {...form.register("duration_minutes")} value={60} />
 
           {/* Description */}
           <div className="space-y-2">

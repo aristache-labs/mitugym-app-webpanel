@@ -55,12 +55,10 @@ export function BookingsTable({ bookings }: BookingsTableProps) {
         return (
           <div className="space-y-1">
             <div className="font-medium">{booking.service?.name || "Unknown Service"}</div>
-            {booking.service?.duration_minutes && (
-              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Clock className="h-3 w-3" />
-                {booking.service.duration_minutes} min
-              </div>
-            )}
+            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              1 hour
+            </div>
           </div>
         );
       },
