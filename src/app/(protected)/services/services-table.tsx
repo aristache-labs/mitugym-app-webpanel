@@ -58,7 +58,7 @@ export function ServicesTable({ services }: ServicesTableProps) {
   const columns = [
     {
       accessorKey: "name",
-      header: "Service Name",
+      header: () => <div className="flex justify-center w-full">Service Name</div>,
       cell: ({ row }: { row: { original: Service } }) => {
         const service = row.original;
         return (
@@ -68,12 +68,12 @@ export function ServicesTable({ services }: ServicesTableProps) {
     },
     {
       accessorKey: "service_type",
-      header: "Type",
+      header: () => <div className="flex justify-center w-full">Type</div>,
       cell: ({ row }: { row: { original: Service } }) => getServiceTypeBadge(row.original.service_type),
     },
     {
       accessorKey: "price",
-      header: "Price",
+      header: () => <div className="flex justify-center w-full">Price</div>,
       cell: ({ row }: { row: { original: Service } }) => (
         <div className="flex items-center gap-1">
           <Banknote className="h-4 w-4 text-muted-foreground" />
@@ -83,7 +83,7 @@ export function ServicesTable({ services }: ServicesTableProps) {
     },
     {
       accessorKey: "duration_minutes",
-      header: "Duration",
+      header: () => <div className="flex justify-center w-full">Duration</div>,
       cell: () => (
         <div className="flex items-center gap-1">
           <Clock className="h-4 w-4 text-muted-foreground" />
@@ -93,7 +93,7 @@ export function ServicesTable({ services }: ServicesTableProps) {
     },
     {
       accessorKey: "max_sessions",
-      header: "Sessions",
+      header: () => <div className="flex justify-center w-full">Sessions</div>,
       cell: ({ row }: { row: { original: Service } }) => {
         const sessions = row.original.max_sessions;
         return sessions ? `${sessions} session${sessions > 1 ? 's' : ''}` : "1 session";
@@ -101,7 +101,7 @@ export function ServicesTable({ services }: ServicesTableProps) {
     },
     {
       accessorKey: "requires_advance_booking",
-      header: "Booking",
+      header: () => <div className="flex justify-center w-full">Booking</div>,
       cell: ({ row }: { row: { original: Service } }) => {
         const service = row.original;
         return service.requires_advance_booking ? (
@@ -115,7 +115,7 @@ export function ServicesTable({ services }: ServicesTableProps) {
     },
     {
       accessorKey: "is_active",
-      header: "Status",
+      header: () => <div className="flex justify-center w-full">Status</div>,
       cell: ({ row }: { row: { original: Service } }) => (
         <Badge variant={row.original.is_active ? "default" : "secondary"}>
           {row.original.is_active ? "Active" : "Inactive"}
@@ -124,7 +124,7 @@ export function ServicesTable({ services }: ServicesTableProps) {
     },
     {
       id: "actions",
-      header: "Actions",
+        header: () => <div className="flex justify-center w-full">Actions</div>,
       cell: ({ row }: { row: { original: Service } }) => {
         const service = row.original;
         return (

@@ -101,7 +101,7 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
   const columns = [
     {
       accessorKey: "booking_date",
-      header: "Date & Time",
+      header: () => <div className="flex justify-center w-full">Date & Time</div>,
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
@@ -121,7 +121,7 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     },
     {
       id: "service",
-      header: "Service",
+      header: () => <div className="flex justify-center w-full">Service</div>,
       accessorFn: (row: ServiceBooking) => row.service?.name || "Unknown Service",
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
@@ -138,7 +138,7 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     },
     {
       accessorKey: "member",
-      header: "Member",
+      header: () => <div className="flex justify-center w-full">Member</div>,
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
@@ -156,12 +156,12 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: () => <div className="flex justify-center w-full">Status</div>,
       cell: ({ row }: { row: { original: ServiceBooking } }) => getStatusBadge(row.original.status),
     },
     {
       accessorKey: "notes",
-      header: "Notes",
+      header: () => <div className="flex justify-center w-full">Notes</div>,
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const notes = row.original.notes;
         return notes ? (
@@ -175,7 +175,7 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     },
     {
       id: "actions",
-      header: "Actions",
+      header: () => <div className="flex justify-center w-full">Actions</div>,
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (

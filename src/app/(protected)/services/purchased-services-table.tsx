@@ -5,13 +5,11 @@ import { DataTable } from "@/components/data-table/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { PurchasedService, Service } from "@/types";
-import { Calendar, User, Package, Trash2, CheckCircle, XCircle } from "lucide-react";
+import { Calendar, User, Package, Trash2, CheckCircle, XCircle, Eye } from "lucide-react";
 import { format } from "date-fns";
-import Link from "next/link";
 import { approvePurchasedServiceAction, cancelPurchasedServiceAction, deletePurchasedServiceAction } from "@/app/(protected)/actions";
 
 interface PurchasedServicesTableProps {
@@ -23,6 +21,7 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<PurchasedService | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [approveNotes, setApproveNotes] = useState("");
@@ -46,6 +45,12 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
     setSelectedService(service);
     setCancelModalOpen(true);
     setCancelReason("");
+    setError(null);
+  };
+
+  const handleViewClick = (service: PurchasedService) => {
+    setSelectedService(service);
+    setViewModalOpen(true);
     setError(null);
   };
 
@@ -137,7 +142,7 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
   const columns = [
     {
       accessorKey: "purchase_date",
-      header: "Purchase Date",
+      header: () => <div className="flex justify-center w-full">Purchase Date</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
@@ -157,7 +162,7 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
     },
     {
       id: "service",
-      header: "Service",
+      header: () => <div className="flex justify-center w-full">Service</div>,
       accessorFn: (row: PurchasedService) => row.service?.name || "Unknown Service",
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
@@ -174,7 +179,7 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
     },
     {
       accessorKey: "member",
-      header: "Member",
+      header: () => <div className="flex justify-center w-full">Member</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
@@ -192,12 +197,12 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: () => <div className="flex justify-center w-full">Status</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => getStatusBadge(row.original.status),
     },
     {
       accessorKey: "sessions",
-      header: "Sessions",
+      header: () => <div className="flex justify-center w-full">Sessions</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
@@ -210,7 +215,7 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
     },
     {
       accessorKey: "notes",
-      header: "Notes",
+      header: () => <div className="flex justify-center w-full">Notes</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const notes = row.original.notes;
         return notes ? (
@@ -224,21 +229,22 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
     },
     {
       id: "actions",
-      header: "Actions",
+        header: () => <div className="flex justify-center w-full">Actions</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => handleViewClick(service)}
+              className="text-blue-600 hover:bg-blue-50"
+            >
+              <Eye className="h-4 w-4" />
               View
             </Button>
             {service.status === "pending" && (
               <>
-                <Link href={`/services/purchased/${service.id}/edit`}>
-                  <Button variant="ghost" size="sm">
-                    Edit
-                  </Button>
-                </Link>
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -290,7 +296,7 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
         isOpen={deleteModalOpen}
         onClose={() => {
           setDeleteModalOpen(false);
-          setServiceToDelete(null);
+          setSelectedService(null);
           setError(null);
         }}
         title="Delete Purchased Service"
@@ -478,6 +484,162 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
               {isPending ? "Cancelling..." : "Cancel Service"}
             </Button>
           </div>
+        </div>
+      </Modal>
+
+      {/* View Details Modal */}
+      <Modal
+        isOpen={viewModalOpen}
+        onClose={() => {
+          setViewModalOpen(false);
+          setSelectedService(null);
+          setError(null);
+        }}
+        title="Purchased Service Details"
+      >
+        <div className="space-y-6">
+          {selectedService && (
+            <>
+              {/* Service Information */}
+              <div className="bg-muted/50 border border-border rounded-lg p-4">
+                <h3 className="font-semibold text-lg mb-3">Service Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="font-medium text-muted-foreground">Service Name:</span>
+                    <div className="mt-1">{selectedService.service?.name || "Unknown Service"}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-muted-foreground">Service Type:</span>
+                    <div className="mt-1">{selectedService.service?.session_type || "Standard"}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-muted-foreground">Duration:</span>
+                    <div className="mt-1">{selectedService.service?.duration_minutes || 60} minutes</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-muted-foreground">Price:</span>
+                    <div className="mt-1">{selectedService.service?.price?.toFixed(2) || "0.00"} RON</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Member Information */}
+              <div className="bg-muted/50 border border-border rounded-lg p-4">
+                <h3 className="font-semibold text-lg mb-3">Member Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="font-medium text-muted-foreground">Full Name:</span>
+                    <div className="mt-1">{selectedService.member?.full_name || "Unknown Member"}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-muted-foreground">Email:</span>
+                    <div className="mt-1">{selectedService.member?.email || "-"}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-muted-foreground">Phone:</span>
+                    <div className="mt-1">{selectedService.member?.phone || "-"}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-muted-foreground">Membership Status:</span>
+                    <div className="mt-1">{selectedService.member?.status || "-"}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Purchase Details */}
+              <div className="bg-muted/50 border border-border rounded-lg p-4">
+                <h3 className="font-semibold text-lg mb-3">Purchase Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="font-medium text-muted-foreground">Purchase Date:</span>
+                    <div className="mt-1">{format(new Date(selectedService.purchase_date), "PPp")}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-muted-foreground">Status:</span>
+                    <div className="mt-1">{getStatusBadge(selectedService.status)}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-muted-foreground">Total Sessions:</span>
+                    <div className="mt-1">{selectedService.sessions_total}</div>
+                  </div>
+                  <div>
+                    <span className="font-medium text-muted-foreground">Remaining Sessions:</span>
+                    <div className="mt-1">{selectedService.sessions_remaining}</div>
+                  </div>
+                  {selectedService.approved_date && (
+                    <>
+                      <div>
+                        <span className="font-medium text-muted-foreground">Approved Date:</span>
+                        <div className="mt-1">{format(new Date(selectedService.approved_date), "PPp")}</div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Notes */}
+              {selectedService.notes && (
+                <div className="bg-muted/50 border border-border rounded-lg p-4">
+                  <h3 className="font-semibold text-lg mb-3">Notes</h3>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    {selectedService.notes}
+                  </p>
+                </div>
+              )}
+
+              {/* Action Buttons based on status */}
+              <div className="flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setViewModalOpen(false);
+                    setSelectedService(null);
+                    setError(null);
+                  }}
+                >
+                  Close
+                </Button>
+                
+                {selectedService.status === "pending" && (
+                  <>
+                    <Button
+                      onClick={() => {
+                        setViewModalOpen(false);
+                        handleApproveClick(selectedService);
+                      }}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Approve
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        setViewModalOpen(false);
+                        handleCancelClick(selectedService);
+                      }}
+                    >
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                  </>
+                )}
+                
+                {selectedService.status === "cancelled" && (
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      setViewModalOpen(false);
+                      handleDeleteClick(selectedService);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete
+                  </Button>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </Modal>
     </>
