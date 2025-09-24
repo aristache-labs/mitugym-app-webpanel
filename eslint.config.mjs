@@ -20,6 +20,15 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      "max-lines": ["error", {
+        "max": 1500,
+        "skipBlankLines": true,
+        "skipComments": true
+      }]
+    }
+  },
 ];
 
 export default eslintConfig;

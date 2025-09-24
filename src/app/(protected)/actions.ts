@@ -16,6 +16,20 @@ export type ActionResult<T = undefined> =
   | { success: true; data?: T; message?: string }
   | { success: false; error: string; issues?: Record<string, string[]> };
 
+// Type for booking data with relations
+type BookingWithRelations = {
+  id: string;
+  status: string;
+  booking_date: string;
+  profiles?: {
+    first_name?: string;
+    last_name?: string;
+  };
+  services?: {
+    name?: string;
+  };
+};
+
 // Special entity IDs for system-wide operations
 const SYSTEM_ENTITY_IDS = {
   GYM_SCHEDULE: "00000000-0000-0000-0000-000000000001",
@@ -482,7 +496,12 @@ export async function deletePlanAction(id: string): Promise<ActionResult> {
 export async function saveScheduleAction(values: ScheduleDay[]): Promise<ActionResult> {
   const parsed = scheduleSchema.safeParse(values);
   if (!parsed.success) {
-    return { success: false, error: "Invalid schedule", issues: parsed.error.flatten().fieldErrors };
+    const fieldErrors = parsed.error.flatten().fieldErrors;
+    const issues: Record<string, string[]> = {};
+    for (const [key, value] of Object.entries(fieldErrors)) {
+      issues[key] = value || [];
+    }
+    return { success: false, error: "Invalid schedule", issues };
   }
 
   const admin = getSupabaseAdmin();
@@ -885,7 +904,7 @@ export async function manualCheckoutAction(checkinId: string): Promise<ActionRes
   return { success: true, message: "Member checked out successfully" };
 }
 
-export async function clearAuditLogsAction(): Promise<ActionResult> {
+export async function clearAuditLogsAction(): Promise<ActionResult<{ cleared_count: number }>> {
   const admin = getSupabaseAdmin();
   if (!admin) {
     return { success: false, error: "Supabase credentials are missing" };
@@ -1326,8 +1345,9 @@ export async function deleteServiceBookingAction(formData: FormData): Promise<Ac
   }
 
   // Construct member full name
-  const memberName = (bookingToDelete as any).profiles ? 
-    `${(bookingToDelete as any).profiles.first_name || ""} ${(bookingToDelete as any).profiles.last_name || ""}`.trim() :
+  const bookingData = bookingToDelete as BookingWithRelations;
+  const memberName = bookingData.profiles ? 
+    `${bookingData.profiles.first_name || ""} ${bookingData.profiles.last_name || ""}`.trim() :
     "Unknown Member";
 
   // Log the booking deletion
@@ -1337,10 +1357,10 @@ export async function deleteServiceBookingAction(formData: FormData): Promise<Ac
     "service_bookings",
     id,
     { status: bookingToDelete.status },
-    `Service Booking - ${(bookingToDelete as any).services?.name} for ${memberName}`,
+    `Service Booking - ${bookingData.services?.name} for ${memberName}`,
     {
       booking_deleted: {
-        before: `${(bookingToDelete as any).services?.name} booking for ${memberName} on ${format(new Date(bookingToDelete.booking_date), "PPp")}`,
+        before: `${bookingData.services?.name} booking for ${memberName} on ${format(new Date(bookingToDelete.booking_date), "PPp")}`,
         after: "Deleted"
       }
     }
@@ -1394,8 +1414,9 @@ export async function cancelServiceBookingAction(formData: FormData): Promise<Ac
   }
 
   // Construct member full name
-  const memberName = (bookingToCancel as any).profiles ? 
-    `${(bookingToCancel as any).profiles.first_name || ""} ${(bookingToCancel as any).profiles.last_name || ""}`.trim() :
+  const cancelBookingData = bookingToCancel as BookingWithRelations;
+  const memberName = cancelBookingData.profiles ? 
+    `${cancelBookingData.profiles.first_name || ""} ${cancelBookingData.profiles.last_name || ""}`.trim() :
     "Unknown Member";
 
   // Log the booking cancellation
@@ -1405,7 +1426,7 @@ export async function cancelServiceBookingAction(formData: FormData): Promise<Ac
     "service_bookings",
     id,
     { status: bookingToCancel.status },
-    `Service Booking - ${(bookingToCancel as any).services?.name} for ${memberName}`,
+    `Service Booking - ${cancelBookingData.services?.name} for ${memberName}`,
     {
       booking_cancelled: {
         before: `Status: upcoming`,
@@ -1463,7 +1484,12 @@ export async function approvePurchasedServiceAction(formData: FormData): Promise
   }
 
   // Update the purchased service status to approved
-  const updateData: any = {
+  const updateData: {
+    status: string;
+    approved_date: string;
+    updated_at: string;
+    notes?: string;
+  } = {
     status: "approved",
     approved_date: new Date().toISOString(),
     updated_at: new Date().toISOString(),

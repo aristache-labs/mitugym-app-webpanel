@@ -14,6 +14,10 @@ export const planSchema = z.object({
     .optional()
     .default([]),
   is_active: z.coerce.boolean().optional().default(true),
+  display_order: z.coerce
+    .number({ invalid_type_error: "Display order must be a number" })
+    .min(0, "Display order cannot be negative")
+    .optional(),
 });
 
 export type PlanInput = z.infer<typeof planSchema>;
