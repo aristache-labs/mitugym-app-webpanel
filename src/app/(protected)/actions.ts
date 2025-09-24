@@ -8,7 +8,7 @@ import { createMemberSchema, updateMemberSchema } from "@/schemas/members";
 import { planSchema } from "@/schemas/plans";
 import { newsSchema } from "@/schemas/news";
 import { scheduleSchema } from "@/schemas/schedule";
-import { createServiceSchema, updateServiceSchema, createServiceBookingSchema, updateServiceBookingSchema, approvePurchasedServiceSchema, cancelPurchasedServiceSchema, deletePurchasedServiceSchema } from "@/schemas/services";
+import { createServiceSchema, updateServiceSchema, createServiceBookingSchema, updateServiceBookingSchema, approvePurchasedServiceSchema, cancelPurchasedServiceSchema, deletePurchasedServiceSchema, createPurchasedServiceSchema } from "@/schemas/services";
 import type { ScheduleDay } from "@/types";
 import { format } from "date-fns";
 
@@ -1754,4 +1754,110 @@ export async function deletePurchasedServiceAction(formData: FormData): Promise<
 
   revalidatePath("/services");
   return { success: true, message: "Purchased service deleted successfully" };
+}
+
+export async function createPurchasedServiceAction(formData: FormData): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+
+  const parsed = createPurchasedServiceSchema.safeParse({
+    member_id: formData.get("member_id"),
+    service_id: formData.get("service_id"),
+    sessions_total: formData.get("sessions_total"),
+    notes: formData.get("notes"),
+  });
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: "Validation failed",
+      issues: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const { member_id, service_id, sessions_total, notes } = parsed.data;
+
+  // Verify service exists and is active
+  const { data: service, error: serviceError } = await admin
+    .from("services")
+    .select("name, is_active, max_sessions")
+    .eq("id", service_id)
+    .single();
+
+  if (serviceError || !service) {
+    return { success: false, error: "Service not found" };
+  }
+
+  if (!service.is_active) {
+    return { success: false, error: "Cannot purchase inactive service" };
+  }
+
+  if (service.max_sessions && sessions_total > service.max_sessions) {
+    return { success: false, error: `Maximum ${service.max_sessions} sessions allowed for this service` };
+  }
+
+  // Verify member exists
+  const { data: member, error: memberError } = await admin
+    .from("profiles")
+    .select("first_name, last_name")
+    .eq("id", member_id)
+    .single();
+
+  if (memberError || !member) {
+    return { success: false, error: "Member not found" };
+  }
+
+  // Create the purchased service
+  const purchaseData = {
+    member_id,
+    service_id,
+    status: "pending" as const,
+    sessions_total,
+    sessions_remaining: sessions_total,
+    purchase_date: new Date().toISOString(),
+    notes: notes || null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  const { data: newPurchase, error } = await admin
+    .from("purchased_services")
+    .insert(purchaseData)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to create purchased service", error);
+    return { success: false, error: error.message };
+  }
+
+  const memberName = `${member.first_name || ''} ${member.last_name || ''}`.trim() || 'Unknown Member';
+
+  // Log the purchase creation
+  await appendAuditLog(
+    staff.profile.id,
+    "purchased_service.create",
+    "purchased_services",
+    newPurchase.id,
+    {
+      service_name: service.name,
+      member_id,
+      sessions_total,
+      notes: notes || null,
+    },
+    `${service.name} for ${memberName}`,
+    {
+      purchase_created: {
+        before: "No purchase",
+        after: `${sessions_total} sessions (pending approval)`
+      }
+    }
+  );
+
+  revalidatePath("/services");
+  return { success: true, message: "Purchase created successfully and pending approval" };
 }

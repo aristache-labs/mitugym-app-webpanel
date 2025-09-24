@@ -66,6 +66,16 @@ export const deletePurchasedServiceSchema = z.object({
   id: z.string().uuid("Invalid purchased service ID"),
 });
 
+export const createPurchasedServiceSchema = z.object({
+  member_id: z.string().uuid("Please select a member"),
+  service_id: z.string().uuid("Please select a service"),
+  sessions_total: z.coerce
+    .number({ invalid_type_error: "Sessions must be a number" })
+    .min(1, "At least 1 session is required")
+    .max(100, "Maximum 100 sessions allowed"),
+  notes: z.string().max(1000, "Notes too long").optional(),
+});
+
 // Types inferred from schemas
 export type CreateServiceRequest = z.infer<typeof createServiceSchema>;
 export type UpdateServiceRequest = z.infer<typeof updateServiceSchema>;
@@ -74,3 +84,4 @@ export type UpdateServiceBookingRequest = z.infer<typeof updateServiceBookingSch
 export type ApprovePurchasedServiceRequest = z.infer<typeof approvePurchasedServiceSchema>;
 export type CancelPurchasedServiceRequest = z.infer<typeof cancelPurchasedServiceSchema>;
 export type DeletePurchasedServiceRequest = z.infer<typeof deletePurchasedServiceSchema>;
+export type CreatePurchasedServiceRequest = z.infer<typeof createPurchasedServiceSchema>;
