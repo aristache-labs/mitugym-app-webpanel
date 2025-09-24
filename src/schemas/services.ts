@@ -49,8 +49,28 @@ export const updateServiceBookingSchema = serviceBookingBaseSchema.partial().ext
   id: z.string().uuid("Invalid booking ID"),
 });
 
+// Purchased service schemas
+export const purchasedServiceStatusSchema = z.enum(["pending", "approved", "cancelled"]);
+
+export const approvePurchasedServiceSchema = z.object({
+  id: z.string().uuid("Invalid purchased service ID"),
+  notes: z.string().max(1000, "Notes too long").optional(),
+});
+
+export const cancelPurchasedServiceSchema = z.object({
+  id: z.string().uuid("Invalid purchased service ID"),
+  reason: z.string().min(1, "Cancellation reason is required").max(1000, "Reason too long"),
+});
+
+export const deletePurchasedServiceSchema = z.object({
+  id: z.string().uuid("Invalid purchased service ID"),
+});
+
 // Types inferred from schemas
 export type CreateServiceRequest = z.infer<typeof createServiceSchema>;
 export type UpdateServiceRequest = z.infer<typeof updateServiceSchema>;
 export type CreateServiceBookingRequest = z.infer<typeof createServiceBookingSchema>;
 export type UpdateServiceBookingRequest = z.infer<typeof updateServiceBookingSchema>;
+export type ApprovePurchasedServiceRequest = z.infer<typeof approvePurchasedServiceSchema>;
+export type CancelPurchasedServiceRequest = z.infer<typeof cancelPurchasedServiceSchema>;
+export type DeletePurchasedServiceRequest = z.infer<typeof deletePurchasedServiceSchema>;

@@ -8,7 +8,7 @@ import { createMemberSchema, updateMemberSchema } from "@/schemas/members";
 import { planSchema } from "@/schemas/plans";
 import { newsSchema } from "@/schemas/news";
 import { scheduleSchema } from "@/schemas/schedule";
-import { createServiceSchema, updateServiceSchema, createServiceBookingSchema, updateServiceBookingSchema } from "@/schemas/services";
+import { createServiceSchema, updateServiceSchema, createServiceBookingSchema, updateServiceBookingSchema, approvePurchasedServiceSchema, cancelPurchasedServiceSchema, deletePurchasedServiceSchema } from "@/schemas/services";
 import type { ScheduleDay } from "@/types";
 import { format } from "date-fns";
 
@@ -1416,4 +1416,316 @@ export async function cancelServiceBookingAction(formData: FormData): Promise<Ac
 
   revalidatePath("/services");
   return { success: true, message: "Service booking cancelled successfully" };
+}
+
+// ===== PURCHASED SERVICE ACTIONS =====
+
+export async function approvePurchasedServiceAction(formData: FormData): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+
+  const parsed = approvePurchasedServiceSchema.safeParse({
+    id: formData.get("id"),
+    notes: formData.get("notes") || undefined,
+  });
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: "Validation failed",
+      issues: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const { id, notes } = parsed.data;
+
+  // Get the purchased service details before approval
+  const { data: purchasedService, error: fetchError } = await admin
+    .from("purchased_services")
+    .select(`
+      *,
+      services (name)
+    `)
+    .eq("id", id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch purchased service", fetchError);
+    return { success: false, error: "Purchased service not found" };
+  }
+
+  if (purchasedService.status !== "pending") {
+    return { success: false, error: "Only pending services can be approved" };
+  }
+
+  // Update the purchased service status to approved
+  const updateData: any = {
+    status: "approved",
+    approved_date: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  if (notes) {
+    updateData.notes = notes;
+  }
+
+  const { error } = await admin
+    .from("purchased_services")
+    .update(updateData)
+    .eq("id", id);
+
+  if (error) {
+    console.error("Failed to approve purchased service", error);
+    return { success: false, error: error.message };
+  }
+
+  // Get member profile separately
+  const { data: memberProfile } = await admin
+    .from("profiles")
+    .select("first_name, last_name")
+    .eq("id", purchasedService.member_id)
+    .single();
+
+  const memberName = memberProfile 
+    ? `${memberProfile.first_name || ''} ${memberProfile.last_name || ''}`.trim()
+    : 'Unknown Member';
+
+  // Log the approval
+  await appendAuditLog(
+    staff.profile.id,
+    "purchased_service.approve",
+    "purchased_services",
+    id,
+    { 
+      service_name: purchasedService.services?.name,
+      sessions_total: purchasedService.sessions_total,
+      notes: notes 
+    },
+    `${purchasedService.services?.name} for ${memberName}`,
+    {
+      service_approved: {
+        before: "Status: pending",
+        after: "Status: approved"
+      }
+    }
+  );
+
+  revalidatePath("/services");
+  return { success: true, message: "Purchased service approved successfully" };
+}
+
+export async function cancelPurchasedServiceAction(formData: FormData): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+
+  const parsed = cancelPurchasedServiceSchema.safeParse({
+    id: formData.get("id"),
+    reason: formData.get("reason"),
+  });
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: "Validation failed",
+      issues: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const { id, reason } = parsed.data;
+
+  // Get the purchased service details before cancellation
+  const { data: purchasedService, error: fetchError } = await admin
+    .from("purchased_services")
+    .select(`
+      *,
+      services (name)
+    `)
+    .eq("id", id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch purchased service", fetchError);
+    return { success: false, error: "Purchased service not found" };
+  }
+
+  if (purchasedService.status === "cancelled") {
+    return { success: false, error: "Service is already cancelled" };
+  }
+
+  // Check if there are active session bookings
+  const { count, error: bookingError } = await admin
+    .from("session_bookings")
+    .select("*", { count: "exact", head: true })
+    .eq("purchased_service_id", id)
+    .in("status", ["pending", "confirmed"]);
+
+  if (bookingError) {
+    console.error("Failed to check session bookings", bookingError);
+    return { success: false, error: "Failed to check active bookings" };
+  }
+
+  if (count && count > 0) {
+    return { success: false, error: `Cannot cancel service with ${count} active booking(s). Please cancel the bookings first.` };
+  }
+
+  // Update the purchased service status to cancelled
+  const { error } = await admin
+    .from("purchased_services")
+    .update({
+      status: "cancelled",
+      notes: reason,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Failed to cancel purchased service", error);
+    return { success: false, error: error.message };
+  }
+
+  // Get member profile separately
+  const { data: memberProfile2 } = await admin
+    .from("profiles")
+    .select("first_name, last_name")
+    .eq("id", purchasedService.member_id)
+    .single();
+
+  const memberName = memberProfile2 
+    ? `${memberProfile2.first_name || ''} ${memberProfile2.last_name || ''}`.trim()
+    : 'Unknown Member';
+
+  // Log the cancellation
+  await appendAuditLog(
+    staff.profile.id,
+    "purchased_service.cancel",
+    "purchased_services",
+    id,
+    { 
+      service_name: purchasedService.services?.name,
+      sessions_remaining: purchasedService.sessions_remaining,
+      reason: reason 
+    },
+    `${purchasedService.services?.name} for ${memberName}`,
+    {
+      service_cancelled: {
+        before: `Status: ${purchasedService.status}`,
+        after: "Status: cancelled"
+      }
+    }
+  );
+
+  revalidatePath("/services");
+  return { success: true, message: "Purchased service cancelled successfully" };
+}
+
+export async function deletePurchasedServiceAction(formData: FormData): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+
+  const parsed = deletePurchasedServiceSchema.safeParse({
+    id: formData.get("id"),
+  });
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: "Validation failed",
+      issues: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const { id } = parsed.data;
+
+  // Get the purchased service details before deletion
+  const { data: purchasedService, error: fetchError } = await admin
+    .from("purchased_services")
+    .select(`
+      *,
+      services (name)
+    `)
+    .eq("id", id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch purchased service", fetchError);
+    return { success: false, error: "Purchased service not found" };
+  }
+
+  if (purchasedService.status !== "cancelled") {
+    return { success: false, error: "Only cancelled services can be deleted" };
+  }
+
+  // Check if there are any session bookings (even cancelled ones should be preserved for history)
+  const { count, error: bookingError } = await admin
+    .from("session_bookings")
+    .select("*", { count: "exact", head: true })
+    .eq("purchased_service_id", id);
+
+  if (bookingError) {
+    console.error("Failed to check session bookings", bookingError);
+    return { success: false, error: "Failed to check session bookings" };
+  }
+
+  if (count && count > 0) {
+    return { success: false, error: `Cannot delete service with ${count} session booking(s) in history. Please contact system administrator if deletion is necessary.` };
+  }
+
+  // Get member profile for audit log
+  const { data: memberProfile } = await admin
+    .from("profiles")
+    .select("first_name, last_name")
+    .eq("id", purchasedService.member_id)
+    .single();
+
+  const memberName = memberProfile 
+    ? `${memberProfile.first_name || ''} ${memberProfile.last_name || ''}`.trim()
+    : 'Unknown Member';
+
+  // Delete the purchased service
+  const { error } = await admin
+    .from("purchased_services")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("Failed to delete purchased service", error);
+    return { success: false, error: error.message };
+  }
+
+  // Log the deletion
+  await appendAuditLog(
+    staff.profile.id,
+    "purchased_service.delete",
+    "purchased_services",
+    id,
+    { 
+      service_name: purchasedService.services?.name,
+      sessions_total: purchasedService.sessions_total,
+      sessions_remaining: purchasedService.sessions_remaining,
+      original_status: purchasedService.status,
+      purchase_date: purchasedService.purchase_date
+    },
+    `${purchasedService.services?.name} for ${memberName}`,
+    {
+      service_deleted: {
+        before: `Cancelled service (${purchasedService.sessions_remaining}/${purchasedService.sessions_total} sessions remaining)`,
+        after: "Service permanently deleted"
+      }
+    }
+  );
+
+  revalidatePath("/services");
+  return { success: true, message: "Purchased service deleted successfully" };
 }

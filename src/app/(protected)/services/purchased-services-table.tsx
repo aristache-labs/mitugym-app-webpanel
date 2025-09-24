@@ -5,10 +5,14 @@ import { DataTable } from "@/components/data-table/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { PurchasedService, Service } from "@/types";
-import { Calendar, User, Package, Trash2 } from "lucide-react";
+import { Calendar, User, Package, Trash2, CheckCircle, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
+import { approvePurchasedServiceAction, cancelPurchasedServiceAction, deletePurchasedServiceAction } from "@/app/(protected)/actions";
 
 interface PurchasedServicesTableProps {
   purchasedServices: PurchasedService[];
@@ -17,34 +21,100 @@ interface PurchasedServicesTableProps {
 
 export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesTableProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [serviceToDelete, setServiceToDelete] = useState<PurchasedService | null>(null);
+  const [approveModalOpen, setApproveModalOpen] = useState(false);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<PurchasedService | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [approveNotes, setApproveNotes] = useState("");
+  const [cancelReason, setCancelReason] = useState("");
   const [isPending, startTransition] = useTransition();
 
   const handleDeleteClick = (service: PurchasedService) => {
-    setServiceToDelete(service);
+    setSelectedService(service);
     setDeleteModalOpen(true);
     setError(null);
   };
 
+  const handleApproveClick = (service: PurchasedService) => {
+    setSelectedService(service);
+    setApproveModalOpen(true);
+    setApproveNotes("");
+    setError(null);
+  };
+
+  const handleCancelClick = (service: PurchasedService) => {
+    setSelectedService(service);
+    setCancelModalOpen(true);
+    setCancelReason("");
+    setError(null);
+  };
+
   const handleDeleteConfirm = async () => {
-    if (!serviceToDelete) return;
+    if (!selectedService) return;
 
     startTransition(async () => {
       const formData = new FormData();
-      formData.append("id", serviceToDelete.id);
+      formData.append("id", selectedService.id);
 
       try {
-        // TODO: Implement deletePurchasedServiceAction
-        // const result = await deletePurchasedServiceAction(formData);
-        // 
-        // if (result.success) {
-        //   setDeleteModalOpen(false);
-        //   setServiceToDelete(null);
-        // } else {
-        //   setError(result.error);
-        // }
-        setError("Delete action not implemented yet");
+        const result = await deletePurchasedServiceAction(formData);
+        
+        if (result.success) {
+          setDeleteModalOpen(false);
+          setSelectedService(null);
+        } else {
+          setError(result.error);
+        }
+      } catch {
+        setError("An unexpected error occurred");
+      }
+    });
+  };
+
+  const handleApproveConfirm = async () => {
+    if (!selectedService) return;
+
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("id", selectedService.id);
+      if (approveNotes) {
+        formData.append("notes", approveNotes);
+      }
+
+      try {
+        const result = await approvePurchasedServiceAction(formData);
+        
+        if (result.success) {
+          setApproveModalOpen(false);
+          setSelectedService(null);
+          setApproveNotes("");
+        } else {
+          setError(result.error);
+        }
+      } catch {
+        setError("An unexpected error occurred");
+      }
+    });
+  };
+
+  const handleCancelConfirm = async () => {
+    if (!selectedService) return;
+
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("id", selectedService.id);
+      formData.append("reason", cancelReason);
+
+      try {
+        const result = await cancelPurchasedServiceAction(formData);
+        
+        if (result.success) {
+          setCancelModalOpen(false);
+          setSelectedService(null);
+          setCancelReason("");
+        } else {
+          setError(result.error);
+        }
       } catch {
         setError("An unexpected error occurred");
       }
@@ -173,8 +243,19 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                   variant="ghost" 
                   size="sm" 
                   className="text-green-600 hover:bg-green-50"
+                  onClick={() => handleApproveClick(service)}
                 >
+                  <CheckCircle className="h-4 w-4" />
                   Approve
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-destructive hover:bg-destructive/10"
+                  onClick={() => handleCancelClick(service)}
+                >
+                  <XCircle className="h-4 w-4" />
+                  Cancel
                 </Button>
               </>
             )}
@@ -225,12 +306,12 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
             Are you sure you want to permanently delete this cancelled purchased service?
           </p>
 
-          {serviceToDelete && (
+          {selectedService && (
             <div className="bg-muted/50 border border-border rounded-lg p-3">
               <div className="space-y-2 text-sm">
-                <div><strong>Service:</strong> {serviceToDelete.service?.name}</div>
-                <div><strong>Member:</strong> {serviceToDelete.member?.full_name}</div>
-                <div><strong>Purchase Date:</strong> {format(new Date(serviceToDelete.purchase_date), "PPp")}</div>
+                <div><strong>Service:</strong> {selectedService.service?.name}</div>
+                <div><strong>Member:</strong> {selectedService.member?.full_name}</div>
+                <div><strong>Purchase Date:</strong> {format(new Date(selectedService.purchase_date), "PPp")}</div>
                 <div><strong>Status:</strong> <Badge variant="outline" className="text-destructive">Cancelled</Badge></div>
               </div>
             </div>
@@ -245,7 +326,7 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
               variant="outline"
               onClick={() => {
                 setDeleteModalOpen(false);
-                setServiceToDelete(null);
+                setSelectedService(null);
                 setError(null);
               }}
               disabled={isPending}
@@ -258,6 +339,143 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
               disabled={isPending}
             >
               {isPending ? "Deleting..." : "Delete Service"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Approve Modal */}
+      <Modal
+        isOpen={approveModalOpen}
+        onClose={() => {
+          setApproveModalOpen(false);
+          setSelectedService(null);
+          setApproveNotes("");
+          setError(null);
+        }}
+        title="Approve Purchased Service"
+      >
+        <div className="space-y-4">
+          {error && (
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
+              <p className="text-sm text-destructive">{error}</p>
+            </div>
+          )}
+
+          <p className="text-sm text-muted-foreground">
+            Approve this purchased service to allow the member to book sessions.
+          </p>
+
+          {selectedService && (
+            <div className="bg-muted/50 border border-border rounded-lg p-3">
+              <div className="space-y-2 text-sm">
+                <div><strong>Service:</strong> {selectedService.service?.name}</div>
+                <div><strong>Member:</strong> {selectedService.member?.full_name}</div>
+                <div><strong>Sessions:</strong> {selectedService.sessions_total} total</div>
+                <div><strong>Purchase Date:</strong> {format(new Date(selectedService.purchase_date), "PPp")}</div>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="approve-notes">Approval Notes (Optional)</Label>
+            <Textarea
+              id="approve-notes"
+              placeholder="Add any notes about the approval..."
+              value={approveNotes}
+              onChange={(e) => setApproveNotes(e.target.value)}
+              rows={3}
+            />
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setApproveModalOpen(false);
+                setSelectedService(null);
+                setApproveNotes("");
+                setError(null);
+              }}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleApproveConfirm}
+              disabled={isPending}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {isPending ? "Approving..." : "Approve Service"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Cancel Modal */}
+      <Modal
+        isOpen={cancelModalOpen}
+        onClose={() => {
+          setCancelModalOpen(false);
+          setSelectedService(null);
+          setCancelReason("");
+          setError(null);
+        }}
+        title="Cancel Purchased Service"
+      >
+        <div className="space-y-4">
+          {error && (
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
+              <p className="text-sm text-destructive">{error}</p>
+            </div>
+          )}
+
+          <p className="text-sm text-muted-foreground">
+            Cancel this purchased service. This action will prevent the member from booking sessions for this service.
+          </p>
+
+          {selectedService && (
+            <div className="bg-muted/50 border border-border rounded-lg p-3">
+              <div className="space-y-2 text-sm">
+                <div><strong>Service:</strong> {selectedService.service?.name}</div>
+                <div><strong>Member:</strong> {selectedService.member?.full_name}</div>
+                <div><strong>Sessions Remaining:</strong> {selectedService.sessions_remaining}/{selectedService.sessions_total}</div>
+                <div><strong>Purchase Date:</strong> {format(new Date(selectedService.purchase_date), "PPp")}</div>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="cancel-reason">Cancellation Reason *</Label>
+            <Textarea
+              id="cancel-reason"
+              placeholder="Please provide a reason for cancelling this service..."
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              rows={3}
+              required
+            />
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setCancelModalOpen(false);
+                setSelectedService(null);
+                setCancelReason("");
+                setError(null);
+              }}
+              disabled={isPending}
+            >
+              Keep Service
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleCancelConfirm}
+              disabled={isPending || !cancelReason.trim()}
+            >
+              {isPending ? "Cancelling..." : "Cancel Service"}
             </Button>
           </div>
         </div>
