@@ -73,6 +73,7 @@ export type OccupancySnapshot = {
 // Service related types
 export type ServiceType = "personal_trainer" | "professional_massage";
 export type BookingStatus = "upcoming" | "completed" | "cancelled";
+export type PurchasedServiceStatus = "pending" | "approved" | "cancelled";
 
 export type Service = {
   id: string;
@@ -98,6 +99,23 @@ export type ServiceBooking = {
   booking_date: string;
   status: BookingStatus;
   sessions_remaining?: number | null;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+  // Relations
+  service?: Service;
+  member?: Member;
+};
+
+export type PurchasedService = {
+  id: string;
+  member_id: string;
+  service_id: string;
+  status: PurchasedServiceStatus;
+  sessions_total: number;
+  sessions_remaining: number;
+  purchase_date: string;
+  approved_date?: string | null;
   notes?: string | null;
   created_at: string;
   updated_at: string;

@@ -7,6 +7,7 @@ import type {
   MembershipPlan,
   NewsItem,
   OccupancySnapshot,
+  PurchasedService,
   ScheduleDay,
   Service,
   ServiceBooking,
@@ -500,70 +501,187 @@ export async function fetchServiceById(id: string): Promise<Service | null> {
   };
 }
 
-export async function fetchServiceBookings(): Promise<ServiceBooking[]> {
+export async function fetchPurchasedServices(): Promise<PurchasedService[]> {
   const admin = getSupabaseAdmin();
   if (!admin) {
     console.error("Supabase admin client not available");
     return [];
   }
 
-  const { data, error } = await admin
-    .from("service_bookings")
+  // First, get purchased services with services data
+  const { data: purchasedData, error: purchasedError } = await admin
+    .from("purchased_services")
     .select(`
       *,
-      services (*),
-      profiles (*)
+      services (*)
     `)
-    .order("booking_date", { ascending: false })
-    .order("created_at", { ascending: false });
+    .order("purchase_date", { ascending: false });
 
-  if (error) {
-    console.error("Failed to fetch service bookings", error);
+  if (purchasedError) {
+    console.error("Failed to fetch purchased services", purchasedError);
     return [];
   }
 
-  return data.map((booking) => ({
-    id: booking.id,
-    member_id: booking.member_id,
-    service_id: booking.service_id,
-    booking_date: booking.booking_date,
-    status: booking.status,
-    sessions_remaining: booking.sessions_remaining,
-    notes: booking.notes,
-    created_at: booking.created_at,
-    updated_at: booking.updated_at,
-    service: booking.services ? {
-      id: booking.services.id,
-      name: booking.services.name,
-      service_type: booking.services.service_type,
-      session_type: booking.services.session_type,
-      duration_minutes: booking.services.duration_minutes,
-      price: parseFloat(booking.services.price),
-      description: booking.services.description,
-      requires_advance_booking: booking.services.requires_advance_booking,
-      advance_booking_hours: booking.services.advance_booking_hours,
-      max_sessions: booking.services.max_sessions,
-      is_active: booking.services.is_active,
-      display_order: booking.services.display_order,
-      created_at: booking.services.created_at,
-      updated_at: booking.services.updated_at,
+  if (!purchasedData || purchasedData.length === 0) {
+    return [];
+  }
+
+  // Get unique member IDs
+  const memberIds = [...new Set(purchasedData.map(p => p.member_id))];
+
+  // Fetch profiles for these members
+  const { data: profilesData, error: profilesError } = await admin
+    .from("profiles")
+    .select("*")
+    .in("id", memberIds);
+
+  if (profilesError) {
+    console.error("Failed to fetch member profiles", profilesError);
+  }
+
+  // Create a map of member profiles
+  const profilesMap = new Map();
+  if (profilesData) {
+    profilesData.forEach(profile => {
+      profilesMap.set(profile.id, profile);
+    });
+  }
+
+  return purchasedData.map((purchase) => ({
+    id: purchase.id,
+    member_id: purchase.member_id,
+    service_id: purchase.service_id,
+    status: purchase.status,
+    sessions_total: purchase.sessions_total,
+    sessions_remaining: purchase.sessions_remaining,
+    purchase_date: purchase.purchase_date,
+    approved_date: purchase.approved_date,
+    notes: purchase.notes,
+    created_at: purchase.created_at,
+    updated_at: purchase.updated_at,
+    service: purchase.services ? {
+      id: purchase.services.id,
+      name: purchase.services.name,
+      service_type: purchase.services.service_type,
+      session_type: purchase.services.session_type,
+      duration_minutes: purchase.services.duration_minutes,
+      price: parseFloat(purchase.services.price),
+      description: purchase.services.description,
+      requires_advance_booking: purchase.services.requires_advance_booking,
+      advance_booking_hours: purchase.services.advance_booking_hours,
+      max_sessions: purchase.services.max_sessions,
+      is_active: purchase.services.is_active,
+      display_order: purchase.services.display_order,
+      created_at: purchase.services.created_at,
+      updated_at: purchase.services.updated_at,
     } : undefined,
-    member: booking.profiles ? {
-      id: booking.profiles.id,
-      full_name: `${booking.profiles.first_name || ""} ${booking.profiles.last_name || ""}`.trim(),
-      email: booking.profiles.email,
-      phone: booking.profiles.phone,
-      gender: booking.profiles.gender,
-      status: booking.profiles.membership_status,
-      plan_id: null, // Not needed for bookings
-      starts_at: booking.profiles.plan_start_date,
-      expires_at: booking.profiles.expiry_date,
-      created_at: booking.profiles.created_at,
+    member: profilesMap.has(purchase.member_id) ? {
+      id: purchase.member_id,
+      full_name: `${profilesMap.get(purchase.member_id).first_name || ""} ${profilesMap.get(purchase.member_id).last_name || ""}`.trim() || null,
+      email: profilesMap.get(purchase.member_id).email,
+      phone: profilesMap.get(purchase.member_id).phone,
+      gender: profilesMap.get(purchase.member_id).gender,
+      status: profilesMap.get(purchase.member_id).membership_status,
+      plan_id: profilesMap.get(purchase.member_id).membership_plan,
+      plan_name: profilesMap.get(purchase.member_id).membership_plan,
+      starts_at: profilesMap.get(purchase.member_id).plan_start_date,
+      expires_at: profilesMap.get(purchase.member_id).expiry_date,
+      created_at: profilesMap.get(purchase.member_id).created_at,
     } : undefined,
   }));
 }
 
-export async function fetchTodaysServiceBookings(): Promise<ServiceBooking[]> {
+export async function fetchSessionBookings(): Promise<ServiceBooking[]> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    console.error("Supabase admin client not available");
+    return [];
+  }
+
+  // First, get session bookings with purchased services data
+  const { data: bookingsData, error: bookingsError } = await admin
+    .from("session_bookings")
+    .select(`
+      *,
+      purchased_services (
+        services (*)
+      )
+    `)
+    .order("booking_date", { ascending: false });
+
+  if (bookingsError) {
+    console.error("Failed to fetch session bookings", bookingsError);
+    return [];
+  }
+
+  if (!bookingsData || bookingsData.length === 0) {
+    return [];
+  }
+
+  // Get unique member IDs
+  const memberIds = [...new Set(bookingsData.map(b => b.member_id))];
+
+  // Fetch profiles for these members
+  const { data: profilesData, error: profilesError } = await admin
+    .from("profiles")
+    .select("*")
+    .in("id", memberIds);
+
+  if (profilesError) {
+    console.error("Failed to fetch member profiles", profilesError);
+  }
+
+  // Create a map of member profiles
+  const profilesMap = new Map();
+  if (profilesData) {
+    profilesData.forEach(profile => {
+      profilesMap.set(profile.id, profile);
+    });
+  }
+
+  return bookingsData.map((booking) => ({
+    id: booking.id,
+    member_id: booking.member_id,
+    service_id: booking.purchased_services?.services?.id || "",
+    booking_date: booking.booking_date,
+    status: booking.status === "confirmed" ? "upcoming" : booking.status,
+    sessions_remaining: null,
+    notes: booking.notes,
+    created_at: booking.created_at,
+    updated_at: booking.updated_at,
+    service: booking.purchased_services?.services ? {
+      id: booking.purchased_services.services.id,
+      name: booking.purchased_services.services.name,
+      service_type: booking.purchased_services.services.service_type,
+      session_type: booking.purchased_services.services.session_type,
+      duration_minutes: booking.purchased_services.services.duration_minutes,
+      price: parseFloat(booking.purchased_services.services.price),
+      description: booking.purchased_services.services.description,
+      requires_advance_booking: booking.purchased_services.services.requires_advance_booking,
+      advance_booking_hours: booking.purchased_services.services.advance_booking_hours,
+      max_sessions: booking.purchased_services.services.max_sessions,
+      is_active: booking.purchased_services.services.is_active,
+      display_order: booking.purchased_services.services.display_order,
+      created_at: booking.purchased_services.services.created_at,
+      updated_at: booking.purchased_services.services.updated_at,
+    } : undefined,
+    member: profilesMap.has(booking.member_id) ? {
+      id: booking.member_id,
+      full_name: `${profilesMap.get(booking.member_id).first_name || ""} ${profilesMap.get(booking.member_id).last_name || ""}`.trim() || null,
+      email: profilesMap.get(booking.member_id).email,
+      phone: profilesMap.get(booking.member_id).phone,
+      gender: profilesMap.get(booking.member_id).gender,
+      status: profilesMap.get(booking.member_id).membership_status,
+      plan_id: profilesMap.get(booking.member_id).membership_plan,
+      plan_name: profilesMap.get(booking.member_id).membership_plan,
+      starts_at: profilesMap.get(booking.member_id).plan_start_date,
+      expires_at: profilesMap.get(booking.member_id).expiry_date,
+      created_at: profilesMap.get(booking.member_id).created_at,
+    } : undefined,
+  }));
+}
+
+export async function fetchTodaysSessionBookings(): Promise<ServiceBooking[]> {
   const admin = getSupabaseAdmin();
   if (!admin) {
     console.error("Supabase admin client not available");
@@ -573,60 +691,87 @@ export async function fetchTodaysServiceBookings(): Promise<ServiceBooking[]> {
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];
 
-  const { data, error } = await admin
-    .from("service_bookings")
+  const { data: bookingsData, error: bookingsError } = await admin
+    .from("session_bookings")
     .select(`
       *,
-      services (*),
-      profiles (*)
+      purchased_services (
+        services (*)
+      )
     `)
-    .eq("status", "upcoming")
+    .in("status", ["pending", "confirmed"])
     .gte("booking_date", `${today}T00:00:00Z`)
     .lt("booking_date", `${today}T23:59:59Z`)
     .order("booking_date", { ascending: true });
 
-  if (error) {
-    console.error("Failed to fetch today's service bookings", error);
+  if (bookingsError) {
+    console.error("Failed to fetch today's session bookings", bookingsError);
     return [];
   }
 
-  return data.map((booking) => ({
+  if (!bookingsData || bookingsData.length === 0) {
+    return [];
+  }
+
+  // Get unique member IDs
+  const memberIds = [...new Set(bookingsData.map(b => b.member_id))];
+
+  // Fetch profiles for these members
+  const { data: profilesData, error: profilesError } = await admin
+    .from("profiles")
+    .select("*")
+    .in("id", memberIds);
+
+  if (profilesError) {
+    console.error("Failed to fetch member profiles", profilesError);
+  }
+
+  // Create a map of member profiles
+  const profilesMap = new Map();
+  if (profilesData) {
+    profilesData.forEach(profile => {
+      profilesMap.set(profile.id, profile);
+    });
+  }
+
+  return bookingsData.map((booking) => ({
     id: booking.id,
     member_id: booking.member_id,
-    service_id: booking.service_id,
+    service_id: booking.purchased_services?.services?.id || "",
     booking_date: booking.booking_date,
-    status: booking.status,
-    sessions_remaining: booking.sessions_remaining,
+    status: booking.status === "confirmed" ? "upcoming" : booking.status,
+    sessions_remaining: null,
     notes: booking.notes,
     created_at: booking.created_at,
     updated_at: booking.updated_at,
-    service: booking.services ? {
-      id: booking.services.id,
-      name: booking.services.name,
-      service_type: booking.services.service_type,
-      session_type: booking.services.session_type,
-      duration_minutes: booking.services.duration_minutes,
-      price: parseFloat(booking.services.price),
-      description: booking.services.description,
-      requires_advance_booking: booking.services.requires_advance_booking,
-      advance_booking_hours: booking.services.advance_booking_hours,
-      max_sessions: booking.services.max_sessions,
-      is_active: booking.services.is_active,
-      display_order: booking.services.display_order,
-      created_at: booking.services.created_at,
-      updated_at: booking.services.updated_at,
+    service: booking.purchased_services?.services ? {
+      id: booking.purchased_services.services.id,
+      name: booking.purchased_services.services.name,
+      service_type: booking.purchased_services.services.service_type,
+      session_type: booking.purchased_services.services.session_type,
+      duration_minutes: booking.purchased_services.services.duration_minutes,
+      price: parseFloat(booking.purchased_services.services.price),
+      description: booking.purchased_services.services.description,
+      requires_advance_booking: booking.purchased_services.services.requires_advance_booking,
+      advance_booking_hours: booking.purchased_services.services.advance_booking_hours,
+      max_sessions: booking.purchased_services.services.max_sessions,
+      is_active: booking.purchased_services.services.is_active,
+      display_order: booking.purchased_services.services.display_order,
+      created_at: booking.purchased_services.services.created_at,
+      updated_at: booking.purchased_services.services.updated_at,
     } : undefined,
-    member: booking.profiles ? {
-      id: booking.profiles.id,
-      full_name: `${booking.profiles.first_name || ""} ${booking.profiles.last_name || ""}`.trim(),
-      email: booking.profiles.email,
-      phone: booking.profiles.phone,
-      gender: booking.profiles.gender,
-      status: booking.profiles.membership_status,
-      plan_id: null, // Not needed for bookings
-      starts_at: booking.profiles.plan_start_date,
-      expires_at: booking.profiles.expiry_date,
-      created_at: booking.profiles.created_at,
+    member: profilesMap.has(booking.member_id) ? {
+      id: booking.member_id,
+      full_name: `${profilesMap.get(booking.member_id).first_name || ""} ${profilesMap.get(booking.member_id).last_name || ""}`.trim() || null,
+      email: profilesMap.get(booking.member_id).email,
+      phone: profilesMap.get(booking.member_id).phone,
+      gender: profilesMap.get(booking.member_id).gender,
+      status: profilesMap.get(booking.member_id).membership_status,
+      plan_id: profilesMap.get(booking.member_id).membership_plan,
+      plan_name: profilesMap.get(booking.member_id).membership_plan,
+      starts_at: profilesMap.get(booking.member_id).plan_start_date,
+      expires_at: profilesMap.get(booking.member_id).expiry_date,
+      created_at: profilesMap.get(booking.member_id).created_at,
     } : undefined,
   }));
 }

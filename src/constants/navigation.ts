@@ -1,10 +1,11 @@
-import { Activity, CalendarClock, Home, IdCard, LogOut, Newspaper, Settings, Users, Briefcase } from "lucide-react";
+import { Activity, CalendarClock, Home, IdCard, LogOut, Newspaper, Settings, Users, Briefcase, Calendar } from "lucide-react";
 
 export const NAVIGATION = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
   { label: "Members", href: "/members", icon: Users },
   { label: "Membership Plans", href: "/plans", icon: IdCard },
   { label: "Services", href: "/services", icon: Briefcase },
+  { label: "Bookings", href: "/bookings", icon: Calendar },
   { label: "Check-ins", href: "/checkins", icon: Activity },
   { label: "News", href: "/news", icon: Newspaper },
   { label: "Schedule", href: "/schedule", icon: CalendarClock },

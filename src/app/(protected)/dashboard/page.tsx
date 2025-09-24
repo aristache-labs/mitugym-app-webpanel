@@ -1,4 +1,4 @@
-import { fetchCheckIns, fetchDashboardMetrics, fetchNews, fetchTodaysServiceBookings, fetchSchedule } from "@/lib/data";
+import { fetchCheckIns, fetchDashboardMetrics, fetchNews, fetchTodaysSessionBookings, fetchSchedule } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { OccupancyChart } from "@/components/dashboard/occupancy-chart";
@@ -11,7 +11,7 @@ export default async function DashboardPage() {
     fetchDashboardMetrics(),
     fetchCheckIns(),
     fetchNews(),
-    fetchTodaysServiceBookings(),
+    fetchTodaysSessionBookings(),
     fetchSchedule(),
   ]);
 
