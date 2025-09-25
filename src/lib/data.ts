@@ -441,10 +441,12 @@ export async function fetchOccupancy(): Promise<OccupancySnapshot> {
 }
 
 export async function fetchDashboardMetrics() {
-  const [members, checkIns, occupancy] = await Promise.all([
+  const [members, checkIns, occupancy, sessionBookings, purchasedServices] = await Promise.all([
     fetchMembers(),
     fetchCheckIns(),
     fetchOccupancy(),
+    fetchSessionBookings(),
+    fetchPurchasedServices(),
   ]);
 
   const activeMembers = members.filter((member) => member.status === "active").length;
@@ -460,10 +462,18 @@ export async function fetchDashboardMetrics() {
     return new Date(checkIn.checked_in_at).getTime() > Date.now() - 1000 * 60 * 60;
   }).length;
 
+  // Count pending session bookings
+  const pendingBookings = sessionBookings.filter((booking) => booking.status === "pending").length;
+
+  // Count pending purchased services (those awaiting approval)
+  const pendingServices = purchasedServices.filter((service) => service.status === "pending").length;
+
   return {
     occupancy: occupancyNow,
     activeMembers,
     expiringSoon,
+    pendingBookings,
+    pendingServices,
   };
 }
 

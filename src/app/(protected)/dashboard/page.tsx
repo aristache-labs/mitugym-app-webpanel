@@ -5,6 +5,7 @@ import { OccupancyChart } from "@/components/dashboard/occupancy-chart";
 import { UpcomingServicesCard } from "@/components/dashboard/upcoming-services-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Users, UserCheck, AlertTriangle, Clock, Settings } from "lucide-react";
 
 export default async function DashboardPage() {
   const [metrics, checkIns, news, todaysServices, schedule] = await Promise.all([
@@ -20,11 +21,38 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Premium Metrics Section */}
-      <section className="grid gap-6 md:grid-cols-3">
-        <MetricCard title="In Gym Now" value={metrics.occupancy} description="Live floor traffic" />
-        <MetricCard title="Active members" value={metrics.activeMembers} description="Members in good standing" />
-        <MetricCard title="Expiring this week" value={metrics.expiringSoon} description="Memberships to renew" />
+      {/* Premium Metrics Section - Compact Single Row */}
+      <section className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <MetricCard 
+          title="In Gym Now" 
+          value={metrics.occupancy} 
+          description="Live floor traffic" 
+          icon={Users}
+        />
+        <MetricCard 
+          title="Active Members" 
+          value={metrics.activeMembers} 
+          description="Members in good standing" 
+          icon={UserCheck}
+        />
+        <MetricCard 
+          title="Expiring This Week" 
+          value={metrics.expiringSoon} 
+          description="Memberships to renew" 
+          icon={AlertTriangle}
+        />
+        <MetricCard 
+          title="Pending Bookings" 
+          value={metrics.pendingBookings} 
+          description="Awaiting confirmation" 
+          icon={Clock}
+        />
+        <MetricCard 
+          title="Pending Services" 
+          value={metrics.pendingServices} 
+          description="Awaiting approval" 
+          icon={Settings}
+        />
       </section>
 
       {/* Main Content Grid */}
