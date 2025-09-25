@@ -225,9 +225,11 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
         const booking = row.original;
         return (
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm">
-              View
-            </Button>
+            <Link href={`/bookings/${booking.id}`}>
+              <Button variant="ghost" size="sm">
+                View
+              </Button>
+            </Link>
             {booking.status === "pending" && (
               <>
                 <Link href={`/bookings/${booking.id}/edit`}>
