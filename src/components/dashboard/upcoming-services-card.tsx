@@ -26,9 +26,9 @@ export function UpcomingServicesCard({ bookings }: UpcomingServicesCardProps) {
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Calendar className="h-4 w-4" />
-          Today&apos;s Services
+          Today&apos;s Bookings
         </CardTitle>
-        <Link href="/services" className="text-xs text-muted-foreground hover:text-foreground">
+        <Link href="/bookings" className="text-xs text-muted-foreground hover:text-foreground">
           View all →
         </Link>
       </CardHeader>
@@ -36,7 +36,7 @@ export function UpcomingServicesCard({ bookings }: UpcomingServicesCardProps) {
         {bookings.length === 0 ? (
           <div className="text-center py-6">
             <Briefcase className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">No services scheduled for today</p>
+            <p className="text-sm text-muted-foreground">No bookings scheduled for today</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -47,25 +47,25 @@ export function UpcomingServicesCard({ bookings }: UpcomingServicesCardProps) {
               >
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs font-medium">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-semibold">
                       {format(new Date(booking.booking_date), "HH:mm")}
                     </span>
                   </div>
                   
                   <div className="flex-1">
+                    <div className="flex items-center gap-1 mb-1">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-semibold text-base text-text">
+                        {booking.member?.full_name || "Unknown Member"}
+                      </span>
+                    </div>
+                    
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm">
+                      <span className="text-sm text-muted-foreground">
                         {booking.service?.name || "Unknown Service"}
                       </span>
                       {booking.service?.service_type && getServiceTypeBadge(booking.service.service_type)}
-                    </div>
-                    
-                    <div className="flex items-center gap-1 mt-1">
-                      <User className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">
-                        {booking.member?.full_name || "Unknown Member"}
-                      </span>
                     </div>
                   </div>
                 </div>
@@ -83,10 +83,10 @@ export function UpcomingServicesCard({ bookings }: UpcomingServicesCardProps) {
             {bookings.length > 5 && (
               <div className="text-center pt-2">
                 <Link 
-                  href="/services" 
+                  href="/bookings" 
                   className="text-xs text-muted-foreground hover:text-foreground"
                 >
-                  +{bookings.length - 5} more services today
+                  +{bookings.length - 5} more bookings today
                 </Link>
               </div>
             )}
