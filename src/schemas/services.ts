@@ -91,6 +91,21 @@ export const cancelSessionBookingSchema = z.object({
   reason: z.string().min(1, "Cancellation reason is required").max(1000, "Reason too long"),
 });
 
+export const updateSessionBookingSchema = z.object({
+  id: z.string().uuid("Invalid booking ID"),
+  booking_date: z.string().min(1, "Booking date is required").refine(
+    (val) => {
+      // Allow both datetime-local format (YYYY-MM-DDTHH:mm) and ISO format
+      const datetimeLocalRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+      const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/;
+      return datetimeLocalRegex.test(val) || isoRegex.test(val) || !isNaN(Date.parse(val));
+    },
+    { message: "Invalid booking date format" }
+  ),
+  status: bookingStatusSchema.optional(),
+  notes: z.string().max(1000, "Notes too long").optional(),
+});
+
 // Types inferred from schemas
 export type CreateServiceRequest = z.infer<typeof createServiceSchema>;
 export type UpdateServiceRequest = z.infer<typeof updateServiceSchema>;
@@ -103,3 +118,4 @@ export type CreatePurchasedServiceRequest = z.infer<typeof createPurchasedServic
 export type ConfirmSessionBookingRequest = z.infer<typeof confirmSessionBookingSchema>;
 export type CompleteSessionBookingRequest = z.infer<typeof completeSessionBookingSchema>;
 export type CancelSessionBookingRequest = z.infer<typeof cancelSessionBookingSchema>;
+export type UpdateSessionBookingRequest = z.infer<typeof updateSessionBookingSchema>;

@@ -40,7 +40,8 @@ export {
 export {
   confirmSessionBookingAction,
   completeSessionBookingAction,
-  cancelSessionBookingAction
+  cancelSessionBookingAction,
+  updateSessionBookingAction
 } from "./services/session-booking-actions";
 
 // System actions (auth, schedule, news, checkins, audit logs)
