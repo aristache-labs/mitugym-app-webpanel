@@ -1,5 +1,4 @@
-import { MembersTable } from "@/app/(protected)/members/members-table";
-import { MembersPageClient } from "./members-page-client";
+import { MembersPageWrapper } from "./members-page-wrapper";
 import { fetchMembers } from "@/lib/data";
 import { Users } from "lucide-react";
 
@@ -27,7 +26,7 @@ async function fetchExpiringMembersCount() {
     const expires = new Date(member.expires_at).getTime();
     const romaniaTime = new Date().getTime() + (3 * 60 * 60 * 1000); // Add 3 hours for UTC+3
     const week = 1000 * 60 * 60 * 24 * 7;
-    return expires - romaniaTime < week && expires > romaniaTime;
+    return expires - romaniaTime <= week && expires > romaniaTime;
   }).length;
 }
 
@@ -52,12 +51,7 @@ export default async function MembersPage() {
         </div>
       </div>
 
-      <MembersPageClient members={members} expiringCount={expiringCount} />
-
-      {/* Members Table */}
-      <section>
-        <MembersTable members={members} />
-      </section>
+      <MembersPageWrapper members={members} expiringCount={expiringCount} />
     </div>
   );
 }
