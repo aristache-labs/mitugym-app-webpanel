@@ -215,3 +215,82 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
 
   return { success: true, message: "Member updated" };
 }
+
+export async function deleteMemberAction(memberId: string): Promise<ActionResult> {
+  if (!memberId || typeof memberId !== 'string') {
+    return { success: false, error: "Invalid member ID" };
+  }
+
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+
+  try {
+    // First, get the member data for audit logging and auth user deletion
+    const { data: member, error: fetchError } = await admin
+      .from("profiles")
+      .select("id, first_name, last_name, email")
+      .eq("id", memberId)
+      .single();
+
+    if (fetchError || !member) {
+      return { success: false, error: "Member not found" };
+    }
+
+    const full_name = `${member.first_name || ''} ${member.last_name || ''}`.trim() || 'Unknown Member';
+
+    // Delete from profiles table (this will cascade to related tables due to foreign keys)
+    const { error: deleteError } = await admin
+      .from("profiles")
+      .delete()
+      .eq("id", memberId);
+
+    if (deleteError) {
+      console.error("Failed to delete member profile:", deleteError);
+      return { success: false, error: "Failed to delete member profile" };
+    }
+
+    // Delete the auth user as well
+    try {
+      const { error: authDeleteError } = await admin.auth.admin.deleteUser(memberId);
+      if (authDeleteError) {
+        console.warn("Failed to delete auth user (profile already deleted):", authDeleteError);
+        // Don't fail the entire operation if auth user deletion fails
+      }
+    } catch (authError) {
+      console.warn("Auth user deletion failed:", authError);
+      // Continue - the profile deletion is more important
+    }
+
+    // Log the deletion
+    await appendAuditLog(
+      staff.profile.id,
+      "member.delete",
+      "profiles",
+      memberId,
+      {
+        id: memberId,
+        email: member.email,
+        deleted_by: staff.profile.full_name || staff.profile.id
+      },
+      full_name, // resource name
+      {
+        member: { before: full_name, after: null },
+        status: { before: "active", after: "deleted" }
+      }
+    );
+
+    revalidatePath("/members");
+    
+    return { success: true, message: "Member deleted successfully" };
+  } catch (error) {
+    console.error("Delete member error:", error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Failed to delete member" 
+    };
+  }
+}
