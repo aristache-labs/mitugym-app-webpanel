@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ServiceBooking } from "@/types";
-import { Calendar, Clock, User, Briefcase } from "lucide-react";
+import { Calendar, Clock, Briefcase } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 
@@ -22,71 +22,79 @@ export function UpcomingServicesCard({ bookings }: UpcomingServicesCardProps) {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
-          <Calendar className="h-4 w-4" />
+    <Card className="bg-card/95 backdrop-blur-sm border-surface/30 shadow-2xl shadow-black/20">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b border-surface/20 bg-gradient-to-r from-primary/5 to-secondary/5">
+        <CardTitle className="text-lg font-semibold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-primary" />
           Today&apos;s Bookings
         </CardTitle>
-        <Link href="/bookings" className="text-xs text-muted-foreground hover:text-foreground">
+        <Link 
+          href="/bookings" 
+          className="text-xs text-muted/80 hover:text-primary transition-colors font-medium bg-surface/60 px-3 py-1.5 rounded-full hover:bg-primary/10 border border-surface/40 hover:border-primary/30"
+        >
           View all →
         </Link>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6">
         {bookings.length === 0 ? (
-          <div className="text-center py-6">
-            <Briefcase className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">No bookings scheduled for today</p>
+          <div className="text-center py-12">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+              <Briefcase className="h-8 w-8 text-primary/60" />
+            </div>
+            <p className="text-sm text-muted/90">No bookings scheduled for today</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {bookings.slice(0, 5).map((booking) => (
               <div
                 key={booking.id}
-                className="flex items-center justify-between p-3 rounded-lg border border-border/50 hover:bg-muted/50 transition-colors"
+                className="group flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
               >
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-semibold">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-xl border border-primary/20">
+                    <Clock className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-bold text-primary">
                       {format(new Date(booking.booking_date), "HH:mm")}
                     </span>
                   </div>
                   
                   <div className="flex-1">
-                    <div className="flex items-center gap-1 mb-1">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-semibold text-base text-text">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 text-primary font-semibold text-xs">
+                        {(booking.member?.full_name || "U").charAt(0).toUpperCase()}
+                      </div>
+                      <span className="font-semibold text-base text-text group-hover:text-primary transition-colors">
                         {booking.member?.full_name || "Unknown Member"}
                       </span>
                     </div>
                     
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 ml-10">
+                      <span className="text-sm text-muted/90">
                         {booking.service?.name || "Unknown Service"}
                       </span>
                       {booking.service?.service_type && getServiceTypeBadge(booking.service.service_type)}
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="text-right">
                   {booking.sessions_remaining && booking.sessions_remaining > 0 && (
-                    <div className="text-xs text-muted-foreground">
+                    <div className="bg-secondary/20 text-secondary px-2 py-1 rounded-lg text-xs font-medium border border-secondary/30">
                       {booking.sessions_remaining} left
                     </div>
                   )}
                 </div>
               </div>
             ))}
-            
+
             {bookings.length > 5 && (
-              <div className="text-center pt-2">
-                <Link 
-                  href="/bookings" 
-                  className="text-xs text-muted-foreground hover:text-foreground"
+              <div className="text-center pt-4">
+                <Link
+                  href="/bookings"
+                  className="inline-flex items-center gap-2 text-sm text-muted/80 hover:text-primary transition-colors font-medium bg-surface/60 px-4 py-2 rounded-full hover:bg-primary/10 border border-surface/40 hover:border-primary/30"
                 >
-                  +{bookings.length - 5} more bookings today
+                  <span>+{bookings.length - 5} more bookings today</span>
+                  <Calendar className="h-4 w-4" />
                 </Link>
               </div>
             )}

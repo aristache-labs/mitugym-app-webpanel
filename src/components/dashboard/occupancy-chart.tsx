@@ -78,24 +78,54 @@ export function OccupancyChart({ checkIns, schedule }: { checkIns: CheckIn[]; sc
   const data = buildTrend(checkIns, schedule);
   
   return (
-    <Card className="bg-card/90">
-      <CardHeader>
-        <CardTitle className="text-lg">Today&apos;s traffic</CardTitle>
+    <Card className="bg-card/95 backdrop-blur-sm border-surface/30 shadow-2xl shadow-black/20">
+      <CardHeader className="border-b border-surface/20 bg-gradient-to-r from-primary/5 to-secondary/5">
+        <CardTitle className="text-lg font-semibold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent">
+          Today&apos;s Traffic
+        </CardTitle>
       </CardHeader>
-      <CardContent className="h-[220px]">
+      <CardContent className="h-[280px] p-6">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
+          <AreaChart data={data} margin={{ top: 20, right: 20, left: 10, bottom: 10 }}>
             <defs>
               <linearGradient id="occupancyGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#4dd4d4" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#4dd4d4" stopOpacity={0} />
+                <stop offset="0%" stopColor="#4dd4d4" stopOpacity={0.9} />
+                <stop offset="50%" stopColor="#4dd4d4" stopOpacity={0.4} />
+                <stop offset="100%" stopColor="#4dd4d4" stopOpacity={0.05} />
               </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge> 
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
             </defs>
-            <XAxis dataKey="time" stroke="#b3d9d9" fontSize={12} tickLine={false} axisLine={false} />
-            <YAxis stroke="#b3d9d9" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+            <XAxis 
+              dataKey="time" 
+              stroke="rgba(77,212,212,0.7)" 
+              fontSize={12} 
+              tickLine={false} 
+              axisLine={false}
+              tick={{ fill: 'rgba(77,212,212,0.8)' }}
+            />
+            <YAxis 
+              stroke="rgba(77,212,212,0.7)" 
+              fontSize={12} 
+              tickLine={false} 
+              axisLine={false} 
+              allowDecimals={false}
+              tick={{ fill: 'rgba(77,212,212,0.8)' }}
+            />
             <Tooltip
-              contentStyle={{ background: "#141A1A", borderRadius: 12, border: "1px solid rgba(77,212,212,0.3)" }}
-              labelStyle={{ color: "#4dd4d4" }}
+              contentStyle={{ 
+                background: "rgba(20, 26, 26, 0.95)", 
+                borderRadius: 16, 
+                border: "1px solid rgba(77,212,212,0.4)",
+                backdropFilter: "blur(12px)",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.5)"
+              }}
+              labelStyle={{ color: "#4dd4d4", fontWeight: "600" }}
               formatter={(value: unknown) => {
                 if (value === null) return ["No data yet", "Future"];
                 return [`${value} people`, "In Gym"];
@@ -107,8 +137,11 @@ export function OccupancyChart({ checkIns, schedule }: { checkIns: CheckIn[]; sc
               dataKey="total" 
               stroke="#4dd4d4" 
               fill="url(#occupancyGradient)" 
-              strokeWidth={2}
+              strokeWidth={3}
               connectNulls={false}
+              filter="url(#glow)"
+              dot={{ fill: "#4dd4d4", strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, fill: "#4dd4d4", stroke: "#fff", strokeWidth: 2 }}
             />
           </AreaChart>
         </ResponsiveContainer>
