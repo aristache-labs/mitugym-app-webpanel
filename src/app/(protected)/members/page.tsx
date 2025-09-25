@@ -24,9 +24,9 @@ async function fetchExpiringMembersCount() {
   return members.filter((member) => {
     if (!member.expires_at) return false;
     const expires = new Date(member.expires_at).getTime();
-    const romaniaTime = new Date().getTime() + (3 * 60 * 60 * 1000); // Add 3 hours for UTC+3
-    const week = 1000 * 60 * 60 * 24 * 7;
-    return expires - romaniaTime <= week && expires > romaniaTime;
+    const now = new Date().getTime();
+    const week = 7 * 24 * 60 * 60 * 1000;
+    return expires - now <= week && expires > now;
   }).length;
 }
 

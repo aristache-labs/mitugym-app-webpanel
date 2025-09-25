@@ -1,16 +1,26 @@
 import { AuditLogTable } from "@/components/settings/audit-log-table";
 import { ClearAuditLogsButton } from "@/components/settings/clear-audit-logs-button";
+import { TimezoneSettings } from "@/components/settings/timezone-settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchAuditLogs } from "@/lib/data";
+import { getSetting } from "@/lib/settings";
 
 export const metadata = {
   title: "Settings",
 };
 
 export default async function SettingsPage() {
-  const logs = await fetchAuditLogs();
+  const [logs, currentTimezone] = await Promise.all([
+    fetchAuditLogs(),
+    getSetting<string>('timezone').then(tz => tz || 'Europe/Bucharest'),
+  ]);
+
   return (
     <div className="space-y-6">
+      {/* Timezone Settings */}
+      <TimezoneSettings currentTimezone={currentTimezone} />
+
+      {/* Audit Log */}
       <Card className="bg-card/90">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle>Audit log</CardTitle>
@@ -20,6 +30,8 @@ export default async function SettingsPage() {
           <AuditLogTable entries={logs} />
         </CardContent>
       </Card>
+
+      {/* Integrations */}
       <Card className="bg-card/90">
         <CardHeader>
           <CardTitle>Integrations</CardTitle>

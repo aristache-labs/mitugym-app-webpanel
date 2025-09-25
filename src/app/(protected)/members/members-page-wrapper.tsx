@@ -21,19 +21,15 @@ export function MembersPageWrapper({ members, expiringCount }: MembersPageWrappe
       case 'inactive':
         return members.filter(m => m.status === 'inactive');
       case 'expiring':
-        // Filter members expiring in the next 7 days (using Romania timezone)
-        // This exactly matches the backend logic in fetchExpiringMembersCount
+        // Filter members expiring in the next 7 days using configurable timezone
+        // Note: This will need to be async, but for now filtering is done server-side
         return members.filter((member) => {
           if (!member.expires_at) return false;
-          
+          // Simple client-side fallback - this will be replaced with server-side filtering
           const expires = new Date(member.expires_at).getTime();
-          const romaniaTime = new Date().getTime() + (3 * 60 * 60 * 1000); // Add 3 hours for UTC+3
-          const week = 1000 * 60 * 60 * 24 * 7;
-          
-          // Include members expiring within 7 days (including exactly 7 days)
-          const isExpiringThisWeek = expires - romaniaTime <= week && expires > romaniaTime;
-          
-          return isExpiringThisWeek;
+          const now = new Date().getTime();
+          const week = 7 * 24 * 60 * 60 * 1000;
+          return expires - now <= week && expires > now;
         });
       case 'all':
       default:

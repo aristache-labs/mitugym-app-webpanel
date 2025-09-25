@@ -453,32 +453,32 @@ export async function fetchDashboardMetrics() {
 
   const activeMembers = members.filter((member) => member.status === "active").length;
   
-  // Get expiring members count from database using Romania timezone
+  // Get expiring members count from database
   let expiringSoon = 0;
   if (admin) {
     const { data: expiringMembers, error } = await admin.rpc('get_expiring_members_count');
     
     if (error) {
       console.warn("Failed to get expiring members from database, using fallback calculation", error);
-      // Use fallback calculation if RPC fails
+      // Use fallback calculation if RPC fails - using simple calculation for performance
       expiringSoon = members.filter((member) => {
         if (!member.expires_at) return false;
         const expires = new Date(member.expires_at).getTime();
-        const romaniaTime = new Date().getTime() + (3 * 60 * 60 * 1000); // Add 3 hours for UTC+3
-        const week = 1000 * 60 * 60 * 24 * 7;
-        return expires - romaniaTime < week && expires > romaniaTime;
+        const now = new Date().getTime();
+        const week = 7 * 24 * 60 * 60 * 1000;
+        return expires - now <= week && expires > now;
       }).length;
     } else {
       expiringSoon = expiringMembers ?? 0;
     }
   } else {
-    // Fallback to frontend calculation with Romania timezone if admin not available
+    // Fallback to frontend calculation if admin not available - using simple calculation
     expiringSoon = members.filter((member) => {
       if (!member.expires_at) return false;
       const expires = new Date(member.expires_at).getTime();
-      const romaniaTime = new Date().getTime() + (3 * 60 * 60 * 1000); // Add 3 hours for UTC+3
-      const week = 1000 * 60 * 60 * 24 * 7;
-      return expires - romaniaTime < week && expires > romaniaTime;
+      const now = new Date().getTime();
+      const week = 7 * 24 * 60 * 60 * 1000;
+      return expires - now <= week && expires > now;
     }).length;
   }
 
