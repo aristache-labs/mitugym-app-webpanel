@@ -1,19 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { Member } from "@/types";
 import { formatDate } from "@/lib/utils";
 import { MemberStatusBadge } from "@/components/members/member-status-badge";
+import { MemberActions } from "@/components/members/member-actions";
 
 export const memberColumns: ColumnDef<Member>[] = [
   {
     accessorKey: "full_name",
     header: "Member",
     cell: ({ row }) => (
-      <Link href={`/members/${row.original.id}`} className="font-semibold text-primary hover:text-accent">
+      <span className="font-semibold text-text">
         {row.original.full_name}
-      </Link>
+      </span>
     ),
   },
   {
@@ -34,5 +34,15 @@ export const memberColumns: ColumnDef<Member>[] = [
     accessorKey: "expires_at",
     header: "Expires",
     cell: ({ row }) => formatDate(row.original.expires_at),
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <MemberActions 
+        memberId={row.original.id} 
+        memberName={row.original.full_name} 
+      />
+    ),
   },
 ];

@@ -2,12 +2,11 @@ import { notFound } from "next/navigation";
 import { MemberForm } from "@/components/members/member-form";
 import { DeleteMemberButton } from "@/components/members/delete-member-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { fetchCheckIns, fetchMemberById, fetchPlans } from "@/lib/data";
+import { fetchMemberById, fetchPlans } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
-import { ArrowLeft, User, Activity, Clock } from "lucide-react";
+import { ArrowLeft, User } from "lucide-react";
 
 interface MemberDetailPageProps {
   params: Promise<{ id: string }>;
@@ -21,8 +20,7 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
     notFound();
   }
 
-  const [plans, checkIns] = await Promise.all([fetchPlans(), fetchCheckIns()]);
-  const memberCheckIns = checkIns.filter((checkIn) => checkIn.member_id === member.id).slice(0, 10);
+  const plans = await fetchPlans();
 
   return (
     <div className="space-y-8">
@@ -52,9 +50,8 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
         </div>
       </div>
 
-      {/* Premium Content Grid */}
-      <section className="grid gap-8 lg:grid-cols-[2fr_1fr]">
-        {/* Premium Edit Form */}
+      {/* Premium Edit Form */}
+      <section className="max-w-4xl mx-auto">
         <div className="relative">
           {/* Background Glow */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-3xl blur-2xl"></div>
@@ -96,75 +93,6 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
               
             <CardContent className="relative p-8 pt-0">
               <MemberForm member={member} plans={plans} />
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Premium Check-ins Card */}
-        <div className="relative">
-          {/* Background Glow */}
-          <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-primary/5 rounded-3xl blur-xl"></div>
-          
-          <Card className="relative group bg-card/95 backdrop-blur-xl border border-surface/40 shadow-xl shadow-black/15 transition-all duration-300 hover:shadow-2xl hover:shadow-secondary/10 hover:border-secondary/50 overflow-hidden rounded-3xl">
-            {/* Card Hover Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-secondary/2 via-secondary/1 to-primary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
-            
-            <CardHeader className="relative p-6 pb-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-secondary/10 group-hover:bg-secondary/20 transition-colors">
-                  <Activity className="h-5 w-5 text-secondary/60 group-hover:text-secondary transition-colors" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold text-text group-hover:text-secondary transition-colors">
-                    Recent Check-ins
-                  </CardTitle>
-                  <p className="text-xs text-muted/70 mt-0.5">Latest gym activity</p>
-                </div>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="relative p-6 pt-0">
-              {memberCheckIns.length === 0 ? (
-                <div className="text-center py-8">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-secondary/10 flex items-center justify-center">
-                    <Clock className="h-6 w-6 text-secondary/60" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-text">No check-ins yet</p>
-                    <p className="text-xs text-muted/80 mt-1">Gym visits will appear here</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {memberCheckIns.map((checkIn, index) => (
-                    <div 
-                      key={checkIn.id} 
-                      className={`group/item relative rounded-2xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 p-4 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-secondary/30 hover:shadow-lg hover:shadow-secondary/10 ${
-                        index === 0 ? 'ring-1 ring-secondary/20' : ''
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 rounded-full bg-secondary/60 group-hover/item:bg-secondary"></div>
-                          <span className="text-sm font-medium text-text group-hover/item:text-secondary transition-colors">
-                            {formatDate(checkIn.checked_in_at)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {index === 0 && (
-                            <span className="px-2 py-0.5 bg-secondary/20 text-secondary rounded-full text-xs font-medium border border-secondary/30">
-                              Latest
-                            </span>
-                          )}
-                          <Badge variant="default" className="capitalize bg-secondary/20 text-secondary border-secondary/30 hover:bg-secondary/30 transition-colors">
-                            {checkIn.method ?? "manual"}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>
