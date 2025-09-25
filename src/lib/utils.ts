@@ -73,8 +73,11 @@ export function calculateExpirationDate(startDate: string, durationMonths: numbe
 }
 
 export function calculateMemberStatus(storedStatus: string, startDate: string | null, expiresAt: string | null): MemberStatus {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+  // Get current time in Romania timezone (UTC+3)
+  const now = new Date();
+  const romaniaTime = new Date(now.getTime() + (3 * 60 * 60 * 1000)); // Add 3 hours for UTC+3
+  const today = new Date(romaniaTime);
+  today.setHours(0, 0, 0, 0); // Reset time to compare dates only in Romania timezone
   
   // If no start date, use the stored status
   if (!startDate) {
@@ -92,8 +95,10 @@ export function calculateMemberStatus(storedStatus: string, startDate: string | 
   // If plan has expired, show as inactive
   if (expiresAt) {
     const expires = new Date(expiresAt);
-    expires.setHours(0, 0, 0, 0);
-    if (today > expires) {
+    // Set to end of expiration day in Romania timezone
+    expires.setHours(23, 59, 59, 999);
+    
+    if (romaniaTime > expires) {
       return "inactive";
     }
   }
