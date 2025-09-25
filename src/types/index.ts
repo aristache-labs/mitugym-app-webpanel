@@ -72,7 +72,7 @@ export type OccupancySnapshot = {
 
 // Service related types
 export type ServiceType = "personal_trainer" | "professional_massage";
-export type BookingStatus = "upcoming" | "completed" | "cancelled";
+export type BookingStatus = "pending" | "confirmed" | "upcoming" | "completed" | "cancelled";
 export type PurchasedServiceStatus = "pending" | "approved" | "cancelled";
 
 export type Service = {

@@ -76,6 +76,21 @@ export const createPurchasedServiceSchema = z.object({
   notes: z.string().max(1000, "Notes too long").optional(),
 });
 
+export const confirmSessionBookingSchema = z.object({
+  id: z.string().uuid("Invalid booking ID"),
+  notes: z.string().max(1000, "Notes too long").optional(),
+});
+
+export const completeSessionBookingSchema = z.object({
+  id: z.string().uuid("Invalid booking ID"),
+  notes: z.string().max(1000, "Notes too long").optional(),
+});
+
+export const cancelSessionBookingSchema = z.object({
+  id: z.string().uuid("Invalid booking ID"),
+  reason: z.string().min(1, "Cancellation reason is required").max(1000, "Reason too long"),
+});
+
 // Types inferred from schemas
 export type CreateServiceRequest = z.infer<typeof createServiceSchema>;
 export type UpdateServiceRequest = z.infer<typeof updateServiceSchema>;
@@ -85,3 +100,6 @@ export type ApprovePurchasedServiceRequest = z.infer<typeof approvePurchasedServ
 export type CancelPurchasedServiceRequest = z.infer<typeof cancelPurchasedServiceSchema>;
 export type DeletePurchasedServiceRequest = z.infer<typeof deletePurchasedServiceSchema>;
 export type CreatePurchasedServiceRequest = z.infer<typeof createPurchasedServiceSchema>;
+export type ConfirmSessionBookingRequest = z.infer<typeof confirmSessionBookingSchema>;
+export type CompleteSessionBookingRequest = z.infer<typeof completeSessionBookingSchema>;
+export type CancelSessionBookingRequest = z.infer<typeof cancelSessionBookingSchema>;

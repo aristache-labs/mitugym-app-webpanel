@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { ServiceBooking } from "@/types";
+import { confirmSessionBookingAction, completeSessionBookingAction, cancelSessionBookingAction } from "@/app/(protected)/actions";
 import { Calendar, User, Clock, CheckCircle, XCircle, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -51,8 +52,22 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     if (!selectedBooking) return;
 
     startTransition(async () => {
-      // TODO: Implement confirmSessionBookingAction
-      setError("Confirm action not implemented yet");
+      const formData = new FormData();
+      formData.append("id", selectedBooking.id);
+      formData.append("notes", "");
+
+      try {
+        const result = await confirmSessionBookingAction(formData);
+        
+        if (result.success) {
+          setConfirmModalOpen(false);
+          setSelectedBooking(null);
+        } else {
+          setError(result.error);
+        }
+      } catch {
+        setError("An unexpected error occurred");
+      }
     });
   };
 
@@ -60,8 +75,22 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     if (!selectedBooking) return;
 
     startTransition(async () => {
-      // TODO: Implement completeSessionBookingAction
-      setError("Complete action not implemented yet");
+      const formData = new FormData();
+      formData.append("id", selectedBooking.id);
+      formData.append("notes", "");
+
+      try {
+        const result = await completeSessionBookingAction(formData);
+        
+        if (result.success) {
+          setCompleteModalOpen(false);
+          setSelectedBooking(null);
+        } else {
+          setError(result.error);
+        }
+      } catch {
+        setError("An unexpected error occurred");
+      }
     });
   };
 
@@ -69,8 +98,22 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     if (!selectedBooking) return;
 
     startTransition(async () => {
-      // TODO: Implement cancelSessionBookingAction
-      setError("Cancel action not implemented yet");
+      const formData = new FormData();
+      formData.append("id", selectedBooking.id);
+      formData.append("reason", "Cancelled by staff");
+
+      try {
+        const result = await cancelSessionBookingAction(formData);
+        
+        if (result.success) {
+          setCancelModalOpen(false);
+          setSelectedBooking(null);
+        } else {
+          setError(result.error);
+        }
+      } catch {
+        setError("An unexpected error occurred");
+      }
     });
   };
 
@@ -87,8 +130,10 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     switch (status) {
       case "pending":
         return <Badge className="bg-yellow-500 text-white">Pending</Badge>;
-      case "upcoming":
+      case "confirmed":
         return <Badge className="bg-blue-500 text-white">Confirmed</Badge>;
+      case "upcoming":
+        return <Badge className="bg-indigo-500 text-white">Upcoming</Badge>;
       case "completed":
         return <Badge className="bg-green-500 text-white">Completed</Badge>;
       case "cancelled":
@@ -210,7 +255,7 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
                 </Button>
               </>
             )}
-            {booking.status === "upcoming" && (
+            {(booking.status === "confirmed" || booking.status === "upcoming") && (
               <>
                 <Link href={`/bookings/${booking.id}/edit`}>
                   <Button variant="ghost" size="sm">
