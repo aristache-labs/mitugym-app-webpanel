@@ -12,12 +12,17 @@ export default async function ProtectedLayout({
 
   return (
     <div className="min-h-screen">
-      <div className="mx-auto flex max-w-[1600px] gap-6 px-4 py-10 lg:px-10">
-        <Sidebar />
-        <main className="flex-1 space-y-6">
-          <Topbar staff={staff} />
-          {children}
-        </main>
+      {/* Fixed Header */}
+      <Topbar staff={staff} />
+      
+      {/* Main Content with top padding to account for fixed header */}
+      <div className="pt-20">
+        <div className="mx-auto flex max-w-[1600px] gap-6 px-4 py-6 lg:px-10">
+          <Sidebar />
+          <main className="flex-1 space-y-6">
+            {children}
+          </main>
+        </div>
       </div>
     </div>
   );

@@ -15,13 +15,7 @@ export function Sidebar() {
   return (
     <aside className="flex h-full w-full max-w-[260px] flex-col justify-between border-r border-surface/40 bg-surface/40 px-6 py-8">
       <div className="space-y-8">
-        <div>
-          <Link href="/dashboard" className="text-2xl font-semibold text-primary">
-            MITUGYM
-          </Link>
-          <p className="mt-1 text-xs uppercase tracking-[0.3em] text-muted">Admin panel</p>
-        </div>
-        <nav className="space-y-1">
+        <nav className="space-y-2">
           {NAVIGATION.map((item) => {
             const active = pathname?.startsWith(item.href);
             const Icon = item.icon;
