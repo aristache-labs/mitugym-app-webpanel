@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { MembersPageClient } from "./members-page-client";
 import { MembersTable } from "./members-table";
+import { getExpiringMembers, debugExpiringCalculation } from "@/lib/expiring-helpers";
 import type { Member } from "@/types";
 
 interface MembersPageWrapperProps {
@@ -13,6 +14,18 @@ interface MembersPageWrapperProps {
 export function MembersPageWrapper({ members, expiringCount }: MembersPageWrapperProps) {
   const [currentFilter, setCurrentFilter] = useState<string>('all');
 
+  // Debug: log members and their expiration info
+  console.log('=== EXPIRING MEMBERS DEBUG ===');
+  console.log('Backend expiring count:', expiringCount);
+  console.log('Total members:', members.length);
+  
+  // Debug each member's expiration calculation
+  members.forEach(member => {
+    if (member.expires_at) {
+      debugExpiringCalculation(member.expires_at, member.full_name, member.status);
+    }
+  });
+
   // Filter members based on the current filter
   const filteredMembers = useMemo(() => {
     switch (currentFilter) {
@@ -21,16 +34,11 @@ export function MembersPageWrapper({ members, expiringCount }: MembersPageWrappe
       case 'inactive':
         return members.filter(m => m.status === 'inactive');
       case 'expiring':
-        // Filter members expiring in the next 7 days using configurable timezone
-        // Note: This will need to be async, but for now filtering is done server-side
-        return members.filter((member) => {
-          if (!member.expires_at) return false;
-          // Simple client-side fallback - this will be replaced with server-side filtering
-          const expires = new Date(member.expires_at).getTime();
-          const now = new Date().getTime();
-          const week = 7 * 24 * 60 * 60 * 1000;
-          return expires - now <= week && expires > now;
-        });
+        // Use the helper function to ensure consistency with backend
+        const expiringMembers = getExpiringMembers(members, 7);
+        console.log('Client-side expiring members found:', expiringMembers.length);
+        console.log('Expiring members:', expiringMembers.map(m => m.full_name));
+        return expiringMembers;
       case 'all':
       default:
         return members;

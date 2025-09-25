@@ -1,5 +1,6 @@
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { calculateMemberStatus } from "@/lib/utils";
+import { getExpiringMembers } from "@/lib/expiring-helpers";
 import type {
   AuditLogEntry,
   CheckIn,
@@ -460,26 +461,14 @@ export async function fetchDashboardMetrics() {
     
     if (error) {
       console.warn("Failed to get expiring members from database, using fallback calculation", error);
-      // Use fallback calculation if RPC fails - using simple calculation for performance
-      expiringSoon = members.filter((member) => {
-        if (!member.expires_at) return false;
-        const expires = new Date(member.expires_at).getTime();
-        const now = new Date().getTime();
-        const week = 7 * 24 * 60 * 60 * 1000;
-        return expires - now <= week && expires > now;
-      }).length;
+      // Use fallback calculation if RPC fails - now using consistent helper
+      expiringSoon = getExpiringMembers(members, 7).length;
     } else {
       expiringSoon = expiringMembers ?? 0;
     }
   } else {
-    // Fallback to frontend calculation if admin not available - using simple calculation
-    expiringSoon = members.filter((member) => {
-      if (!member.expires_at) return false;
-      const expires = new Date(member.expires_at).getTime();
-      const now = new Date().getTime();
-      const week = 7 * 24 * 60 * 60 * 1000;
-      return expires - now <= week && expires > now;
-    }).length;
+    // Fallback to frontend calculation if admin not available - using consistent helper
+    expiringSoon = getExpiringMembers(members, 7).length;
   }
 
   const occupancyNow = occupancy?.total ?? checkIns.filter((checkIn) => {

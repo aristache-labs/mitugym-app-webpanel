@@ -1,5 +1,6 @@
 import { MembersPageWrapper } from "./members-page-wrapper";
 import { fetchMembers } from "@/lib/data";
+import { getExpiringMembers } from "@/lib/expiring-helpers";
 import { Users } from "lucide-react";
 
 export const metadata = {
@@ -21,13 +22,7 @@ async function fetchExpiringMembersCount() {
   // Fallback calculation if database query fails
   const { fetchMembers } = await import("@/lib/data");
   const members = await fetchMembers();
-  return members.filter((member) => {
-    if (!member.expires_at) return false;
-    const expires = new Date(member.expires_at).getTime();
-    const now = new Date().getTime();
-    const week = 7 * 24 * 60 * 60 * 1000;
-    return expires - now <= week && expires > now;
-  }).length;
+  return getExpiringMembers(members, 7).length;
 }
 
 export default async function MembersPage() {
