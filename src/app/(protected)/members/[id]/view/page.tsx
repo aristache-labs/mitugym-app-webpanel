@@ -354,7 +354,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
             {/* Card Hover Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-secondary/2 via-secondary/1 to-primary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
             
-            <CardHeader className="relative p-6 pb-4">
+            <CardHeader className="relative p-2 pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-1.5 rounded-lg bg-secondary/10 group-hover:bg-secondary/20 transition-colors">
                   <Activity className="h-4 w-4 text-secondary/60 group-hover:text-secondary transition-colors" />
