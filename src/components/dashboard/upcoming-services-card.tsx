@@ -70,7 +70,7 @@ export function UpcomingServicesCard({ bookings }: UpcomingServicesCardProps) {
           </div>
         ) : (
           <div className="space-y-4">
-            {bookings.slice(0, 5).map((booking, index) => (
+            {bookings.slice(0, 5).map((booking) => (
               <div
                 key={booking.id}
                 className="group/item flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
@@ -89,9 +89,11 @@ export function UpcomingServicesCard({ bookings }: UpcomingServicesCardProps) {
                         {(booking.member?.full_name || "U").charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-1">
-                        <span className="font-semibold text-base text-text group-hover/item:text-primary transition-colors block">
-                          {booking.member?.full_name || "Unknown Member"}
-                        </span>
+                        <Link href="/bookings" className="group/member">
+                          <span className="font-semibold text-base text-text group-hover/item:text-primary group-hover/member:text-primary transition-colors block cursor-pointer hover:underline">
+                            {booking.member?.full_name || "Unknown Member"}
+                          </span>
+                        </Link>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-sm text-muted/90">
                             {booking.service?.name || "Unknown Service"}

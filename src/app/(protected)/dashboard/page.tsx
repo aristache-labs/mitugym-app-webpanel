@@ -174,51 +174,101 @@ export default async function DashboardPage() {
 
       {/* Enhanced Announcements Section */}
       <section>
-        <Card className="bg-card/95 backdrop-blur-sm border-surface/30 shadow-2xl shadow-black/20">
-          <CardHeader className="border-b border-surface/20 bg-gradient-to-r from-primary/5 to-secondary/5">
-            <CardTitle className="text-lg font-semibold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent">
-              Announcements
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 p-6">
-            {spotlightNews.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-2xl">📢</span>
+        <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">
+          {/* Full card hover overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[20px]" />
+          
+          <CardHeader className="relative pb-4">
+            {/* Gradient border */}
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <svg className="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                  </svg>
                 </div>
-                <p className="text-sm text-muted">No announcements scheduled.</p>
+                <div>
+                  <Link href="/news" className="group/title">
+                    <CardTitle className="text-lg font-semibold text-text group-hover:text-primary group-hover/title:text-primary transition-colors cursor-pointer">
+                      Announcements
+                    </CardTitle>
+                  </Link>
+                  <p className="text-xs text-muted/70 mt-0.5">Important updates and notifications</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-semibold text-text">
+                  {spotlightNews.length} active
+                </div>
+                <div className="text-xs text-muted/70">notices</div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="relative p-6">
+            {spotlightNews.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                  <svg className="h-8 w-8 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                  </svg>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium text-text">No announcements</p>
+                  <p className="text-xs text-muted/80 mt-1">All caught up with notifications</p>
+                </div>
               </div>
             ) : (
-              spotlightNews.map((item) => (
-                <article 
-                  key={item.id} 
-                  className="group rounded-2xl border border-surface/40 bg-gradient-to-r from-surface/80 to-surface/60 p-6 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-base font-semibold text-text group-hover:text-primary transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="mt-3 text-sm text-muted/90 leading-relaxed">{item.content}</p>
-                      <p className="mt-4 text-xs text-muted/70">
-                        Expires {item.expires_at ? formatDate(item.expires_at) : "No expiry"}
-                      </p>
+              <div className="space-y-4">
+                {spotlightNews.map((item, index) => (
+                  <article 
+                    key={item.id} 
+                    className="group/item relative rounded-2xl border border-surface/40 bg-gradient-to-r from-surface/80 to-surface/60 p-6 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-primary group-hover/item:bg-primary/25 transition-colors">
+                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <h3 className="text-base font-semibold text-text group-hover/item:text-primary transition-colors">
+                              {item.title}
+                            </h3>
+                            <p className="mt-2 text-sm text-muted/90 leading-relaxed">{item.content}</p>
+                          </div>
+                          <div className="flex-shrink-0">
+                            <Badge
+                              variant={
+                                item.priority === "high"
+                                  ? "destructive"
+                                  : item.priority === "medium"
+                                    ? "warning"
+                                    : "default"
+                              }
+                              className="shadow-sm"
+                            >
+                              {item.priority}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="mt-4 flex items-center justify-between">
+                          <p className="text-xs text-muted/70">
+                            Expires {item.expires_at ? formatDate(item.expires_at) : "No expiry"}
+                          </p>
+                          <div className="text-xs text-muted/60">
+                            Notice #{spotlightNews.length - index}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <Badge
-                      variant={
-                        item.priority === "high"
-                          ? "destructive"
-                          : item.priority === "medium"
-                            ? "warning"
-                            : "default"
-                      }
-                      className="ml-4 shadow-sm"
-                    >
-                      {item.priority}
-                    </Badge>
-                  </div>
-                </article>
-              ))
+                  </article>
+                ))}
+              </div>
             )}
           </CardContent>
         </Card>
