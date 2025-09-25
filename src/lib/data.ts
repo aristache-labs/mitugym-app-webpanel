@@ -441,6 +441,8 @@ export async function fetchOccupancy(): Promise<OccupancySnapshot> {
 }
 
 export async function fetchDashboardMetrics() {
+  const admin = getSupabaseAdmin();
+  
   const [members, checkIns, occupancy, sessionBookings, purchasedServices] = await Promise.all([
     fetchMembers(),
     fetchCheckIns(),
@@ -450,13 +452,35 @@ export async function fetchDashboardMetrics() {
   ]);
 
   const activeMembers = members.filter((member) => member.status === "active").length;
-  const expiringSoon = members.filter((member) => {
-    if (!member.expires_at) return false;
-    const expires = new Date(member.expires_at).getTime();
-    const now = Date.now();
-    const week = 1000 * 60 * 60 * 24 * 7;
-    return expires - now < week && expires > now;
-  }).length;
+  
+  // Get expiring members count from database using Romania timezone
+  let expiringSoon = 0;
+  if (admin) {
+    const { data: expiringMembers, error } = await admin.rpc('get_expiring_members_count');
+    
+    if (error) {
+      console.warn("Failed to get expiring members from database, using fallback calculation", error);
+      // Use fallback calculation if RPC fails
+      expiringSoon = members.filter((member) => {
+        if (!member.expires_at) return false;
+        const expires = new Date(member.expires_at).getTime();
+        const romaniaTime = new Date().getTime() + (3 * 60 * 60 * 1000); // Add 3 hours for UTC+3
+        const week = 1000 * 60 * 60 * 24 * 7;
+        return expires - romaniaTime < week && expires > romaniaTime;
+      }).length;
+    } else {
+      expiringSoon = expiringMembers ?? 0;
+    }
+  } else {
+    // Fallback to frontend calculation with Romania timezone if admin not available
+    expiringSoon = members.filter((member) => {
+      if (!member.expires_at) return false;
+      const expires = new Date(member.expires_at).getTime();
+      const romaniaTime = new Date().getTime() + (3 * 60 * 60 * 1000); // Add 3 hours for UTC+3
+      const week = 1000 * 60 * 60 * 24 * 7;
+      return expires - romaniaTime < week && expires > romaniaTime;
+    }).length;
+  }
 
   const occupancyNow = occupancy?.total ?? checkIns.filter((checkIn) => {
     return new Date(checkIn.checked_in_at).getTime() > Date.now() - 1000 * 60 * 60;

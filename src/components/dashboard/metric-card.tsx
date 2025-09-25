@@ -8,12 +8,14 @@ export function MetricCard({
   description,
   icon: Icon,
   href,
+  onClick,
 }: {
   title: string;
   value: string | number;
   description?: string;
   icon?: LucideIcon;
   href?: string;
+  onClick?: () => void;
 }) {
   const cardContent = (
     <>
@@ -60,6 +62,17 @@ export function MetricCard({
           {cardContent}
         </Card>
       </Link>
+    );
+  }
+
+  if (onClick) {
+    return (
+      <Card 
+        className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-md shadow-black/5 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/50 overflow-hidden cursor-pointer hover:scale-[1.02]"
+        onClick={onClick}
+      >
+        {cardContent}
+      </Card>
     );
   }
 

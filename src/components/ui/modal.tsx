@@ -14,6 +14,7 @@ interface ModalProps {
   cancelText?: string;
   variant?: "default" | "destructive";
   children?: React.ReactNode;
+  className?: string;
 }
 
 export function Modal({
@@ -26,6 +27,7 @@ export function Modal({
   cancelText = "Cancel",
   variant = "default",
   children,
+  className,
 }: ModalProps) {
   // Handle escape key
   useEffect(() => {
@@ -70,10 +72,9 @@ export function Modal({
     >
       {/* Modal Content */}
       <div 
-        className="bg-surface border border-surface/50 rounded-lg shadow-lg"
+        className={`bg-surface border border-surface/50 rounded-lg shadow-lg ${className || 'max-w-2xl'}`}
         style={{
           width: '90%',
-          maxWidth: '768px',
           maxHeight: '90vh',
           overflow: 'auto',
           margin: 'auto'

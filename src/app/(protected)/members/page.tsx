@@ -1,64 +1,58 @@
 import { MembersTable } from "@/app/(protected)/members/members-table";
-import { Button } from "@/components/ui/button";
+import { MembersPageClient } from "./members-page-client";
 import { fetchMembers } from "@/lib/data";
-import Link from "next/link";
-import { Plus, Users } from "lucide-react";
+import { Users } from "lucide-react";
 
 export const metadata = {
   title: "Members",
 };
 
-export default async function MembersPage() {
+async function fetchExpiringMembersCount() {
+  // Import getSupabaseAdmin here to avoid top-level imports
+  const { getSupabaseAdmin } = await import("@/lib/supabase-admin");
+  const admin = getSupabaseAdmin();
+  
+  if (admin) {
+    const { data: expiringCount, error } = await admin.rpc('get_expiring_members_count');
+    if (!error) {
+      return expiringCount ?? 0;
+    }
+  }
+  
+  // Fallback calculation if database query fails
+  const { fetchMembers } = await import("@/lib/data");
   const members = await fetchMembers();
+  return members.filter((member) => {
+    if (!member.expires_at) return false;
+    const expires = new Date(member.expires_at).getTime();
+    const romaniaTime = new Date().getTime() + (3 * 60 * 60 * 1000); // Add 3 hours for UTC+3
+    const week = 1000 * 60 * 60 * 24 * 7;
+    return expires - romaniaTime < week && expires > romaniaTime;
+  }).length;
+}
+
+export default async function MembersPage() {
+  const [members, expiringCount] = await Promise.all([
+    fetchMembers(),
+    fetchExpiringMembersCount(),
+  ]);
 
   return (
     <div className="space-y-6">
       {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/10">
-            <Users className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-text">Members</h1>
-            <p className="text-sm text-muted/80">
-              Manage member profiles, plans, and membership status
-            </p>
-          </div>
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-xl bg-primary/10">
+          <Users className="h-6 w-6 text-primary" />
         </div>
-        <Link href="/members/new">
-          <Button className="gap-2 bg-primary hover:bg-primary/90 text-white">
-            <Plus className="h-4 w-4" />
-            Add Member
-          </Button>
-        </Link>
+        <div>
+          <h1 className="text-2xl font-bold text-text">Members</h1>
+          <p className="text-sm text-muted/80">
+            Manage member profiles, plans, and membership status
+          </p>
+        </div>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
-        <div className="bg-card/95 backdrop-blur-sm border border-surface/30 rounded-2xl p-4">
-          <div className="text-sm text-muted/70 uppercase tracking-wider">Total Members</div>
-          <div className="text-2xl font-bold text-text mt-1">{members.length}</div>
-        </div>
-        <div className="bg-card/95 backdrop-blur-sm border border-surface/30 rounded-2xl p-4">
-          <div className="text-sm text-muted/70 uppercase tracking-wider">Active</div>
-          <div className="text-2xl font-bold text-success mt-1">
-            {members.filter(m => m.status === 'active').length}
-          </div>
-        </div>
-        <div className="bg-card/95 backdrop-blur-sm border border-surface/30 rounded-2xl p-4">
-          <div className="text-sm text-muted/70 uppercase tracking-wider">Expired</div>
-          <div className="text-2xl font-bold text-warning mt-1">
-            {members.filter(m => m.status === 'expired').length}
-          </div>
-        </div>
-        <div className="bg-card/95 backdrop-blur-sm border border-surface/30 rounded-2xl p-4">
-          <div className="text-sm text-muted/70 uppercase tracking-wider">Suspended</div>
-          <div className="text-2xl font-bold text-error mt-1">
-            {members.filter(m => m.status === 'suspended').length}
-          </div>
-        </div>
-      </div>
+      <MembersPageClient members={members} expiringCount={expiringCount} />
 
       {/* Members Table */}
       <section>
