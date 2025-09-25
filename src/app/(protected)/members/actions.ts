@@ -24,20 +24,27 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
 
   try {
     // 1. Create Supabase auth user
+    // Generate password
+    const password = parsed.data.password || generateRandomPassword();
+    
+    // Check if user already exists in profiles table
+    const { data: existingProfile } = await admin
+      .from("profiles")
+      .select("id, email")
+      .eq("email", parsed.data.email)
+      .maybeSingle();
+    
+    if (existingProfile) {
+      return { success: false, error: `User with email ${parsed.data.email} already exists` };
+    }
+    
     const { data: authUser, error: authError } = await admin.auth.admin.createUser({
       email: parsed.data.email,
-      password: parsed.data.password || generateRandomPassword(),
+      password: password,
       email_confirm: true, // Auto-confirm email
-      user_metadata: {
-        full_name,
-        display_name: full_name,
-        first_name: parsed.data.first_name,
-        last_name: parsed.data.last_name,
-      }
     });
 
     if (authError) {
-      console.error("Failed to create auth user", authError);
       return { success: false, error: `Failed to create user account: ${authError.message}` };
     }
 
@@ -65,7 +72,6 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
       .upsert(profilePayload, { onConflict: "id" });
 
     if (profileError) {
-      console.error("Failed to create profile", profileError);
       // If profile creation fails, clean up the auth user
       await admin.auth.admin.deleteUser(authUser.user.id);
       return { success: false, error: `Failed to create profile: ${profileError.message}` };

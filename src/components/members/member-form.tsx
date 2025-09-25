@@ -113,9 +113,13 @@ export function MemberForm({ plans, member }: MemberFormProps) {
     }
     setServerError(null);
     if (!member) {
+      // For new member creation, redirect to members page
       form.reset();
+      router.push("/members");
+    } else {
+      // For member updates, just refresh
+      router.refresh();
     }
-    router.refresh();
   };
 
   const onSubmit = form.handleSubmit((values) => {
