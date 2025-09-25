@@ -7,11 +7,34 @@ export type Member = {
   email: string;
   phone: string | null;
   gender?: MemberGender | null;
+  date_of_birth: string | null;
+  address: string | null;
+  city: string | null;
+  county: string | null;
   status: MemberStatus;
   plan_id: string | null;
   plan_name?: string | null;
   starts_at: string | null;
   expires_at: string | null;
+  created_at: string;
+};
+
+// Database profile type for raw Supabase queries
+export type DatabaseProfile = {
+  id: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  gender?: string | null;
+  date_of_birth?: string | null;
+  address?: string | null;
+  city?: string | null;
+  county?: string | null;
+  status?: string | null;
+  plan_id?: string | null;
+  starts_at?: string | null;
+  expires_at?: string | null;
   created_at: string;
 };
 

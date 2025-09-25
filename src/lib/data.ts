@@ -5,6 +5,7 @@ import type {
   AuditLogEntry,
   CheckIn,
   Member,
+  DatabaseProfile,
   MembershipPlan,
   NewsItem,
   OccupancySnapshot,
@@ -15,6 +16,30 @@ import type {
 } from "@/types";
 
 
+// Helper function to transform DatabaseProfile to Member
+function transformDatabaseProfileToMember(dbProfile: DatabaseProfile, planName?: string | null): Member {
+  const storedStatus = dbProfile.status as Member['status'] || 'active';
+  const actualStatus = calculateMemberStatus(storedStatus, dbProfile.starts_at ?? null, dbProfile.expires_at ?? null);
+  
+  return {
+    id: dbProfile.id,
+    full_name: `${dbProfile.first_name || ''} ${dbProfile.last_name || ''}`.trim() || 'Unknown Member',
+    email: dbProfile.email || '',
+    phone: dbProfile.phone || null,
+    gender: dbProfile.gender as Member['gender'] || null,
+    date_of_birth: dbProfile.date_of_birth || null,
+    address: dbProfile.address || null,
+    city: dbProfile.city || null,
+    county: dbProfile.county || null,
+    status: actualStatus as Member['status'],
+    plan_id: dbProfile.plan_id || null,
+    plan_name: planName || null,
+    starts_at: dbProfile.starts_at || null,
+    expires_at: dbProfile.expires_at || null,
+    created_at: dbProfile.created_at,
+  };
+}
+
 const sampleMembers: Member[] = [
   {
     id: "11111111-1111-1111-1111-111111111111",
@@ -22,6 +47,10 @@ const sampleMembers: Member[] = [
     email: "avery@mitugym.dev",
     phone: "+1 555-0110",
     gender: "other",
+    date_of_birth: "1990-05-15",
+    address: "123 Main Street",
+    city: "Bucharest",
+    county: "Ilfov",
     status: "active",
     plan_id: "plan-basic",
     plan_name: "Unlimited",
@@ -35,6 +64,10 @@ const sampleMembers: Member[] = [
     email: "jordan@mitugym.dev",
     phone: "+1 555-0124",
     gender: "male",
+    date_of_birth: "1985-12-03",
+    address: "456 Oak Avenue",
+    city: "Cluj-Napoca",
+    county: "Cluj",
     status: "frozen",
     plan_id: "plan-flex",
     plan_name: "Flex 12",
@@ -131,7 +164,7 @@ export async function fetchMembers(): Promise<Member[]> {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, first_name, last_name, gender, email, phone, status, plan_id, starts_at, expires_at, created_at")
+    .select("id, first_name, last_name, gender, date_of_birth, address, city, county, email, phone, status, plan_id, starts_at, expires_at, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -161,23 +194,9 @@ export async function fetchMembers(): Promise<Member[]> {
   const plansData = await fetchPlans();
   const planLookup = new Map(plansData.map(plan => [plan.id, plan.name]));
 
-  return rows.map<Member>((profile) => {
-    const storedStatus = profile.status as Member['status'] || 'active';
-    const actualStatus = calculateMemberStatus(storedStatus, profile.starts_at ?? null, profile.expires_at ?? null);
-    
-    return {
-      id: profile.id,
-      full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unknown Member',
-      email: profile.email || '',
-      phone: profile.phone || null,
-      gender: profile.gender as Member['gender'] || null,
-      status: actualStatus as Member['status'],
-      plan_id: profile.plan_id || null,
-      plan_name: profile.plan_id ? (planLookup.get(profile.plan_id) ?? null) : null,
-      starts_at: profile.starts_at || null,
-      expires_at: profile.expires_at || null,
-      created_at: profile.created_at,
-    };
+  return rows.map<Member>((profile: DatabaseProfile) => {
+    const planName = profile.plan_id ? (planLookup.get(profile.plan_id) ?? null) : null;
+    return transformDatabaseProfileToMember(profile, planName);
   });
 }
 
@@ -189,7 +208,7 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, first_name, last_name, gender, email, phone, status, plan_id, starts_at, expires_at, created_at")
+    .select("id, first_name, last_name, gender, date_of_birth, address, city, county, email, phone, status, plan_id, starts_at, expires_at, created_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -220,22 +239,9 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
   const plansData = await fetchPlans();
   const planLookup = new Map(plansData.map(plan => [plan.id, plan.name]));
   
-  const storedStatus = profile.status as Member['status'] || 'active';
-  const actualStatus = calculateMemberStatus(storedStatus, profile.starts_at ?? null, profile.expires_at ?? null);
-
-  return {
-    id: profile.id,
-    full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unknown Member',
-    email: profile.email || '',
-    phone: profile.phone || null,
-    gender: profile.gender as Member['gender'] || null,
-    status: actualStatus as Member['status'],
-    plan_id: profile.plan_id || null,
-    plan_name: profile.plan_id ? (planLookup.get(profile.plan_id) ?? null) : null,
-    starts_at: profile.starts_at || null,
-    expires_at: profile.expires_at || null,
-    created_at: profile.created_at,
-  } as Member;
+  const dbProfile = profile as DatabaseProfile;
+  const planName = dbProfile.plan_id ? (planLookup.get(dbProfile.plan_id) ?? null) : null;
+  return transformDatabaseProfileToMember(dbProfile, planName);
 }
 
 export async function fetchPlans(): Promise<MembershipPlan[]> {
@@ -638,19 +644,8 @@ export async function fetchPurchasedServices(): Promise<PurchasedService[]> {
       created_at: purchase.services.created_at,
       updated_at: purchase.services.updated_at,
     } : undefined,
-    member: profilesMap.has(purchase.member_id) ? {
-      id: purchase.member_id,
-      full_name: `${profilesMap.get(purchase.member_id).first_name || ""} ${profilesMap.get(purchase.member_id).last_name || ""}`.trim() || 'Unknown Member',
-      email: profilesMap.get(purchase.member_id).email,
-      phone: profilesMap.get(purchase.member_id).phone,
-      gender: profilesMap.get(purchase.member_id).gender,
-      status: profilesMap.get(purchase.member_id).status,
-      plan_id: profilesMap.get(purchase.member_id).plan_id,
-      plan_name: profilesMap.get(purchase.member_id).plan_id,
-      starts_at: profilesMap.get(purchase.member_id).starts_at,
-      expires_at: profilesMap.get(purchase.member_id).expires_at,
-      created_at: profilesMap.get(purchase.member_id).created_at,
-    } : undefined,
+    member: profilesMap.has(purchase.member_id) ? 
+      transformDatabaseProfileToMember(profilesMap.get(purchase.member_id) as DatabaseProfile) : undefined,
   }));
 }
 
@@ -728,19 +723,8 @@ export async function fetchSessionBookings(): Promise<ServiceBooking[]> {
       created_at: booking.purchased_services.services.created_at,
       updated_at: booking.purchased_services.services.updated_at,
     } : undefined,
-    member: profilesMap.has(booking.member_id) ? {
-      id: booking.member_id,
-      full_name: `${profilesMap.get(booking.member_id).first_name || ""} ${profilesMap.get(booking.member_id).last_name || ""}`.trim() || 'Unknown Member',
-      email: profilesMap.get(booking.member_id).email,
-      phone: profilesMap.get(booking.member_id).phone,
-      gender: profilesMap.get(booking.member_id).gender,
-      status: profilesMap.get(booking.member_id).status,
-      plan_id: profilesMap.get(booking.member_id).plan_id,
-      plan_name: profilesMap.get(booking.member_id).plan_id,
-      starts_at: profilesMap.get(booking.member_id).starts_at,
-      expires_at: profilesMap.get(booking.member_id).expires_at,
-      created_at: profilesMap.get(booking.member_id).created_at,
-    } : undefined,
+    member: profilesMap.has(booking.member_id) ? 
+      transformDatabaseProfileToMember(profilesMap.get(booking.member_id) as DatabaseProfile) : undefined,
   }));
 }
 
@@ -823,18 +807,7 @@ export async function fetchTodaysSessionBookings(): Promise<ServiceBooking[]> {
       created_at: booking.purchased_services.services.created_at,
       updated_at: booking.purchased_services.services.updated_at,
     } : undefined,
-    member: profilesMap.has(booking.member_id) ? {
-      id: booking.member_id,
-      full_name: `${profilesMap.get(booking.member_id).first_name || ""} ${profilesMap.get(booking.member_id).last_name || ""}`.trim() || 'Unknown Member',
-      email: profilesMap.get(booking.member_id).email,
-      phone: profilesMap.get(booking.member_id).phone,
-      gender: profilesMap.get(booking.member_id).gender,
-      status: profilesMap.get(booking.member_id).status,
-      plan_id: profilesMap.get(booking.member_id).plan_id,
-      plan_name: profilesMap.get(booking.member_id).plan_id,
-      starts_at: profilesMap.get(booking.member_id).starts_at,
-      expires_at: profilesMap.get(booking.member_id).expires_at,
-      created_at: profilesMap.get(booking.member_id).created_at,
-    } : undefined,
+    member: profilesMap.has(booking.member_id) ? 
+      transformDatabaseProfileToMember(profilesMap.get(booking.member_id) as DatabaseProfile) : undefined,
   }));
 }
