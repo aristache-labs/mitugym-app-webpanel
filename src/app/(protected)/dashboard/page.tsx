@@ -28,30 +28,35 @@ export default async function DashboardPage() {
           value={metrics.occupancy} 
           description="Live floor traffic" 
           icon={Users}
+          href="/checkins"
         />
         <MetricCard 
           title="Active Members" 
           value={metrics.activeMembers} 
           description="Members in good standing" 
           icon={UserCheck}
+          href="/members"
         />
         <MetricCard 
           title="Expiring This Week" 
           value={metrics.expiringSoon} 
           description="Memberships to renew" 
           icon={AlertTriangle}
+          href="/members"
         />
         <MetricCard 
           title="Pending Bookings" 
           value={metrics.pendingBookings} 
           description="Awaiting confirmation" 
           icon={Clock}
+          href="/bookings"
         />
         <MetricCard 
           title="Pending Services" 
           value={metrics.pendingServices} 
           description="Awaiting approval" 
           icon={Settings}
+          href="/services"
         />
       </section>
 

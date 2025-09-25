@@ -1,19 +1,22 @@
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 export function MetricCard({
   title,
   value,
   description,
   icon: Icon,
+  href,
 }: {
   title: string;
   value: string | number;
   description?: string;
   icon?: LucideIcon;
+  href?: string;
 }) {
-  return (
-    <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-md shadow-black/5 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/50 overflow-hidden">
+  const cardContent = (
+    <>
       {/* Full card hover overlay with rounded corners */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[20px]" />
       
@@ -43,6 +46,22 @@ export function MetricCard({
           </div>
         )}
       </div>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} className="block">
+        <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-md shadow-black/5 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/50 overflow-hidden cursor-pointer hover:scale-[1.02]">
+          {cardContent}
+        </Card>
+      </Link>
+    );
+  }
+
+  return (
+    <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-md shadow-black/5 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/50 overflow-hidden">
+      {cardContent}
     </Card>
   );
 }
