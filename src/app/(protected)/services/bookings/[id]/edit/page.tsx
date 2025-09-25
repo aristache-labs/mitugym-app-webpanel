@@ -1,4 +1,4 @@
-import { fetchServices, fetchMembers, fetchServiceBookings } from "@/lib/data";
+import { fetchServices, fetchMembers, fetchSessionBookings } from "@/lib/data";
 import { ServiceBookingForm } from "@/components/services/service-booking-form";
 import { notFound } from "next/navigation";
 
@@ -16,7 +16,7 @@ export default async function EditServiceBookingPage({ params }: EditServiceBook
   const [services, members, bookings] = await Promise.all([
     fetchServices(),
     fetchMembers(),
-    fetchServiceBookings(),
+    fetchSessionBookings(),
   ]);
 
   const booking = bookings.find(b => b.id === id);

@@ -3,7 +3,6 @@
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { CheckIn, ScheduleDay } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format } from "date-fns";
 
 function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[]) {
   // Get today's date and day of week
@@ -51,7 +50,7 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[]) {
     }
     
     // Only show data up to current hour if viewing today
-    let occupancy = null;
+    let occupancy: number | null = null;
     if (!isToday || hour <= currentHour) {
       // Count people who are in the gym at this hour
       occupancy = 0;
@@ -63,7 +62,7 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[]) {
         // Person is in gym if they checked in before/at this hour AND haven't checked out yet OR checked out after this hour
         if (checkInTime <= currentTime) {
           if (!checkOutTime || checkOutTime > currentTime) {
-            occupancy++;
+            occupancy!++;
           }
         }
       });
@@ -97,7 +96,7 @@ export function OccupancyChart({ checkIns, schedule }: { checkIns: CheckIn[]; sc
             <Tooltip
               contentStyle={{ background: "#141A1A", borderRadius: 12, border: "1px solid rgba(77,212,212,0.3)" }}
               labelStyle={{ color: "#4dd4d4" }}
-              formatter={(value: number | null) => {
+              formatter={(value: unknown) => {
                 if (value === null) return ["No data yet", "Future"];
                 return [`${value} people`, "In Gym"];
               }}

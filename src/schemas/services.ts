@@ -24,7 +24,7 @@ export const updateServiceSchema = serviceBaseSchema.partial().extend({
 });
 
 // Service booking schemas
-export const bookingStatusSchema = z.enum(["upcoming", "completed", "cancelled"]);
+export const bookingStatusSchema = z.enum(["pending", "confirmed", "upcoming", "completed", "cancelled"]);
 
 export const serviceBookingBaseSchema = z.object({
   service_id: z.string().uuid("Invalid service ID"),

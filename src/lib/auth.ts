@@ -33,14 +33,14 @@ export async function getSupabaseServerClient() {
       set(name, value, options) {
         try {
           cookieStore.set(name, value, options);
-        } catch (error) {
+        } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
           // This can be called from a Server Component, ignore the error
         }
       },
       remove(name, options) {
         try {
           cookieStore.set(name, '', { ...options, maxAge: 0 });
-        } catch (error) {
+        } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
           // This can be called from a Server Component, ignore the error
         }
       },

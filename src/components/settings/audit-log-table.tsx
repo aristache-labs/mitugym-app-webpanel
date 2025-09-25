@@ -165,7 +165,7 @@ function formatFieldName(field: string): string {
   return fieldMappings[field] || field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 
-function formatChanges(changes: Record<string, { before: unknown; after: unknown }> | string | null): React.ReactNode {
+function formatChanges(changes: Record<string, { before: unknown; after: unknown }> | string | null | undefined): React.ReactNode {
   if (!changes) return "—";
   
   // Parse if it's a JSON string
@@ -277,7 +277,7 @@ export function AuditLogTable({ entries }: AuditLogTableProps) {
         accessorKey: "entity_id",
         header: "ID",
         cell: ({ row }) => {
-          const { entity_id, action, entity } = row.original;
+          const { entity_id } = row.original;
           
           if (!entity_id) {
             return "—";

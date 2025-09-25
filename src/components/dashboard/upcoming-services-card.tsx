@@ -26,7 +26,7 @@ export function UpcomingServicesCard({ bookings }: UpcomingServicesCardProps) {
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <Calendar className="h-4 w-4" />
-          Today's Services
+          Today&apos;s Services
         </CardTitle>
         <Link href="/services" className="text-xs text-muted-foreground hover:text-foreground">
           View all →

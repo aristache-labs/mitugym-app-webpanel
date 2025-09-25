@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { ChevronUp, ChevronDown, Clock, Edit3, Gamepad2 } from "lucide-react";
+import { ChevronUp, ChevronDown, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TimePickerProps {

@@ -27,6 +27,8 @@ interface ServiceBookingFormProps {
 }
 
 const BOOKING_STATUS_OPTIONS = [
+  { value: "pending", label: "Pending" },
+  { value: "confirmed", label: "Confirmed" },
   { value: "upcoming", label: "Upcoming" },
   { value: "completed", label: "Completed" },
   { value: "cancelled", label: "Cancelled" },
@@ -108,7 +110,7 @@ export function ServiceBookingForm({ booking, services, members, mode }: Service
         } else {
           setError(result.error);
         }
-      } catch (error) {
+      } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
         setError("An unexpected error occurred");
       }
     });
@@ -223,7 +225,7 @@ export function ServiceBookingForm({ booking, services, members, mode }: Service
               <Label htmlFor="status">Status</Label>
               <CustomSelect
                 value={form.watch("status")}
-                onChange={(value: string) => form.setValue("status", value as any)}
+                onChange={(value: string) => form.setValue("status", value as "pending" | "confirmed" | "upcoming" | "completed" | "cancelled")}
                 options={BOOKING_STATUS_OPTIONS}
                 placeholder="Select status"
               />

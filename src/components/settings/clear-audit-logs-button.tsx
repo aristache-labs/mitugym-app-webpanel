@@ -26,10 +26,10 @@ export function ClearAuditLogsButton() {
         
         setError(null);
         setShowConfirmDialog(false);
-        setSuccessMessage(result.message);
+        setSuccessMessage(result.message || "Audit logs cleared successfully");
         setShowSuccessDialog(true);
         router.refresh(); // Refresh the page to show empty audit logs
-      } catch (err) {
+      } catch (_err) { // eslint-disable-line @typescript-eslint/no-unused-vars
         setError("An unexpected error occurred");
       }
     });

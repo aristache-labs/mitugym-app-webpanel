@@ -13,17 +13,6 @@ import type {
   ServiceBooking,
 } from "@/types";
 
-type SupabaseMemberRow = Omit<Member, "plan_name"> & {
-  membership_plans?: { name?: string | null } | null;
-};
-
-type SupabaseCheckInRow = CheckIn & {
-  members?: { full_name?: string | null } | null;
-};
-
-type SupabaseNewsRow = NewsItem & {
-  staff_profiles?: { full_name?: string | null } | null;
-};
 
 const sampleMembers: Member[] = [
   {
@@ -149,7 +138,19 @@ export async function fetchMembers(): Promise<Member[]> {
     return sampleMembers;
   }
 
-  const rows = (data as SupabaseMemberRow[] | null) ?? [];
+  const rows = (data as {
+    id: string;
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    phone?: string;
+    gender?: string;
+    membership_status?: string;
+    membership_plan?: string;
+    plan_start_date?: string;
+    expiry_date?: string;
+    created_at: string;
+  }[] | null) ?? [];
 
   if (!rows.length) {
     return sampleMembers;
@@ -161,19 +162,19 @@ export async function fetchMembers(): Promise<Member[]> {
 
   return rows.map<Member>((profile) => {
     const storedStatus = profile.membership_status as Member['status'] || 'active';
-    const actualStatus = calculateMemberStatus(storedStatus, profile.plan_start_date, profile.expiry_date);
+    const actualStatus = calculateMemberStatus(storedStatus, profile.plan_start_date ?? null, profile.expiry_date ?? null);
     
     return {
       id: profile.id,
-      full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || null,
-      email: profile.email,
-      phone: profile.phone,
+      full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unknown Member',
+      email: profile.email || '',
+      phone: profile.phone || null,
       gender: profile.gender as Member['gender'] || null,
       status: actualStatus as Member['status'],
       plan_id: profile.membership_plan || null,
-      plan_name: profile.membership_plan ? planLookup.get(profile.membership_plan) || null : null,
-      starts_at: profile.plan_start_date,
-      expires_at: profile.expiry_date,
+      plan_name: profile.membership_plan ? (planLookup.get(profile.membership_plan) ?? null) : null,
+      starts_at: profile.plan_start_date || null,
+      expires_at: profile.expiry_date || null,
       created_at: profile.created_at,
     };
   });
@@ -200,26 +201,38 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
     return null;
   }
 
-  const profile = data as any;
+  const profile = data as {
+    id: string;
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    phone?: string;
+    gender?: string;
+    membership_status?: string;
+    membership_plan?: string;
+    plan_start_date?: string;
+    expiry_date?: string;
+    created_at: string;
+  };
 
   // Fetch plans to get the plan name
   const plansData = await fetchPlans();
   const planLookup = new Map(plansData.map(plan => [plan.id, plan.name]));
   
   const storedStatus = profile.membership_status as Member['status'] || 'active';
-  const actualStatus = calculateMemberStatus(storedStatus, profile.plan_start_date, profile.expiry_date);
+  const actualStatus = calculateMemberStatus(storedStatus, profile.plan_start_date ?? null, profile.expiry_date ?? null);
 
   return {
     id: profile.id,
-    full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || null,
-    email: profile.email,
-    phone: profile.phone,
+    full_name: `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unknown Member',
+    email: profile.email || '',
+    phone: profile.phone || null,
     gender: profile.gender as Member['gender'] || null,
     status: actualStatus as Member['status'],
     plan_id: profile.membership_plan || null,
-    plan_name: profile.membership_plan ? planLookup.get(profile.membership_plan) || null : null,
-    starts_at: profile.plan_start_date,
-    expires_at: profile.expiry_date,
+    plan_name: profile.membership_plan ? (planLookup.get(profile.membership_plan) ?? null) : null,
+    starts_at: profile.plan_start_date || null,
+    expires_at: profile.expiry_date || null,
     created_at: profile.created_at,
   } as Member;
 }
@@ -240,7 +253,14 @@ export async function fetchPlans(): Promise<MembershipPlan[]> {
     return samplePlans;
   }
 
-  return data ? data.map((plan: any) => ({
+  return data ? data.map((plan: {
+    id: string;
+    name: string;
+    price: number;
+    duration_months?: number;
+    features?: string[];
+    is_active: boolean;
+  }) => ({
     id: plan.id,
     name: plan.name,
     price: plan.price,
@@ -293,7 +313,14 @@ export async function fetchCheckIns(): Promise<CheckIn[]> {
     });
   }
 
-  return checkinsData.map<CheckIn>((checkIn: any) => ({
+  return checkinsData.map<CheckIn>((checkIn: {
+    id: string;
+    user_id: string;
+    check_in_time: string;
+    check_out_time?: string;
+    duration_minutes?: number;
+    membership_plan_name?: string;
+  }) => ({
     id: checkIn.id,
     member_id: checkIn.user_id,
     member_name: memberNames[checkIn.user_id] || 'Unknown Member',
@@ -321,7 +348,15 @@ export async function fetchNews(): Promise<NewsItem[]> {
     return sampleNews;
   }
 
-  const rows = (data as any[] | null) ?? [];
+  const rows = (data as {
+    id: string;
+    title: string;
+    content: string;
+    priority: number;
+    end_date?: string;
+    created_at: string;
+    created_by?: string;
+  }[] | null) ?? [];
 
   return rows.length
     ? rows.map<NewsItem>((item) => ({
@@ -329,7 +364,7 @@ export async function fetchNews(): Promise<NewsItem[]> {
         title: item.title,
         content: item.content,
         priority: item.priority === 1 ? 'low' : item.priority === 2 ? 'medium' : 'high',
-        expires_at: item.end_date,
+        expires_at: item.end_date || null,
         created_at: item.created_at,
         author_name: 'Admin', // No relationship exists, using default
       }))
@@ -353,7 +388,12 @@ export async function fetchSchedule(): Promise<ScheduleDay[]> {
     return sampleSchedule;
   }
 
-  return data.map((row: any) => ({
+  return data.map((row: {
+    day_of_week: number;
+    open_time?: string;
+    close_time?: string;
+    is_active: boolean;
+  }) => ({
     // Convert from database format (0=Monday, 6=Sunday) to JS Date format (0=Sunday, 1=Monday)
     // DB: 0=Mon,1=Tue,2=Wed,3=Thu,4=Fri,5=Sat,6=Sun
     // JS: 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
@@ -577,7 +617,7 @@ export async function fetchPurchasedServices(): Promise<PurchasedService[]> {
     } : undefined,
     member: profilesMap.has(purchase.member_id) ? {
       id: purchase.member_id,
-      full_name: `${profilesMap.get(purchase.member_id).first_name || ""} ${profilesMap.get(purchase.member_id).last_name || ""}`.trim() || null,
+      full_name: `${profilesMap.get(purchase.member_id).first_name || ""} ${profilesMap.get(purchase.member_id).last_name || ""}`.trim() || 'Unknown Member',
       email: profilesMap.get(purchase.member_id).email,
       phone: profilesMap.get(purchase.member_id).phone,
       gender: profilesMap.get(purchase.member_id).gender,
@@ -667,7 +707,7 @@ export async function fetchSessionBookings(): Promise<ServiceBooking[]> {
     } : undefined,
     member: profilesMap.has(booking.member_id) ? {
       id: booking.member_id,
-      full_name: `${profilesMap.get(booking.member_id).first_name || ""} ${profilesMap.get(booking.member_id).last_name || ""}`.trim() || null,
+      full_name: `${profilesMap.get(booking.member_id).first_name || ""} ${profilesMap.get(booking.member_id).last_name || ""}`.trim() || 'Unknown Member',
       email: profilesMap.get(booking.member_id).email,
       phone: profilesMap.get(booking.member_id).phone,
       gender: profilesMap.get(booking.member_id).gender,
@@ -762,7 +802,7 @@ export async function fetchTodaysSessionBookings(): Promise<ServiceBooking[]> {
     } : undefined,
     member: profilesMap.has(booking.member_id) ? {
       id: booking.member_id,
-      full_name: `${profilesMap.get(booking.member_id).first_name || ""} ${profilesMap.get(booking.member_id).last_name || ""}`.trim() || null,
+      full_name: `${profilesMap.get(booking.member_id).first_name || ""} ${profilesMap.get(booking.member_id).last_name || ""}`.trim() || 'Unknown Member',
       email: profilesMap.get(booking.member_id).email,
       phone: profilesMap.get(booking.member_id).phone,
       gender: profilesMap.get(booking.member_id).gender,
