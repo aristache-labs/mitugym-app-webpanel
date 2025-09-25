@@ -6,6 +6,7 @@ import { UpcomingServicesCard } from "@/components/dashboard/upcoming-services-c
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, UserCheck, AlertTriangle, Clock, Settings } from "lucide-react";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const [metrics, checkIns, news, todaysServices, schedule] = await Promise.all([
@@ -68,39 +69,107 @@ export default async function DashboardPage() {
         </div>
         
         {/* Enhanced Check-ins Card */}
-        <Card className="bg-card/95 backdrop-blur-sm border-surface/30 shadow-2xl shadow-black/20">
-          <CardHeader className="border-b border-surface/20 bg-gradient-to-r from-primary/5 to-secondary/5">
-            <CardTitle className="text-lg font-semibold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent">
-              Latest Check-ins
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 p-6">
-            {latestCheckIns.map((checkIn) => (
-              <div 
-                key={checkIn.id} 
-                className="group flex items-center justify-between rounded-2xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 px-5 py-4 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-primary font-semibold text-sm">
-                    {(checkIn.member_name ?? "W").charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-text group-hover:text-primary transition-colors">
-                      {checkIn.member_name ?? "Walk-in"}
-                    </p>
-                    <p className="text-xs text-muted/80">{formatDate(checkIn.checked_in_at)}</p>
-                  </div>
+        <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">
+          {/* Full card hover overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[20px]" />
+          
+           <CardHeader className="relative pb-4">
+             {/* Gradient border */}
+             <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <svg className="h-5 w-5 text-primary/60 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
                 </div>
-                <Badge 
-                  variant="default" 
-                  className="capitalize bg-primary/20 text-primary border-primary/30 hover:bg-primary/30"
-                >
-                  {checkIn.method ?? "manual"}
-                </Badge>
+                <div>
+                  <Link href="/checkins" className="group/title">
+                    <CardTitle className="text-lg font-semibold text-text group-hover:text-primary group-hover/title:text-primary transition-colors cursor-pointer">
+                      Latest Check-ins
+                    </CardTitle>
+                  </Link>
+                  <p className="text-xs text-muted/70 mt-0.5">Recent gym entries and activity</p>
+                </div>
               </div>
-            ))}
-          </CardContent>
-        </Card>
+              <div className="text-right">
+                <div className="text-sm font-semibold text-text">
+                  {latestCheckIns.length} today
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          
+          <CardContent className="relative p-2">
+            {latestCheckIns.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                  <svg className="h-6 w-6 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium text-text">No check-ins yet</p>
+                  <p className="text-xs text-muted/80 mt-1">Member check-ins will appear here</p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {latestCheckIns.map((checkIn, index) => (
+                  <div 
+                    key={checkIn.id} 
+                    className="group/item flex items-center justify-between rounded-2xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 px-3 py-3 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
+                  >
+                    <div className="flex items-center gap-3">
+                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary font-bold text-base group-hover/item:bg-primary/25 transition-colors">
+                         {(checkIn.member_name ?? "W").charAt(0).toUpperCase()}
+                       </div>
+                       <div className="flex-1">
+                         <div className="flex items-center gap-2">
+                           {checkIn.member_name && checkIn.member_name !== "Walk-in" ? (
+                             <Link href={`/members/${checkIn.member_id}`} className="group/member">
+                               <p className="font-semibold text-text group-hover/item:text-primary group-hover/member:text-primary transition-colors cursor-pointer hover:underline">
+                                 {checkIn.member_name}
+                               </p>
+                             </Link>
+                           ) : (
+                             <p className="font-semibold text-text group-hover/item:text-primary transition-colors">
+                               Walk-in
+                             </p>
+                           )}
+                         </div>
+                         <div className="flex items-center gap-2 mt-1">
+                           <svg className="h-3 w-3 text-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                           </svg>
+                           <p className="text-xs text-muted/80">{formatDate(checkIn.checked_in_at)}</p>
+                         </div>
+                       </div>
+                     </div>
+                     <div className="flex flex-col items-end gap-2">
+                       <div className="flex items-center gap-2">
+                         {index === 0 && (
+                           <span className="px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full text-xs font-medium border border-green-500/30">
+                             Latest
+                           </span>
+                         )}
+                         <Badge 
+                           variant="default" 
+                           className="capitalize bg-primary/20 text-primary border-primary/30 hover:bg-primary/30 transition-colors"
+                         >
+                           {checkIn.method ?? "manual"}
+                         </Badge>
+                       </div>
+                       <div className="text-xs text-muted/60">
+                         Check-in #{latestCheckIns.length - index}
+                       </div>
+                     </div>
+                  </div>
+                ))}
+              </div>
+             )}
+           </CardContent>
+         </Card>
       </section>
 
       {/* Enhanced Announcements Section */}

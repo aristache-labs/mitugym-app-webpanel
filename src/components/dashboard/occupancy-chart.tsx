@@ -82,7 +82,9 @@ export function OccupancyChart({ checkIns, schedule }: { checkIns: CheckIn[]; sc
       {/* Full card hover overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[20px]" />
       
-      <CardHeader className="relative border-b border-surface/20">
+      <CardHeader className="relative pb-4">
+        {/* Gradient border */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
@@ -190,7 +192,9 @@ export function OccupancyChart({ checkIns, schedule }: { checkIns: CheckIn[]; sc
         </div>
         
         {/* Chart footer with additional info */}
-        <div className="mt-4 pt-4 border-t border-surface/20">
+        <div className="relative mt-4 pt-4">
+          {/* Gradient border */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
           <div className="flex items-center justify-between text-xs text-muted/70">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
