@@ -228,15 +228,20 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     </div>
                   )}
                   
-                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                    <Calendar className="h-5 w-5 text-primary flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-medium text-muted/70">Member ID</p>
-                      <p className="text-text font-semibold font-mono text-sm">
-                        {member.id.substring(0, 8)}...
-                      </p>
-                    </div>
-                  </div>
+                   <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
+                     <CreditCard className="h-5 w-5 text-primary flex-shrink-0" />
+                     <div>
+                       <p className="text-sm font-medium text-muted/70">Membership Plan</p>
+                       <p className="text-text font-semibold">
+                         {member.plan_name || 'No plan assigned'}
+                       </p>
+                       {member.expires_at && (
+                         <p className={`text-sm mt-1 ${isExpired ? 'text-red-500' : isExpiringSoon ? 'text-yellow-600' : 'text-muted/60'}`}>
+                           {isExpired ? 'Expired on:' : 'Expires:'} {formatDate(member.expires_at)}
+                         </p>
+                       )}
+                     </div>
+                   </div>
                 </div>
 
                 {/* Contact Information */}
@@ -269,80 +274,66 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     </div>
                   )}
                   
-                  {member.address ? (
-                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                      <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-muted/70">Address</p>
-                        <p className="text-text font-semibold">{member.address}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
-                      <MapPin className="h-5 w-5 text-muted/40 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-muted/50">Address</p>
-                        <p className="text-muted/60 text-sm">Not provided</p>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
-                {/* Location & Membership Details */}
-                <div className="space-y-4">
-                  <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Location & Membership</h3>
-                  
-                  {member.city ? (
-                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                      <Building className="h-5 w-5 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-muted/70">City</p>
-                        <p className="text-text font-semibold">{member.city}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
-                      <Building className="h-5 w-5 text-muted/40 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-muted/50">City</p>
-                        <p className="text-muted/60 text-sm">Not provided</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {member.county ? (
-                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                      <Map className="h-5 w-5 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-muted/70">County</p>
-                        <p className="text-text font-semibold">{member.county}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
-                      <Map className="h-5 w-5 text-muted/40 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-muted/50">County</p>
-                        <p className="text-muted/60 text-sm">Not provided</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                    <CreditCard className="h-5 w-5 text-primary flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-medium text-muted/70">Membership Plan</p>
-                      <p className="text-text font-semibold">
-                        {member.plan_name || 'No plan assigned'}
-                      </p>
-                      {member.expires_at && (
-                        <p className={`text-sm mt-1 ${isExpired ? 'text-red-500' : isExpiringSoon ? 'text-yellow-600' : 'text-muted/60'}`}>
-                          {isExpired ? 'Expired on:' : 'Expires:'} {formatDate(member.expires_at)}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                 {/* Location & Membership Details */}
+                 <div className="space-y-4">
+                   <h3 className="text-sm font-semibold text-text uppercase tracking-wider">Location & Membership</h3>
+                   
+                   {member.address ? (
+                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
+                       <MapPin className="h-5 w-5 text-primary flex-shrink-0" />
+                       <div>
+                         <p className="text-sm font-medium text-muted/70">Address</p>
+                         <p className="text-text font-semibold">{member.address}</p>
+                       </div>
+                     </div>
+                   ) : (
+                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
+                       <MapPin className="h-5 w-5 text-muted/40 flex-shrink-0" />
+                       <div>
+                         <p className="text-sm font-medium text-muted/50">Address</p>
+                         <p className="text-muted/60 text-sm">Not provided</p>
+                       </div>
+                     </div>
+                   )}
+                   
+                   {member.city ? (
+                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
+                       <Building className="h-5 w-5 text-primary flex-shrink-0" />
+                       <div>
+                         <p className="text-sm font-medium text-muted/70">City</p>
+                         <p className="text-text font-semibold">{member.city}</p>
+                       </div>
+                     </div>
+                   ) : (
+                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
+                       <Building className="h-5 w-5 text-muted/40 flex-shrink-0" />
+                       <div>
+                         <p className="text-sm font-medium text-muted/50">City</p>
+                         <p className="text-muted/60 text-sm">Not provided</p>
+                       </div>
+                     </div>
+                   )}
+                   
+                   {member.county ? (
+                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
+                       <Map className="h-5 w-5 text-primary flex-shrink-0" />
+                       <div>
+                         <p className="text-sm font-medium text-muted/70">County</p>
+                         <p className="text-text font-semibold">{member.county}</p>
+                       </div>
+                     </div>
+                   ) : (
+                     <div className="flex items-center gap-3 p-4 rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
+                       <Map className="h-5 w-5 text-muted/40 flex-shrink-0" />
+                       <div>
+                         <p className="text-sm font-medium text-muted/50">County</p>
+                         <p className="text-muted/60 text-sm">Not provided</p>
+                       </div>
+                     </div>
+                   )}
+                 </div>
               </div>
             </CardContent>
           </Card>
@@ -455,49 +446,87 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
             </div>
           </CardHeader>
             
-          <CardContent className="relative p-6 pt-0">
-            <div className="grid md:grid-cols-2 gap-8">
+          <CardContent className="relative p-8 pt-0">
+            {/* Central Divider */}
+            <div className="relative mb-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-cyan-400/60 to-transparent"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <div className="px-4 py-2 bg-card rounded-xl border border-cyan-400/30 shadow-lg shadow-cyan-400/10">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-cyan-400/80"></div>
+                    <span className="text-xs font-medium text-cyan-400/90 uppercase tracking-wider">Services Overview</span>
+                    <div className="w-2 h-2 rounded-full bg-cyan-400/80"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 relative">
+              {/* Central Vertical Divider */}
+              <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-cyan-400/40 to-transparent transform -translate-x-1/2"></div>
+              
               {/* Purchased Services */}
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-text uppercase tracking-wider flex items-center gap-2">
-                  <ShoppingBag className="h-4 w-4 text-green-500" />
-                  Purchased Services
-                </h3>
-                <div className="space-y-3 max-h-80 overflow-y-auto">
+                
+                <div className="space-y-3 max-h-120 overflow-y-auto">
                   {memberPurchasedServices.length > 0 ? (
                     memberPurchasedServices.map((service) => (
                       <div
                         key={service.id}
-                        className="group/item relative rounded-xl bg-gradient-to-r from-green-500/5 to-green-500/10 border border-green-500/20 p-4 transition-all duration-200 hover:from-green-500/10 hover:to-green-500/15"
+                        className="group relative rounded-2xl bg-card/80 backdrop-blur-sm p-4 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:bg-card/90"
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-green-500/20">
-                              <Package className="h-4 w-4 text-green-500" />
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3">
+                            <div className="p-2 rounded-xl bg-gradient-to-br from-primary/15 to-primary/10">
+                              <Package className="h-4 w-4 text-primary" />
                             </div>
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium text-text truncate">
-                                {service.service?.name || 'Service'}
-                              </p>
-                              <p className="text-xs text-muted/60">
-                                {formatDate(service.purchase_date)}
-                              </p>
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-semibold text-text group-hover:text-primary transition-colors truncate">
+                                {service.service?.name || 'Service Package'}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs text-muted/60">Purchased</span>
+                                <div className="w-1 h-1 rounded-full bg-muted/40"></div>
+                                <span className="text-xs font-medium text-text">
+                                  {formatDate(service.purchase_date)}
+                                </span>
+                              </div>
                             </div>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            <p className="text-sm font-semibold text-green-600">
-                              ${service.service?.price || '0'}
+                            <p className="text-lg font-bold text-primary mb-1">
+                              {service.service?.price || '0'} <span className="text-sm font-medium">RON</span>
                             </p>
-                            <Badge variant="outline" className="text-xs border-green-500/30 text-green-600">
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs font-medium ${
+                                service.status === 'approved' 
+                                  ? 'border-green-500/40 text-green-600 bg-green-500/10' 
+                                  : service.status === 'pending'
+                                  ? 'border-yellow-500/40 text-yellow-600 bg-yellow-500/10'
+                                  : 'border-red-500/40 text-red-600 bg-red-500/10'
+                              }`}
+                            >
                               {service.status}
                             </Badge>
                           </div>
                         </div>
+                        
+                        
                         {service.sessions_remaining !== null && (
-                          <div className="mt-3 pt-3 border-t border-green-500/10">
-                            <p className="text-xs text-muted/70">
-                              {service.sessions_remaining} of {service.sessions_total} sessions remaining
-                            </p>
+                          <div className="flex items-center justify-between mt-3 p-3 rounded-xl bg-gradient-to-r from-surface/20 to-surface/10">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-primary/60"></div>
+                              <span className="text-xs font-medium text-muted/70">Sessions Progress</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-sm font-semibold text-text">
+                                {service.sessions_remaining} / {service.sessions_total}
+                              </span>
+                              <p className="text-xs text-muted/60">remaining</p>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -506,31 +535,40 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     <>
                       {/* Show membership plan if exists */}
                       {member.plan_name && (
-                        <div className="group/item relative rounded-xl bg-gradient-to-r from-green-500/5 to-green-500/10 border border-green-500/20 p-4 transition-all duration-200 hover:from-green-500/10 hover:to-green-500/15">
+                        <div className="group relative rounded-2xl bg-card/80 backdrop-blur-sm p-4 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:bg-card/90">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <div className="p-2 rounded-lg bg-green-500/20">
-                                <CreditCard className="h-4 w-4 text-green-500" />
+                              <div className="p-2 rounded-xl bg-gradient-to-br from-primary/15 to-primary/10">
+                                <CreditCard className="h-4 w-4 text-primary" />
                               </div>
                               <div>
-                                <p className="text-sm font-medium text-text">{member.plan_name}</p>
-                                <p className="text-xs text-muted/60">
-                                  {formatDate(member.created_at)}
-                                </p>
+                                <h4 className="font-semibold text-text group-hover:text-primary transition-colors">
+                                  {member.plan_name}
+                                </h4>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <span className="text-xs text-muted/60">Active since</span>
+                                  <span className="text-xs font-medium text-text">
+                                    {formatDate(member.created_at)}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                            <Badge variant="outline" className="text-xs border-green-500/30 text-green-600">
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs font-medium border-green-500/40 text-green-600 bg-green-500/10"
+                            >
                               {member.status}
                             </Badge>
                           </div>
                         </div>
                       )}
                       {memberPurchasedServices.length === 0 && !member.plan_name && (
-                        <div className="flex flex-col items-center justify-center py-8 text-center">
-                          <div className="p-3 rounded-xl bg-green-500/5 border border-green-500/10 mb-3">
-                            <ShoppingBag className="h-6 w-6 text-green-500/50" />
+                        <div className="flex flex-col items-center justify-center py-12 text-center">
+                          <div className="p-4 rounded-2xl bg-gradient-to-br from-surface/20 to-surface/10 border border-surface/30 mb-4">
+                            <ShoppingBag className="h-8 w-8 text-muted/50" />
                           </div>
-                          <p className="text-muted/70 font-medium text-sm">No purchases</p>
+                          <h4 className="font-medium text-text mb-1">No Services Purchased</h4>
+                          <p className="text-sm text-muted/60">Service purchases will appear here</p>
                         </div>
                       )}
                     </>
@@ -540,43 +578,75 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
 
               {/* Service Bookings */}
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-text uppercase tracking-wider flex items-center gap-2">
-                  <CalendarCheck className="h-4 w-4 text-blue-500" />
-                  Service Bookings
-                </h3>
-                <div className="space-y-3 max-h-80 overflow-y-auto">
+                
+                <div className="space-y-3 max-h-96 overflow-y-auto">
                   {memberBookings.length > 0 ? (
                     memberBookings.map((booking) => (
                       <div
                         key={booking.id}
-                        className="group/item relative rounded-xl bg-gradient-to-r from-blue-500/5 to-blue-500/10 border border-blue-500/20 p-4 transition-all duration-200 hover:from-blue-500/10 hover:to-blue-500/15"
+                        className="group relative rounded-2xl bg-card/80 backdrop-blur-sm p-4 transition-all duration-300 hover:shadow-lg hover:shadow-secondary/5 hover:bg-card/90"
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-blue-500/20">
-                              <Calendar className="h-4 w-4 text-blue-500" />
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3">
+                            <div className="p-2 rounded-xl bg-gradient-to-br from-secondary/15 to-secondary/10">
+                              <Calendar className="h-4 w-4 text-secondary" />
                             </div>
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium text-text truncate">
-                                {booking.service?.name || 'Booking'}
-                              </p>
-                              <p className="text-xs text-muted/60">
-                                {formatDate(booking.booking_date)}
-                              </p>
+                            <div className="min-w-0 flex-1">
+                              <h4 className="font-semibold text-text group-hover:text-secondary transition-colors truncate">
+                                {booking.service?.name || 'Service Booking'}
+                              </h4>
+                              <div className="grid grid-cols-1 gap-2 mt-3">
+                                <div className="flex items-center gap-2 p-2 rounded-lg bg-surface/20">
+                                  <Calendar className="h-3 w-3 text-secondary/60" />
+                                  <span className="text-xs font-medium text-text">
+                                    {formatDate(booking.booking_date)}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2 p-2 rounded-lg bg-surface/20">
+                                  <Clock className="h-3 w-3 text-secondary/60" />
+                                  <span className="text-xs font-medium text-text">
+                                    {new Date(booking.booking_date).toLocaleTimeString('en-US', {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                      hour12: false
+                                    })}
+                                  </span>
+                                  <div className="ml-auto flex items-center gap-1">
+                                    <div className="w-1 h-1 rounded-full bg-secondary/40"></div>
+                                    <span className="text-xs text-muted/60">
+                                      {booking.service?.duration_minutes || 'N/A'} min
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                          <Badge variant="outline" className="text-xs border-blue-500/30 text-blue-600">
-                            {booking.status}
-                          </Badge>
+                          <div className="text-right flex-shrink-0">
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs font-medium mb-2 ${
+                                booking.status === 'confirmed' 
+                                  ? 'border-green-500/40 text-green-600 bg-green-500/10' 
+                                  : booking.status === 'pending'
+                                  ? 'border-yellow-500/40 text-yellow-600 bg-yellow-500/10'
+                                  : booking.status === 'completed'
+                                  ? 'border-blue-500/40 text-blue-600 bg-blue-500/10'
+                                  : 'border-red-500/40 text-red-600 bg-red-500/10'
+                              }`}
+                            >
+                              {booking.status}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-8 text-center">
-                      <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/10 mb-3">
-                        <CalendarCheck className="h-6 w-6 text-blue-500/50" />
+                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                      <div className="p-4 rounded-2xl bg-gradient-to-br from-surface/20 to-surface/10 border border-surface/30 mb-4">
+                        <CalendarCheck className="h-8 w-8 text-muted/50" />
                       </div>
-                      <p className="text-muted/70 font-medium text-sm">No bookings</p>
+                      <h4 className="font-medium text-text mb-1">No Bookings Scheduled</h4>
+                      <p className="text-sm text-muted/60">Service bookings will appear here</p>
                     </div>
                   )}
                 </div>
