@@ -103,12 +103,11 @@ function formatFieldName(field: string): string {
     'last_name': 'Last Name', 
     'plan_start': 'Plan Start Date',
     'plan_expiry': 'Plan Expiry Date',
-    'membership_status': 'Status',
-    'membership_plan': 'Membership Plan',
+    'status': 'Member Status',
+    'plan': 'Membership Plan',
     'phone': 'Phone Number',
     'email': 'Email Address',
     'gender': 'Gender',
-    'status': 'Member Status',
     
     // Schedule fields
     'monday_open': 'Monday Opening',

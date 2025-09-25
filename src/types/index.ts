@@ -1,4 +1,4 @@
-export type MemberStatus = "active" | "inactive" | "frozen" | "pending";
+export type MemberStatus = "active" | "inactive" | "frozen" | "pending" | "expired" | "suspended";
 export type MemberGender = "male" | "female" | "other";
 
 export type Member = {

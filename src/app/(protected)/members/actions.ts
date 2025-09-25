@@ -54,10 +54,10 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
       gender: parsed.data.gender,
       email: parsed.data.email,
       phone: parsed.data.phone,
-      membership_status: parsed.data.status, // Send original status, let trigger calculate
-      membership_plan: parsed.data.plan_id,
-      plan_start_date: parsed.data.starts_at,
-      expiry_date: parsed.data.expires_at,
+      status: parsed.data.status, // Send original status, let trigger calculate
+      plan_id: parsed.data.plan_id,
+      starts_at: parsed.data.starts_at,
+      expires_at: parsed.data.expires_at,
     };
 
     const { error: profileError } = await admin
@@ -71,15 +71,7 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
       return { success: false, error: `Failed to create profile: ${profileError.message}` };
     }
 
-    // After successful creation, refresh the member's status based on plan timing
-    const { error: statusError } = await admin.rpc('refresh_member_status', {
-      member_id: authUser.user.id
-    });
-
-    if (statusError) {
-      console.warn("Failed to refresh member status", statusError);
-      // Don't fail the whole operation, just log the warning
-    }
+    // Member status will be automatically calculated by database triggers
 
     await appendAuditLog(
       staff.profile.id, 
@@ -130,7 +122,7 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
   // Get current member data for comparison
   const { data: currentMember, error: fetchError } = await admin
     .from("profiles")
-    .select("first_name, last_name, gender, email, phone, membership_status, membership_plan, plan_start_date, expiry_date")
+    .select("first_name, last_name, gender, email, phone, status, plan_id, starts_at, expires_at")
     .eq("id", parsed.data.id)
     .single();
 
@@ -150,10 +142,10 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
     gender: parsed.data.gender,
     email: parsed.data.email,
     phone: parsed.data.phone,
-    membership_status: parsed.data.status, // Send original status, let trigger calculate
-    membership_plan: parsed.data.plan_id,
-    plan_start_date: parsed.data.starts_at,
-    expiry_date: parsed.data.expires_at,
+    status: parsed.data.status, // Send original status, let trigger calculate
+    plan_id: parsed.data.plan_id,
+    starts_at: parsed.data.starts_at,
+    expires_at: parsed.data.expires_at,
   };
 
   const { error } = await admin
@@ -166,15 +158,7 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
     return { success: false, error: error.message };
   }
 
-  // After successful update, refresh the member's status based on plan timing
-  const { error: statusError } = await admin.rpc('refresh_member_status', {
-    member_id: parsed.data.id
-  });
-
-  if (statusError) {
-    console.warn("Failed to refresh member status", statusError);
-    // Don't fail the whole operation, just log the warning
-  }
+  // Member status will be automatically calculated by database triggers
 
   // Create detailed change tracking
   const changes: Record<string, { before: unknown, after: unknown }> = {};
@@ -194,17 +178,17 @@ export async function updateMemberAction(values: unknown): Promise<ActionResult>
   if (currentMember.gender !== parsed.data.gender) {
     changes.gender = { before: currentMember.gender, after: parsed.data.gender };
   }
-  if (currentMember.membership_status !== parsed.data.status) {
-    changes.status = { before: currentMember.membership_status, after: parsed.data.status };
+  if (currentMember.status !== parsed.data.status) {
+    changes.status = { before: currentMember.status, after: parsed.data.status };
   }
-  if (currentMember.membership_plan !== parsed.data.plan_id) {
-    changes.plan = { before: currentMember.membership_plan, after: parsed.data.plan_id };
+  if (currentMember.plan_id !== parsed.data.plan_id) {
+    changes.plan = { before: currentMember.plan_id, after: parsed.data.plan_id };
   }
-  if (currentMember.plan_start_date !== parsed.data.starts_at) {
-    changes.plan_start = { before: currentMember.plan_start_date, after: parsed.data.starts_at };
+  if (currentMember.starts_at !== parsed.data.starts_at) {
+    changes.plan_start = { before: currentMember.starts_at, after: parsed.data.starts_at };
   }
-  if (currentMember.expiry_date !== parsed.data.expires_at) {
-    changes.plan_expiry = { before: currentMember.expiry_date, after: parsed.data.expires_at };
+  if (currentMember.expires_at !== parsed.data.expires_at) {
+    changes.plan_expiry = { before: currentMember.expires_at, after: parsed.data.expires_at };
   }
 
   await appendAuditLog(

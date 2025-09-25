@@ -130,7 +130,7 @@ export async function fetchMembers(): Promise<Member[]> {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, first_name, last_name, gender, email, phone, membership_status, membership_plan, plan_start_date, expiry_date, created_at")
+    .select("id, first_name, last_name, gender, email, phone, status, plan_id, starts_at, expires_at, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -145,10 +145,10 @@ export async function fetchMembers(): Promise<Member[]> {
     email?: string;
     phone?: string;
     gender?: string;
-    membership_status?: string;
-    membership_plan?: string;
-    plan_start_date?: string;
-    expiry_date?: string;
+    status?: string;
+    plan_id?: string;
+    starts_at?: string;
+    expires_at?: string;
     created_at: string;
   }[] | null) ?? [];
 
@@ -161,8 +161,8 @@ export async function fetchMembers(): Promise<Member[]> {
   const planLookup = new Map(plansData.map(plan => [plan.id, plan.name]));
 
   return rows.map<Member>((profile) => {
-    const storedStatus = profile.membership_status as Member['status'] || 'active';
-    const actualStatus = calculateMemberStatus(storedStatus, profile.plan_start_date ?? null, profile.expiry_date ?? null);
+    const storedStatus = profile.status as Member['status'] || 'active';
+    const actualStatus = calculateMemberStatus(storedStatus, profile.starts_at ?? null, profile.expires_at ?? null);
     
     return {
       id: profile.id,
@@ -171,10 +171,10 @@ export async function fetchMembers(): Promise<Member[]> {
       phone: profile.phone || null,
       gender: profile.gender as Member['gender'] || null,
       status: actualStatus as Member['status'],
-      plan_id: profile.membership_plan || null,
-      plan_name: profile.membership_plan ? (planLookup.get(profile.membership_plan) ?? null) : null,
-      starts_at: profile.plan_start_date || null,
-      expires_at: profile.expiry_date || null,
+      plan_id: profile.plan_id || null,
+      plan_name: profile.plan_id ? (planLookup.get(profile.plan_id) ?? null) : null,
+      starts_at: profile.starts_at || null,
+      expires_at: profile.expires_at || null,
       created_at: profile.created_at,
     };
   });
@@ -188,7 +188,7 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, first_name, last_name, gender, email, phone, membership_status, membership_plan, plan_start_date, expiry_date, created_at")
+    .select("id, first_name, last_name, gender, email, phone, status, plan_id, starts_at, expires_at, created_at")
     .eq("id", id)
     .maybeSingle();
 
@@ -208,10 +208,10 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
     email?: string;
     phone?: string;
     gender?: string;
-    membership_status?: string;
-    membership_plan?: string;
-    plan_start_date?: string;
-    expiry_date?: string;
+    status?: string;
+    plan_id?: string;
+    starts_at?: string;
+    expires_at?: string;
     created_at: string;
   };
 
@@ -219,8 +219,8 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
   const plansData = await fetchPlans();
   const planLookup = new Map(plansData.map(plan => [plan.id, plan.name]));
   
-  const storedStatus = profile.membership_status as Member['status'] || 'active';
-  const actualStatus = calculateMemberStatus(storedStatus, profile.plan_start_date ?? null, profile.expiry_date ?? null);
+  const storedStatus = profile.status as Member['status'] || 'active';
+  const actualStatus = calculateMemberStatus(storedStatus, profile.starts_at ?? null, profile.expires_at ?? null);
 
   return {
     id: profile.id,
@@ -229,10 +229,10 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
     phone: profile.phone || null,
     gender: profile.gender as Member['gender'] || null,
     status: actualStatus as Member['status'],
-    plan_id: profile.membership_plan || null,
-    plan_name: profile.membership_plan ? (planLookup.get(profile.membership_plan) ?? null) : null,
-    starts_at: profile.plan_start_date || null,
-    expires_at: profile.expiry_date || null,
+    plan_id: profile.plan_id || null,
+    plan_name: profile.plan_id ? (planLookup.get(profile.plan_id) ?? null) : null,
+    starts_at: profile.starts_at || null,
+    expires_at: profile.expires_at || null,
     created_at: profile.created_at,
   } as Member;
 }
@@ -631,11 +631,11 @@ export async function fetchPurchasedServices(): Promise<PurchasedService[]> {
       email: profilesMap.get(purchase.member_id).email,
       phone: profilesMap.get(purchase.member_id).phone,
       gender: profilesMap.get(purchase.member_id).gender,
-      status: profilesMap.get(purchase.member_id).membership_status,
-      plan_id: profilesMap.get(purchase.member_id).membership_plan,
-      plan_name: profilesMap.get(purchase.member_id).membership_plan,
-      starts_at: profilesMap.get(purchase.member_id).plan_start_date,
-      expires_at: profilesMap.get(purchase.member_id).expiry_date,
+      status: profilesMap.get(purchase.member_id).status,
+      plan_id: profilesMap.get(purchase.member_id).plan_id,
+      plan_name: profilesMap.get(purchase.member_id).plan_id,
+      starts_at: profilesMap.get(purchase.member_id).starts_at,
+      expires_at: profilesMap.get(purchase.member_id).expires_at,
       created_at: profilesMap.get(purchase.member_id).created_at,
     } : undefined,
   }));
@@ -721,11 +721,11 @@ export async function fetchSessionBookings(): Promise<ServiceBooking[]> {
       email: profilesMap.get(booking.member_id).email,
       phone: profilesMap.get(booking.member_id).phone,
       gender: profilesMap.get(booking.member_id).gender,
-      status: profilesMap.get(booking.member_id).membership_status,
-      plan_id: profilesMap.get(booking.member_id).membership_plan,
-      plan_name: profilesMap.get(booking.member_id).membership_plan,
-      starts_at: profilesMap.get(booking.member_id).plan_start_date,
-      expires_at: profilesMap.get(booking.member_id).expiry_date,
+      status: profilesMap.get(booking.member_id).status,
+      plan_id: profilesMap.get(booking.member_id).plan_id,
+      plan_name: profilesMap.get(booking.member_id).plan_id,
+      starts_at: profilesMap.get(booking.member_id).starts_at,
+      expires_at: profilesMap.get(booking.member_id).expires_at,
       created_at: profilesMap.get(booking.member_id).created_at,
     } : undefined,
   }));
@@ -816,11 +816,11 @@ export async function fetchTodaysSessionBookings(): Promise<ServiceBooking[]> {
       email: profilesMap.get(booking.member_id).email,
       phone: profilesMap.get(booking.member_id).phone,
       gender: profilesMap.get(booking.member_id).gender,
-      status: profilesMap.get(booking.member_id).membership_status,
-      plan_id: profilesMap.get(booking.member_id).membership_plan,
-      plan_name: profilesMap.get(booking.member_id).membership_plan,
-      starts_at: profilesMap.get(booking.member_id).plan_start_date,
-      expires_at: profilesMap.get(booking.member_id).expiry_date,
+      status: profilesMap.get(booking.member_id).status,
+      plan_id: profilesMap.get(booking.member_id).plan_id,
+      plan_name: profilesMap.get(booking.member_id).plan_id,
+      starts_at: profilesMap.get(booking.member_id).starts_at,
+      expires_at: profilesMap.get(booking.member_id).expires_at,
       created_at: profilesMap.get(booking.member_id).created_at,
     } : undefined,
   }));
