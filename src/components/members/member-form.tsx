@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { CustomSelect } from "@/components/ui/custom-select";
+import { useToast } from "@/components/ui/toast";
 import { cn, calculateExpirationDate, calculateMemberStatus } from "@/lib/utils";
 
 interface MemberFormProps {
@@ -32,6 +33,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
+  const { addToast } = useToast();
   const schema = member ? updateMemberSchema : createMemberSchema;
 
   const form = useForm<FormValues>({
@@ -109,15 +111,34 @@ export function MemberForm({ plans, member }: MemberFormProps) {
   const handleResult = (result: ActionResult) => {
     if (!result.success) {
       setServerError(result.error);
+      addToast({
+        type: "error",
+        title: "Error",
+        description: result.error,
+        duration: 6000,
+      });
       return;
     }
     setServerError(null);
+    
     if (!member) {
       // For new member creation, redirect to members page
+      addToast({
+        type: "success",
+        title: "Member Created",
+        description: "New member has been successfully created.",
+        duration: 4000,
+      });
       form.reset();
       router.push("/members");
     } else {
-      // For member updates, just refresh
+      // For member updates, show success message and refresh
+      addToast({
+        type: "success",
+        title: "Changes Saved",
+        description: "Member information has been successfully updated.",
+        duration: 4000,
+      });
       router.refresh();
     }
   };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -15,6 +15,11 @@ export function MemberActions({ memberId }: MemberActionsProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  // Reset confirmation state when memberId changes
+  useEffect(() => {
+    setShowDeleteConfirm(false);
+  }, [memberId]);
 
   const handleDelete = () => {
     startTransition(async () => {
