@@ -7,12 +7,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CustomSelect } from "@/components/ui/custom-select";
+import { useToast } from "@/components/ui/toast";
 import { updateSessionBookingAction } from "@/app/(protected)/actions";
 import { ServiceBooking } from "@/types";
 
@@ -20,7 +20,7 @@ import { ServiceBooking } from "@/types";
 const updateSessionBookingFormSchema = z.object({
   id: z.string().uuid(),
   booking_date: z.string().min(1, "Booking date is required"),
-  status: z.enum(["pending", "confirmed", "upcoming", "completed", "cancelled"]).optional(),
+  status: z.enum(["pending", "confirmed", "completed", "cancelled"]).optional(),
   notes: z.string().max(1000, "Notes too long").optional(),
 });
 
@@ -33,7 +33,6 @@ interface SessionBookingEditFormProps {
 const STATUS_OPTIONS = [
   { value: "pending", label: "Pending" },
   { value: "confirmed", label: "Confirmed" },
-  { value: "upcoming", label: "Upcoming" },
   { value: "completed", label: "Completed" },
   { value: "cancelled", label: "Cancelled" },
 ];
@@ -42,13 +41,14 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { addToast } = useToast();
 
   const form = useForm<UpdateSessionBookingFormData>({
     resolver: zodResolver(updateSessionBookingFormSchema),
     defaultValues: {
       id: booking.id,
       booking_date: booking.booking_date ? format(new Date(booking.booking_date), "yyyy-MM-dd'T'HH:mm") : "",
-      status: booking.status,
+      status: booking.status === "upcoming" ? "confirmed" : booking.status,
       notes: booking.notes || "",
     },
   });
@@ -76,23 +76,34 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
         const result = await updateSessionBookingAction(formData);
 
         if (result.success) {
+          addToast({
+            type: "success",
+            title: "Booking Updated",
+            message: "Session booking has been updated successfully.",
+          });
           router.push("/bookings");
         } else {
           setError(result.error);
+          addToast({
+            type: "error",
+            title: "Update Failed",
+            message: result.error || "Failed to update session booking.",
+          });
         }
       } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
-        setError("An unexpected error occurred");
+        const errorMessage = "An unexpected error occurred";
+        setError(errorMessage);
+        addToast({
+          type: "error",
+          title: "Update Failed",
+          message: errorMessage,
+        });
       }
     });
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>Edit Session Booking</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {error && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
               <p className="text-sm text-destructive">{error}</p>
@@ -159,7 +170,7 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
             <Label htmlFor="status">Status</Label>
             <CustomSelect
               value={form.watch("status") || ""}
-              onChange={(value: string) => form.setValue("status", value as "pending" | "confirmed" | "upcoming" | "completed" | "cancelled")}
+              onChange={(value: string) => form.setValue("status", value as "pending" | "confirmed" | "completed" | "cancelled")}
               options={STATUS_OPTIONS}
               placeholder="Select status"
             />
@@ -187,21 +198,31 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex justify-end gap-4 pt-6">
             <Button
               type="button"
               variant="outline"
               onClick={() => router.push("/bookings")}
               disabled={isPending}
+              className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? "Updating..." : "Update Booking"}
+            <Button 
+              type="submit" 
+              disabled={isPending}
+              className="gap-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 transition-all duration-200 rounded-xl min-w-[140px]"
+            >
+              {isPending ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  Updating...
+                </>
+              ) : (
+                "Update Booking"
+              )}
             </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+    </form>
   );
 }

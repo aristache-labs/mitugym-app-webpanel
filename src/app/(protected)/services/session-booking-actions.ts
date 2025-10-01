@@ -8,7 +8,8 @@ import {
   confirmSessionBookingSchema, 
   completeSessionBookingSchema, 
   cancelSessionBookingSchema,
-  updateSessionBookingSchema 
+  updateSessionBookingSchema,
+  deleteSessionBookingSchema 
 } from "@/schemas/services";
 import { ActionResult, appendAuditLog } from "../lib/action-utils";
 
@@ -94,6 +95,9 @@ export async function createSessionBookingAction(formData: FormData): Promise<Ac
     console.error("Failed to create session booking", error);
     return { success: false, error: error.message };
   }
+
+  // Note: Session management is handled automatically by database trigger
+  // No manual session decrementing needed
 
   const memberName = `${memberResult.data.first_name || ''} ${memberResult.data.last_name || ''}`.trim() || 'Unknown Member';
   const serviceName = purchasedServiceResult.data.services?.name || 'Unknown Service';
@@ -183,6 +187,9 @@ export async function confirmSessionBookingAction(formData: FormData): Promise<A
     console.error("Failed to confirm session booking", error);
     return { success: false, error: error.message };
   }
+
+  // Note: Session management is handled automatically by database trigger
+  // Trigger decrements sessions when status changes from pending to confirmed
 
   // Get member profile separately
   const { data: memberProfile } = await admin
@@ -283,6 +290,9 @@ export async function completeSessionBookingAction(formData: FormData): Promise<
     console.error("Failed to complete session booking", error);
     return { success: false, error: error.message };
   }
+
+  // Note: Session was already decremented when booking was confirmed
+  // Completing a booking doesn't consume additional sessions
 
   // Get member profile separately
   const { data: memberProfile } = await admin
@@ -387,6 +397,9 @@ export async function cancelSessionBookingAction(formData: FormData): Promise<Ac
     console.error("Failed to cancel session booking", error);
     return { success: false, error: error.message };
   }
+
+  // Note: Session management is handled automatically by database trigger
+  // Trigger increments sessions when status changes from confirmed to cancelled
 
   // Get member profile separately
   const { data: memberProfile } = await admin
@@ -548,4 +561,95 @@ export async function updateSessionBookingAction(formData: FormData): Promise<Ac
 
   revalidatePath("/bookings");
   return { success: true, message: "Session booking updated successfully" };
+}
+
+export async function deleteSessionBookingAction(formData: FormData): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+
+  const parsed = deleteSessionBookingSchema.safeParse({
+    id: formData.get("id"),
+  });
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: "Validation failed",
+      issues: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const { id } = parsed.data;
+
+  // Get booking details for audit log before deletion
+  const { data: existingBooking, error: fetchError } = await admin
+    .from("session_bookings")
+    .select(`
+      *,
+      purchased_services (
+        services (name)
+      )
+    `)
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !existingBooking) {
+    return { success: false, error: "Session booking not found" };
+  }
+
+  // Only allow deletion of cancelled bookings
+  if (existingBooking.status !== "cancelled") {
+    return { success: false, error: "Only cancelled bookings can be deleted" };
+  }
+
+  // Get member details for audit log
+  const { data: memberData } = await admin
+    .from("profiles")
+    .select("first_name, last_name")
+    .eq("id", existingBooking.member_id)
+    .single();
+
+  // Delete the session booking
+  const { error: deleteError } = await admin
+    .from("session_bookings")
+    .delete()
+    .eq("id", id);
+
+  if (deleteError) {
+    console.error("Failed to delete session booking", deleteError);
+    return { success: false, error: deleteError.message };
+  }
+
+  const memberName = memberData 
+    ? `${memberData.first_name || ''} ${memberData.last_name || ''}`.trim() || 'Unknown Member'
+    : 'Unknown Member';
+  const serviceName = existingBooking.purchased_services?.services?.name || 'Unknown Service';
+
+  // Log the deletion
+  await appendAuditLog(
+    staff.profile.id,
+    "session_booking.delete",
+    "session_bookings",
+    id,
+    { 
+      service_name: serviceName,
+      booking_date: existingBooking.booking_date,
+      status: existingBooking.status,
+      notes: existingBooking.notes,
+    },
+    `${serviceName} for ${memberName}`,
+    {
+      booking_deleted: {
+        before: `Status: ${existingBooking.status}, Date: ${existingBooking.booking_date}`,
+        after: "DELETED"
+      }
+    }
+  );
+
+  revalidatePath("/bookings");
+  return { success: true, message: "Session booking deleted successfully" };
 }

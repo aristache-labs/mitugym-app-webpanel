@@ -22,7 +22,7 @@ const createSessionBookingFormSchema = z.object({
   purchased_service_id: z.string().uuid("Please select a service"),
   member_id: z.string().uuid("Please select a member"),
   booking_date: z.string().min(1, "Booking date is required"),
-  status: z.enum(["pending", "confirmed", "upcoming"]).default("pending"),
+  status: z.enum(["pending", "confirmed"]).default("pending"),
   notes: z.string().max(1000, "Notes too long").optional(),
 });
 
@@ -36,7 +36,6 @@ interface SessionBookingFormProps {
 const STATUS_OPTIONS = [
   { value: "pending", label: "Pending" },
   { value: "confirmed", label: "Confirmed" },
-  { value: "upcoming", label: "Upcoming" },
 ];
 
 export function SessionBookingForm({ members, services }: SessionBookingFormProps) {
@@ -248,7 +247,7 @@ export function SessionBookingForm({ members, services }: SessionBookingFormProp
           </Label>
           <CustomSelect
             value={form.watch("status")}
-            onChange={(value) => form.setValue("status", value as "pending" | "confirmed" | "upcoming")}
+            onChange={(value) => form.setValue("status", value as "pending" | "confirmed")}
             options={STATUS_OPTIONS}
             placeholder="Select status..."
             className="w-full"

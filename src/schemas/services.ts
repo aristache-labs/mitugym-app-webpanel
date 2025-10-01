@@ -106,6 +106,10 @@ export const updateSessionBookingSchema = z.object({
   notes: z.string().max(1000, "Notes too long").optional(),
 });
 
+export const deleteSessionBookingSchema = z.object({
+  id: z.string().uuid("Invalid booking ID"),
+});
+
 // Types inferred from schemas
 export type CreateServiceRequest = z.infer<typeof createServiceSchema>;
 export type UpdateServiceRequest = z.infer<typeof updateServiceSchema>;
@@ -119,3 +123,4 @@ export type ConfirmSessionBookingRequest = z.infer<typeof confirmSessionBookingS
 export type CompleteSessionBookingRequest = z.infer<typeof completeSessionBookingSchema>;
 export type CancelSessionBookingRequest = z.infer<typeof cancelSessionBookingSchema>;
 export type UpdateSessionBookingRequest = z.infer<typeof updateSessionBookingSchema>;
+export type DeleteSessionBookingRequest = z.infer<typeof deleteSessionBookingSchema>;

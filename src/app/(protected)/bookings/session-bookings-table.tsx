@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { ServiceBooking } from "@/types";
-import { confirmSessionBookingAction, completeSessionBookingAction, cancelSessionBookingAction } from "@/app/(protected)/actions";
+import { confirmSessionBookingAction, completeSessionBookingAction, cancelSessionBookingAction, deleteSessionBookingAction } from "@/app/(protected)/actions";
 import { Calendar, User, Clock, CheckCircle, XCircle, Trash2, Eye, Edit, X, Package } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -121,8 +121,25 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     if (!selectedBooking) return;
 
     startTransition(async () => {
-      // TODO: Implement deleteSessionBookingAction
-      setError("Delete action not implemented yet");
+      setError(null);
+      
+      const formData = new FormData();
+      formData.append("id", selectedBooking.id);
+
+      try {
+        const result = await deleteSessionBookingAction(formData);
+
+        if (result.success) {
+          setDeleteModalOpen(false);
+          setSelectedBooking(null);
+          // The page will automatically refresh due to revalidatePath in the action
+        } else {
+          setError(result.error || "Failed to delete session booking");
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+        setError("An unexpected error occurred");
+      }
     });
   };
 
@@ -703,51 +720,125 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
           setError(null);
         }}
         title="Delete Booking"
+        className="max-w-2xl"
       >
-        <div className="space-y-4">
-          {error && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-              <p className="text-sm text-destructive">{error}</p>
+        <div className="relative">
+          {/* Background Glow */}
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-3xl blur-2xl"></div>
+          
+          <div className="relative space-y-6">
+            {/* Header Section */}
+            <div className="text-center space-y-2">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-red-500/20 to-red-600/30 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-red-500/20">
+                <Trash2 className="h-8 w-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-text">Delete Session Booking</h3>
+              <p className="text-sm text-muted-foreground">
+                This action will permanently remove the booking from the system
+              </p>
             </div>
-          )}
 
-          <p className="text-sm text-muted-foreground">
-            Are you sure you want to permanently delete this cancelled booking?
-          </p>
+            {/* Error Display */}
+            {error && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-red-600/10 rounded-2xl blur-xl"></div>
+                <div className="relative bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-2xl p-4">
+                  <div className="flex items-center gap-3">
+                    <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    <p className="text-sm text-red-600 font-medium">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
-          {selectedBooking && (
-            <div className="bg-muted/50 border border-border rounded-lg p-3">
-              <div className="space-y-2 text-sm">
-                <div><strong>Service:</strong> {selectedBooking.service?.name}</div>
-                <div><strong>Member:</strong> {selectedBooking.member?.full_name}</div>
-                <div><strong>Date:</strong> {format(new Date(selectedBooking.booking_date), "PPp")}</div>
+            {/* Booking Details */}
+            {selectedBooking && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-red-600/10 rounded-2xl blur-xl"></div>
+                <div className="relative bg-red-500/5 backdrop-blur-sm border border-red-500/20 rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Calendar className="h-5 w-5 text-red-600" />
+                    <h4 className="font-semibold text-text">Booking to Delete</h4>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-red-500/5 to-transparent border border-red-500/10">
+                      <Package className="h-4 w-4 text-red-600" />
+                      <div>
+                        <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Service</p>
+                        <p className="text-sm font-semibold text-text">{selectedBooking.service?.name}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-red-500/5 to-transparent border border-red-500/10">
+                      <User className="h-4 w-4 text-red-600" />
+                      <div>
+                        <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Member</p>
+                        <p className="text-sm font-semibold text-text">{selectedBooking.member?.full_name}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-red-500/5 to-transparent border border-red-500/10">
+                      <Clock className="h-4 w-4 text-red-600" />
+                      <div>
+                        <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Date & Time</p>
+                        <p className="text-sm font-semibold text-text">{format(new Date(selectedBooking.booking_date), "PPp")}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Danger Warning */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-red-600/10 to-red-700/15 rounded-2xl blur-xl"></div>
+              <div className="relative bg-red-600/10 backdrop-blur-sm border border-red-600/30 rounded-2xl p-4">
+                <div className="flex items-start gap-3">
+                  <Trash2 className="h-5 w-5 text-red-700 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-red-700 mb-1">Permanent Deletion Warning</p>
+                    <p className="text-xs text-muted-foreground">
+                      This booking will be permanently deleted from the system. This action cannot be undone and all associated data will be lost.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
 
-          <p className="text-sm font-medium text-destructive">
-            This action cannot be undone.
-          </p>
-
-          <div className="flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setDeleteModalOpen(false);
-                setSelectedBooking(null);
-                setError(null);
-              }}
-              disabled={isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={isPending}
-            >
-              {isPending ? "Deleting..." : "Delete Booking"}
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-4 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setDeleteModalOpen(false);
+                  setSelectedBooking(null);
+                  setError(null);
+                }}
+                disabled={isPending}
+                className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
+              >
+                <X className="h-4 w-4" />
+                Keep Booking
+              </Button>
+              <Button
+                onClick={handleDelete}
+                disabled={isPending}
+                className="gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl min-w-[140px]"
+              >
+                {isPending ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4" />
+                    Delete Booking
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </Modal>
