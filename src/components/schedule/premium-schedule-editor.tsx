@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import type { ScheduleDay } from "@/types";
 import { weekdayLabel, sortScheduleByWeekday } from "@/lib/utils";
 import { Clock, Calendar, CheckCircle2, XCircle } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 interface PremiumScheduleEditorProps {
   schedule: ScheduleDay[];
@@ -18,6 +19,7 @@ export function PremiumScheduleEditor({ schedule }: PremiumScheduleEditorProps) 
   const [state, setState] = useState<ScheduleDay[]>(sortScheduleByWeekday(schedule));
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const { addToast } = useToast();
 
   const updateDay = (weekday: number, patch: Partial<ScheduleDay>) => {
     setState((prev) => {
@@ -49,9 +51,19 @@ export function PremiumScheduleEditor({ schedule }: PremiumScheduleEditorProps) 
   const handleResult = (result: ActionResult) => {
     if (!result.success) {
       setServerError(result.error);
+      addToast({
+        type: "error",
+        title: "Failed to Save Schedule",
+        description: result.error || "An unexpected error occurred. Please try again.",
+      });
       return;
     }
     setServerError(null);
+    addToast({
+      type: "success",
+      title: "Schedule Saved",
+      description: "Your gym schedule has been successfully updated.",
+    });
   };
 
   const getDayStatus = (day: ScheduleDay) => {

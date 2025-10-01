@@ -24,7 +24,7 @@ export function TimePicker({
   const [hours, setHours] = useState("06");
   const [minutes, setMinutes] = useState("00");
   const [inputValue, setInputValue] = useState("");
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0, shouldOpenUpward: false });
   const containerRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -47,10 +47,18 @@ export function TimePicker({
   useEffect(() => {
     if (isOpen && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
+      const dropdownHeight = 400; // Approximate height of the dropdown
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+      
       setDropdownPosition({
-        top: rect.bottom + window.scrollY + 4,
+        top: shouldOpenUpward 
+          ? rect.top + window.scrollY - dropdownHeight - 4
+          : rect.bottom + window.scrollY + 4,
         left: rect.left + window.scrollX,
-        width: rect.width
+        width: rect.width,
+        shouldOpenUpward
       });
     }
   }, [isOpen]);
@@ -148,14 +156,16 @@ export function TimePicker({
     return createPortal(
       <div 
         data-time-picker-dropdown
-        className="fixed z-[9999] rounded-lg border-2 border-primary/20 bg-card shadow-2xl ring-1 ring-primary/10"
+        className="fixed z-[9999] rounded-lg border-2 border-primary/20 bg-card shadow-2xl ring-1 ring-primary/10 max-h-[400px] overflow-auto"
         style={{ 
           top: dropdownPosition.top,
           left: dropdownPosition.left,
           width: dropdownPosition.width,
           zIndex: 9999,
           backgroundColor: 'var(--card)',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(77, 212, 212, 0.2), 0 0 20px rgba(77, 212, 212, 0.1)'
+          boxShadow: dropdownPosition.shouldOpenUpward
+            ? '0 -25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(77, 212, 212, 0.2), 0 0 20px rgba(77, 212, 212, 0.1)'
+            : '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(77, 212, 212, 0.2), 0 0 20px rgba(77, 212, 212, 0.1)'
         }}
       >
           <div className="p-4 space-y-4">
