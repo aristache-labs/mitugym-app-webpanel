@@ -1,7 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchSessionBookings } from "@/lib/data";
 import { SessionBookingsTable } from "./session-bookings-table";
+import { CalendarViewButton } from "@/components/bookings/calendar-view-button";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { Plus, Calendar, Clock, CheckCircle, AlertCircle, Package } from "lucide-react";
 import Link from "next/link";
@@ -90,12 +91,15 @@ export default async function BookingsPage() {
                   <p className="text-sm text-muted/70 mt-1">Manage and track all booking sessions</p>
                 </div>
               </div>
-              <Link href="/bookings/new">
-                <Button className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl">
-                  <Plus className="h-4 w-4" />
-                  New Booking
-                </Button>
-              </Link>
+              <div className="flex items-center gap-3">
+                <CalendarViewButton bookings={bookings} timeFormat={timeFormat} />
+                <Link href="/bookings/new">
+                  <Button className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl">
+                    <Plus className="h-4 w-4" />
+                    New Booking
+                  </Button>
+                </Link>
+              </div>
             </div>
           </CardHeader>
           
