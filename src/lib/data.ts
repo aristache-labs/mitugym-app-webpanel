@@ -9,6 +9,7 @@ import type {
   MembershipPlan,
   NewsItem,
   OccupancySnapshot,
+  PlanType,
   PurchasedService,
   ScheduleDay,
   Service,
@@ -81,6 +82,7 @@ const samplePlans: MembershipPlan[] = [
   {
     id: "plan-day",
     name: "Day Pass",
+    plan_type: "day_entry",
     price: 15,
     duration_months: 0,
     features: ["Single day access", "All equipment", "Valid for 24 hours"],
@@ -89,6 +91,7 @@ const samplePlans: MembershipPlan[] = [
   {
     id: "plan-basic",
     name: "Monthly Unlimited",
+    plan_type: "full",
     price: 79,
     duration_months: 1,
     features: ["Unlimited access", "All equipment", "Monthly billing"],
@@ -97,6 +100,7 @@ const samplePlans: MembershipPlan[] = [
   {
     id: "plan-flex",
     name: "Quarterly Plan",
+    plan_type: "full",
     price: 199,
     duration_months: 3,
     features: ["3 month access", "All equipment", "Flexible timing"],
@@ -252,7 +256,7 @@ export async function fetchPlans(): Promise<MembershipPlan[]> {
 
   const { data, error } = await admin
     .from("membership_plans")
-    .select("id, name, price, duration_months, features, is_active")
+    .select("id, name, plan_type, price, duration_months, features, is_active")
     .order("price");
 
   if (error) {
@@ -263,6 +267,7 @@ export async function fetchPlans(): Promise<MembershipPlan[]> {
   return data ? data.map((plan: {
     id: string;
     name: string;
+    plan_type: string;
     price: number;
     duration_months?: number;
     features?: string[];
@@ -270,6 +275,7 @@ export async function fetchPlans(): Promise<MembershipPlan[]> {
   }) => ({
     id: plan.id,
     name: plan.name,
+    plan_type: plan.plan_type as PlanType,
     price: plan.price,
     duration_months: plan.duration_months ?? 1, // Use nullish coalescing to preserve 0
     features: plan.features || [],

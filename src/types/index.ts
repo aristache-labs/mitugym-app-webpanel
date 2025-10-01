@@ -38,9 +38,12 @@ export type DatabaseProfile = {
   created_at: string;
 };
 
+export type PlanType = "day_entry" | "full" | "student";
+
 export type MembershipPlan = {
   id: string;
   name: string;
+  plan_type: PlanType;
   price: number;
   duration_months: number;
   features?: string[];

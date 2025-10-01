@@ -1,8 +1,11 @@
 import { z } from "zod";
 
+export const planTypeEnum = z.enum(["day_entry", "full", "student"]);
+
 export const planSchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().min(2, "Name is required"),
+  plan_type: planTypeEnum.default("full"),
   price: z.coerce
     .number({ invalid_type_error: "Price must be a number" })
     .min(0, "Price cannot be negative"),
