@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { z } from "zod";
 import { apiKeyRateLimiter, ipRateLimiter, memberRateLimiter, createRateLimitIdentifier } from "@/lib/rate-limit";
+import { parseQRCode, validateTOTPCode, isTOTPFormat } from "@/lib/totp";
 
-// Schema for check-in request
+// Schema for check-in request  
+// Note: action is now optional - smart detection based on check-in status
 const checkinRequestSchema = z.object({
   qr_code: z.string().min(1, "QR code is required"),
   api_key: z.string().min(1, "API key is required"),
-  action: z.enum(["checkin", "checkout"]),
+  action: z.enum(["checkin", "checkout", "auto"]).optional(), // Optional - auto-detect if not provided
   device_id: z.string().optional(), // Optional device identifier
 });
 
@@ -34,11 +36,15 @@ type CheckinResponse = {
  * 
  * Request body:
  * {
- *   "qr_code": "member_qr_code_string",
+ *   "qr_code": "member_id:totp_code" or "member_id" (legacy),
  *   "api_key": "your_secure_api_key",
- *   "action": "checkin" | "checkout",
+ *   "action": "checkin" | "checkout" | "auto" (optional - auto-detects if not provided),
  *   "device_id": "optional_device_identifier"
  * }
+ * 
+ * QR Code Format:
+ * - New: "member_id:123456" (TOTP rotating code)
+ * - Legacy: "member_id" (backward compatible)
  */
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -108,8 +114,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { qr_code, api_key, action } = validation.data;
-    apiAction = action;
+    const { qr_code, api_key } = validation.data;
+    let { action } = validation.data;
+    
+    // Parse QR code - check if it's TOTP format or legacy
+    let actualMemberId: string;
+    let isTOTP = false;
+    
+    if (isTOTPFormat(qr_code)) {
+      // New TOTP format: member_id:totp_code
+      const parsed = parseQRCode(qr_code);
+      if (!parsed) {
+        await logApiRequest({
+          request,
+          endpoint: '/api/checkin',
+          method: 'POST',
+          statusCode: 400,
+          success: false,
+          errorMessage: "Invalid QR code format",
+          durationMs: Date.now() - startTime,
+        });
+        return NextResponse.json<CheckinResponse>(
+          {
+            success: false,
+            message: "Invalid QR code format",
+            error: "QR code must be in format: member_id:totp_code",
+          },
+          { status: 400 }
+        );
+      }
+      actualMemberId = parsed.memberId;
+      isTOTP = true;
+    } else {
+      // Legacy format: just member ID (backward compatible)
+      actualMemberId = qr_code;
+      isTOTP = false;
+    }
+    
+    apiAction = action || "auto";
     
     // Check API key-based rate limit
     const apiKeyLimit = apiKeyRateLimiter.check(createRateLimitIdentifier('api_key', api_key));
@@ -179,12 +221,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find member by QR code
-    // Assuming QR code contains the member ID or a unique identifier
+    // Find member by member ID and get TOTP secret if needed
     const { data: member, error: memberError } = await admin
       .from("profiles")
-      .select("id, first_name, last_name, email, status, plan_id, starts_at, expires_at")
-      .eq("id", qr_code) // Adjust this based on your QR code format
+      .select("id, first_name, last_name, email, status, plan_id, starts_at, expires_at, totp_secret")
+      .eq("id", actualMemberId)
       .single();
 
     if (memberError || !member) {
@@ -212,6 +253,81 @@ export async function POST(request: NextRequest) {
     // Store member info for logging
     memberId = member.id;
     memberName = `${member.first_name || ''} ${member.last_name || ''}`.trim();
+
+    // Validate TOTP if using new format
+    if (isTOTP) {
+      const parsed = parseQRCode(qr_code);
+      if (!parsed) {
+        // This shouldn't happen as we already validated, but check anyway
+        return NextResponse.json<CheckinResponse>(
+          {
+            success: false,
+            message: "Invalid QR code",
+            error: "QR code validation failed",
+          },
+          { status: 400 }
+        );
+      }
+
+      // Check if member has TOTP secret
+      const memberWithSecret = member as typeof member & { totp_secret?: string };
+      if (!memberWithSecret.totp_secret) {
+        await logApiRequest({
+          request,
+          endpoint: '/api/checkin',
+          method: 'POST',
+          statusCode: 403,
+          success: false,
+          apiAction,
+          memberId,
+          memberName,
+          errorMessage: "TOTP not configured for this member",
+          durationMs: Date.now() - startTime,
+        });
+        return NextResponse.json<CheckinResponse>(
+          {
+            success: false,
+            message: "TOTP not configured",
+            error: "Please set up your mobile app first at /api/member/totp-setup/:memberId",
+            data: {
+              member_id: memberId,
+              member_name: memberName,
+            },
+          },
+          { status: 403 }
+        );
+      }
+
+      // Validate TOTP code
+      const isValidTOTP = validateTOTPCode(parsed.totpCode, memberWithSecret.totp_secret, memberId);
+      
+      if (!isValidTOTP) {
+        await logApiRequest({
+          request,
+          endpoint: '/api/checkin',
+          method: 'POST',
+          statusCode: 401,
+          success: false,
+          apiAction,
+          memberId,
+          memberName,
+          errorMessage: "Invalid or expired TOTP code",
+          durationMs: Date.now() - startTime,
+        });
+        return NextResponse.json<CheckinResponse>(
+          {
+            success: false,
+            message: "Invalid QR code",
+            error: "QR code is invalid or expired. Please refresh your QR code.",
+            data: {
+              member_id: memberId,
+              member_name: memberName,
+            },
+          },
+          { status: 401 }
+        );
+      }
+    }
 
     // Check member-based rate limit (prevent spam for specific members)
     const memberLimit = memberRateLimiter.check(createRateLimitIdentifier('member', member.id));
@@ -335,18 +451,25 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Check current check-in status for smart action detection
+    const { data: existingCheckin } = await admin
+      .from("checkins")
+      .select("id, check_in_time")
+      .eq("user_id", member.id)
+      .is("check_out_time", null)
+      .order("check_in_time", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    // Smart action detection: if action is 'auto' or not provided
+    if (action === "auto" || !action) {
+      action = existingCheckin ? "checkout" : "checkin";
+      apiAction = action;
+    }
+
     // Handle check-in
     if (action === "checkin") {
-      // Check if member is already checked in
-      const { data: existingCheckin } = await admin
-        .from("checkins")
-        .select("id, check_in_time")
-        .eq("user_id", member.id)
-        .is("check_out_time", null)
-        .order("check_in_time", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
+      // Check if member is already checked in (from smart detection above)
       if (existingCheckin) {
         return NextResponse.json<CheckinResponse>(
           {

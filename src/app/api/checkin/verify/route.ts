@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { z } from "zod";
 import { apiKeyRateLimiter, ipRateLimiter, memberRateLimiter, createRateLimitIdentifier } from "@/lib/rate-limit";
+import { parseQRCode, validateTOTPCode, isTOTPFormat } from "@/lib/totp";
 
 // Schema for verification request
 const verifyRequestSchema = z.object({
@@ -36,9 +37,13 @@ type VerifyResponse = {
  * 
  * Request body:
  * {
- *   "qr_code": "member_qr_code_string",
+ *   "qr_code": "member_id:totp_code" or "member_id" (legacy),
  *   "api_key": "your_secure_api_key"
  * }
+ * 
+ * QR Code Format:
+ * - New: "member_id:123456" (TOTP rotating code)
+ * - Legacy: "member_id" (backward compatible)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -84,6 +89,31 @@ export async function POST(request: NextRequest) {
     }
 
     const { qr_code, api_key } = validation.data;
+
+    // Parse QR code - check if it's TOTP format or legacy
+    let actualMemberId: string;
+    let isTOTP = false;
+    
+    if (isTOTPFormat(qr_code)) {
+      // New TOTP format: member_id:totp_code
+      const parsed = parseQRCode(qr_code);
+      if (!parsed) {
+        return NextResponse.json<VerifyResponse>(
+          {
+            success: false,
+            message: "Invalid QR code format",
+            error: "QR code must be in format: member_id:totp_code",
+          },
+          { status: 400 }
+        );
+      }
+      actualMemberId = parsed.memberId;
+      isTOTP = true;
+    } else {
+      // Legacy format: just member ID (backward compatible)
+      actualMemberId = qr_code;
+      isTOTP = false;
+    }
 
     // Check API key-based rate limit
     const apiKeyLimit = apiKeyRateLimiter.check(createRateLimitIdentifier('api_key', api_key));
@@ -132,11 +162,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find member by QR code
+    // Find member by member ID and get TOTP secret if needed
     const { data: member, error: memberError } = await admin
       .from("profiles")
-      .select("id, first_name, last_name, email, status, plan_id, starts_at, expires_at")
-      .eq("id", qr_code)
+      .select("id, first_name, last_name, email, status, plan_id, starts_at, expires_at, totp_secret")
+      .eq("id", actualMemberId)
       .single();
 
     if (memberError || !member) {
@@ -148,6 +178,74 @@ export async function POST(request: NextRequest) {
         },
         { status: 404 }
       );
+    }
+
+    // Validate TOTP if using new format
+    if (isTOTP) {
+      const parsed = parseQRCode(qr_code);
+      if (!parsed) {
+        return NextResponse.json<VerifyResponse>(
+          {
+            success: false,
+            message: "Invalid QR code",
+            error: "QR code validation failed",
+          },
+          { status: 400 }
+        );
+      }
+
+      // Check if member has TOTP secret
+      const memberWithSecret = member as typeof member & { totp_secret?: string };
+      if (!memberWithSecret.totp_secret) {
+        return NextResponse.json<VerifyResponse>(
+          {
+            success: false,
+            message: "TOTP not configured",
+            error: "Please set up your mobile app first",
+            data: {
+              member_id: member.id,
+              member_name: `${member.first_name || ''} ${member.last_name || ''}`.trim(),
+              email: member.email,
+              membership_status: member.status || 'unknown',
+              plan_name: null,
+              starts_at: null,
+              expires_at: null,
+              days_remaining: null,
+              is_checked_in: false,
+              can_checkin: false,
+              validation_errors: ["TOTP not configured for this member"],
+            },
+          },
+          { status: 403 }
+        );
+      }
+
+      // Validate TOTP code
+      const isValidTOTP = validateTOTPCode(parsed.totpCode, memberWithSecret.totp_secret, member.id);
+      
+      if (!isValidTOTP) {
+        return NextResponse.json<VerifyResponse>(
+          {
+            success: false,
+            message: "Invalid QR code",
+            error: "QR code is invalid or expired",
+            data: {
+              member_id: member.id,
+              member_name: `${member.first_name || ''} ${member.last_name || ''}`.trim(),
+              email: member.email,
+              membership_status: member.status || 'unknown',
+              plan_name: null,
+              starts_at: null,
+              expires_at: null,
+              days_remaining: null,
+              is_checked_in: false,
+              can_checkin: false,
+              validation_errors: ["Invalid or expired TOTP code"],
+            },
+          },
+          { status: 401 }
+        );
+      }
     }
 
     // Get plan information
