@@ -5,6 +5,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireStaff } from "@/lib/auth";
 import { createMemberSchema, updateMemberSchema } from "@/schemas/members";
 import { ActionResult, appendAuditLog, generateRandomPassword } from "../lib/action-utils";
+import { deleteAvatar, updateAvatar } from "@/lib/storage";
 
 export async function createMemberAction(values: unknown): Promise<ActionResult> {
   const parsed = createMemberSchema.safeParse(values);
@@ -109,6 +110,110 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
   } catch (error) {
     console.error("Unexpected error creating member", error);
     return { success: false, error: "An unexpected error occurred" };
+  }
+}
+
+/**
+ * Upload avatar for a member
+ */
+export async function uploadMemberAvatarAction(
+  memberId: string,
+  formData: FormData
+): Promise<ActionResult> {
+  try {
+    await requireStaff();
+
+    const file = formData.get('avatar') as File;
+    if (!file) {
+      return { success: false, error: "No file provided" };
+    }
+
+    const admin = getSupabaseAdmin();
+    if (!admin) {
+      return { success: false, error: "Storage service unavailable" };
+    }
+
+    // Get current avatar URL to delete old one if exists
+    const { data: member } = await admin
+      .from("profiles")
+      .select("avatar_url")
+      .eq("id", memberId)
+      .single();
+
+    // Upload new avatar
+    const result = await updateAvatar(file, memberId, member?.avatar_url);
+
+    if (!result.success) {
+      return { success: false, error: result.error || "Upload failed" };
+    }
+
+    // Update profile with new avatar URL
+    const { error: updateError } = await admin
+      .from("profiles")
+      .update({ avatar_url: result.url })
+      .eq("id", memberId);
+
+    if (updateError) {
+      // Clean up uploaded file if database update fails
+      if (result.url) {
+        await deleteAvatar(result.url);
+      }
+      return { success: false, error: "Failed to update profile" };
+    }
+
+    revalidatePath(`/members/${memberId}`);
+    revalidatePath("/members");
+
+    return { success: true, message: "Avatar uploaded successfully" };
+  } catch (error) {
+    console.error("Avatar upload error:", error);
+    return { success: false, error: "Failed to upload avatar" };
+  }
+}
+
+/**
+ * Delete avatar for a member
+ */
+export async function deleteMemberAvatarAction(
+  memberId: string
+): Promise<ActionResult> {
+  try {
+    await requireStaff();
+
+    const admin = getSupabaseAdmin();
+    if (!admin) {
+      return { success: false, error: "Storage service unavailable" };
+    }
+
+    // Get current avatar URL
+    const { data: member } = await admin
+      .from("profiles")
+      .select("avatar_url")
+      .eq("id", memberId)
+      .single();
+
+    if (member?.avatar_url) {
+      // Delete from storage
+      await deleteAvatar(member.avatar_url);
+    }
+
+    // Update profile to remove avatar URL
+    const { error: updateError } = await admin
+      .from("profiles")
+      .update({ avatar_url: null })
+      .eq("id", memberId);
+
+    if (updateError) {
+      return { success: false, error: "Failed to update profile" };
+    }
+
+    revalidatePath(`/members/${memberId}`);
+    revalidatePath("/members");
+
+    return { success: true, message: "Avatar removed successfully" };
+  } catch (error) {
+    console.error("Avatar delete error:", error);
+    return { success: false, error: "Failed to delete avatar" };
   }
 }
 

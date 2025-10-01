@@ -7,7 +7,9 @@ export type { ActionResult, BookingWithRelations } from "./lib/action-utils";
 // Member actions
 export { 
   createMemberAction, 
-  updateMemberAction 
+  updateMemberAction,
+  uploadMemberAvatarAction,
+  deleteMemberAvatarAction
 } from "./members/actions";
 
 // Plan actions

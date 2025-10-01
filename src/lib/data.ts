@@ -38,6 +38,7 @@ function transformDatabaseProfileToMember(dbProfile: DatabaseProfile, planName?:
     starts_at: dbProfile.starts_at || null,
     expires_at: dbProfile.expires_at || null,
     created_at: dbProfile.created_at,
+    avatar_url: dbProfile.avatar_url || null,
   };
 }
 
@@ -168,7 +169,7 @@ export async function fetchMembers(): Promise<Member[]> {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, first_name, last_name, gender, date_of_birth, address, city, county, email, phone, status, plan_id, starts_at, expires_at, created_at")
+    .select("id, first_name, last_name, gender, date_of_birth, address, city, county, email, phone, status, plan_id, starts_at, expires_at, created_at, avatar_url")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -212,7 +213,7 @@ export async function fetchMemberById(id: string): Promise<Member | null> {
 
   const { data, error } = await admin
     .from("profiles")
-    .select("id, first_name, last_name, gender, date_of_birth, address, city, county, email, phone, status, plan_id, starts_at, expires_at, created_at")
+    .select("id, first_name, last_name, gender, date_of_birth, address, city, county, email, phone, status, plan_id, starts_at, expires_at, created_at, avatar_url")
     .eq("id", id)
     .maybeSingle();
 

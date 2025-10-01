@@ -13,7 +13,13 @@ import {
   type UpdateMemberInput,
   updateMemberSchema,
 } from "@/schemas/members";
-import { createMemberAction, updateMemberAction, type ActionResult } from "@/app/(protected)/actions";
+import { 
+  createMemberAction, 
+  updateMemberAction, 
+  uploadMemberAvatarAction,
+  deleteMemberAvatarAction,
+  type ActionResult 
+} from "@/app/(protected)/actions";
 import type { Member, MembershipPlan } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -21,6 +27,7 @@ import { Input } from "@/components/ui/input";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { useToast } from "@/components/ui/toast";
 import { cn, calculateExpirationDate, calculateMemberStatus } from "@/lib/utils";
+import { AvatarUpload } from "./avatar-upload";
 
 interface MemberFormProps {
   plans: MembershipPlan[];
@@ -32,7 +39,10 @@ type FormValues = CreateMemberInput | UpdateMemberInput;
 export function MemberForm({ plans, member }: MemberFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [shouldDeleteAvatar, setShouldDeleteAvatar] = useState(false);
   const { addToast } = useToast();
   const schema = member ? updateMemberSchema : createMemberSchema;
 
@@ -108,7 +118,53 @@ export function MemberForm({ plans, member }: MemberFormProps) {
     return () => subscription.unsubscribe();
   }, [form, plans]);
 
-  const handleResult = (result: ActionResult) => {
+  const handleAvatarChange = (file: File | null) => {
+    setAvatarFile(file);
+    setShouldDeleteAvatar(false);
+  };
+
+  const handleAvatarDelete = () => {
+    setAvatarFile(null);
+    setShouldDeleteAvatar(true);
+  };
+
+  const handleAvatarUpload = async (memberId: string) => {
+    if (shouldDeleteAvatar && member?.avatar_url) {
+      // Delete avatar
+      const deleteResult = await deleteMemberAvatarAction(memberId);
+      if (deleteResult.success) {
+        addToast({
+          type: "success",
+          title: "Avatar Removed",
+          description: "Member avatar has been removed.",
+          duration: 3000,
+        });
+      }
+    } else if (avatarFile) {
+      // Upload new/updated avatar
+      const formData = new FormData();
+      formData.append('avatar', avatarFile);
+      
+      const uploadResult = await uploadMemberAvatarAction(memberId, formData);
+      if (uploadResult.success) {
+        addToast({
+          type: "success",
+          title: "Avatar Updated",
+          description: "Member avatar has been uploaded.",
+          duration: 3000,
+        });
+      } else {
+        addToast({
+          type: "error",
+          title: "Upload Failed",
+          description: uploadResult.error || "Failed to upload avatar",
+          duration: 5000,
+        });
+      }
+    }
+  };
+
+  const handleResult = async (result: ActionResult) => {
     if (!result.success) {
       setServerError(result.error);
       addToast({
@@ -120,6 +176,13 @@ export function MemberForm({ plans, member }: MemberFormProps) {
       return;
     }
     setServerError(null);
+    
+    // Handle avatar upload/delete for existing members
+    if (member && (avatarFile || shouldDeleteAvatar)) {
+      setIsUploadingAvatar(true);
+      await handleAvatarUpload(member.id);
+      setIsUploadingAvatar(false);
+    }
     
     if (!member) {
       // For new member creation, redirect to members page
@@ -147,13 +210,29 @@ export function MemberForm({ plans, member }: MemberFormProps) {
     startTransition(async () => {
       const action = member ? updateMemberAction : createMemberAction;
       const result = await action(values);
-      handleResult(result);
+      await handleResult(result);
     });
   });
 
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-6">
+        {/* Avatar Upload Section */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-semibold text-text">Member Photo</h3>
+          <AvatarUpload
+            currentAvatarUrl={member?.avatar_url}
+            onAvatarChange={handleAvatarChange}
+            onAvatarDelete={handleAvatarDelete}
+            memberName={member?.full_name || form.watch('first_name') || 'Member'}
+            isEditing={!!member}
+          />
+        </div>
+
+        <div className="border-t border-surface/20 pt-6">
+          <h3 className="text-lg font-semibold text-text mb-4">Basic Information</h3>
+        </div>
+
         <div className="grid gap-4 md:grid-cols-2">
           <FormField
             control={form.control}
@@ -350,9 +429,14 @@ export function MemberForm({ plans, member }: MemberFormProps) {
         )}
         {serverError ? <p className="text-sm text-error">{serverError}</p> : null}
         <div className="flex items-center justify-between">
-
-          <Button type="submit" disabled={isPending} className={cn(isPending && "opacity-70")}> 
-            {member ? "Save changes" : "Create member"}
+          <Button type="submit" disabled={isPending || isUploadingAvatar} className={cn((isPending || isUploadingAvatar) && "opacity-70")}> 
+            {isPending 
+              ? "Saving..." 
+              : isUploadingAvatar 
+                ? "Uploading avatar..." 
+                : member 
+                  ? "Save changes" 
+                  : "Create member"}
           </Button>
         </div>
       </form>

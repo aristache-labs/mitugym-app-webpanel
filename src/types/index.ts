@@ -17,6 +17,7 @@ export type Member = {
   starts_at: string | null;
   expires_at: string | null;
   created_at: string;
+  avatar_url?: string | null;
 };
 
 // Database profile type for raw Supabase queries
@@ -36,6 +37,7 @@ export type DatabaseProfile = {
   starts_at?: string | null;
   expires_at?: string | null;
   created_at: string;
+  avatar_url?: string | null;
 };
 
 export type PlanType = "day_entry" | "full" | "student";
