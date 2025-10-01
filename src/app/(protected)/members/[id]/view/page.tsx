@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { fetchCheckIns, fetchMemberById, fetchPurchasedServices, fetchSessionBookings, fetchAuditLogs } from "@/lib/data";
 import { formatDate, formatTime } from "@/lib/utils";
 import Link from "next/link";
-import Image from "next/image";
+import { AvatarWithPreview } from "@/components/members/avatar-preview-modal";
 import { ArrowLeft, User, Activity, Edit, Mail, Phone, Calendar, CreditCard, UserCheck, AlertCircle, TrendingUp, ShoppingBag, Clock, CalendarCheck, Package, Cake, Users, MapPin, Building, Map } from "lucide-react";
 import { getTimeFormat } from "@/lib/timezone";
 
@@ -76,26 +76,11 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
           <div className="relative p-8">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-6">
-                <div className="relative">
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-primary/30 shadow-lg">
-                    {member.avatar_url ? (
-                      <Image
-                        src={member.avatar_url}
-                        alt={member.full_name}
-                        fill
-                        className="object-cover"
-                        sizes="80px"
-                        priority
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                        <span className="text-2xl font-bold text-primary">
-                          {member.full_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <AvatarWithPreview
+                  avatarUrl={member.avatar_url}
+                  memberName={member.full_name}
+                  size="large"
+                />
                 <div>
                   <h1 className="text-3xl font-bold text-text">{member.full_name}</h1>
                   <p className="text-muted/70 mt-1">Member since {formatDate(member.created_at)}</p>
