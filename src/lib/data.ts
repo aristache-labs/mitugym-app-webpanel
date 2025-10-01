@@ -670,6 +670,7 @@ export async function fetchSessionBookings(): Promise<ServiceBooking[]> {
     .select(`
       *,
       purchased_services (
+        sessions_remaining,
         services (*)
       )
     `)
@@ -711,7 +712,7 @@ export async function fetchSessionBookings(): Promise<ServiceBooking[]> {
     service_id: booking.purchased_services?.services?.id || "",
     booking_date: booking.booking_date,
     status: booking.status === "confirmed" ? "upcoming" : booking.status,
-    sessions_remaining: null,
+    sessions_remaining: booking.purchased_services?.sessions_remaining || null,
     notes: booking.notes,
     created_at: booking.created_at,
     updated_at: booking.updated_at,
@@ -751,6 +752,7 @@ export async function fetchTodaysSessionBookings(): Promise<ServiceBooking[]> {
     .select(`
       *,
       purchased_services (
+        sessions_remaining,
         services (*)
       )
     `)
@@ -795,7 +797,7 @@ export async function fetchTodaysSessionBookings(): Promise<ServiceBooking[]> {
     service_id: booking.purchased_services?.services?.id || "",
     booking_date: booking.booking_date,
     status: booking.status === "confirmed" ? "upcoming" : booking.status,
-    sessions_remaining: null,
+    sessions_remaining: booking.purchased_services?.sessions_remaining || null,
     notes: booking.notes,
     created_at: booking.created_at,
     updated_at: booking.updated_at,

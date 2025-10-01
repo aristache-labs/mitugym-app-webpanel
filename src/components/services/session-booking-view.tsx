@@ -19,7 +19,6 @@ import {
   Calendar, 
   User, 
   Clock, 
-  DollarSign, 
   FileText, 
   CheckCircle, 
   XCircle, 
@@ -313,114 +312,154 @@ export function SessionBookingView({ booking }: SessionBookingViewProps) {
           </div>
 
           {/* Right Column - Member Info */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-5 w-5" />
-                  Member Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Full Name</p>
-                  <p className="text-lg font-semibold">{booking.member?.full_name || "Unknown Member"}</p>
-                </div>
-
-                {booking.member?.email && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Email</p>
-                    <p className="flex items-center gap-2 text-sm">
-                      <Mail className="h-4 w-4" />
-                      <a 
-                        href={`mailto:${booking.member.email}`}
-                        className="text-primary hover:underline"
-                      >
-                        {booking.member.email}
-                      </a>
-                    </p>
-                  </div>
-                )}
-
-                {booking.member?.phone && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Phone</p>
-                    <p className="flex items-center gap-2 text-sm">
-                      <Phone className="h-4 w-4" />
-                      <a 
-                        href={`tel:${booking.member.phone}`}
-                        className="text-primary hover:underline"
-                      >
-                        {booking.member.phone}
-                      </a>
-                    </p>
-                  </div>
-                )}
-
-                {booking.member?.gender && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Gender</p>
-                    <p className="text-sm capitalize">{booking.member.gender}</p>
-                  </div>
-                )}
-
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Membership Status</p>
-                  <Badge variant={booking.member?.status === "active" ? "success" : "secondary"}>
-                    {booking.member?.status || "Unknown"}
-                  </Badge>
-                </div>
-
-                {booking.member?.plan_name && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Plan</p>
-                    <p className="text-sm">{booking.member.plan_name}</p>
-                  </div>
-                )}
-
-                <div className="pt-2">
-                  <Link href={`/members/${booking.member_id}`}>
-                    <Button variant="outline" size="sm" className="w-full">
-                      View Member Profile
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Stats */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="bg-muted/50 p-2 rounded text-center">
-                    <p className="font-medium">Status</p>
-                    <p className="capitalize">{booking.status}</p>
-                  </div>
-                  <div className="bg-muted/50 p-2 rounded text-center">
-                    <p className="font-medium">Sessions Left</p>
-                    <p>{booking.sessions_remaining || "N/A"}</p>
-                  </div>
-                </div>
+          <div className="space-y-8">
+            {/* Member Information */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-cyan-500/10 rounded-3xl blur-2xl"></div>
+              
+              <Card className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-2xl shadow-black/20 transition-all duration-300 hover:shadow-3xl hover:shadow-cyan-500/10 hover:border-cyan-500/50 overflow-hidden rounded-3xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/2 via-cyan-500/1 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
                 
-                <div className="pt-2 space-y-2">
-                  <Link href="/bookings">
-                    <Button variant="outline" size="sm" className="w-full">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      All Bookings
-                    </Button>
-                  </Link>
-                  <Link href="/services">
-                    <Button variant="outline" size="sm" className="w-full">
-                      <Clock className="h-4 w-4 mr-2" />
-                      All Services
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
+                <CardHeader className="relative p-8 pb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 transition-colors">
+                      <User className="h-6 w-6 text-cyan-500/60 hover:text-cyan-500 transition-colors" />
+                    </div>
+                    <CardTitle className="text-xl font-semibold text-text hover:text-cyan-500 transition-colors">
+                      Member Information
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="relative p-8 pt-0 space-y-4">
+                  {/* Full Name */}
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Full Name</p>
+                    <p className="text-lg font-semibold text-text">{booking.member?.full_name || "Unknown Member"}</p>
+                  </div>
+
+                  {/* Contact Information */}
+                  {booking.member?.email && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Email</p>
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-cyan-500" />
+                        <a 
+                          href={`mailto:${booking.member.email}`}
+                          className="text-sm text-primary hover:underline font-medium"
+                        >
+                          {booking.member.email}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
+                  {booking.member?.phone && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Phone</p>
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-cyan-500" />
+                        <a 
+                          href={`tel:${booking.member.phone}`}
+                          className="text-sm text-primary hover:underline font-medium"
+                        >
+                          {booking.member.phone}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Member Details */}
+                  {booking.member?.gender && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Gender</p>
+                      <p className="text-sm font-medium text-text capitalize">{booking.member.gender}</p>
+                    </div>
+                  )}
+
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Membership Status</p>
+                    <Badge 
+                      variant={booking.member?.status === "active" ? "default" : "secondary"}
+                      className={
+                        booking.member?.status === "active" 
+                          ? "bg-green-500/20 text-green-600 border-green-500/30" 
+                          : "bg-red-500/20 text-red-600 border-red-500/30"
+                      }
+                    >
+                      {booking.member?.status || "Unknown"}
+                    </Badge>
+                  </div>
+
+                  {booking.member?.plan_name && (
+                    <div>
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Plan</p>
+                      <p className="text-sm font-medium text-text">{booking.member.plan_name}</p>
+                    </div>
+                  )}
+
+                  {/* View Profile Button */}
+                  <div className="pt-2">
+                    <Link href={`/members/${booking.member_id}`}>
+                      <Button variant="outline" className="w-full gap-2 hover:bg-cyan-500/10 hover:text-cyan-600 hover:border-cyan-500/50 transition-all duration-200 rounded-xl">
+                        <User className="h-4 w-4" />
+                        View Member Profile
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-cyan-500/10 rounded-3xl blur-2xl"></div>
+              
+              <Card className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-2xl shadow-black/20 transition-all duration-300 hover:shadow-3xl hover:shadow-cyan-500/10 hover:border-cyan-500/50 overflow-hidden rounded-3xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/2 via-cyan-500/1 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+                
+                <CardHeader className="relative p-8 pb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 transition-colors">
+                      <Hash className="h-6 w-6 text-cyan-500/60 hover:text-cyan-500 transition-colors" />
+                    </div>
+                    <CardTitle className="text-xl font-semibold text-text hover:text-cyan-500 transition-colors">
+                      Quick Actions
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="relative p-8 pt-0 space-y-6">
+                  {/* Quick Stats */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 text-center">
+                      <p className="text-xs font-medium text-primary/80 uppercase tracking-wider mb-1">Status</p>
+                      <p className="text-sm font-semibold text-text capitalize">{booking.status}</p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500/5 to-orange-500/10 border border-orange-500/20 text-center">
+                      <p className="text-xs font-medium text-orange-600 uppercase tracking-wider mb-1">Sessions Left</p>
+                      <p className="text-sm font-semibold text-text">{booking.sessions_remaining || "N/A"}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Action Buttons */}
+                  <div className="space-y-3">
+                    <Link href="/bookings">
+                      <Button variant="outline" className="w-full gap-2 hover:bg-cyan-500/10 hover:text-cyan-600 hover:border-cyan-500/50 transition-all duration-200 rounded-xl">
+                        <Calendar className="h-4 w-4" />
+                        All Bookings
+                      </Button>
+                    </Link>
+                    <Link href="/services">
+                      <Button variant="outline" className="w-full gap-2 hover:bg-cyan-500/10 hover:text-cyan-600 hover:border-cyan-500/50 transition-all duration-200 rounded-xl">
+                        <Clock className="h-4 w-4" />
+                        All Services
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
