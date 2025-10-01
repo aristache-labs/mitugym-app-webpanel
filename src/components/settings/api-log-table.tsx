@@ -11,6 +11,7 @@ import { Activity, AlertCircle, CheckCircle2 } from "lucide-react";
 interface ApiLogTableProps {
   logs: ApiLog[];
   timeFormat?: TimeFormat;
+  statsOnly?: boolean;
 }
 
 function getStatusBadgeVariant(statusCode: number): "default" | "success" | "warning" | "destructive" {
@@ -36,7 +37,7 @@ function getActionBadge(action: string | null | undefined) {
   );
 }
 
-export function ApiLogTable({ logs, timeFormat = '24h' }: ApiLogTableProps) {
+export function ApiLogTable({ logs, timeFormat = '24h', statsOnly = false }: ApiLogTableProps) {
   // Calculate statistics
   const stats = useMemo(() => {
     const total = logs.length;
@@ -169,52 +170,64 @@ export function ApiLogTable({ logs, timeFormat = '24h' }: ApiLogTableProps) {
     },
   ], [timeFormat]);
 
+  // Statistics component
+  const statsComponent = (
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 p-3 bg-surface/30 rounded-lg border border-surface/40">
+      <div>
+        <p className="text-xs text-muted/60">Total Requests</p>
+        <p className="text-xl font-bold text-text">{stats.total}</p>
+      </div>
+      <div>
+        <p className="text-xs text-muted/60">Successful</p>
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
+          <p className="text-xl font-bold text-success">{stats.successful}</p>
+        </div>
+      </div>
+      <div>
+        <p className="text-xs text-muted/60">Failed</p>
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-error" />
+          <p className="text-xl font-bold text-error">{stats.failed}</p>
+        </div>
+      </div>
+      <div>
+        <p className="text-xs text-muted/60">Rate Limited</p>
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-warning" />
+          <p className="text-xl font-bold text-warning">{stats.rateLimited}</p>
+        </div>
+      </div>
+      <div>
+        <p className="text-xs text-muted/60">Avg Response</p>
+        <p className="text-xl font-bold text-primary">{stats.avgDuration}ms</p>
+      </div>
+    </div>
+  );
+
   if (logs.length === 0) {
     return (
-      <div className="text-center py-12">
-        <Activity className="h-12 w-12 text-muted/40 mx-auto mb-4" />
-        <p className="text-muted/60">No API logs yet</p>
-        <p className="text-sm text-muted/40 mt-1">
-          Logs will appear here when the check-in API is used
-        </p>
+      <div>
+        {statsComponent}
+        <div className="text-center py-8 mt-4">
+          <Activity className="h-10 w-10 text-muted/40 mx-auto mb-3" />
+          <p className="text-sm text-muted/60">No API logs yet</p>
+          <p className="text-xs text-muted/40 mt-1">
+            Logs will appear here when the check-in API is used
+          </p>
+        </div>
       </div>
     );
   }
 
+  // If statsOnly mode, just return statistics
+  if (statsOnly) {
+    return statsComponent;
+  }
+
   return (
-    <div>
-      {/* Enhanced Statistics */}
-      <div className="mb-4 grid grid-cols-2 md:grid-cols-5 gap-4 p-4 bg-surface/30 rounded-lg border border-surface/40">
-        <div>
-          <p className="text-xs text-muted/60">Total Requests</p>
-          <p className="text-2xl font-bold text-text">{stats.total}</p>
-        </div>
-        <div>
-          <p className="text-xs text-muted/60">Successful</p>
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
-            <p className="text-2xl font-bold text-success">{stats.successful}</p>
-          </div>
-        </div>
-        <div>
-          <p className="text-xs text-muted/60">Failed</p>
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-error" />
-            <p className="text-2xl font-bold text-error">{stats.failed}</p>
-          </div>
-        </div>
-        <div>
-          <p className="text-xs text-muted/60">Rate Limited</p>
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-warning" />
-            <p className="text-2xl font-bold text-warning">{stats.rateLimited}</p>
-          </div>
-        </div>
-        <div>
-          <p className="text-xs text-muted/60">Avg Response</p>
-          <p className="text-2xl font-bold text-primary">{stats.avgDuration}ms</p>
-        </div>
-      </div>
+    <div className="space-y-4">
+      {statsComponent}
       <DataTable columns={columns} data={logs} />
     </div>
   );

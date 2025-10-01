@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Shield, Activity, Users, Key, Clock } from "lucide-react";
+import { Shield, Activity, Users, Key, Clock, Info } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 interface RateLimitSettingsProps {
@@ -60,7 +59,6 @@ export function RateLimitSettings({ currentSettings, stats }: RateLimitSettingsP
             description: 'Rate limit settings have been saved and applied.',
             duration: 3000,
           });
-          // Reload page to apply new settings
           setTimeout(() => window.location.reload(), 1000);
         } else {
           addToast({
@@ -92,172 +90,149 @@ export function RateLimitSettings({ currentSettings, stats }: RateLimitSettingsP
   const windowMinutes = Math.floor(windowSeconds / 60);
 
   return (
-    <Card className="bg-card/90">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
-            <Shield className="h-5 w-5 text-primary" />
+    <div className="space-y-6">
+      {/* Compact Statistics */}
+      {stats && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-surface/30 rounded-lg border border-surface/40">
+          <div className="flex items-center gap-2">
+            <Activity className="h-4 w-4 text-primary flex-shrink-0" />
+            <div>
+              <p className="text-xs text-muted/60">IP Addresses</p>
+              <p className="text-lg font-bold text-text">{stats.ip.activeIdentifiers}</p>
+            </div>
           </div>
-          <div>
-            <CardTitle>Rate Limiting Configuration</CardTitle>
-            <p className="text-sm text-muted/60 mt-1">
-              Control API request limits to prevent abuse and ensure service availability
-            </p>
+          <div className="flex items-center gap-2">
+            <Key className="h-4 w-4 text-warning flex-shrink-0" />
+            <div>
+              <p className="text-xs text-muted/60">API Keys</p>
+              <p className="text-lg font-bold text-text">{stats.apiKey.activeIdentifiers}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-success flex-shrink-0" />
+            <div>
+              <p className="text-xs text-muted/60">Members</p>
+              <p className="text-lg font-bold text-text">{stats.member.activeIdentifiers}</p>
+            </div>
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Statistics */}
-        {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-surface/30 rounded-lg border border-surface/40">
-            <div className="flex items-center gap-3">
-              <Activity className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-xs text-muted/60">IP Addresses</p>
-                <p className="text-lg font-bold text-text">{stats.ip.activeIdentifiers}</p>
-                <p className="text-xs text-muted/50">currently tracked</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Key className="h-5 w-5 text-warning" />
-              <div>
-                <p className="text-xs text-muted/60">API Keys</p>
-                <p className="text-lg font-bold text-text">{stats.apiKey.activeIdentifiers}</p>
-                <p className="text-xs text-muted/50">currently tracked</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Users className="h-5 w-5 text-success" />
-              <div>
-                <p className="text-xs text-muted/60">Members</p>
-                <p className="text-lg font-bold text-text">{stats.member.activeIdentifiers}</p>
-                <p className="text-xs text-muted/50">currently tracked</p>
-              </div>
-            </div>
-          </div>
-        )}
+      )}
 
+      {/* Grid Layout for Form Fields */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Rate Window Configuration */}
         <div className="space-y-2">
-          <Label htmlFor="window_ms" className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-primary" />
+          <Label htmlFor="window_ms" className="flex items-center gap-2 text-xs">
+            <Clock className="h-3 w-3 text-primary" />
             Rate Limit Window
           </Label>
-          <div className="flex gap-2 items-center">
-            <Input
-              id="window_ms"
-              type="number"
-              value={windowMs}
-              onChange={(e) => setWindowMs(parseInt(e.target.value) || 60000)}
-              min={1000}
-              step={1000}
-              className="max-w-xs"
-            />
-            <span className="text-sm text-muted/60">
-              milliseconds ({windowMinutes} minute{windowMinutes !== 1 ? 's' : ''}, {windowSeconds % 60} sec)
-            </span>
-          </div>
+          <Input
+            id="window_ms"
+            type="number"
+            value={windowMs}
+            onChange={(e) => setWindowMs(parseInt(e.target.value) || 60000)}
+            min={1000}
+            step={1000}
+            className="w-full"
+          />
           <p className="text-xs text-muted/60">
-            Time window for rate limit calculations. Default: 60000ms (1 minute)
+            {windowMinutes}m {windowSeconds % 60}s (milliseconds)
           </p>
         </div>
 
         {/* IP Rate Limit */}
         <div className="space-y-2">
-          <Label htmlFor="ip_max" className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-primary" />
+          <Label htmlFor="ip_max" className="flex items-center gap-2 text-xs">
+            <Activity className="h-3 w-3 text-primary" />
             IP Address Limit
           </Label>
-          <div className="flex gap-2 items-center">
-            <Input
-              id="ip_max"
-              type="number"
-              value={ipMax}
-              onChange={(e) => setIpMax(parseInt(e.target.value) || 100)}
-              min={1}
-              className="max-w-xs"
-            />
-            <span className="text-sm text-muted/60">requests per window</span>
-          </div>
+          <Input
+            id="ip_max"
+            type="number"
+            value={ipMax}
+            onChange={(e) => setIpMax(parseInt(e.target.value) || 100)}
+            min={1}
+            className="w-full"
+          />
           <p className="text-xs text-muted/60">
-            Maximum requests per IP address. Prevents DDoS attacks. Default: 100
+            Requests per window
           </p>
         </div>
 
         {/* API Key Rate Limit */}
         <div className="space-y-2">
-          <Label htmlFor="api_key_max" className="flex items-center gap-2">
-            <Key className="h-4 w-4 text-warning" />
+          <Label htmlFor="api_key_max" className="flex items-center gap-2 text-xs">
+            <Key className="h-3 w-3 text-warning" />
             API Key Limit
           </Label>
-          <div className="flex gap-2 items-center">
-            <Input
-              id="api_key_max"
-              type="number"
-              value={apiKeyMax}
-              onChange={(e) => setApiKeyMax(parseInt(e.target.value) || 60)}
-              min={1}
-              className="max-w-xs"
-            />
-            <span className="text-sm text-muted/60">requests per window</span>
-          </div>
+          <Input
+            id="api_key_max"
+            type="number"
+            value={apiKeyMax}
+            onChange={(e) => setApiKeyMax(parseInt(e.target.value) || 60)}
+            min={1}
+            className="w-full"
+          />
           <p className="text-xs text-muted/60">
-            Maximum requests per API key. Prevents API abuse. Default: 60
+            Requests per window
           </p>
         </div>
 
         {/* Member Rate Limit */}
         <div className="space-y-2">
-          <Label htmlFor="member_max" className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-success" />
+          <Label htmlFor="member_max" className="flex items-center gap-2 text-xs">
+            <Users className="h-3 w-3 text-success" />
             Member Limit
           </Label>
-          <div className="flex gap-2 items-center">
-            <Input
-              id="member_max"
-              type="number"
-              value={memberMax}
-              onChange={(e) => setMemberMax(parseInt(e.target.value) || 20)}
-              min={1}
-              className="max-w-xs"
-            />
-            <span className="text-sm text-muted/60">requests per window</span>
-          </div>
+          <Input
+            id="member_max"
+            type="number"
+            value={memberMax}
+            onChange={(e) => setMemberMax(parseInt(e.target.value) || 20)}
+            min={1}
+            className="w-full"
+          />
           <p className="text-xs text-muted/60">
-            Maximum check-in attempts per member. Prevents spam. Default: 20
+            Check-in attempts per window
           </p>
         </div>
+      </div>
 
-        {/* Action Buttons */}
+      {/* Compact Information */}
+      <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+        <div className="flex gap-2">
+          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-muted/80">
+            <strong className="text-primary">Note:</strong> Changes take effect immediately. Active counters continue their current window, but new requests use updated limits.
+          </p>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex items-center gap-3 pt-2">
+        <Button
+          onClick={handleSave}
+          disabled={!hasChanges || isPending}
+          className="gap-2 bg-primary hover:bg-primary/90 text-white"
+        >
+          <Shield className="h-4 w-4" />
+          {isPending ? 'Saving...' : 'Save Changes'}
+        </Button>
+        
         {hasChanges && (
-          <div className="flex gap-3 pt-4 border-t border-surface/20">
-            <Button
-              onClick={handleSave}
-              disabled={isPending}
-              className="gap-2 bg-primary hover:bg-primary/90 text-white"
-            >
-              <Shield className="h-4 w-4" />
-              {isPending ? 'Saving...' : 'Save Changes'}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleReset}
-              disabled={isPending}
-            >
-              Reset
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            onClick={handleReset}
+            disabled={isPending}
+          >
+            Reset
+          </Button>
         )}
-
-        {/* Information */}
-        <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-          <p className="text-sm text-muted/80">
-            <strong className="text-primary">Note:</strong> Changes take effect immediately after saving. 
-            Active rate limit counters will continue using their current window but new requests will use the updated limits.
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+        
+        {!hasChanges && (
+          <span className="text-sm text-muted/60">No changes to save</span>
+        )}
+      </div>
+    </div>
   );
 }
-
