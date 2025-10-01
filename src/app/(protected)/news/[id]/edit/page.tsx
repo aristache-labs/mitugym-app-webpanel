@@ -1,6 +1,10 @@
 import { NewsForm } from "@/components/news/news-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchNews } from "@/lib/data";
 import { notFound } from "next/navigation";
+import { Pencil } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Edit Announcement",
@@ -23,35 +27,42 @@ export default async function EditAnnouncementPage({ params }: EditAnnouncementP
 
   return (
     <div className="space-y-6">
-      {/* Premium Header Section */}
-      <div className="relative animate-fade-in-up">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent">
-                Edit Announcement
-              </h1>
-              <p className="text-sm text-muted/80">
-                Update your announcement for the mobile app and in-gym displays
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Form Card */}
-      <div className="max-w-3xl animate-fade-in-up animate-stagger-1">
+      {/* Premium Form Container */}
+      <div className="max-w-4xl animate-fade-in-up">
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-2xl blur-xl"></div>
-          <div className="relative bg-gradient-to-br from-card/95 to-surface/90 border-primary/20 shadow-2xl rounded-2xl border p-6">
-            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-surface/30">
-              <div className="w-1 h-6 bg-gradient-to-b from-primary to-accent rounded-full"></div>
-              <h2 className="text-lg font-semibold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent">
-                Editing: {item.title}
-              </h2>
-            </div>
-            <NewsForm item={item} />
-          </div>
+          {/* Background Glow */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-3xl blur-2xl"></div>
+          
+          {/* Form Card */}
+          <Card className="relative group bg-card/95 backdrop-blur-xl border border-surface/40 shadow-2xl shadow-black/20 transition-all duration-300 hover:shadow-3xl hover:shadow-primary/10 hover:border-primary/50 overflow-hidden rounded-3xl">
+            {/* Card Hover Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-accent/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+            
+            <CardHeader className="relative p-8 pb-6 border-b border-surface/30">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-warning/20 to-orange-500/20 group-hover:from-warning/30 group-hover:to-orange-500/30 transition-all duration-300 border border-warning/30">
+                    <Pencil className="h-6 w-6 text-warning group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl font-bold bg-gradient-to-r from-text to-warning bg-clip-text text-transparent">
+                      Edit Announcement
+                    </CardTitle>
+                    <p className="text-sm text-muted/70 mt-1 line-clamp-1">{item.title}</p>
+                  </div>
+                </div>
+                <Link href="/news">
+                  <Button variant="outline" className="gap-2">
+                    ← Back
+                  </Button>
+                </Link>
+              </div>
+            </CardHeader>
+            
+            <CardContent className="relative p-8">
+              <NewsForm item={item} />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

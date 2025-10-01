@@ -15,6 +15,8 @@ export const newsSchema = z.object({
       if (Number.isNaN(date.getTime())) {
         throw new Error("Invalid date");
       }
+      // Set time to 23:59:59 so the announcement expires at the END of the selected date
+      date.setHours(23, 59, 59, 999);
       return date.toISOString();
     }),
   is_active: z.boolean().optional().default(true),

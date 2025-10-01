@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table/data-table";
@@ -9,6 +9,7 @@ import { deleteNewsAction, toggleNewsActiveAction } from "@/app/(protected)/acti
 import type { NewsItem } from "@/types";
 import { ConfirmationModal } from "@/components/ui/modal";
 import { Pencil, Trash2, Power, Plus } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 interface NewsManagerProps {
   items: NewsItem[];
@@ -20,28 +21,57 @@ export function NewsManager({ items }: NewsManagerProps) {
   const [isToggling, startToggleTransition] = useTransition();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<NewsItem | null>(null);
+  const { addToast } = useToast();
 
   const handleDelete = async () => {
     if (!itemToDelete) return;
     
+    const itemTitle = itemToDelete.title;
+    
     startTransition(async () => {
       const result = await deleteNewsAction(itemToDelete.id);
+      setItemToDelete(null);
+      setShowDeleteModal(false);
+      
       if (!result.success) {
         console.error("Delete news failed:", result.error);
-        // The action will handle the error display through revalidation
+        addToast({
+          type: "error",
+          title: "Failed to Delete Announcement",
+          description: result.error || "An unexpected error occurred. Please try again.",
+        });
+        return;
       }
-      setItemToDelete(null);
+      
+      addToast({
+        type: "success",
+        title: "Announcement Deleted",
+        description: `"${itemTitle}" has been successfully deleted.`,
+      });
     });
   };
 
-  const handleToggleActive = async (id: string, currentStatus: boolean) => {
+  const handleToggleActive = useCallback(async (id: string, currentStatus: boolean, title: string) => {
     startToggleTransition(async () => {
       const result = await toggleNewsActiveAction(id, !currentStatus);
+      
       if (!result.success) {
         console.error("Toggle active failed:", result.error);
+        addToast({
+          type: "error",
+          title: "Failed to Update Status",
+          description: result.error || "An unexpected error occurred. Please try again.",
+        });
+        return;
       }
+      
+      addToast({
+        type: "success",
+        title: !currentStatus ? "Announcement Activated" : "Announcement Deactivated",
+        description: `"${title}" has been ${!currentStatus ? 'activated' : 'deactivated'}.`,
+      });
     });
-  };
+  }, [addToast]);
 
   const columns = useMemo<ColumnDef<NewsItem>[]>(
     () => [
@@ -148,7 +178,7 @@ export function NewsManager({ items }: NewsManagerProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleToggleActive(row.original.id, isActive)}
+                onClick={() => handleToggleActive(row.original.id, isActive, row.original.title)}
                 disabled={isToggling}
                 className={`h-8 w-8 p-0 rounded-lg border transition-all duration-300 ${
                   isActive
@@ -190,7 +220,7 @@ export function NewsManager({ items }: NewsManagerProps) {
         },
       },
     ],
-    [isDeleting, isToggling, router]
+    [isDeleting, isToggling, router, handleToggleActive]
   );
 
   return (
@@ -211,12 +241,12 @@ export function NewsManager({ items }: NewsManagerProps) {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border border-primary/30">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                  <span className="text-xs font-semibold text-primary">
-                    {items.length} Active {items.length === 1 ? 'Announcement' : 'Announcements'}
-                  </span>
-                </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border border-primary/30">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                <span className="text-xs font-semibold text-primary">
+                  {items.filter(item => item.is_active !== false).length} Active {items.filter(item => item.is_active !== false).length === 1 ? 'Announcement' : 'Announcements'}
+                </span>
+              </div>
                 <Button
                   onClick={() => router.push("/news/new")}
                   className="gap-2 bg-primary hover:bg-primary/90 text-white"

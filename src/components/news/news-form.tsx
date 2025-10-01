@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { NewsEditor } from "@/components/news/news-editor";
+import { useToast } from "@/components/ui/toast";
 
 interface NewsFormProps {
   item?: NewsItem | null;
@@ -22,6 +23,7 @@ export function NewsForm({ item, onCompleted }: NewsFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [serverError, setServerError] = useState<string | null>(null);
+  const { addToast } = useToast();
 
   const form = useForm<NewsInput>({
     resolver: zodResolver(newsSchema),
@@ -55,9 +57,25 @@ export function NewsForm({ item, onCompleted }: NewsFormProps) {
   const handleResult = (result: ActionResult) => {
     if (!result.success) {
       setServerError(result.error);
+      addToast({
+        type: "error",
+        title: item ? "Failed to Update Announcement" : "Failed to Create Announcement",
+        description: result.error || "An unexpected error occurred. Please try again.",
+      });
       return;
     }
+    
     setServerError(null);
+    
+    // Show success toast
+    addToast({
+      type: "success",
+      title: item ? "Announcement Updated" : "Announcement Created",
+      description: item 
+        ? "Your announcement has been successfully updated." 
+        : "Your announcement has been successfully created.",
+    });
+    
     if (onCompleted) {
       onCompleted();
     } else {
@@ -127,6 +145,9 @@ export function NewsForm({ item, onCompleted }: NewsFormProps) {
                   onChange={(event) => field.onChange(event.target.value || null)}
                 />
               </FormControl>
+              <p className="text-xs text-muted/60 mt-1">
+                The announcement will expire at 11:59 PM on the selected date
+              </p>
               <FormMessage>{form.formState.errors.expires_at?.message}</FormMessage>
             </FormItem>
           )}
