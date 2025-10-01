@@ -9,6 +9,8 @@ import type { CheckIn } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
 import { formatDateTime } from "@/lib/utils";
 import { CheckoutButton } from "@/components/checkins/checkout-button";
+import { AvatarWithPreview } from "@/components/members/avatar-preview-modal";
+import Link from "next/link";
 
 interface CheckinsTableProps {
   data: CheckIn[];
@@ -26,17 +28,26 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
         header: "Member",
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border border-primary/30">
-              <span className="text-xs font-bold text-primary">
-                {(row.original.member_name ?? "W")[0].toUpperCase()}
-              </span>
-            </div>
+            <AvatarWithPreview
+              avatarUrl={row.original.avatar_url}
+              memberName={row.original.member_name ?? "Walk-in"}
+              size="small"
+              className="w-8 h-8"
+            />
             <div>
-              <p className="font-semibold text-text">
-                {row.original.member_name ?? "Walk-in"}
-              </p>
-              {!row.original.member_name && (
-                <p className="text-xs text-muted/60">Guest visitor</p>
+              {row.original.member_name && row.original.member_id ? (
+                <Link href={`/members/${row.original.member_id}/view`} className="group">
+                  <p className="font-semibold text-text group-hover:text-primary transition-colors cursor-pointer hover:underline">
+                    {row.original.member_name}
+                  </p>
+                </Link>
+              ) : (
+                <>
+                  <p className="font-semibold text-text">
+                    Walk-in
+                  </p>
+                  <p className="text-xs text-muted/60">Guest visitor</p>
+                </>
               )}
             </div>
           </div>
