@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/components/ui/toast";
 import { Service, ServiceType } from "@/types";
 import { useRouter } from "next/navigation";
 import type { z } from "zod";
@@ -39,6 +40,7 @@ const SESSION_TYPE_OPTIONS = [
 export function ServiceForm({ service, mode }: ServiceFormProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const { addToast } = useToast();
   const router = useRouter();
 
   const isEdit = mode === "edit";
@@ -95,12 +97,29 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
           : await createServiceAction(formData);
 
         if (result.success) {
+          addToast({
+            type: "success",
+            title: isEdit ? "Service Updated Successfully" : "Service Created Successfully",
+            description: isEdit 
+              ? `${service?.name} has been updated with the new information.`
+              : "The new service has been created and is now available.",
+          });
           router.push("/services");
         } else {
           setError(result.error);
+          addToast({
+            type: "error",
+            title: isEdit ? "Failed to Update Service" : "Failed to Create Service",
+            description: result.error || "An unexpected error occurred. Please try again.",
+          });
         }
       } catch {
         setError("An unexpected error occurred");
+        addToast({
+          type: "error",
+          title: "Unexpected Error",
+          description: "An unexpected error occurred. Please try again.",
+        });
       }
     });
   };
@@ -262,10 +281,11 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
               variant="outline"
               onClick={() => router.push("/services")}
               disabled={isPending}
+              className="px-6"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending} className="px-8">
               {isPending 
                 ? (isEdit ? "Updating..." : "Creating...") 
                 : (isEdit ? "Update Service" : "Create Service")

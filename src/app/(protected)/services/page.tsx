@@ -1,9 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { fetchServices, fetchPurchasedServices } from "@/lib/data";
-import { ServicesTable } from "./services-table";
+import { ServicesTableNew } from "./services-table-new";
 import { PurchasedServicesTable } from "./purchased-services-table";
-import { Plus } from "lucide-react";
+import { fetchServices, fetchPurchasedServices } from "@/lib/data";
+import { Briefcase, ShoppingBag, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export const metadata = {
@@ -21,37 +20,64 @@ export default async function ServicesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Services Management */}
-      <Card className="bg-card/90">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle>Services ({activeServices.length} active)</CardTitle>
-          <Link href="/services/new">
-            <Button className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add Service
-            </Button>
-          </Link>
-        </CardHeader>
-        <CardContent>
-          <ServicesTable services={services} />
-        </CardContent>
-      </Card>
 
-      {/* Purchased Services Management */}
-      <Card className="bg-card/90">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle>Purchased Services ({approvedServices.length} approved)</CardTitle>
-          <Link href="/services/purchased/new">
-            <Button variant="outline" className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              New Purchase
-            </Button>
-          </Link>
-        </CardHeader>
-        <CardContent>
-          <PurchasedServicesTable purchasedServices={purchasedServices} services={services} />
-        </CardContent>
-      </Card>
+      {/* Services Table */}
+      <div className="relative">
+        {/* Background Glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-primary/5 rounded-3xl blur-2xl"></div>
+        
+        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-xl shadow-black/15 transition-all duration-300 hover:shadow-2xl hover:shadow-secondary/10 hover:border-secondary/50 overflow-hidden rounded-3xl p-6">
+          {/* Card Hover Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-secondary/2 via-secondary/1 to-primary/2 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+          
+          <div className="relative">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-secondary/10">
+                  <Briefcase className="h-5 w-5 text-secondary" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-text">Available Services</h2>
+                  <p className="text-sm text-muted/70">Manage gym services and pricing</p>
+                </div>
+              </div>
+            </div>
+            <ServicesTableNew services={services} />
+          </div>
+        </div>
+      </div>
+
+      {/* Purchased Services Section */}
+      <div className="relative">
+        {/* Background Glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-blue-500/5 rounded-3xl blur-2xl"></div>
+        
+        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-xl shadow-black/15 transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/10 hover:border-green-500/50 overflow-hidden rounded-3xl p-6">
+          {/* Card Hover Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/2 via-green-500/1 to-blue-500/2 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+          
+          <div className="relative">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-green-500/10">
+                  <ShoppingBag className="h-5 w-5 text-green-500" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-text">Purchased Services</h2>
+                  <p className="text-sm text-muted/70">{approvedServices.length} approved purchases</p>
+                </div>
+              </div>
+              <Link href="/services/purchased/new">
+                <Button className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl">
+                  <Plus className="h-4 w-4" />
+                  New Purchase
+                </Button>
+              </Link>
+            </div>
+            <PurchasedServicesTable purchasedServices={purchasedServices} services={services} />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

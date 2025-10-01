@@ -142,17 +142,17 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
   const columns = [
     {
       accessorKey: "purchase_date",
-      header: () => <div className="flex justify-center w-full">Purchase Date</div>,
+      header: () => <div className="flex justify-center w-full whitespace-nowrap">Purchase Date</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <div>
-              <div className="font-medium">
+          <div className="flex items-start gap-2">
+            <Calendar className="h-4 w-4 text-muted-foreground mt-0.5" />
+            <div className="min-w-0">
+              <div className="font-medium text-sm leading-tight">
                 {format(new Date(service.purchase_date), "MMM dd, yyyy")}
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-xs text-muted-foreground leading-tight mt-1">
                 {format(new Date(service.purchase_date), "h:mm a")}
               </div>
             </div>
@@ -167,11 +167,9 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
-          <div className="space-y-1">
-            <div className="font-medium">{service.service?.name || "Unknown Service"}</div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Package className="h-3 w-3" />
-              {service.service?.session_type || "Standard"}
+          <div className="max-w-[180px]">
+            <div className="font-medium text-sm line-clamp-2 leading-tight">
+              {service.service?.name || "Unknown Service"}
             </div>
           </div>
         );
@@ -183,12 +181,16 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
-          <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <div>
-              <div className="font-medium">{service.member?.full_name || "Unknown Member"}</div>
+          <div className="flex items-start gap-2">
+            <User className="h-4 w-4 text-muted-foreground mt-0.5" />
+            <div className="min-w-0 max-w-[160px]">
+              <div className="font-medium text-sm leading-tight line-clamp-1">
+                {service.member?.full_name || "Unknown Member"}
+              </div>
               {service.member?.email && (
-                <div className="text-sm text-muted-foreground">{service.member.email}</div>
+                <div className="text-xs text-muted-foreground leading-tight truncate">
+                  {service.member.email}
+                </div>
               )}
             </div>
           </div>
@@ -214,54 +216,40 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
       },
     },
     {
-      accessorKey: "notes",
-      header: () => <div className="flex justify-center w-full">Notes</div>,
-      cell: ({ row }: { row: { original: PurchasedService } }) => {
-        const notes = row.original.notes;
-        return notes ? (
-          <div className="max-w-[200px] truncate" title={notes}>
-            {notes}
-          </div>
-        ) : (
-          <div className="text-muted-foreground">-</div>
-        );
-      },
-    },
-    {
       id: "actions",
         header: () => <div className="flex justify-center w-full">Actions</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button 
               variant="ghost" 
               size="sm"
               onClick={() => handleViewClick(service)}
-              className="text-blue-600 hover:bg-blue-50"
+              className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-colors"
+              title="View Details"
             >
               <Eye className="h-4 w-4" />
-              View
             </Button>
             {service.status === "pending" && (
               <>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-green-600 hover:bg-green-50"
+                  className="h-8 w-8 p-0 hover:bg-green-500/10 hover:text-green-600 transition-colors"
                   onClick={() => handleApproveClick(service)}
+                  title="Approve Service"
                 >
                   <CheckCircle className="h-4 w-4" />
-                  Approve
                 </Button>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-destructive hover:bg-destructive/10"
+                  className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-500 transition-colors"
                   onClick={() => handleCancelClick(service)}
+                  title="Cancel Service"
                 >
                   <XCircle className="h-4 w-4" />
-                  Cancel
                 </Button>
               </>
             )}
@@ -269,12 +257,11 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-destructive hover:bg-destructive/10"
+                className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-500 transition-colors"
                 onClick={() => handleDeleteClick(service)}
-                title="Delete cancelled purchase"
+                title="Delete Service"
               >
                 <Trash2 className="h-4 w-4" />
-                Delete
               </Button>
             )}
           </div>
