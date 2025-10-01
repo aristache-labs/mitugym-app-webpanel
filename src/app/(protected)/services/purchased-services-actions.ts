@@ -179,6 +179,7 @@ export async function cancelPurchasedServiceAction(formData: FormData): Promise<
     .from("purchased_services")
     .update({
       status: "cancelled",
+      cancelled_date: new Date().toISOString(),
       notes: reason,
       updated_at: new Date().toISOString(),
     })

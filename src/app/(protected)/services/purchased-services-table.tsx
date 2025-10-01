@@ -8,7 +8,7 @@ import { Modal } from "@/components/ui/modal";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { PurchasedService, Service } from "@/types";
-import { Calendar, User, Package, Trash2, CheckCircle, XCircle, Eye } from "lucide-react";
+import { Calendar, User, Package, Trash2, CheckCircle, XCircle, Eye, Briefcase, Banknote, StickyNote, Hash } from "lucide-react";
 import { format } from "date-fns";
 import { approvePurchasedServiceAction, cancelPurchasedServiceAction, deletePurchasedServiceAction } from "@/app/(protected)/actions";
 
@@ -253,6 +253,17 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                 </Button>
               </>
             )}
+            {service.status === "approved" && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-500 transition-colors"
+                onClick={() => handleCancelClick(service)}
+                title="Cancel Service"
+              >
+                <XCircle className="h-4 w-4" />
+              </Button>
+            )}
             {service.status === "cancelled" && (
               <Button
                 variant="ghost"
@@ -286,52 +297,162 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
           setSelectedService(null);
           setError(null);
         }}
-        title="Delete Purchased Service"
+        title="Delete Service Purchase"
+        className="max-w-2xl"
       >
-        <div className="space-y-4">
+        <div className="space-y-6">
           {error && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-              <p className="text-sm text-destructive">{error}</p>
-            </div>
-          )}
-
-          <p className="text-sm text-muted-foreground">
-            Are you sure you want to permanently delete this cancelled purchased service?
-          </p>
-
-          {selectedService && (
-            <div className="bg-muted/50 border border-border rounded-lg p-3">
-              <div className="space-y-2 text-sm">
-                <div><strong>Service:</strong> {selectedService.service?.name}</div>
-                <div><strong>Member:</strong> {selectedService.member?.full_name}</div>
-                <div><strong>Purchase Date:</strong> {format(new Date(selectedService.purchase_date), "PPp")}</div>
-                <div><strong>Status:</strong> <Badge variant="outline" className="text-destructive">Cancelled</Badge></div>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
+              <div className="relative p-4 rounded-2xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-xl bg-red-500/10">
+                    <XCircle className="h-5 w-5 text-red-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-red-800 mb-1">Error</p>
+                    <p className="text-xs text-red-700">{error}</p>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
-          <p className="text-sm font-medium text-destructive">
-            This action cannot be undone.
-          </p>
+          {/* Header Section */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
+            <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 rounded-2xl bg-red-500/10">
+                  <Trash2 className="h-6 w-6 text-red-500" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text">Delete Service Purchase</h3>
+                  <p className="text-sm text-muted/70">Permanently remove this cancelled service purchase</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <div className="flex justify-end gap-3">
+          {/* Service Details */}
+          {selectedService && (
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 rounded-2xl blur-xl"></div>
+              <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 rounded-xl bg-primary/10">
+                    <Package className="h-5 w-5 text-primary" />
+                  </div>
+                  <h4 className="font-semibold text-text">Purchase Details</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <Package className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service</p>
+                        <p className="text-sm font-semibold text-text">{selectedService.service?.name}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Purchase Date</p>
+                        <p className="text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <User className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Member</p>
+                        <p className="text-sm font-semibold text-text">{selectedService.member?.full_name}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <XCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Status</p>
+                        <div className="mt-1">
+                          <Badge variant="outline" className="bg-red-500/20 text-red-600 border-red-500/30">
+                            Cancelled
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Warning Notice */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
+            <div className="relative p-4 rounded-2xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-xl bg-red-500/10">
+                  <Trash2 className="h-5 w-5 text-red-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-red-800 mb-1">⚠️ Permanent Deletion</p>
+                  <p className="text-xs text-red-700 leading-relaxed">
+                    This action will permanently delete this cancelled service purchase from the system. This cannot be undone and all associated data will be lost.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Confirmation Notice */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-yellow-500/10 rounded-2xl blur-xl"></div>
+            <div className="relative p-4 rounded-2xl bg-gradient-to-br from-yellow-500/5 to-yellow-500/10 border border-yellow-500/20">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-xl bg-yellow-500/10">
+                  <StickyNote className="h-5 w-5 text-yellow-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-yellow-800 mb-1">📋 Confirmation Required</p>
+                  <p className="text-xs text-yellow-700 leading-relaxed">
+                    Are you sure you want to permanently delete this cancelled purchased service? This action is irreversible.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3 pt-4">
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => {
                 setDeleteModalOpen(false);
                 setSelectedService(null);
                 setError(null);
               }}
               disabled={isPending}
+              className="px-6 hover:bg-surface/50 transition-all duration-200 rounded-xl"
             >
               Cancel
             </Button>
             <Button
-              variant="destructive"
               onClick={handleDeleteConfirm}
               disabled={isPending}
+              className="gap-2 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl px-8"
             >
-              {isPending ? "Deleting..." : "Delete Service"}
+              {isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4" />
+                  Delete Service
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -346,44 +467,117 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
           setApproveNotes("");
           setError(null);
         }}
-        title="Approve Purchased Service"
+        title="Approve Service Purchase"
+        className="max-w-2xl"
       >
-        <div className="space-y-4">
+        <div className="space-y-6">
           {error && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-              <p className="text-sm text-destructive">{error}</p>
-            </div>
-          )}
-
-          <p className="text-sm text-muted-foreground">
-            Approve this purchased service to allow the member to book sessions.
-          </p>
-
-          {selectedService && (
-            <div className="bg-muted/50 border border-border rounded-lg p-3">
-              <div className="space-y-2 text-sm">
-                <div><strong>Service:</strong> {selectedService.service?.name}</div>
-                <div><strong>Member:</strong> {selectedService.member?.full_name}</div>
-                <div><strong>Sessions:</strong> {selectedService.sessions_total} total</div>
-                <div><strong>Purchase Date:</strong> {format(new Date(selectedService.purchase_date), "PPp")}</div>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
+              <div className="relative p-4 rounded-2xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-xl bg-red-500/10">
+                    <XCircle className="h-5 w-5 text-red-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-red-800 mb-1">Error</p>
+                    <p className="text-xs text-red-700">{error}</p>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="approve-notes">Approval Notes (Optional)</Label>
-            <Textarea
-              id="approve-notes"
-              placeholder="Add any notes about the approval..."
-              value={approveNotes}
-              onChange={(e) => setApproveNotes(e.target.value)}
-              rows={3}
-            />
+          {/* Header Section */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/10 rounded-2xl blur-xl"></div>
+            <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 rounded-2xl bg-green-500/10">
+                  <CheckCircle className="h-6 w-6 text-green-500" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text">Approve Service Purchase</h3>
+                  <p className="text-sm text-muted/70">Allow the member to book sessions for this service</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="flex justify-end gap-3">
+          {/* Service Details */}
+          {selectedService && (
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 rounded-2xl blur-xl"></div>
+              <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 rounded-xl bg-primary/10">
+                    <Package className="h-5 w-5 text-primary" />
+                  </div>
+                  <h4 className="font-semibold text-text">Purchase Details</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <Package className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service</p>
+                        <p className="text-sm font-semibold text-text">{selectedService.service?.name}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <Hash className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Sessions</p>
+                        <p className="text-sm font-semibold text-text">{selectedService.sessions_total} total</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <User className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Member</p>
+                        <p className="text-sm font-semibold text-text">{selectedService.member?.full_name}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Purchase Date</p>
+                        <p className="text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Notes Section */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-500/10 rounded-2xl blur-xl"></div>
+            <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-xl bg-blue-500/10">
+                  <StickyNote className="h-5 w-5 text-blue-500" />
+                </div>
+                <Label htmlFor="approve-notes" className="font-semibold text-text">Approval Notes (Optional)</Label>
+              </div>
+              <Textarea
+                id="approve-notes"
+                placeholder="Add any notes about the approval..."
+                value={approveNotes}
+                onChange={(e) => setApproveNotes(e.target.value)}
+                rows={3}
+                className="w-full rounded-2xl border border-surface/50 bg-surface/20 px-4 py-3 text-sm placeholder:text-muted/50 focus:border-primary/50 focus:bg-surface/30 transition-all duration-200"
+              />
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3 pt-4">
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => {
                 setApproveModalOpen(false);
                 setSelectedService(null);
@@ -391,15 +585,26 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                 setError(null);
               }}
               disabled={isPending}
+              className="px-6 hover:bg-surface/50 transition-all duration-200 rounded-xl"
             >
               Cancel
             </Button>
             <Button
               onClick={handleApproveConfirm}
               disabled={isPending}
-              className="bg-green-600 hover:bg-green-700"
+              className="gap-2 bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/40 transition-all duration-200 rounded-xl px-8"
             >
-              {isPending ? "Approving..." : "Approve Service"}
+              {isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  Approving...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="h-4 w-4" />
+                  Approve Service
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -414,45 +619,136 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
           setCancelReason("");
           setError(null);
         }}
-        title="Cancel Purchased Service"
+        title="Cancel Service Purchase"
+        className="max-w-2xl"
       >
-        <div className="space-y-4">
+        <div className="space-y-6">
           {error && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-              <p className="text-sm text-destructive">{error}</p>
-            </div>
-          )}
-
-          <p className="text-sm text-muted-foreground">
-            Cancel this purchased service. This action will prevent the member from booking sessions for this service.
-          </p>
-
-          {selectedService && (
-            <div className="bg-muted/50 border border-border rounded-lg p-3">
-              <div className="space-y-2 text-sm">
-                <div><strong>Service:</strong> {selectedService.service?.name}</div>
-                <div><strong>Member:</strong> {selectedService.member?.full_name}</div>
-                <div><strong>Sessions Remaining:</strong> {selectedService.sessions_remaining}/{selectedService.sessions_total}</div>
-                <div><strong>Purchase Date:</strong> {format(new Date(selectedService.purchase_date), "PPp")}</div>
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
+              <div className="relative p-4 rounded-2xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 rounded-xl bg-red-500/10">
+                    <XCircle className="h-5 w-5 text-red-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-red-800 mb-1">Error</p>
+                    <p className="text-xs text-red-700">{error}</p>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="cancel-reason">Cancellation Reason *</Label>
-            <Textarea
-              id="cancel-reason"
-              placeholder="Please provide a reason for cancelling this service..."
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              rows={3}
-              required
-            />
+          {/* Header Section */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
+            <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 rounded-2xl bg-red-500/10">
+                  <XCircle className="h-6 w-6 text-red-500" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-text">Cancel Service Purchase</h3>
+                  <p className="text-sm text-muted/70">This will prevent the member from booking sessions for this service</p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="flex justify-end gap-3">
+          {/* Service Details */}
+          {selectedService && (
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 rounded-2xl blur-xl"></div>
+              <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 rounded-xl bg-primary/10">
+                    <Package className="h-5 w-5 text-primary" />
+                  </div>
+                  <h4 className="font-semibold text-text">Purchase Details</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <Package className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service</p>
+                        <p className="text-sm font-semibold text-text">{selectedService.service?.name}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <Hash className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Sessions</p>
+                        <p className="text-sm font-semibold text-text">{selectedService.sessions_remaining}/{selectedService.sessions_total} remaining</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <User className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Member</p>
+                        <p className="text-sm font-semibold text-text">{selectedService.member?.full_name}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                      <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Purchase Date</p>
+                        <p className="text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Warning Notice */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-yellow-500/10 rounded-2xl blur-xl"></div>
+            <div className="relative p-4 rounded-2xl bg-gradient-to-br from-yellow-500/5 to-yellow-500/10 border border-yellow-500/20">
+              <div className="flex items-start gap-3">
+                <div className="p-2 rounded-xl bg-yellow-500/10">
+                  <StickyNote className="h-5 w-5 text-yellow-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-yellow-800 mb-1">⚠️ Important Notice</p>
+                  <p className="text-xs text-yellow-700 leading-relaxed">
+                    Cancelling this service will prevent the member from booking any remaining sessions. This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Reason Section */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-orange-500/10 rounded-2xl blur-xl"></div>
+            <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-xl bg-orange-500/10">
+                  <StickyNote className="h-5 w-5 text-orange-500" />
+                </div>
+                <Label htmlFor="cancel-reason" className="font-semibold text-text">Cancellation Reason *</Label>
+              </div>
+              <Textarea
+                id="cancel-reason"
+                placeholder="Please provide a reason for cancelling this service..."
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                rows={3}
+                required
+                className="w-full rounded-2xl border border-surface/50 bg-surface/20 px-4 py-3 text-sm placeholder:text-muted/50 focus:border-primary/50 focus:bg-surface/30 transition-all duration-200"
+              />
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3 pt-4">
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={() => {
                 setCancelModalOpen(false);
                 setSelectedService(null);
@@ -460,15 +756,26 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                 setError(null);
               }}
               disabled={isPending}
+              className="px-6 hover:bg-surface/50 transition-all duration-200 rounded-xl"
             >
               Keep Service
             </Button>
             <Button
-              variant="destructive"
               onClick={handleCancelConfirm}
               disabled={isPending || !cancelReason.trim()}
+              className="gap-2 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl px-8"
             >
-              {isPending ? "Cancelling..." : "Cancel Service"}
+              {isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  Cancelling...
+                </>
+              ) : (
+                <>
+                  <XCircle className="h-4 w-4" />
+                  Cancel Service
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -483,106 +790,247 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
           setError(null);
         }}
         title="Purchased Service Details"
+        className="max-w-6xl"
       >
         <div className="space-y-6">
           {selectedService && (
             <>
+              {/* Header with Status */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-2xl blur-xl"></div>
+                <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-xl bg-primary/10">
+                        <Package className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg text-text">{selectedService.service?.name || "Unknown Service"}</h3>
+                        <p className="text-sm text-muted/70">Service Purchase Details</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {getStatusBadge(selectedService.status)}
+                    </div>
+                  </div>
+                  
+                  {/* Quick Stats */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="text-center p-3 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
+                      <div className="text-lg font-bold text-primary">{selectedService.sessions_remaining}</div>
+                      <div className="text-xs text-muted/70">Remaining</div>
+                    </div>
+                    <div className="text-center p-3 rounded-xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border border-blue-500/20">
+                      <div className="text-lg font-bold text-blue-600">{selectedService.sessions_total}</div>
+                      <div className="text-xs text-muted/70">Total</div>
+                    </div>
+                    <div className="text-center p-3 rounded-xl bg-gradient-to-br from-green-500/5 to-green-500/10 border border-green-500/20">
+                      <div className="text-lg font-bold text-green-600">{selectedService.service?.duration_minutes || 60}m</div>
+                      <div className="text-xs text-muted/70">Duration</div>
+                    </div>
+                    <div className="text-center p-3 rounded-xl bg-gradient-to-br from-orange-500/5 to-orange-500/10 border border-orange-500/20">
+                      <div className="text-lg font-bold text-orange-600">{selectedService.service?.price?.toFixed(0) || "0"} RON</div>
+                      <div className="text-xs text-muted/70">Price</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Service Information */}
-              <div className="bg-muted/50 border border-border rounded-lg p-4">
-                <h3 className="font-semibold text-lg mb-3">Service Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <span className="font-medium text-muted-foreground">Service Name:</span>
-                    <div className="mt-1">{selectedService.service?.name || "Unknown Service"}</div>
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-500/10 rounded-2xl blur-xl"></div>
+                <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-xl bg-blue-500/10">
+                      <Briefcase className="h-5 w-5 text-blue-500" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-text">Service Information</h3>
                   </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">Service Type:</span>
-                    <div className="mt-1">{selectedService.service?.session_type || "Standard"}</div>
-                  </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">Duration:</span>
-                    <div className="mt-1">{selectedService.service?.duration_minutes || 60} minutes</div>
-                  </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">Price:</span>
-                    <div className="mt-1">{selectedService.service?.price?.toFixed(2) || "0.00"} RON</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <Package className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service Name</p>
+                          <p className="text-sm font-semibold text-text">{selectedService.service?.name || "Unknown Service"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Duration</p>
+                          <p className="text-sm font-semibold text-text">{selectedService.service?.duration_minutes || 60} minutes</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <Package className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service Type</p>
+                          <p className="text-sm font-semibold text-text">{selectedService.service?.session_type || "Standard"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <Banknote className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Price</p>
+                          <p className="text-sm font-semibold text-text">{selectedService.service?.price?.toFixed(2) || "0.00"} RON</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Member Information */}
-              <div className="bg-muted/50 border border-border rounded-lg p-4">
-                <h3 className="font-semibold text-lg mb-3">Member Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <span className="font-medium text-muted-foreground">Full Name:</span>
-                    <div className="mt-1">{selectedService.member?.full_name || "Unknown Member"}</div>
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/10 rounded-2xl blur-xl"></div>
+                <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-xl bg-green-500/10">
+                      <User className="h-5 w-5 text-green-500" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-text">Member Information</h3>
                   </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">Email:</span>
-                    <div className="mt-1">{selectedService.member?.email || "-"}</div>
-                  </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">Phone:</span>
-                    <div className="mt-1">{selectedService.member?.phone || "-"}</div>
-                  </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">Membership Status:</span>
-                    <div className="mt-1">{selectedService.member?.status || "-"}</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <User className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Full Name</p>
+                          <p className="text-sm font-semibold text-text">{selectedService.member?.full_name || "Unknown Member"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <User className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Phone</p>
+                          <p className="text-sm font-semibold text-text">{selectedService.member?.phone || "-"}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <User className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Email</p>
+                          <p className="text-sm font-semibold text-text">{selectedService.member?.email || "-"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Status</p>
+                          <p className="text-sm font-semibold text-text capitalize">{selectedService.member?.status || "-"}</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Purchase Details */}
-              <div className="bg-muted/50 border border-border rounded-lg p-4">
-                <h3 className="font-semibold text-lg mb-3">Purchase Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <span className="font-medium text-muted-foreground">Purchase Date:</span>
-                    <div className="mt-1">{format(new Date(selectedService.purchase_date), "PPp")}</div>
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-orange-500/10 rounded-2xl blur-xl"></div>
+                <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-xl bg-orange-500/10">
+                      <Calendar className="h-5 w-5 text-orange-500" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-text">Purchase Details</h3>
                   </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">Status:</span>
-                    <div className="mt-1">{getStatusBadge(selectedService.status)}</div>
-                  </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">Total Sessions:</span>
-                    <div className="mt-1">{selectedService.sessions_total}</div>
-                  </div>
-                  <div>
-                    <span className="font-medium text-muted-foreground">Remaining Sessions:</span>
-                    <div className="mt-1">{selectedService.sessions_remaining}</div>
-                  </div>
-                  {selectedService.approved_date && (
-                    <>
-                      <div>
-                        <span className="font-medium text-muted-foreground">Approved Date:</span>
-                        <div className="mt-1">{format(new Date(selectedService.approved_date), "PPp")}</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Purchase Date</p>
+                          <p className="text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
+                        </div>
                       </div>
-                    </>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <Package className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Total Sessions</p>
+                          <p className="text-sm font-semibold text-text">{selectedService.sessions_total}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Status</p>
+                          <div className="mt-1">{getStatusBadge(selectedService.status)}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
+                        <Package className="h-4 w-4 text-primary flex-shrink-0" />
+                        <div>
+                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Remaining Sessions</p>
+                          <p className="text-sm font-semibold text-text">{selectedService.sessions_remaining}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {(selectedService.approved_date || selectedService.cancelled_date) && (
+                    <div className="mt-4 pt-4 border-t border-surface/30">
+                      <div className="space-y-3">
+                        {selectedService.approved_date && (
+                          <div className="flex items-center gap-3 p-3 rounded-xl bg-green-500/5 border border-green-500/20">
+                            <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                            <div>
+                              <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Approved Date</p>
+                              <p className="text-sm font-semibold text-text">{format(new Date(selectedService.approved_date), "PPp")}</p>
+                            </div>
+                          </div>
+                        )}
+                        {selectedService.cancelled_date && (
+                          <div className="flex items-center gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/20">
+                            <XCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
+                            <div>
+                              <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Cancelled Date</p>
+                              <p className="text-sm font-semibold text-text">{format(new Date(selectedService.cancelled_date), "PPp")}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
 
               {/* Notes */}
               {selectedService.notes && (
-                <div className="bg-muted/50 border border-border rounded-lg p-4">
-                  <h3 className="font-semibold text-lg mb-3">Notes</h3>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                    {selectedService.notes}
-                  </p>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-purple-500/10 rounded-2xl blur-xl"></div>
+                  <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 rounded-xl bg-purple-500/10">
+                        <Package className="h-5 w-5 text-purple-500" />
+                      </div>
+                      <h3 className="font-semibold text-lg text-text">Notes</h3>
+                    </div>
+                    <div className="p-4 rounded-xl bg-surface/20 border border-surface/30">
+                      <p className="text-sm text-text whitespace-pre-wrap leading-relaxed">
+                        {selectedService.notes}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
 
               {/* Action Buttons based on status */}
-              <div className="flex justify-end gap-3">
+              <div className="flex justify-end gap-3 pt-4">
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   onClick={() => {
                     setViewModalOpen(false);
                     setSelectedService(null);
                     setError(null);
                   }}
+                  className="px-6 hover:bg-surface/50 transition-all duration-200 rounded-xl"
                 >
                   Close
                 </Button>
@@ -594,33 +1042,46 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                         setViewModalOpen(false);
                         handleApproveClick(selectedService);
                       }}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="gap-2 bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/40 transition-all duration-200 rounded-xl"
                     >
-                      <CheckCircle className="h-4 w-4 mr-2" />
+                      <CheckCircle className="h-4 w-4" />
                       Approve
                     </Button>
                     <Button
-                      variant="destructive"
                       onClick={() => {
                         setViewModalOpen(false);
                         handleCancelClick(selectedService);
                       }}
+                      className="gap-2 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl"
                     >
-                      <XCircle className="h-4 w-4 mr-2" />
+                      <XCircle className="h-4 w-4" />
                       Cancel
                     </Button>
                   </>
                 )}
                 
+                {selectedService.status === "approved" && (
+                  <Button
+                    onClick={() => {
+                      setViewModalOpen(false);
+                      handleCancelClick(selectedService);
+                    }}
+                    className="gap-2 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl"
+                  >
+                    <XCircle className="h-4 w-4" />
+                    Cancel Service
+                  </Button>
+                )}
+                
                 {selectedService.status === "cancelled" && (
                   <Button
-                    variant="destructive"
                     onClick={() => {
                       setViewModalOpen(false);
                       handleDeleteClick(selectedService);
                     }}
+                    className="gap-2 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl"
                   >
-                    <Trash2 className="h-4 w-4 mr-2" />
+                    <Trash2 className="h-4 w-4" />
                     Delete
                   </Button>
                 )}

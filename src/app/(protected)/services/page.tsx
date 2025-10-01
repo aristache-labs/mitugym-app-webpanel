@@ -9,6 +9,9 @@ export const metadata = {
   title: "Services Management",
 };
 
+// Disable caching to ensure fresh data
+export const revalidate = 0;
+
 export default async function ServicesPage() {
   const [services, purchasedServices] = await Promise.all([
     fetchServices(),

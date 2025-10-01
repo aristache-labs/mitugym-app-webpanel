@@ -142,6 +142,7 @@ export type PurchasedService = {
   sessions_remaining: number;
   purchase_date: string;
   approved_date?: string | null;
+  cancelled_date?: string | null;
   notes?: string | null;
   created_at: string;
   updated_at: string;

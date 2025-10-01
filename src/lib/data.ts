@@ -601,6 +601,7 @@ export async function fetchPurchasedServices(): Promise<PurchasedService[]> {
     return [];
   }
 
+
   // Get unique member IDs
   const memberIds = [...new Set(purchasedData.map(p => p.member_id))];
 
@@ -631,6 +632,7 @@ export async function fetchPurchasedServices(): Promise<PurchasedService[]> {
     sessions_remaining: purchase.sessions_remaining,
     purchase_date: purchase.purchase_date,
     approved_date: purchase.approved_date,
+    cancelled_date: purchase.cancelled_date,
     notes: purchase.notes,
     created_at: purchase.created_at,
     updated_at: purchase.updated_at,
