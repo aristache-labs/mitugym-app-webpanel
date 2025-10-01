@@ -106,12 +106,12 @@ export function DataTable<TData, TValue>({
               <TableRow key={headerGroup.id} className="border-b border-surface/20 bg-gradient-to-r from-primary/5 to-secondary/5 hover:bg-gradient-to-r hover:from-primary/10 hover:to-secondary/10 transition-all duration-200">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="text-xs uppercase tracking-[0.1em] text-muted/80 font-semibold py-4 px-6">
+                    <TableHead key={header.id} className="text-xs uppercase tracking-[0.1em] text-muted/80 font-semibold py-4 px-6 text-center">
                       {header.isPlaceholder ? null : (
                         <div
                           className={cn(
                             header.column.getCanSort() && "cursor-pointer select-none hover:text-primary transition-colors",
-                            "flex items-center gap-2"
+                            "flex items-center justify-center gap-2"
                           )}
                           onClick={header.column.getToggleSortingHandler()}
                         >

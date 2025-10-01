@@ -10,7 +10,9 @@ import { Banknote, Clock, Calendar } from "lucide-react";
 export const serviceColumns: ColumnDef<Service>[] = [
   {
     accessorKey: "name",
-    header: "Service Name",
+    header: ({ column }) => (
+      <div className="text-center font-semibold">Service Name</div>
+    ),
     cell: ({ row }) => (
       <div className="max-w-[200px]">
         <span className="font-semibold text-text line-clamp-2 leading-tight">
@@ -21,7 +23,9 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "service_type",
-    header: "Type",
+    header: ({ column }) => (
+      <div className="text-center font-semibold">Type</div>
+    ),
     cell: ({ row }) => {
       const typeLabels = {
         'personal_trainer': 'Personal Training',
@@ -38,7 +42,9 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "price",
-    header: "Price",
+    header: ({ column }) => (
+      <div className="text-center font-semibold">Price</div>
+    ),
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <Banknote className="h-4 w-4 text-primary" />
@@ -48,7 +54,9 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "duration_minutes",
-    header: "Duration",
+    header: ({ column }) => (
+      <div className="text-center font-semibold">Duration</div>
+    ),
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <Clock className="h-4 w-4 text-secondary" />
@@ -58,7 +66,9 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "max_sessions",
-    header: "Sessions",
+    header: ({ column }) => (
+      <div className="text-center font-semibold">Sessions</div>
+    ),
     cell: ({ row }) => {
       const sessions = row.original.max_sessions || 1;
       return (
@@ -70,7 +80,9 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "is_active",
-    header: "Status",
+    header: ({ column }) => (
+      <div className="text-center font-semibold">Status</div>
+    ),
     cell: ({ row }) => (
       <Badge 
         variant={row.original.is_active ? "default" : "secondary"}
@@ -86,7 +98,9 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     id: "actions",
-    header: "Actions",
+    header: ({ column }) => (
+      <div className="text-center font-semibold">Actions</div>
+    ),
     cell: ({ row }) => (
       <ServiceActions 
         serviceId={row.original.id} 
