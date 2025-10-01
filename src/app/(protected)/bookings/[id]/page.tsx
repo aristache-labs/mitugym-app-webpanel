@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { fetchSessionBookings } from "@/lib/data";
-// Session booking view component
 import { SessionBookingView } from "@/components/services/session-booking-view";
 
 interface ViewSessionBookingPageProps {
@@ -8,8 +7,11 @@ interface ViewSessionBookingPageProps {
 }
 
 export const metadata = {
-  title: "View Session Booking",
+  title: "Session Booking Details",
 };
+
+// Disable caching to ensure fresh data
+export const revalidate = 0;
 
 export default async function ViewSessionBookingPage({ params }: ViewSessionBookingPageProps) {
   const { id } = await params;
@@ -21,16 +23,5 @@ export default async function ViewSessionBookingPage({ params }: ViewSessionBook
     notFound();
   }
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Session Booking Details</h1>
-        <p className="text-muted-foreground">
-          View complete booking information
-        </p>
-      </div>
-
-      <SessionBookingView booking={booking} />
-    </div>
-  );
+  return <SessionBookingView booking={booking} />;
 }
