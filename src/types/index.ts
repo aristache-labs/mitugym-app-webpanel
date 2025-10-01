@@ -68,6 +68,7 @@ export type NewsItem = {
   expires_at: string | null;
   created_at: string;
   author_name?: string | null;
+  is_active?: boolean;
 };
 
 export type ScheduleDay = {

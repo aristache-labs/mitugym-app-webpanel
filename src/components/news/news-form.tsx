@@ -58,8 +58,12 @@ export function NewsForm({ item, onCompleted }: NewsFormProps) {
       return;
     }
     setServerError(null);
-    router.refresh();
-    onCompleted?.();
+    if (onCompleted) {
+      onCompleted();
+    } else {
+      router.push("/news");
+      router.refresh();
+    }
   };
 
   const onSubmit = form.handleSubmit((values) => {

@@ -382,6 +382,55 @@ export async function deleteNewsAction(id: string): Promise<ActionResult> {
   return { success: true, message: "News item deleted" };
 }
 
+export async function toggleNewsActiveAction(id: string, isActive: boolean): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+
+  // Get news title for audit log
+  const { data: newsItem, error: fetchError } = await admin
+    .from("announcements")
+    .select("title")
+    .eq("id", id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch news", fetchError);
+    return { success: false, error: "Failed to fetch news data" };
+  }
+
+  const { error } = await admin
+    .from("announcements")
+    .update({ is_active: isActive })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Failed to toggle news active status", error);
+    return { success: false, error: error.message };
+  }
+
+  await appendAuditLog(
+    staff.profile.id,
+    isActive ? "news.activate" : "news.deactivate",
+    "announcements",
+    id,
+    { id, is_active: isActive },
+    newsItem.title,
+    {
+      status_changed: {
+        before: isActive ? "inactive" : "active",
+        after: isActive ? "active" : "inactive"
+      }
+    }
+  );
+  revalidatePath("/news");
+
+  return { success: true, message: `Announcement ${isActive ? 'activated' : 'deactivated'}` };
+}
+
 // ===== CHECKIN ACTIONS =====
 
 export async function manualCheckoutAction(checkinId: string): Promise<ActionResult> {

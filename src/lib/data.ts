@@ -352,8 +352,7 @@ export async function fetchNews(): Promise<NewsItem[]> {
 
   const { data, error } = await admin
     .from("announcements")
-    .select("id, title, content, priority, end_date, created_at, created_by")
-    .eq("is_active", true)
+    .select("id, title, content, priority, end_date, created_at, created_by, is_active")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -369,6 +368,7 @@ export async function fetchNews(): Promise<NewsItem[]> {
     end_date?: string;
     created_at: string;
     created_by?: string;
+    is_active?: boolean;
   }[] | null) ?? [];
 
   return rows.length
@@ -380,6 +380,7 @@ export async function fetchNews(): Promise<NewsItem[]> {
         expires_at: item.end_date || null,
         created_at: item.created_at,
         author_name: 'Admin', // No relationship exists, using default
+        is_active: item.is_active,
       }))
     : sampleNews;
 }

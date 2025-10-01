@@ -53,6 +53,7 @@ export {
   createNewsAction,
   updateNewsAction,
   deleteNewsAction,
+  toggleNewsActiveAction,
   manualCheckoutAction,
   clearAuditLogsAction
 } from "./system/actions";

@@ -17,6 +17,7 @@ export const newsSchema = z.object({
       }
       return date.toISOString();
     }),
+  is_active: z.boolean().optional().default(true),
 });
 
 export type NewsInput = z.infer<typeof newsSchema>;
