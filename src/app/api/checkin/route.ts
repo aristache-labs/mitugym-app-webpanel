@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { z } from "zod";
+import { apiKeyRateLimiter, ipRateLimiter, memberRateLimiter, createRateLimitIdentifier } from "@/lib/rate-limit";
 
 // Schema for check-in request
 const checkinRequestSchema = z.object({
@@ -46,6 +47,42 @@ export async function POST(request: NextRequest) {
   let apiAction: string | undefined;
   
   try {
+    // Get IP address for rate limiting
+    const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown';
+    
+    // Check IP-based rate limit first (general protection)
+    const ipLimit = ipRateLimiter.check(createRateLimitIdentifier('ip', ipAddress));
+    if (!ipLimit.allowed) {
+      const resetIn = Math.ceil((ipLimit.resetTime - Date.now()) / 1000);
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 429,
+        success: false,
+        errorMessage: `Rate limit exceeded for IP: ${ipAddress}`,
+        durationMs: Date.now() - startTime,
+      });
+      return NextResponse.json<CheckinResponse>(
+        {
+          success: false,
+          message: "Too many requests",
+          error: `Rate limit exceeded. Try again in ${resetIn} seconds.`,
+        },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': '100',
+            'X-RateLimit-Remaining': ipLimit.remaining.toString(),
+            'X-RateLimit-Reset': ipLimit.resetTime.toString(),
+            'Retry-After': resetIn.toString(),
+          },
+        }
+      );
+    }
+
     // Parse and validate request body
     const body = await request.json();
     const validation = checkinRequestSchema.safeParse(body);
@@ -73,6 +110,38 @@ export async function POST(request: NextRequest) {
 
     const { qr_code, api_key, action } = validation.data;
     apiAction = action;
+    
+    // Check API key-based rate limit
+    const apiKeyLimit = apiKeyRateLimiter.check(createRateLimitIdentifier('api_key', api_key));
+    if (!apiKeyLimit.allowed) {
+      const resetIn = Math.ceil((apiKeyLimit.resetTime - Date.now()) / 1000);
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 429,
+        success: false,
+        apiAction,
+        errorMessage: 'Rate limit exceeded for API key',
+        durationMs: Date.now() - startTime,
+      });
+      return NextResponse.json<CheckinResponse>(
+        {
+          success: false,
+          message: "Too many requests",
+          error: `API key rate limit exceeded. Try again in ${resetIn} seconds.`,
+        },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': '60',
+            'X-RateLimit-Remaining': apiKeyLimit.remaining.toString(),
+            'X-RateLimit-Reset': apiKeyLimit.resetTime.toString(),
+            'Retry-After': resetIn.toString(),
+          },
+        }
+      );
+    }
     // device_id can be used for logging/auditing in the future
 
     // Verify API key (check against environment variable or database)
@@ -143,6 +212,44 @@ export async function POST(request: NextRequest) {
     // Store member info for logging
     memberId = member.id;
     memberName = `${member.first_name || ''} ${member.last_name || ''}`.trim();
+
+    // Check member-based rate limit (prevent spam for specific members)
+    const memberLimit = memberRateLimiter.check(createRateLimitIdentifier('member', member.id));
+    if (!memberLimit.allowed) {
+      const resetIn = Math.ceil((memberLimit.resetTime - Date.now()) / 1000);
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 429,
+        success: false,
+        apiAction,
+        memberId,
+        memberName,
+        errorMessage: `Rate limit exceeded for member: ${memberName}`,
+        durationMs: Date.now() - startTime,
+      });
+      return NextResponse.json<CheckinResponse>(
+        {
+          success: false,
+          message: "Too many requests",
+          error: `Too many check-in attempts for this member. Try again in ${resetIn} seconds.`,
+          data: {
+            member_id: memberId,
+            member_name: memberName,
+          },
+        },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': '20',
+            'X-RateLimit-Remaining': memberLimit.remaining.toString(),
+            'X-RateLimit-Reset': memberLimit.resetTime.toString(),
+            'Retry-After': resetIn.toString(),
+          },
+        }
+      );
+    }
 
     // Validate membership status and expiration
     const now = new Date();

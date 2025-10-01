@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { z } from "zod";
+import { apiKeyRateLimiter, ipRateLimiter, memberRateLimiter, createRateLimitIdentifier } from "@/lib/rate-limit";
 
 // Schema for verification request
 const verifyRequestSchema = z.object({
@@ -41,6 +42,32 @@ type VerifyResponse = {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Check IP-based rate limit
+    const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown';
+    
+    const ipLimit = ipRateLimiter.check(createRateLimitIdentifier('ip', ipAddress));
+    if (!ipLimit.allowed) {
+      const resetIn = Math.ceil((ipLimit.resetTime - Date.now()) / 1000);
+      return NextResponse.json<VerifyResponse>(
+        {
+          success: false,
+          message: "Too many requests",
+          error: `Rate limit exceeded. Try again in ${resetIn} seconds.`,
+        },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': '100',
+            'X-RateLimit-Remaining': ipLimit.remaining.toString(),
+            'X-RateLimit-Reset': ipLimit.resetTime.toString(),
+            'Retry-After': resetIn.toString(),
+          },
+        }
+      );
+    }
+
     // Parse and validate request body
     const body = await request.json();
     const validation = verifyRequestSchema.safeParse(body);
@@ -57,6 +84,28 @@ export async function POST(request: NextRequest) {
     }
 
     const { qr_code, api_key } = validation.data;
+
+    // Check API key-based rate limit
+    const apiKeyLimit = apiKeyRateLimiter.check(createRateLimitIdentifier('api_key', api_key));
+    if (!apiKeyLimit.allowed) {
+      const resetIn = Math.ceil((apiKeyLimit.resetTime - Date.now()) / 1000);
+      return NextResponse.json<VerifyResponse>(
+        {
+          success: false,
+          message: "Too many requests",
+          error: `API key rate limit exceeded. Try again in ${resetIn} seconds.`,
+        },
+        { 
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': '60',
+            'X-RateLimit-Remaining': apiKeyLimit.remaining.toString(),
+            'X-RateLimit-Reset': apiKeyLimit.resetTime.toString(),
+            'Retry-After': resetIn.toString(),
+          },
+        }
+      );
+    }
 
     // Verify API key
     const validApiKey = process.env.CHECKIN_API_KEY;

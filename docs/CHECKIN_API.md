@@ -302,7 +302,6 @@ else:
 2. **HTTPS Only**: Always use HTTPS in production
 3. **Rate Limiting**: Consider implementing rate limiting to prevent abuse
 4. **IP Whitelisting**: Restrict API access to known device IPs
-5. **Logging**: Monitor API usage for suspicious activity
 6. **Key Rotation**: Periodically rotate API keys
 
 ## Error Handling
