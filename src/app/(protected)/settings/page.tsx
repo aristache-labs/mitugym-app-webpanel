@@ -2,27 +2,45 @@ import { AuditLogTable } from "@/components/settings/audit-log-table";
 import { ApiLogTable } from "@/components/settings/api-log-table";
 import { ClearAuditLogsButton } from "@/components/settings/clear-audit-logs-button";
 import { TimezoneSettings } from "@/components/settings/timezone-settings";
+import { RateLimitSettings } from "@/components/settings/rate-limit-settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchAuditLogs, fetchApiLogs } from "@/lib/data";
 import { getSetting } from "@/lib/settings";
 import type { TimeFormat } from "@/lib/settings";
+import { getRateLimiterStats } from "@/lib/rate-limit";
 
 export const metadata = {
   title: "Settings",
 };
 
 export default async function SettingsPage() {
-  const [logs, apiLogs, currentTimezone, currentTimeFormat] = await Promise.all([
+  const [logs, apiLogs, currentTimezone, currentTimeFormat, rateLimitSettings] = await Promise.all([
     fetchAuditLogs(),
     fetchApiLogs(100),
     getSetting<string>('timezone').then(tz => tz || 'Europe/Bucharest'),
     getSetting<TimeFormat>('time_format').then(fmt => fmt || '24h'),
+    Promise.all([
+      getSetting<string>('rate_limit_window_ms').then(v => parseInt(v || '60000')),
+      getSetting<string>('rate_limit_ip_max').then(v => parseInt(v || '100')),
+      getSetting<string>('rate_limit_api_key_max').then(v => parseInt(v || '60')),
+      getSetting<string>('rate_limit_member_max').then(v => parseInt(v || '20')),
+    ]).then(([window_ms, ip_max, api_key_max, member_max]) => ({
+      window_ms,
+      ip_max,
+      api_key_max,
+      member_max,
+    })),
   ]);
+
+  const stats = getRateLimiterStats();
 
   return (
     <div className="space-y-6">
       {/* Timezone Settings */}
       <TimezoneSettings currentTimezone={currentTimezone} currentTimeFormat={currentTimeFormat} />
+
+      {/* Rate Limiting Settings */}
+      <RateLimitSettings currentSettings={rateLimitSettings} stats={stats} />
 
       {/* API Logs */}
       <Card className="bg-card/90">

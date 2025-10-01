@@ -37,6 +37,19 @@ function getActionBadge(action: string | null | undefined) {
 }
 
 export function ApiLogTable({ logs, timeFormat = '24h' }: ApiLogTableProps) {
+  // Calculate statistics
+  const stats = useMemo(() => {
+    const total = logs.length;
+    const successful = logs.filter(l => l.success).length;
+    const failed = logs.filter(l => !l.success).length;
+    const rateLimited = logs.filter(l => l.status_code === 429).length;
+    const avgDuration = logs.length > 0
+      ? Math.round(logs.reduce((acc, l) => acc + (l.duration_ms || 0), 0) / logs.length)
+      : 0;
+
+    return { total, successful, failed, rateLimited, avgDuration };
+  }, [logs]);
+
   const columns = useMemo<ColumnDef<ApiLog>[]>(() => [
     {
       accessorKey: "created_at",
@@ -170,27 +183,41 @@ export function ApiLogTable({ logs, timeFormat = '24h' }: ApiLogTableProps) {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      {/* Enhanced Statistics */}
+      <div className="mb-4 grid grid-cols-2 md:grid-cols-5 gap-4 p-4 bg-surface/30 rounded-lg border border-surface/40">
+        <div>
+          <p className="text-xs text-muted/60">Total Requests</p>
+          <p className="text-2xl font-bold text-text">{stats.total}</p>
+        </div>
+        <div>
+          <p className="text-xs text-muted/60">Successful</p>
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
-            <span className="text-sm text-muted/70">
-              {logs.filter(l => l.success).length} successful
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-error" />
-            <span className="text-sm text-muted/70">
-              {logs.filter(l => !l.success).length} failed
-            </span>
+            <p className="text-2xl font-bold text-success">{stats.successful}</p>
           </div>
         </div>
-        <span className="text-sm text-muted/60">
-          Showing {logs.length} most recent logs
-        </span>
+        <div>
+          <p className="text-xs text-muted/60">Failed</p>
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-error" />
+            <p className="text-2xl font-bold text-error">{stats.failed}</p>
+          </div>
+        </div>
+        <div>
+          <p className="text-xs text-muted/60">Rate Limited</p>
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-warning" />
+            <p className="text-2xl font-bold text-warning">{stats.rateLimited}</p>
+          </div>
+        </div>
+        <div>
+          <p className="text-xs text-muted/60">Avg Response</p>
+          <p className="text-2xl font-bold text-primary">{stats.avgDuration}ms</p>
+        </div>
       </div>
       <DataTable columns={columns} data={logs} />
     </div>
   );
 }
+
 

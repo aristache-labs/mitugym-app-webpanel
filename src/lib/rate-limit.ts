@@ -143,6 +143,65 @@ export function getRateLimitConfig() {
 }
 
 /**
+ * Update rate limiters with database settings
+ */
+export async function updateRateLimitersFromDB() {
+  try {
+    const { getSupabaseAdmin } = await import("@/lib/supabase-admin");
+    const admin = getSupabaseAdmin();
+    if (!admin) return;
+
+    const { data: settings } = await admin
+      .from('app_settings')
+      .select('key, value')
+      .in('key', ['rate_limit_window_ms', 'rate_limit_ip_max', 'rate_limit_api_key_max', 'rate_limit_member_max']);
+
+    if (!settings) return;
+
+    const config = settings.reduce((acc, { key, value }) => {
+      acc[key] = parseInt(value || '0');
+      return acc;
+    }, {} as Record<string, number>);
+
+    const windowMs = config.rate_limit_window_ms || 60000;
+
+    if (config.rate_limit_ip_max) {
+      ipRateLimiter.configure(windowMs, config.rate_limit_ip_max);
+    }
+    if (config.rate_limit_api_key_max) {
+      apiKeyRateLimiter.configure(windowMs, config.rate_limit_api_key_max);
+    }
+    if (config.rate_limit_member_max) {
+      memberRateLimiter.configure(windowMs, config.rate_limit_member_max);
+    }
+
+    console.log('Rate limiters updated from database:', config);
+  } catch (error) {
+    console.error('Failed to update rate limiters from database:', error);
+  }
+}
+
+/**
+ * Get current rate limiter statistics
+ */
+export function getRateLimiterStats() {
+  return {
+    ip: {
+      activeIdentifiers: ipRateLimiter.size(),
+      limit: 100, // Will be updated from config
+    },
+    apiKey: {
+      activeIdentifiers: apiKeyRateLimiter.size(),
+      limit: 60,
+    },
+    member: {
+      activeIdentifiers: memberRateLimiter.size(),
+      limit: 20,
+    },
+  };
+}
+
+/**
  * Create identifier for rate limiting
  */
 export function createRateLimitIdentifier(type: 'api_key' | 'ip' | 'member', value: string): string {
