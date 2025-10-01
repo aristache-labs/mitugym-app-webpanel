@@ -34,23 +34,39 @@ export function CheckoutButton({ checkinId, memberName, isCheckedOut }: Checkout
 
   if (isCheckedOut) {
     return (
-      <span className="text-xs text-muted">
-        Checked out
-      </span>
+      <div className="flex items-center gap-2">
+        <div className="w-2 h-2 bg-success/60 rounded-full"></div>
+        <span className="text-xs font-medium text-success/80 bg-success/10 px-3 py-1.5 rounded-full border border-success/20">
+          Checked out
+        </span>
+      </div>
     );
   }
 
   return (
     <>
-      <AnimatedButton
-        size="sm"
-        variant="default"
-        onClick={() => setShowConfirmModal(true)}
-        disabled={isLoading}
-        className="h-7 px-2 text-xs"
-      >
-        {isLoading ? "..." : "Check Out"}
-      </AnimatedButton>
+      <div className="relative group">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <AnimatedButton
+          size="sm"
+          variant="default"
+          onClick={() => setShowConfirmModal(true)}
+          disabled={isLoading}
+          className="relative h-8 px-4 text-xs font-semibold bg-gradient-to-r from-primary/20 to-accent/20 border-primary/30 hover:from-primary/30 hover:to-accent/30 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-xl"
+        >
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+              <span>Processing...</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+              <span>Check Out</span>
+            </div>
+          )}
+        </AnimatedButton>
+      </div>
 
       <ConfirmationModal
         isOpen={showConfirmModal}

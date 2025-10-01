@@ -66,31 +66,49 @@ export function CheckinsWithTabs({ data }: CheckinsWithTabsProps) {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Tabs */}
-      <div className="border-b border-surface/50">
-        <nav className="flex space-x-8">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === tab.id
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted hover:text-text hover:border-surface"
-              }`}
-            >
-              {tab.label}
-              <span className="ml-2 px-2 py-1 text-xs bg-surface/60 rounded-full">
-                {tab.count}
-              </span>
-            </button>
-          ))}
-        </nav>
+    <div className="space-y-8">
+      {/* Premium Tabs */}
+      <div className="relative animate-scale-in">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-2xl blur-xl"></div>
+        <div className="relative bg-card/60 backdrop-blur-sm rounded-2xl border border-surface/30 p-2 hover:border-surface/50 transition-all duration-300">
+          <nav className="flex gap-2">
+            {tabs.map((tab, index) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`relative flex-1 py-4 px-6 rounded-xl font-semibold text-sm transition-all duration-300 group animate-fade-in-up ${
+                  activeTab === tab.id
+                    ? "bg-gradient-to-r from-primary/20 to-accent/20 text-primary border border-primary/30 shadow-lg transform scale-105"
+                    : "text-muted hover:text-text hover:bg-surface/40 border border-transparent hover:scale-102"
+                }`}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="flex items-center justify-center gap-3">
+                  <span className="relative z-10 transition-all duration-300">{tab.label}</span>
+                  <div className={`relative ${
+                    activeTab === tab.id 
+                      ? "bg-gradient-to-r from-primary/30 to-accent/30 border-primary/40 animate-pulse" 
+                      : "bg-surface/60 border-surface/80 group-hover:bg-surface/80"
+                  } px-3 py-1.5 text-xs font-bold rounded-full border transition-all duration-300`}>
+                    {tab.count}
+                  </div>
+                </div>
+                {activeTab === tab.id && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl blur-sm animate-glow"></div>
+                )}
+              </button>
+            ))}
+          </nav>
+        </div>
       </div>
 
-      {/* Table */}
-      <CheckinsTable data={filteredData} />
+      {/* Enhanced Table Container */}
+      <div className="relative animate-fade-in-up animate-stagger-1">
+        <div className="absolute inset-0 bg-gradient-to-br from-card/40 to-surface/40 rounded-2xl blur-xl"></div>
+        <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl border border-surface/30 p-6 shadow-xl hover:shadow-2xl transition-all duration-500">
+          <CheckinsTable data={filteredData} />
+        </div>
+      </div>
     </div>
   );
 }
