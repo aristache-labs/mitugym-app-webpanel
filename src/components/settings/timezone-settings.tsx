@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { AVAILABLE_TIMEZONES } from "@/lib/settings";
 import { updateTimezoneAction } from "@/app/(protected)/settings/actions";
-import { Globe, Check, Clock, AlertCircle, CheckCircle } from "lucide-react";
+import { Globe, Clock, AlertCircle, CheckCircle } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 interface TimezoneSettingsProps {
@@ -54,7 +54,7 @@ export function TimezoneSettings({ currentTimezone }: TimezoneSettingsProps) {
             description: result.error || 'An unexpected error occurred',
           });
         }
-      } catch (error) {
+      } catch {
         setMessage({
           type: 'error',
           text: 'An unexpected error occurred'
@@ -73,7 +73,6 @@ export function TimezoneSettings({ currentTimezone }: TimezoneSettingsProps) {
     setMessage(null);
   };
 
-  const selectedTimezoneInfo = AVAILABLE_TIMEZONES.find(tz => tz.value === selectedTimezone);
   const currentTime = new Date().toLocaleString('en-US', { 
     timeZone: selectedTimezone,
     weekday: 'long',
@@ -144,6 +143,20 @@ export function TimezoneSettings({ currentTimezone }: TimezoneSettingsProps) {
               <p>• Member expiration dates, check-in times, and reports will use this timezone</p>
               <p>• Changes take effect immediately and will refresh the page</p>
               <p>• The timezone automatically handles daylight saving time (DST) transitions</p>
+            </div>
+          </div>
+
+          <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4">
+            <h4 className="font-medium text-green-900 dark:text-green-100 mb-2 flex items-center gap-2">
+              <CheckCircle className="h-4 w-4" />
+              Database Timezone Configuration
+            </h4>
+            <div className="text-sm text-green-800 dark:text-green-200 space-y-1">
+              <p>✅ <strong>Database timezone:</strong> <code className="px-1 py-0.5 bg-green-200 dark:bg-green-900 rounded font-mono">Europe/Bucharest</code></p>
+              <p>• All timestamps are stored in Romania time (EET/EEST with automatic DST)</p>
+              <p>• This configuration works best with Supabase cron jobs and scheduled functions</p>
+              <p>• Cron schedules run according to local time (e.g., midnight = midnight in Bucharest)</p>
+              <p>• The application display timezone should match the database for consistency</p>
             </div>
           </div>
         </div>

@@ -5,6 +5,8 @@ import { clearTimezoneCache } from "@/lib/timezone";
 import { AVAILABLE_TIMEZONES } from "@/lib/settings";
 import { requireStaff } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { appendAuditLog } from "@/app/(protected)/lib/action-utils";
 
 export interface ActionResult {
   success: boolean;
@@ -17,7 +19,7 @@ export interface ActionResult {
 export async function updateTimezoneAction(timezone: string): Promise<ActionResult> {
   try {
     // Verify user is authenticated staff
-    await requireStaff();
+    const staff = await requireStaff();
 
     // Validate timezone
     if (!timezone || typeof timezone !== 'string') {
@@ -30,7 +32,17 @@ export async function updateTimezoneAction(timezone: string): Promise<ActionResu
       return { success: false, error: "Timezone not supported" };
     }
 
-    // Update the setting in the database
+    // Get the admin client
+    const admin = getSupabaseAdmin();
+    if (!admin) {
+      return { success: false, error: "Database connection unavailable" };
+    }
+
+    // Get current timezone from database for audit log
+    const { data: currentTzData } = await admin.rpc('show_timezone' as any);
+    const oldTimezone = currentTzData?.[0]?.TimeZone || 'UTC';
+
+    // Update the application timezone setting
     const success = await updateSetting(
       'timezone', 
       timezone, 
@@ -43,6 +55,26 @@ export async function updateTimezoneAction(timezone: string): Promise<ActionResu
 
     // Clear the timezone cache so the new setting takes effect immediately
     clearTimezoneCache();
+
+    // Log the timezone change in audit logs
+    await appendAuditLog(
+      staff.profile.id,
+      'settings.timezone_update',
+      'app_settings',
+      '00000000-0000-0000-0000-000000000002', // System settings entity ID
+      {
+        setting: 'timezone',
+        from: oldTimezone,
+        to: timezone
+      },
+      'Timezone Settings',
+      {
+        timezone_changed: {
+          before: oldTimezone,
+          after: timezone
+        }
+      }
+    );
 
     // Revalidate relevant paths to ensure fresh data
     revalidatePath('/settings');
