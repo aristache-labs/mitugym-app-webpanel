@@ -156,3 +156,21 @@ export type PurchasedService = {
   service?: Service;
   member?: Member;
 };
+
+export type ApiLog = {
+  id: string;
+  endpoint: string;
+  method: string;
+  status_code: number;
+  request_data?: Record<string, unknown> | null;
+  response_data?: Record<string, unknown> | null;
+  member_id?: string | null;
+  member_name?: string | null;
+  api_action?: string | null;
+  success: boolean;
+  error_message?: string | null;
+  ip_address?: string | null;
+  user_agent?: string | null;
+  duration_ms?: number | null;
+  created_at: string;
+};

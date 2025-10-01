@@ -1,8 +1,9 @@
 import { AuditLogTable } from "@/components/settings/audit-log-table";
+import { ApiLogTable } from "@/components/settings/api-log-table";
 import { ClearAuditLogsButton } from "@/components/settings/clear-audit-logs-button";
 import { TimezoneSettings } from "@/components/settings/timezone-settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchAuditLogs } from "@/lib/data";
+import { fetchAuditLogs, fetchApiLogs } from "@/lib/data";
 import { getSetting } from "@/lib/settings";
 import type { TimeFormat } from "@/lib/settings";
 
@@ -11,8 +12,9 @@ export const metadata = {
 };
 
 export default async function SettingsPage() {
-  const [logs, currentTimezone, currentTimeFormat] = await Promise.all([
+  const [logs, apiLogs, currentTimezone, currentTimeFormat] = await Promise.all([
     fetchAuditLogs(),
+    fetchApiLogs(100),
     getSetting<string>('timezone').then(tz => tz || 'Europe/Bucharest'),
     getSetting<TimeFormat>('time_format').then(fmt => fmt || '24h'),
   ]);
@@ -21,6 +23,21 @@ export default async function SettingsPage() {
     <div className="space-y-6">
       {/* Timezone Settings */}
       <TimezoneSettings currentTimezone={currentTimezone} currentTimeFormat={currentTimeFormat} />
+
+      {/* API Logs */}
+      <Card className="bg-card/90">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <div>
+            <CardTitle>API Logs</CardTitle>
+            <p className="text-sm text-muted/60 mt-1">
+              Check-in API requests from barcode scanners
+            </p>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ApiLogTable logs={apiLogs} timeFormat={currentTimeFormat} />
+        </CardContent>
+      </Card>
 
       {/* Audit Log */}
       <Card className="bg-card/90">

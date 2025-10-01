@@ -2,6 +2,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { calculateMemberStatus } from "@/lib/utils";
 import { getExpiringMembers } from "@/lib/expiring-helpers";
 import type {
+  ApiLog,
   AuditLogEntry,
   CheckIn,
   Member,
@@ -830,4 +831,28 @@ export async function fetchTodaysSessionBookings(): Promise<ServiceBooking[]> {
     member: profilesMap.has(booking.member_id) ? 
       transformDatabaseProfileToMember(profilesMap.get(booking.member_id) as DatabaseProfile) : undefined,
   }));
+}
+
+/**
+ * Fetch API logs from the database
+ */
+export async function fetchApiLogs(limit = 100): Promise<ApiLog[]> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    console.error("Supabase admin client not available");
+    return [];
+  }
+
+  const { data, error } = await admin
+    .from("api_logs")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Failed to fetch API logs", error);
+    return [];
+  }
+
+  return (data || []) as ApiLog[];
 }

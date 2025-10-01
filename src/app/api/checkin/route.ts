@@ -40,28 +40,54 @@ type CheckinResponse = {
  * }
  */
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+  let memberId: string | undefined;
+  let memberName: string | undefined;
+  let apiAction: string | undefined;
+  
   try {
     // Parse and validate request body
     const body = await request.json();
     const validation = checkinRequestSchema.safeParse(body);
 
     if (!validation.success) {
+      const errorMsg = validation.error.errors.map(e => e.message).join(", ");
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 400,
+        success: false,
+        errorMessage: errorMsg,
+        durationMs: Date.now() - startTime,
+      });
       return NextResponse.json<CheckinResponse>(
         {
           success: false,
           message: "Invalid request data",
-          error: validation.error.errors.map(e => e.message).join(", "),
+          error: errorMsg,
         },
         { status: 400 }
       );
     }
 
     const { qr_code, api_key, action } = validation.data;
+    apiAction = action;
     // device_id can be used for logging/auditing in the future
 
     // Verify API key (check against environment variable or database)
     const validApiKey = process.env.CHECKIN_API_KEY;
     if (!validApiKey || api_key !== validApiKey) {
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 401,
+        success: false,
+        apiAction,
+        errorMessage: "Authentication failed",
+        durationMs: Date.now() - startTime,
+      });
       return NextResponse.json<CheckinResponse>(
         {
           success: false,
@@ -93,6 +119,17 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (memberError || !member) {
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 404,
+        success: false,
+        apiAction,
+        memberId: qr_code,
+        errorMessage: "Member not found",
+        durationMs: Date.now() - startTime,
+      });
       return NextResponse.json<CheckinResponse>(
         {
           success: false,
@@ -103,6 +140,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Store member info for logging
+    memberId = member.id;
+    memberName = `${member.first_name || ''} ${member.last_name || ''}`.trim();
+
     // Validate membership status and expiration
     const now = new Date();
     const expiresAt = member.expires_at ? new Date(member.expires_at) : null;
@@ -110,6 +151,18 @@ export async function POST(request: NextRequest) {
 
     // Check if membership is active
     if (member.status !== "active") {
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 403,
+        success: false,
+        apiAction,
+        memberId,
+        memberName,
+        errorMessage: `Member status: ${member.status}`,
+        durationMs: Date.now() - startTime,
+      });
       return NextResponse.json<CheckinResponse>(
         {
           success: false,
@@ -175,8 +228,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const memberName = `${member.first_name || ""} ${member.last_name || ""}`.trim();
-
     // Handle check-in
     if (action === "checkin") {
       // Check if member is already checked in
@@ -231,19 +282,34 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      return NextResponse.json<CheckinResponse>(
-        {
-          success: true,
-          message: "Check-in successful",
-          data: {
-            checkin_id: newCheckin.id,
-            member_id: member.id,
-            member_name: memberName,
-            membership_status: member.status,
-            plan_name: planName,
-            expires_at: member.expires_at || undefined,
-          },
+      const responseData = {
+        success: true,
+        message: "Check-in successful",
+        data: {
+          checkin_id: newCheckin.id,
+          member_id: member.id,
+          member_name: memberName,
+          membership_status: member.status,
+          plan_name: planName,
+          expires_at: member.expires_at || undefined,
         },
+      };
+
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 200,
+        success: true,
+        apiAction,
+        memberId,
+        memberName,
+        durationMs: Date.now() - startTime,
+        responseData,
+      });
+
+      return NextResponse.json<CheckinResponse>(
+        responseData,
         { status: 200 }
       );
     }
@@ -302,20 +368,35 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      return NextResponse.json<CheckinResponse>(
-        {
-          success: true,
-          message: "Check-out successful",
-          data: {
-            checkin_id: activeCheckin.id,
-            member_id: member.id,
-            member_name: memberName,
-            membership_status: member.status,
-            plan_name: planName,
-            expires_at: member.expires_at || undefined,
-            duration_minutes: durationMinutes,
-          },
+      const checkoutResponseData = {
+        success: true,
+        message: "Check-out successful",
+        data: {
+          checkin_id: activeCheckin.id,
+          member_id: member.id,
+          member_name: memberName,
+          membership_status: member.status,
+          plan_name: planName,
+          expires_at: member.expires_at || undefined,
+          duration_minutes: durationMinutes,
         },
+      };
+
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 200,
+        success: true,
+        apiAction,
+        memberId,
+        memberName,
+        durationMs: Date.now() - startTime,
+        responseData: checkoutResponseData,
+      });
+
+      return NextResponse.json<CheckinResponse>(
+        checkoutResponseData,
         { status: 200 }
       );
     }
@@ -361,3 +442,56 @@ export async function GET() {
   });
 }
 
+/**
+ * Log API request to database
+ */
+async function logApiRequest(params: {
+  request: NextRequest;
+  endpoint: string;
+  method: string;
+  statusCode: number;
+  success: boolean;
+  apiAction?: string | null;
+  memberId?: string | null;
+  memberName?: string | null;
+  errorMessage?: string | null;
+  durationMs: number;
+  responseData?: unknown;
+}) {
+  try {
+    const admin = getSupabaseAdmin();
+    if (!admin) return;
+
+    // Get request metadata
+    const ipAddress = params.request.headers.get('x-forwarded-for') || 
+                     params.request.headers.get('x-real-ip') || 
+                     'unknown';
+    const userAgent = params.request.headers.get('user-agent') || 'unknown';
+
+    // Sanitize request data (remove sensitive info like API keys)
+    const requestData = {
+      action: params.apiAction,
+      member_id: params.memberId,
+      // Don't log API keys or sensitive data
+    };
+
+    await admin.from('api_logs').insert({
+      endpoint: params.endpoint,
+      method: params.method,
+      status_code: params.statusCode,
+      request_data: requestData,
+      response_data: params.responseData || null,
+      member_id: params.memberId || null,
+      member_name: params.memberName || null,
+      api_action: params.apiAction || null,
+      success: params.success,
+      error_message: params.errorMessage || null,
+      ip_address: ipAddress,
+      user_agent: userAgent,
+      duration_ms: params.durationMs,
+    });
+  } catch (error) {
+    // Don't throw - logging errors shouldn't break the API
+    console.error('Failed to log API request:', error);
+  }
+}
