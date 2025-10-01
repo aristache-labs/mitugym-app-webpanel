@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { ServiceBooking } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 import { confirmSessionBookingAction, completeSessionBookingAction, cancelSessionBookingAction, deleteSessionBookingAction } from "@/app/(protected)/actions";
 import { Calendar, User, Clock, CheckCircle, XCircle, Trash2, Eye, Edit, X, Package } from "lucide-react";
 import { format } from "date-fns";
@@ -13,9 +14,10 @@ import Link from "next/link";
 
 interface SessionBookingsTableProps {
   bookings: ServiceBooking[];
+  timeFormat?: TimeFormat;
 }
 
-export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
+export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBookingsTableProps) {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
@@ -176,7 +178,10 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
                 {format(new Date(booking.booking_date), "MMM dd, yyyy")}
               </div>
               <div className="text-sm text-muted-foreground mt-1">
-                {format(new Date(booking.booking_date), "h:mm a")}
+                {timeFormat === '12h' 
+                  ? format(new Date(booking.booking_date), "h:mm a")
+                  : format(new Date(booking.booking_date), "HH:mm")
+                }
               </div>
             </div>
           </div>

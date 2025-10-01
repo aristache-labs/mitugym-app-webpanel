@@ -2,13 +2,18 @@ import { CheckinsWithTabs } from "@/components/checkins/checkins-with-tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchCheckIns, fetchOccupancy } from "@/lib/data";
+import { getTimeFormat } from "@/lib/timezone";
 
 export const metadata = {
   title: "Check-ins",
 };
 
 export default async function CheckinsPage() {
-  const [checkIns, occupancy] = await Promise.all([fetchCheckIns(), fetchOccupancy()]);
+  const [checkIns, occupancy, timeFormat] = await Promise.all([
+    fetchCheckIns(), 
+    fetchOccupancy(),
+    getTimeFormat(),
+  ]);
   
   // Dynamic color coding based on occupancy levels
   const getOccupancyColor = (count: number) => {
@@ -101,7 +106,7 @@ export default async function CheckinsPage() {
           </div>
 
           {/* Checkins Section */}
-          <CheckinsWithTabs data={checkIns} />
+          <CheckinsWithTabs data={checkIns} timeFormat={timeFormat} />
         </div>
       </div>
     </div>

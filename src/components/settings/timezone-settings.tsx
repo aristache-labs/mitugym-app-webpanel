@@ -4,22 +4,24 @@ import { useState, useTransition } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CustomSelect } from "@/components/ui/custom-select";
-import { AVAILABLE_TIMEZONES } from "@/lib/settings";
+import { AVAILABLE_TIMEZONES, TIME_FORMAT_OPTIONS, type TimeFormat } from "@/lib/settings";
 import { updateTimezoneAction } from "@/app/(protected)/settings/actions";
 import { Globe, Clock, AlertCircle, CheckCircle } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 interface TimezoneSettingsProps {
   currentTimezone: string;
+  currentTimeFormat: TimeFormat;
 }
 
-export function TimezoneSettings({ currentTimezone }: TimezoneSettingsProps) {
+export function TimezoneSettings({ currentTimezone, currentTimeFormat }: TimezoneSettingsProps) {
   const [selectedTimezone, setSelectedTimezone] = useState(currentTimezone);
+  const [selectedTimeFormat, setSelectedTimeFormat] = useState<TimeFormat>(currentTimeFormat);
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const { addToast } = useToast();
   
-  const hasChanges = selectedTimezone !== currentTimezone;
+  const hasChanges = selectedTimezone !== currentTimezone || selectedTimeFormat !== currentTimeFormat;
 
   const handleSave = () => {
     if (!hasChanges) return;
@@ -27,7 +29,7 @@ export function TimezoneSettings({ currentTimezone }: TimezoneSettingsProps) {
     setMessage(null);
     startTransition(async () => {
       try {
-        const result = await updateTimezoneAction(selectedTimezone);
+        const result = await updateTimezoneAction(selectedTimezone, selectedTimeFormat);
         
         if (result.success) {
           setMessage({
@@ -70,6 +72,7 @@ export function TimezoneSettings({ currentTimezone }: TimezoneSettingsProps) {
 
   const handleReset = () => {
     setSelectedTimezone(currentTimezone);
+    setSelectedTimeFormat(currentTimeFormat);
     setMessage(null);
   };
 
@@ -122,6 +125,22 @@ export function TimezoneSettings({ currentTimezone }: TimezoneSettingsProps) {
                 label: `${tz.country} ${tz.label}`
               }))}
               placeholder="Select timezone..."
+              className="w-full"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-text mb-2 block">
+              Time Format
+            </label>
+            <CustomSelect
+              value={selectedTimeFormat}
+              onChange={(value) => setSelectedTimeFormat(value as TimeFormat)}
+              options={TIME_FORMAT_OPTIONS.map(format => ({
+                value: format.value,
+                label: format.label
+              }))}
+              placeholder="Select time format..."
               className="w-full"
             />
           </div>

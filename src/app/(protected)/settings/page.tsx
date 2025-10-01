@@ -4,21 +4,23 @@ import { TimezoneSettings } from "@/components/settings/timezone-settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchAuditLogs } from "@/lib/data";
 import { getSetting } from "@/lib/settings";
+import type { TimeFormat } from "@/lib/settings";
 
 export const metadata = {
   title: "Settings",
 };
 
 export default async function SettingsPage() {
-  const [logs, currentTimezone] = await Promise.all([
+  const [logs, currentTimezone, currentTimeFormat] = await Promise.all([
     fetchAuditLogs(),
     getSetting<string>('timezone').then(tz => tz || 'Europe/Bucharest'),
+    getSetting<TimeFormat>('time_format').then(fmt => fmt || '24h'),
   ]);
 
   return (
     <div className="space-y-6">
       {/* Timezone Settings */}
-      <TimezoneSettings currentTimezone={currentTimezone} />
+      <TimezoneSettings currentTimezone={currentTimezone} currentTimeFormat={currentTimeFormat} />
 
       {/* Audit Log */}
       <Card className="bg-card/90">

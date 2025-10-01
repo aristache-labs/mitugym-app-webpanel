@@ -36,6 +36,11 @@ export function formatDateTime(value: string | null | undefined, fallback = "—
   }
 }
 
+export function formatTime(value: string | Date, timeFormat: '12h' | '24h' = '24h'): string {
+  const date = typeof value === 'string' ? parseISO(value) : value;
+  return timeFormat === '12h' ? format(date, "h:mm a") : format(date, "HH:mm");
+}
+
 export function weekdayLabel(index: number) {
   // Frontend uses JS Date format: 0=Sunday, 1=Monday, ..., 6=Saturday
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];

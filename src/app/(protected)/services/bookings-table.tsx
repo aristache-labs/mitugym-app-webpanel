@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { ServiceBooking, Service } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 import { Calendar, User, Clock, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -14,9 +15,10 @@ import { deleteServiceBookingAction, cancelServiceBookingAction } from "@/app/(p
 interface BookingsTableProps {
   bookings: ServiceBooking[];
   services: Service[];
+  timeFormat?: TimeFormat;
 }
 
-export function BookingsTable({ bookings }: BookingsTableProps) {
+export function BookingsTable({ bookings, timeFormat = '24h' }: BookingsTableProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [bookingToDelete, setBookingToDelete] = useState<ServiceBooking | null>(null);
@@ -107,7 +109,10 @@ export function BookingsTable({ bookings }: BookingsTableProps) {
                 {format(new Date(booking.booking_date), "MMM dd, yyyy")}
               </div>
               <div className="text-sm text-muted-foreground">
-                {format(new Date(booking.booking_date), "h:mm a")}
+                {timeFormat === '12h' 
+                  ? format(new Date(booking.booking_date), "h:mm a")
+                  : format(new Date(booking.booking_date), "HH:mm")
+                }
               </div>
             </div>
           </div>

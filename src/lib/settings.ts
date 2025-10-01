@@ -138,3 +138,13 @@ export const AVAILABLE_TIMEZONES = [
   { value: 'Australia/Perth', label: 'Australia Western (Australia/Perth)', country: '🇦🇺' },
   { value: 'UTC', label: 'UTC (Coordinated Universal Time)', country: '🌍' },
 ] as const;
+
+/**
+ * Time format options
+ */
+export const TIME_FORMAT_OPTIONS = [
+  { value: '12h', label: '12-hour (1:30 PM)' },
+  { value: '24h', label: '24-hour (13:30)' },
+] as const;
+
+export type TimeFormat = '12h' | '24h';

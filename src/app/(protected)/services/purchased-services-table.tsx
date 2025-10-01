@@ -8,6 +8,7 @@ import { Modal } from "@/components/ui/modal";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { PurchasedService, Service } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 import { Calendar, User, Package, Trash2, CheckCircle, XCircle, Eye, Briefcase, Banknote, StickyNote, Hash } from "lucide-react";
 import { format } from "date-fns";
 import { approvePurchasedServiceAction, cancelPurchasedServiceAction, deletePurchasedServiceAction } from "@/app/(protected)/actions";
@@ -15,9 +16,10 @@ import { approvePurchasedServiceAction, cancelPurchasedServiceAction, deletePurc
 interface PurchasedServicesTableProps {
   purchasedServices: PurchasedService[];
   services: Service[];
+  timeFormat?: TimeFormat;
 }
 
-export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesTableProps) {
+export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }: PurchasedServicesTableProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
@@ -153,7 +155,10 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                 {format(new Date(service.purchase_date), "MMM dd, yyyy")}
               </div>
               <div className="text-xs text-muted-foreground leading-tight mt-1">
-                {format(new Date(service.purchase_date), "h:mm a")}
+                {timeFormat === '12h' 
+                  ? format(new Date(service.purchase_date), "h:mm a")
+                  : format(new Date(service.purchase_date), "HH:mm")
+                }
               </div>
             </div>
           </div>
@@ -946,7 +951,12 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                         <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
                   <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Purchase Date</p>
-                          <p className="text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
+                          <p className="text-sm font-semibold text-text">
+                            {timeFormat === '12h'
+                              ? format(new Date(selectedService.purchase_date), "PPp")
+                              : format(new Date(selectedService.purchase_date), "PPp").replace(/\d{1,2}:\d{2}\s?[AP]M/i, format(new Date(selectedService.purchase_date), "HH:mm"))
+                            }
+                          </p>
                   </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
@@ -982,7 +992,12 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                             <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                       <div>
                               <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Approved Date</p>
-                              <p className="text-sm font-semibold text-text">{format(new Date(selectedService.approved_date), "PPp")}</p>
+                              <p className="text-sm font-semibold text-text">
+                                {timeFormat === '12h'
+                                  ? format(new Date(selectedService.approved_date), "PPp")
+                                  : format(new Date(selectedService.approved_date), "PPp").replace(/\d{1,2}:\d{2}\s?[AP]M/i, format(new Date(selectedService.approved_date), "HH:mm"))
+                                }
+                              </p>
                       </div>
                           </div>
                         )}
@@ -991,7 +1006,12 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                             <XCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
                             <div>
                               <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Cancelled Date</p>
-                              <p className="text-sm font-semibold text-text">{format(new Date(selectedService.cancelled_date), "PPp")}</p>
+                              <p className="text-sm font-semibold text-text">
+                                {timeFormat === '12h'
+                                  ? format(new Date(selectedService.cancelled_date), "PPp")
+                                  : format(new Date(selectedService.cancelled_date), "PPp").replace(/\d{1,2}:\d{2}\s?[AP]M/i, format(new Date(selectedService.cancelled_date), "HH:mm"))
+                                }
+                              </p>
                             </div>
                           </div>
                         )}

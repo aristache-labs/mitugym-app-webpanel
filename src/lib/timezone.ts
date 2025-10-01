@@ -9,12 +9,15 @@
  */
 
 import { getSetting } from "@/lib/settings";
+import type { TimeFormat } from "@/lib/settings";
 
 // Default timezone configuration (fallback)
 const DEFAULT_TIMEZONE = process.env.NEXT_PUBLIC_TIMEZONE || 'Europe/Bucharest';
+const DEFAULT_TIME_FORMAT: TimeFormat = '24h';
 
 // Cache for timezone setting to avoid repeated database calls
 let cachedTimezone: string | null = null;
+let cachedTimeFormat: TimeFormat | null = null;
 let cacheExpiry: number = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
@@ -49,10 +52,40 @@ export async function getAppTimezone(): Promise<string> {
 }
 
 /**
+ * Get the application's configured time format (12h or 24h)
+ */
+export async function getTimeFormat(): Promise<TimeFormat> {
+  const now = Date.now();
+  
+  // Return cached value if still valid
+  if (cachedTimeFormat && now < cacheExpiry) {
+    return cachedTimeFormat;
+  }
+
+  try {
+    // Try to get time format from database settings
+    const timeFormat = await getSetting<TimeFormat>('time_format');
+    
+    if (timeFormat) {
+      // Update cache
+      cachedTimeFormat = timeFormat;
+      cacheExpiry = now + CACHE_DURATION;
+      return timeFormat;
+    }
+  } catch (error) {
+    console.warn('Failed to get time format from settings, using default:', error);
+  }
+
+  // Fall back to default
+  return DEFAULT_TIME_FORMAT;
+}
+
+/**
  * Clear the timezone cache (useful when settings are updated)
  */
 export function clearTimezoneCache(): void {
   cachedTimezone = null;
+  cachedTimeFormat = null;
   cacheExpiry = 0;
 }
 

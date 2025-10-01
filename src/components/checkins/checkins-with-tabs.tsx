@@ -3,14 +3,16 @@
 import { useState, useMemo } from "react";
 import { CheckinsTable } from "@/app/(protected)/checkins/checkins-table";
 import type { CheckIn } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 
 interface CheckinsWithTabsProps {
   data: CheckIn[];
+  timeFormat?: TimeFormat;
 }
 
 type TabType = "today" | "month" | "all";
 
-export function CheckinsWithTabs({ data }: CheckinsWithTabsProps) {
+export function CheckinsWithTabs({ data, timeFormat = '24h' }: CheckinsWithTabsProps) {
   const [activeTab, setActiveTab] = useState<TabType>("today");
 
   const filteredData = useMemo(() => {
@@ -106,7 +108,7 @@ export function CheckinsWithTabs({ data }: CheckinsWithTabsProps) {
       <div className="relative animate-fade-in-up animate-stagger-1">
         <div className="absolute inset-0 bg-gradient-to-br from-card/40 to-surface/40 rounded-2xl blur-xl"></div>
         <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl border border-surface/30 p-6 shadow-xl hover:shadow-2xl transition-all duration-500">
-          <CheckinsTable data={filteredData} />
+          <CheckinsTable data={filteredData} timeFormat={timeFormat} />
         </div>
       </div>
     </div>

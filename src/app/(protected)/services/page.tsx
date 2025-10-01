@@ -4,6 +4,7 @@ import { fetchServices, fetchPurchasedServices } from "@/lib/data";
 import { Briefcase, ShoppingBag, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getTimeFormat } from "@/lib/timezone";
 
 export const metadata = {
   title: "Services Management",
@@ -13,9 +14,10 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function ServicesPage() {
-  const [services, purchasedServices] = await Promise.all([
+  const [services, purchasedServices, timeFormat] = await Promise.all([
     fetchServices(),
     fetchPurchasedServices(),
+    getTimeFormat(),
   ]);
 
   const activeServices = services.filter((service) => service.is_active);
@@ -77,7 +79,7 @@ export default async function ServicesPage() {
                 </Button>
               </Link>
             </div>
-            <PurchasedServicesTable purchasedServices={purchasedServices} services={services} />
+            <PurchasedServicesTable purchasedServices={purchasedServices} services={services} timeFormat={timeFormat} />
           </div>
         </div>
       </div>

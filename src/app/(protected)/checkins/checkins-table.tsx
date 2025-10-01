@@ -6,14 +6,16 @@ import { DataTable } from "@/components/data-table/data-table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import type { CheckIn } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 import { formatDateTime } from "@/lib/utils";
 import { CheckoutButton } from "@/components/checkins/checkout-button";
 
 interface CheckinsTableProps {
   data: CheckIn[];
+  timeFormat?: TimeFormat;
 }
 
-export function CheckinsTable({ data }: CheckinsTableProps) {
+export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) {
   const [methodFilter, setMethodFilter] = useState<string>("");
   const [search, setSearch] = useState("");
 
@@ -51,7 +53,10 @@ export function CheckinsTable({ data }: CheckinsTableProps) {
                 {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </p>
               <p className="text-xs text-muted/60">
-                {date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                {timeFormat === '12h'
+                  ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                  : date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+                }
               </p>
             </div>
           );
@@ -69,7 +74,10 @@ export function CheckinsTable({ data }: CheckinsTableProps) {
                   {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
                 <p className="text-xs text-muted/60">
-                  {date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                  {timeFormat === '12h'
+                    ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                    : date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+                  }
                 </p>
               </div>
             );

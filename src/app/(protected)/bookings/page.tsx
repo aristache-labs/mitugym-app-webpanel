@@ -5,6 +5,7 @@ import { SessionBookingsTable } from "./session-bookings-table";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { Plus, Calendar, Clock, CheckCircle, AlertCircle, Package } from "lucide-react";
 import Link from "next/link";
+import { getTimeFormat } from "@/lib/timezone";
 
 export const metadata = {
   title: "Session Bookings",
@@ -14,7 +15,10 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function BookingsPage() {
-  const bookings = await fetchSessionBookings();
+  const [bookings, timeFormat] = await Promise.all([
+    fetchSessionBookings(),
+    getTimeFormat(),
+  ]);
 
   const pendingBookings = bookings.filter((booking) => booking.status === "pending");
   const confirmedBookings = bookings.filter((booking) => booking.status === "upcoming");
@@ -96,7 +100,7 @@ export default async function BookingsPage() {
           </CardHeader>
           
           <CardContent className="relative p-8 pt-0">
-          <SessionBookingsTable bookings={bookings} />
+          <SessionBookingsTable bookings={bookings} timeFormat={timeFormat} />
         </CardContent>
         </div>
       </div>

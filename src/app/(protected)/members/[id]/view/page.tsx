@@ -3,9 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { fetchCheckIns, fetchMemberById, fetchPurchasedServices, fetchSessionBookings, fetchAuditLogs } from "@/lib/data";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatTime } from "@/lib/utils";
 import Link from "next/link";
 import { ArrowLeft, User, Activity, Edit, Mail, Phone, Calendar, CreditCard, UserCheck, AlertCircle, TrendingUp, ShoppingBag, Clock, CalendarCheck, Package, Cake, Users, MapPin, Building, Map } from "lucide-react";
+import { getTimeFormat } from "@/lib/timezone";
 
 interface ViewMemberPageProps {
   params: Promise<{ id: string }>;
@@ -14,12 +15,13 @@ interface ViewMemberPageProps {
 export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
   const { id } = await params;
 
-  const [member, allCheckIns, purchasedServices, serviceBookings, auditLogs] = await Promise.all([
+  const [member, allCheckIns, purchasedServices, serviceBookings, auditLogs, timeFormat] = await Promise.all([
     fetchMemberById(id),
     fetchCheckIns(),
     fetchPurchasedServices(),
     fetchSessionBookings(),
     fetchAuditLogs(),
+    getTimeFormat(),
   ]);
 
   if (!member) {
@@ -376,10 +378,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                               {formatDate(checkIn.checked_in_at)}
                             </p>
                             <p className="text-xs text-muted/60">
-                              {new Date(checkIn.checked_in_at).toLocaleTimeString('en-US', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
+                              {formatTime(checkIn.checked_in_at, timeFormat)}
                             </p>
                           </div>
                         </div>

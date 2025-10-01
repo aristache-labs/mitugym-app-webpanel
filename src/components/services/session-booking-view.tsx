@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { ServiceBooking } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 import { 
   confirmSessionBookingAction, 
   completeSessionBookingAction, 
@@ -35,6 +36,7 @@ import {
 
 interface SessionBookingViewProps {
   booking: ServiceBooking;
+  timeFormat?: TimeFormat;
 }
 
 function getStatusBadge(status: string) {
@@ -58,7 +60,7 @@ function getStatusBadge(status: string) {
   );
 }
 
-export function SessionBookingView({ booking }: SessionBookingViewProps) {
+export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBookingViewProps) {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
@@ -203,13 +205,19 @@ export function SessionBookingView({ booking }: SessionBookingViewProps) {
                     <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border border-blue-500/20">
                       <p className="text-xs font-medium text-blue-600 uppercase tracking-wider mb-2">Time</p>
                       <p className="text-lg font-semibold text-text">
-                        {format(new Date(booking.booking_date), "h:mm a")}
+                        {timeFormat === '12h' 
+                          ? format(new Date(booking.booking_date), "h:mm a")
+                          : format(new Date(booking.booking_date), "HH:mm")
+                        }
                       </p>
                     </div>
                     <div className="p-4 rounded-2xl bg-gradient-to-br from-green-500/5 to-green-500/10 border border-green-500/20">
                       <p className="text-xs font-medium text-green-600 uppercase tracking-wider mb-2">Created</p>
                       <p className="text-sm font-medium text-text">
-                        {format(new Date(booking.created_at), "MMM dd, yyyy 'at' h:mm a")}
+                        {timeFormat === '12h' 
+                          ? format(new Date(booking.created_at), "MMM dd, yyyy 'at' h:mm a")
+                          : format(new Date(booking.created_at), "MMM dd, yyyy 'at' HH:mm")
+                        }
                       </p>
                     </div>
                     
@@ -218,7 +226,10 @@ export function SessionBookingView({ booking }: SessionBookingViewProps) {
                       <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border border-emerald-500/20">
                         <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider mb-2">Completed</p>
                         <p className="text-sm font-medium text-text">
-                          {format(new Date(booking.completed_date), "MMM dd, yyyy 'at' h:mm a")}
+                          {timeFormat === '12h' 
+                            ? format(new Date(booking.completed_date), "MMM dd, yyyy 'at' h:mm a")
+                            : format(new Date(booking.completed_date), "MMM dd, yyyy 'at' HH:mm")
+                          }
                         </p>
                       </div>
                     )}
@@ -228,7 +239,10 @@ export function SessionBookingView({ booking }: SessionBookingViewProps) {
                       <div className="p-4 rounded-2xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20">
                         <p className="text-xs font-medium text-red-600 uppercase tracking-wider mb-2">Cancelled</p>
                         <p className="text-sm font-medium text-text">
-                          {format(new Date(booking.cancelled_date), "MMM dd, yyyy 'at' h:mm a")}
+                          {timeFormat === '12h' 
+                            ? format(new Date(booking.cancelled_date), "MMM dd, yyyy 'at' h:mm a")
+                            : format(new Date(booking.cancelled_date), "MMM dd, yyyy 'at' HH:mm")
+                          }
                         </p>
                       </div>
                     )}

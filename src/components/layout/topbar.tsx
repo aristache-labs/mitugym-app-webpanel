@@ -6,8 +6,9 @@ import { toZonedTime } from "date-fns-tz";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Globe } from "lucide-react";
+import type { TimeFormat } from "@/lib/settings";
 
-export function Topbar({ staff, timezone }: { staff: StaffContext; timezone: string }) {
+export function Topbar({ staff, timezone, timeFormat }: { staff: StaffContext; timezone: string; timeFormat: TimeFormat }) {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Update time every minute
@@ -22,7 +23,9 @@ export function Topbar({ staff, timezone }: { staff: StaffContext; timezone: str
   // Convert current time to the configured timezone
   const zonedTime = toZonedTime(currentTime, timezone);
   const dateString = format(zonedTime, "EEEE, MMMM d, yyyy");
-  const timeString = format(zonedTime, "h:mm a");
+  const timeString = timeFormat === '12h' 
+    ? format(zonedTime, "h:mm a")
+    : format(zonedTime, "HH:mm");
   
   // Get timezone abbreviation (e.g., "EET", "PST", "UTC")
   const timezoneAbbr = new Intl.DateTimeFormat('en-US', {

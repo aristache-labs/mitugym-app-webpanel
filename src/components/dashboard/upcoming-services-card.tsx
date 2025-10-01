@@ -1,15 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ServiceBooking } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 import { Calendar, Clock, Briefcase } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 
 interface UpcomingServicesCardProps {
   bookings: ServiceBooking[];
+  timeFormat?: TimeFormat;
 }
 
-export function UpcomingServicesCard({ bookings }: UpcomingServicesCardProps) {
+export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingServicesCardProps) {
   const getServiceTypeBadge = (type: string) => {
     switch (type) {
       case "personal_trainer":
@@ -79,7 +81,10 @@ export function UpcomingServicesCard({ bookings }: UpcomingServicesCardProps) {
                   <div className="flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-xl border border-primary/20 group-hover/item:bg-primary/20 transition-colors">
                     <Clock className="h-4 w-4 text-primary" />
                     <span className="text-sm font-bold text-primary">
-                      {format(new Date(booking.booking_date), "HH:mm")}
+                      {timeFormat === '12h' 
+                        ? format(new Date(booking.booking_date), "h:mm a")
+                        : format(new Date(booking.booking_date), "HH:mm")
+                      }
                     </span>
                   </div>
                   

@@ -2,9 +2,11 @@
 
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { CheckIn, ScheduleDay } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { format } from "date-fns";
 
-function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[]) {
+function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: TimeFormat = '24h') {
   // Get today's date and day of week
   const today = new Date();
   const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -36,8 +38,10 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[]) {
   const hourlyOccupancy = [];
   
   for (let hour = openHour; hour <= closeHour; hour++) {
-    const hourKey = hour.toString().padStart(2, '0') + ':00';
     const currentTime = new Date(todayStart.getTime() + hour * 60 * 60 * 1000);
+    const hourKey = timeFormat === '12h' 
+      ? format(currentTime, "h a")
+      : hour.toString().padStart(2, '0') + ':00';
     
     // Skip if this hour is before opening or after closing (accounting for minutes)
     if (hour === openHour && openMinute > 0) {
@@ -74,8 +78,8 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[]) {
   return hourlyOccupancy;
 }
 
-export function OccupancyChart({ checkIns, schedule }: { checkIns: CheckIn[]; schedule: ScheduleDay[] }) {
-  const data = buildTrend(checkIns, schedule);
+export function OccupancyChart({ checkIns, schedule, timeFormat = '24h' }: { checkIns: CheckIn[]; schedule: ScheduleDay[]; timeFormat?: TimeFormat }) {
+  const data = buildTrend(checkIns, schedule, timeFormat);
   
   return (
     <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">

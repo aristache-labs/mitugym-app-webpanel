@@ -7,15 +7,17 @@ import { DataTable } from "@/components/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { deleteNewsAction, toggleNewsActiveAction } from "@/app/(protected)/actions";
 import type { NewsItem } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 import { ConfirmationModal } from "@/components/ui/modal";
 import { Pencil, Trash2, Power, Plus } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 interface NewsManagerProps {
   items: NewsItem[];
+  timeFormat?: TimeFormat;
 }
 
-export function NewsManager({ items }: NewsManagerProps) {
+export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
   const router = useRouter();
   const [isDeleting, startTransition] = useTransition();
   const [isToggling, startToggleTransition] = useTransition();
@@ -160,7 +162,10 @@ export function NewsManager({ items }: NewsManagerProps) {
                 {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </p>
               <p className="text-xs text-muted/60">
-                {date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                {timeFormat === '12h'
+                  ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                  : date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+                }
               </p>
             </div>
           );
@@ -220,7 +225,7 @@ export function NewsManager({ items }: NewsManagerProps) {
         },
       },
     ],
-    [isDeleting, isToggling, router, handleToggleActive]
+    [isDeleting, isToggling, router, handleToggleActive, timeFormat]
   );
 
   return (

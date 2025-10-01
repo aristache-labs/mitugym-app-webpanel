@@ -7,14 +7,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, UserCheck, AlertTriangle, Clock, Settings } from "lucide-react";
 import Link from "next/link";
+import { getTimeFormat } from "@/lib/timezone";
 
 export default async function DashboardPage() {
-  const [metrics, checkIns, news, todaysServices, schedule] = await Promise.all([
+  const [metrics, checkIns, news, todaysServices, schedule, timeFormat] = await Promise.all([
     fetchDashboardMetrics(),
     fetchCheckIns(),
     fetchNews(),
     fetchTodaysSessionBookings(),
     fetchSchedule(),
+    getTimeFormat(),
   ]);
 
   const latestCheckIns = checkIns.slice(0, 5);
@@ -64,8 +66,8 @@ export default async function DashboardPage() {
       {/* Main Content Grid */}
       <section className="grid gap-8 lg:grid-cols-[2fr_1fr]">
         <div className="space-y-8">
-          <OccupancyChart checkIns={checkIns} schedule={schedule} />
-          <UpcomingServicesCard bookings={todaysServices} />
+          <OccupancyChart checkIns={checkIns} schedule={schedule} timeFormat={timeFormat} />
+          <UpcomingServicesCard bookings={todaysServices} timeFormat={timeFormat} />
         </div>
         
         {/* Enhanced Check-ins Card */}
