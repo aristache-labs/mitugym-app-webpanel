@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { ServiceBooking } from "@/types";
 import { confirmSessionBookingAction, completeSessionBookingAction, cancelSessionBookingAction } from "@/app/(protected)/actions";
-import { Calendar, User, Clock, CheckCircle, XCircle, Trash2 } from "lucide-react";
+import { Calendar, User, Clock, CheckCircle, XCircle, Trash2, Eye, Edit } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 
@@ -146,17 +146,19 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
   const columns = [
     {
       accessorKey: "booking_date",
-      header: () => <div className="flex justify-center w-full">Date & Time</div>,
+      header: ({ column }) => (
+        <div className="text-center font-semibold">Date & Time</div>
+      ),
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <div>
-              <div className="font-medium">
+              <div className="font-medium whitespace-nowrap">
                 {format(new Date(booking.booking_date), "MMM dd, yyyy")}
               </div>
-              <div className="text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground mt-1">
                 {format(new Date(booking.booking_date), "h:mm a")}
               </div>
             </div>
@@ -166,16 +168,20 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     },
     {
       id: "service",
-      header: () => <div className="flex justify-center w-full">Service</div>,
+      header: ({ column }) => (
+        <div className="text-center font-semibold">Service</div>
+      ),
       accessorFn: (row: ServiceBooking) => row.service?.name || "Unknown Service",
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="space-y-1">
-            <div className="font-medium">{booking.service?.name || "Unknown Service"}</div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+          <div className="max-w-[180px]">
+            <div className="font-medium line-clamp-2 leading-tight">
+              {booking.service?.name || "Unknown Service"}
+            </div>
+            <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
               <Clock className="h-3 w-3" />
-              {booking.service?.duration_minutes || 60} minutes
+              {booking.service?.duration_minutes || 60} min
             </div>
           </div>
         );
@@ -183,16 +189,18 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     },
     {
       accessorKey: "member",
-      header: () => <div className="flex justify-center w-full">Member</div>,
+      header: ({ column }) => (
+        <div className="text-center font-semibold">Member</div>
+      ),
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 text-muted-foreground" />
-            <div>
-              <div className="font-medium">{booking.member?.full_name || "Unknown Member"}</div>
+            <div className="min-w-0 max-w-[160px]">
+              <div className="font-medium line-clamp-1">{booking.member?.full_name || "Unknown Member"}</div>
               {booking.member?.email && (
-                <div className="text-sm text-muted-foreground">{booking.member.email}</div>
+                <div className="text-sm text-muted-foreground truncate">{booking.member.email}</div>
               )}
             </div>
           </div>
@@ -201,86 +209,83 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
     },
     {
       accessorKey: "status",
-      header: () => <div className="flex justify-center w-full">Status</div>,
+      header: ({ column }) => (
+        <div className="text-center font-semibold">Status</div>
+      ),
       cell: ({ row }: { row: { original: ServiceBooking } }) => getStatusBadge(row.original.status),
     },
     {
-      accessorKey: "notes",
-      header: () => <div className="flex justify-center w-full">Notes</div>,
-      cell: ({ row }: { row: { original: ServiceBooking } }) => {
-        const notes = row.original.notes;
-        return notes ? (
-          <div className="max-w-[200px] truncate" title={notes}>
-            {notes}
-          </div>
-        ) : (
-          <div className="text-muted-foreground">-</div>
-        );
-      },
-    },
-    {
       id: "actions",
-      header: () => <div className="flex justify-center w-full">Actions</div>,
+      header: ({ column }) => (
+        <div className="text-center font-semibold">Actions</div>
+      ),
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Link href={`/bookings/${booking.id}`}>
-              <Button variant="ghost" size="sm">
-                View
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-all duration-200 rounded-lg"
+                title="View booking"
+              >
+                <Eye className="h-4 w-4" />
               </Button>
             </Link>
-            {booking.status === "pending" && (
-              <>
-                <Link href={`/bookings/${booking.id}/edit`}>
-                  <Button variant="ghost" size="sm">
-                    Edit
-                  </Button>
-                </Link>
+            {(booking.status === "pending" || booking.status === "confirmed" || booking.status === "upcoming") && (
+              <Link href={`/bookings/${booking.id}/edit`}>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-green-600 hover:bg-green-50"
+                  className="h-8 w-8 p-0 hover:bg-blue-500/10 hover:text-blue-600 transition-all duration-200 rounded-lg"
+                  title="Edit booking"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              </Link>
+            )}
+            {booking.status === "pending" && (
+              <>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-8 w-8 p-0 hover:bg-green-500/10 hover:text-green-600 transition-all duration-200 rounded-lg"
                   onClick={() => handleConfirmClick(booking)}
+                  title="Confirm booking"
                 >
                   <CheckCircle className="h-4 w-4" />
-                  Confirm
                 </Button>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-destructive hover:bg-destructive/10"
+                  className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 rounded-lg"
                   onClick={() => handleCancelClick(booking)}
+                  title="Cancel booking"
                 >
                   <XCircle className="h-4 w-4" />
-                  Cancel
                 </Button>
               </>
             )}
             {(booking.status === "confirmed" || booking.status === "upcoming") && (
               <>
-                <Link href={`/bookings/${booking.id}/edit`}>
-                  <Button variant="ghost" size="sm">
-                    Edit
-                  </Button>
-                </Link>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-green-600 hover:bg-green-50"
+                  className="h-8 w-8 p-0 hover:bg-green-500/10 hover:text-green-600 transition-all duration-200 rounded-lg"
                   onClick={() => handleCompleteClick(booking)}
+                  title="Complete booking"
                 >
                   <CheckCircle className="h-4 w-4" />
-                  Complete
                 </Button>
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-destructive hover:bg-destructive/10"
+                  className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 rounded-lg"
                   onClick={() => handleCancelClick(booking)}
+                  title="Cancel booking"
                 >
                   <XCircle className="h-4 w-4" />
-                  Cancel
                 </Button>
               </>
             )}
@@ -288,12 +293,11 @@ export function SessionBookingsTable({ bookings }: SessionBookingsTableProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-destructive hover:bg-destructive/10"
+                className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 rounded-lg"
                 onClick={() => handleDeleteClick(booking)}
                 title="Delete cancelled booking"
               >
                 <Trash2 className="h-4 w-4" />
-                Delete
               </Button>
             )}
           </div>
