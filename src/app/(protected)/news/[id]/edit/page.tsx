@@ -41,11 +41,11 @@ export default async function EditAnnouncementPage({ params }: EditAnnouncementP
             <CardHeader className="relative p-8 pb-6 border-b border-surface/30">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-warning/20 to-orange-500/20 group-hover:from-warning/30 group-hover:to-orange-500/30 transition-all duration-300 border border-warning/30">
-                    <Pencil className="h-6 w-6 text-warning group-hover:scale-110 transition-transform duration-300" />
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 group-hover:from-primary/30 group-hover:to-accent/30 transition-all duration-300 border border-primary/30">
+                    <Pencil className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-bold bg-gradient-to-r from-text to-warning bg-clip-text text-transparent">
+                    <CardTitle className="text-xl font-bold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent">
                       Edit Announcement
                     </CardTitle>
                     <p className="text-sm text-muted/70 mt-1 line-clamp-1">{item.title}</p>
