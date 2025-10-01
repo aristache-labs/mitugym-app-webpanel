@@ -173,14 +173,13 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
             <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4">
               <h4 className="font-medium text-green-900 dark:text-green-100 mb-2 flex items-center gap-2">
                 <CheckCircle className="h-4 w-4" />
-                Database Timezone Configuration
+                Database & Cron Jobs
               </h4>
               <div className="text-sm text-green-800 dark:text-green-200 space-y-1">
-                <p>✅ <strong>Database timezone:</strong> <code className="px-1 py-0.5 bg-green-200 dark:bg-green-900 rounded font-mono">Europe/Bucharest</code></p>
-                <p>• All timestamps are stored in Romania time (EET/EEST with automatic DST)</p>
-                <p>• This configuration works best with Supabase cron jobs and scheduled functions</p>
-                <p>• Cron schedules run according to local time (e.g., midnight = midnight in Bucharest)</p>
-                <p>• The application display timezone should match the database for consistency</p>
+                <p>• The database timezone should match your application timezone for consistency</p>
+                <p>• Supabase cron jobs and scheduled functions run according to the database timezone</p>
+                <p>• Cron schedules execute at local time (e.g., midnight runs at database midnight)</p>
+                <p>• Ensure both are aligned to avoid scheduling discrepancies</p>
               </div>
             </div>
           </div>
