@@ -77,9 +77,6 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
                     <User className="h-8 w-8 text-primary" />
                   </div>
-                  {member.status === 'active' && (
-                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card"></div>
-                  )}
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-text">{member.full_name}</h1>
