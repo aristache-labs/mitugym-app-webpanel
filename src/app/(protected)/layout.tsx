@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { requireStaff } from "@/lib/auth";
+import { getAppTimezone } from "@/lib/timezone";
 
 export default async function ProtectedLayout({
   children,
@@ -9,11 +10,12 @@ export default async function ProtectedLayout({
   children: ReactNode;
 }) {
   const staff = await requireStaff();
+  const timezone = await getAppTimezone();
 
   return (
     <div className="min-h-screen">
       {/* Fixed Header */}
-      <Topbar staff={staff} />
+      <Topbar staff={staff} timezone={timezone} />
       
       {/* Main Content with top padding to account for fixed header */}
       <div className="pt-20">

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { clearAuditLogsAction } from "@/app/(protected)/actions";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/toast";
 
 export function ClearAuditLogsButton() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -13,6 +14,7 @@ export function ClearAuditLogsButton() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string>("");
   const router = useRouter();
+  const { addToast } = useToast();
 
   const handleClearLogs = () => {
     startTransition(async () => {
@@ -21,6 +23,11 @@ export function ClearAuditLogsButton() {
         
         if (!result.success) {
           setError(result.error);
+          addToast({
+            type: 'error',
+            title: 'Failed to Clear Audit Logs',
+            description: result.error || 'An unexpected error occurred',
+          });
           return;
         }
         
@@ -28,9 +35,19 @@ export function ClearAuditLogsButton() {
         setShowConfirmDialog(false);
         setSuccessMessage(result.message || "Audit logs cleared successfully");
         setShowSuccessDialog(true);
+        addToast({
+          type: 'success',
+          title: 'Audit Logs Cleared',
+          description: 'All audit log entries have been permanently deleted.',
+        });
         router.refresh(); // Refresh the page to show empty audit logs
       } catch (_err) { // eslint-disable-line @typescript-eslint/no-unused-vars
         setError("An unexpected error occurred");
+        addToast({
+          type: 'error',
+          title: 'Failed to Clear Audit Logs',
+          description: 'An unexpected error occurred',
+        });
       }
     });
   };

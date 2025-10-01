@@ -2,10 +2,12 @@
 
 import { StaffContext } from "@/lib/auth";
 import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Globe } from "lucide-react";
 
-export function Topbar({ staff }: { staff: StaffContext }) {
+export function Topbar({ staff, timezone }: { staff: StaffContext; timezone: string }) {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Update time every minute
@@ -17,8 +19,16 @@ export function Topbar({ staff }: { staff: StaffContext }) {
     return () => clearInterval(timer);
   }, []);
 
-  const dateString = format(currentTime, "EEEE, MMMM d, yyyy");
-  const timeString = format(currentTime, "h:mm a");
+  // Convert current time to the configured timezone
+  const zonedTime = toZonedTime(currentTime, timezone);
+  const dateString = format(zonedTime, "EEEE, MMMM d, yyyy");
+  const timeString = format(zonedTime, "h:mm a");
+  
+  // Get timezone abbreviation (e.g., "EET", "PST", "UTC")
+  const timezoneAbbr = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    timeZoneName: 'short'
+  }).formatToParts(currentTime).find(part => part.type === 'timeZoneName')?.value || timezone.split('/')[1];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-xl border-b border-surface/40 shadow-lg shadow-black/10">
@@ -49,10 +59,16 @@ export function Topbar({ staff }: { staff: StaffContext }) {
           </div>
         </div>
 
-        {/* Right: Date and Time */}
+        {/* Right: Date and Time with Timezone */}
         <div className="text-right">
           <div className="text-xs text-muted/70 font-medium">{dateString}</div>
-          <div className="text-lg font-semibold text-text tabular-nums">{timeString}</div>
+          <div className="flex items-center justify-end gap-2">
+            <div className="text-lg font-semibold text-text tabular-nums">{timeString}</div>
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20">
+              <Globe className="w-3 h-3 text-primary/70" />
+              <span className="text-[10px] font-medium text-primary/70 uppercase tracking-wider">{timezoneAbbr}</span>
+            </div>
+          </div>
         </div>
       </div>
     </header>

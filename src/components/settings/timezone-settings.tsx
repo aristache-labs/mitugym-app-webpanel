@@ -7,6 +7,7 @@ import { CustomSelect } from "@/components/ui/custom-select";
 import { AVAILABLE_TIMEZONES } from "@/lib/settings";
 import { updateTimezoneAction } from "@/app/(protected)/settings/actions";
 import { Globe, Check, Clock, AlertCircle, CheckCircle } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 interface TimezoneSettingsProps {
   currentTimezone: string;
@@ -16,6 +17,7 @@ export function TimezoneSettings({ currentTimezone }: TimezoneSettingsProps) {
   const [selectedTimezone, setSelectedTimezone] = useState(currentTimezone);
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const { addToast } = useToast();
   
   const hasChanges = selectedTimezone !== currentTimezone;
 
@@ -32,6 +34,11 @@ export function TimezoneSettings({ currentTimezone }: TimezoneSettingsProps) {
             type: 'success',
             text: 'Timezone updated successfully! The page will refresh to apply changes.'
           });
+          addToast({
+            type: 'success',
+            title: 'Timezone Updated',
+            description: 'The page will refresh to apply changes.',
+          });
           // Refresh the page after a short delay to ensure all components use the new timezone
           setTimeout(() => {
             window.location.reload();
@@ -41,11 +48,21 @@ export function TimezoneSettings({ currentTimezone }: TimezoneSettingsProps) {
             type: 'error',
             text: result.error || 'An unexpected error occurred'
           });
+          addToast({
+            type: 'error',
+            title: 'Failed to Update Timezone',
+            description: result.error || 'An unexpected error occurred',
+          });
         }
       } catch (error) {
         setMessage({
           type: 'error',
           text: 'An unexpected error occurred'
+        });
+        addToast({
+          type: 'error',
+          title: 'Failed to Update Timezone',
+          description: 'An unexpected error occurred',
         });
       }
     });

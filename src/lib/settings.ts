@@ -78,6 +78,9 @@ export async function updateSetting(key: string, value: any, description?: strin
       value,
       description,
       updated_at: new Date().toISOString()
+    }, {
+      onConflict: 'key',
+      ignoreDuplicates: false
     });
 
   if (error) {
