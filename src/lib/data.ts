@@ -293,7 +293,7 @@ export async function fetchCheckIns(): Promise<CheckIn[]> {
   // Get checkins data
   const { data: checkinsData, error: checkinsError } = await admin
     .from("checkins")
-    .select("id, user_id, check_in_time, check_out_time, duration_minutes, membership_plan_name")
+    .select("id, user_id, check_in_time, check_out_time, duration_minutes, membership_plan_name, method")
     .order("check_in_time", { ascending: false })
     .limit(200);
 
@@ -336,6 +336,7 @@ export async function fetchCheckIns(): Promise<CheckIn[]> {
     check_out_time?: string;
     duration_minutes?: number;
     membership_plan_name?: string;
+    method?: string;
   }) => ({
     id: checkIn.id,
     member_id: checkIn.user_id,
@@ -344,7 +345,7 @@ export async function fetchCheckIns(): Promise<CheckIn[]> {
     checked_in_at: checkIn.check_in_time,
     checked_out_at: checkIn.check_out_time,
     duration_minutes: checkIn.duration_minutes,
-    method: 'manual' // Default since method isn't in the current schema
+    method: checkIn.method || 'manual'
   }));
 }
 
