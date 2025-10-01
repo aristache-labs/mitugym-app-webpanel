@@ -29,7 +29,8 @@ import {
   Package,
   Hash,
   Timer,
-  Banknote
+  Banknote,
+  X
 } from "lucide-react";
 
 interface SessionBookingViewProps {
@@ -492,44 +493,106 @@ export function SessionBookingView({ booking }: SessionBookingViewProps) {
           setError(null);
         }}
         title="Confirm Booking"
+        className="max-w-2xl"
       >
-        <div className="space-y-4">
-          {error && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-              <p className="text-sm text-destructive">{error}</p>
+        <div className="relative">
+          {/* Background Glow */}
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/10 rounded-3xl blur-2xl"></div>
+          
+          <div className="relative space-y-6">
+            {/* Header Section */}
+            <div className="text-center space-y-2">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-green-500/20 to-green-600/30 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-green-500/20">
+                <CheckCircle className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-text">Confirm Session Booking</h3>
+              <p className="text-sm text-muted-foreground">
+                This will confirm the booking and notify the member
+              </p>
             </div>
-          )}
 
-          <p className="text-sm text-muted-foreground">
-            Are you sure you want to confirm this booking?
-          </p>
+            {/* Error Display */}
+            {error && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-red-600/10 rounded-2xl blur-xl"></div>
+                <div className="relative bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-2xl p-4">
+                  <div className="flex items-center gap-3">
+                    <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    <p className="text-sm text-red-600 font-medium">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
-          <div className="bg-muted/50 border border-border rounded-lg p-3">
-            <div className="space-y-2 text-sm">
-              <div><strong>Service:</strong> {booking.service?.name}</div>
-              <div><strong>Member:</strong> {booking.member?.full_name}</div>
-              <div><strong>Date:</strong> {format(new Date(booking.booking_date), "PPp")}</div>
+            {/* Booking Details */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-green-600/10 rounded-2xl blur-xl"></div>
+              <div className="relative bg-green-500/5 backdrop-blur-sm border border-green-500/20 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Calendar className="h-5 w-5 text-green-600" />
+                  <h4 className="font-semibold text-text">Booking Details</h4>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-green-500/5 to-transparent border border-green-500/10">
+                    <Package className="h-4 w-4 text-green-600" />
+                    <div>
+                      <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Service</p>
+                      <p className="text-sm font-semibold text-text">{booking.service?.name}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-green-500/5 to-transparent border border-green-500/10">
+                    <User className="h-4 w-4 text-green-600" />
+                    <div>
+                      <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Member</p>
+                      <p className="text-sm font-semibold text-text">{booking.member?.full_name}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-green-500/5 to-transparent border border-green-500/10">
+                    <Clock className="h-4 w-4 text-green-600" />
+                    <div>
+                      <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Date & Time</p>
+                      <p className="text-sm font-semibold text-text">{format(new Date(booking.booking_date), "PPp")}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setConfirmModalOpen(false);
-                setError(null);
-              }}
-              disabled={isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleConfirm}
-              disabled={isPending}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {isPending ? "Confirming..." : "Confirm Booking"}
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-4 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setConfirmModalOpen(false);
+                  setError(null);
+                }}
+                disabled={isPending}
+                className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
+              >
+                <X className="h-4 w-4" />
+                Cancel
+              </Button>
+              <Button
+                onClick={handleConfirm}
+                disabled={isPending}
+                className="gap-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/40 transition-all duration-200 rounded-xl min-w-[140px]"
+              >
+                {isPending ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Confirming...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-4 w-4" />
+                    Confirm Booking
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </Modal>
@@ -542,44 +605,122 @@ export function SessionBookingView({ booking }: SessionBookingViewProps) {
           setError(null);
         }}
         title="Complete Booking"
+        className="max-w-2xl"
       >
-        <div className="space-y-4">
-          {error && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-              <p className="text-sm text-destructive">{error}</p>
+        <div className="relative">
+          {/* Background Glow */}
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-emerald-500/10 rounded-3xl blur-2xl"></div>
+          
+          <div className="relative space-y-6">
+            {/* Header Section */}
+            <div className="text-center space-y-2">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-emerald-500/20 to-emerald-600/30 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-emerald-500/20">
+                <CheckCircle className="h-8 w-8 text-emerald-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-text">Complete Session Booking</h3>
+              <p className="text-sm text-muted-foreground">
+                Mark this session as completed and update the member&apos;s remaining sessions
+              </p>
             </div>
-          )}
 
-          <p className="text-sm text-muted-foreground">
-            Mark this booking as completed?
-          </p>
+            {/* Error Display */}
+            {error && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-red-600/10 rounded-2xl blur-xl"></div>
+                <div className="relative bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-2xl p-4">
+                  <div className="flex items-center gap-3">
+                    <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    <p className="text-sm text-red-600 font-medium">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
-          <div className="bg-muted/50 border border-border rounded-lg p-3">
-            <div className="space-y-2 text-sm">
-              <div><strong>Service:</strong> {booking.service?.name}</div>
-              <div><strong>Member:</strong> {booking.member?.full_name}</div>
-              <div><strong>Date:</strong> {format(new Date(booking.booking_date), "PPp")}</div>
+            {/* Booking Details */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-emerald-600/10 rounded-2xl blur-xl"></div>
+              <div className="relative bg-emerald-500/5 backdrop-blur-sm border border-emerald-500/20 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Calendar className="h-5 w-5 text-emerald-600" />
+                  <h4 className="font-semibold text-text">Session Details</h4>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-emerald-500/5 to-transparent border border-emerald-500/10">
+                    <Package className="h-4 w-4 text-emerald-600" />
+                    <div>
+                      <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider">Service</p>
+                      <p className="text-sm font-semibold text-text">{booking.service?.name}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-emerald-500/5 to-transparent border border-emerald-500/10">
+                    <User className="h-4 w-4 text-emerald-600" />
+                    <div>
+                      <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider">Member</p>
+                      <p className="text-sm font-semibold text-text">{booking.member?.full_name}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-emerald-500/5 to-transparent border border-emerald-500/10">
+                    <Clock className="h-4 w-4 text-emerald-600" />
+                    <div>
+                      <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider">Date & Time</p>
+                      <p className="text-sm font-semibold text-text">{format(new Date(booking.booking_date), "PPp")}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setCompleteModalOpen(false);
-                setError(null);
-              }}
-              disabled={isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleComplete}
-              disabled={isPending}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {isPending ? "Completing..." : "Mark Complete"}
-            </Button>
+            {/* Completion Notice */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-blue-600/10 rounded-2xl blur-xl"></div>
+              <div className="relative bg-blue-500/5 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-600 mb-1">Completion Effects</p>
+                    <p className="text-xs text-muted-foreground">
+                      This will mark the session as completed and automatically deduct one session from the member&apos;s remaining count.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-4 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCompleteModalOpen(false);
+                  setError(null);
+                }}
+                disabled={isPending}
+                className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
+              >
+                <X className="h-4 w-4" />
+                Cancel
+              </Button>
+              <Button
+                onClick={handleComplete}
+                disabled={isPending}
+                className="gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/40 transition-all duration-200 rounded-xl min-w-[140px]"
+              >
+                {isPending ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Completing...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-4 w-4" />
+                    Mark Complete
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </Modal>
@@ -592,44 +733,122 @@ export function SessionBookingView({ booking }: SessionBookingViewProps) {
           setError(null);
         }}
         title="Cancel Booking"
+        className="max-w-2xl"
       >
-        <div className="space-y-4">
-          {error && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-              <p className="text-sm text-destructive">{error}</p>
+        <div className="relative">
+          {/* Background Glow */}
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-3xl blur-2xl"></div>
+          
+          <div className="relative space-y-6">
+            {/* Header Section */}
+            <div className="text-center space-y-2">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-red-500/20 to-red-600/30 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-red-500/20">
+                <XCircle className="h-8 w-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-text">Cancel Session Booking</h3>
+              <p className="text-sm text-muted-foreground">
+                This action will cancel the booking and may affect the member&apos;s session count
+              </p>
             </div>
-          )}
 
-          <p className="text-sm text-muted-foreground">
-            Are you sure you want to cancel this booking?
-          </p>
+            {/* Error Display */}
+            {error && (
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-red-600/10 rounded-2xl blur-xl"></div>
+                <div className="relative bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-2xl p-4">
+                  <div className="flex items-center gap-3">
+                    <XCircle className="h-5 w-5 text-red-600 flex-shrink-0" />
+                    <p className="text-sm text-red-600 font-medium">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
-          <div className="bg-muted/50 border border-border rounded-lg p-3">
-            <div className="space-y-2 text-sm">
-              <div><strong>Service:</strong> {booking.service?.name}</div>
-              <div><strong>Member:</strong> {booking.member?.full_name}</div>
-              <div><strong>Date:</strong> {format(new Date(booking.booking_date), "PPp")}</div>
+            {/* Booking Details */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-red-600/10 rounded-2xl blur-xl"></div>
+              <div className="relative bg-red-500/5 backdrop-blur-sm border border-red-500/20 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Calendar className="h-5 w-5 text-red-600" />
+                  <h4 className="font-semibold text-text">Booking to Cancel</h4>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-red-500/5 to-transparent border border-red-500/10">
+                    <Package className="h-4 w-4 text-red-600" />
+                    <div>
+                      <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Service</p>
+                      <p className="text-sm font-semibold text-text">{booking.service?.name}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-red-500/5 to-transparent border border-red-500/10">
+                    <User className="h-4 w-4 text-red-600" />
+                    <div>
+                      <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Member</p>
+                      <p className="text-sm font-semibold text-text">{booking.member?.full_name}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-red-500/5 to-transparent border border-red-500/10">
+                    <Clock className="h-4 w-4 text-red-600" />
+                    <div>
+                      <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Date & Time</p>
+                      <p className="text-sm font-semibold text-text">{format(new Date(booking.booking_date), "PPp")}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setCancelModalOpen(false);
-                setError(null);
-              }}
-              disabled={isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleCancel}
-              disabled={isPending}
-              variant="destructive"
-            >
-              {isPending ? "Cancelling..." : "Cancel Booking"}
-            </Button>
+            {/* Warning Notice */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-orange-600/10 rounded-2xl blur-xl"></div>
+              <div className="relative bg-orange-500/5 backdrop-blur-sm border border-orange-500/20 rounded-2xl p-4">
+                <div className="flex items-start gap-3">
+                  <XCircle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-orange-600 mb-1">Cancellation Warning</p>
+                    <p className="text-xs text-muted-foreground">
+                      This booking will be permanently cancelled. The member will be notified and the session may be returned to their available count.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-4 pt-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCancelModalOpen(false);
+                  setError(null);
+                }}
+                disabled={isPending}
+                className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
+              >
+                <X className="h-4 w-4" />
+                Keep Booking
+              </Button>
+              <Button
+                onClick={handleCancel}
+                disabled={isPending}
+                className="gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl min-w-[140px]"
+              >
+                {isPending ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Cancelling...
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="h-4 w-4" />
+                    Cancel Booking
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </Modal>

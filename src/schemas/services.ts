@@ -27,7 +27,7 @@ export const updateServiceSchema = serviceBaseSchema.partial().extend({
 export const bookingStatusSchema = z.enum(["pending", "confirmed", "upcoming", "completed", "cancelled"]);
 
 export const serviceBookingBaseSchema = z.object({
-  service_id: z.string().uuid("Invalid service ID"),
+  purchased_service_id: z.string().uuid("Invalid purchased service ID"),
   member_id: z.string().uuid("Invalid member ID"),
   booking_date: z.string().min(1, "Booking date is required").refine(
     (val) => {
@@ -40,7 +40,7 @@ export const serviceBookingBaseSchema = z.object({
   ),
   status: bookingStatusSchema.default("upcoming"),
   sessions_remaining: z.number().min(0, "Sessions remaining cannot be negative").optional(),
-  notes: z.string().max(1000, "Notes too long").optional(),
+  notes: z.string().max(1000, "Notes too long").optional().nullable(),
 });
 
 export const createServiceBookingSchema = serviceBookingBaseSchema;

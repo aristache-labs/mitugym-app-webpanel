@@ -38,6 +38,7 @@ export {
 
 // Session booking actions
 export {
+  createSessionBookingAction,
   confirmSessionBookingAction,
   completeSessionBookingAction,
   cancelSessionBookingAction,

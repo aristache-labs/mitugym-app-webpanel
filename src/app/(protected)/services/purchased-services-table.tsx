@@ -563,14 +563,14 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                 </div>
                 <Label htmlFor="approve-notes" className="font-semibold text-text">Approval Notes (Optional)</Label>
               </div>
-              <Textarea
-                id="approve-notes"
-                placeholder="Add any notes about the approval..."
-                value={approveNotes}
-                onChange={(e) => setApproveNotes(e.target.value)}
-                rows={3}
+            <Textarea
+              id="approve-notes"
+              placeholder="Add any notes about the approval..."
+              value={approveNotes}
+              onChange={(e) => setApproveNotes(e.target.value)}
+              rows={3}
                 className="w-full rounded-2xl border border-surface/50 bg-surface/20 px-4 py-3 text-sm placeholder:text-muted/50 focus:border-primary/50 focus:bg-surface/30 transition-all duration-200"
-              />
+            />
             </div>
           </div>
 
@@ -733,15 +733,15 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                 </div>
                 <Label htmlFor="cancel-reason" className="font-semibold text-text">Cancellation Reason *</Label>
               </div>
-              <Textarea
-                id="cancel-reason"
-                placeholder="Please provide a reason for cancelling this service..."
-                value={cancelReason}
-                onChange={(e) => setCancelReason(e.target.value)}
-                rows={3}
-                required
+            <Textarea
+              id="cancel-reason"
+              placeholder="Please provide a reason for cancelling this service..."
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              rows={3}
+              required
                 className="w-full rounded-2xl border border-surface/50 bg-surface/20 px-4 py-3 text-sm placeholder:text-muted/50 focus:border-primary/50 focus:bg-surface/30 transition-all duration-200"
-              />
+            />
             </div>
           </div>
 
@@ -850,30 +850,30 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service Name</p>
                           <p className="text-sm font-semibold text-text">{selectedService.service?.name || "Unknown Service"}</p>
-                        </div>
+                  </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Duration</p>
                           <p className="text-sm font-semibold text-text">{selectedService.service?.duration_minutes || 60} minutes</p>
-                        </div>
+                  </div>
                       </div>
                     </div>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service Type</p>
                           <p className="text-sm font-semibold text-text">{selectedService.service?.session_type || "Standard"}</p>
-                        </div>
+                  </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <Banknote className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Price</p>
                           <p className="text-sm font-semibold text-text">{selectedService.service?.price?.toFixed(2) || "0.00"} RON</p>
                         </div>
@@ -897,30 +897,30 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <User className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Full Name</p>
                           <p className="text-sm font-semibold text-text">{selectedService.member?.full_name || "Unknown Member"}</p>
-                        </div>
+                  </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <User className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Phone</p>
                           <p className="text-sm font-semibold text-text">{selectedService.member?.phone || "-"}</p>
-                        </div>
+                  </div>
                       </div>
                     </div>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <User className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Email</p>
                           <p className="text-sm font-semibold text-text">{selectedService.member?.email || "-"}</p>
-                        </div>
+                  </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Status</p>
                           <p className="text-sm font-semibold text-text capitalize">{selectedService.member?.status || "-"}</p>
                         </div>
@@ -944,46 +944,46 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Purchase Date</p>
                           <p className="text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
-                        </div>
+                  </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Total Sessions</p>
                           <p className="text-sm font-semibold text-text">{selectedService.sessions_total}</p>
-                        </div>
+                  </div>
                       </div>
                     </div>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Status</p>
                           <div className="mt-1">{getStatusBadge(selectedService.status)}</div>
-                        </div>
+                  </div>
                       </div>
                       <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
                         <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                        <div>
+                  <div>
                           <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Remaining Sessions</p>
                           <p className="text-sm font-semibold text-text">{selectedService.sessions_remaining}</p>
-                        </div>
+                  </div>
                       </div>
                     </div>
                   </div>
                   {(selectedService.approved_date || selectedService.cancelled_date) && (
                     <div className="mt-4 pt-4 border-t border-surface/30">
                       <div className="space-y-3">
-                        {selectedService.approved_date && (
+                  {selectedService.approved_date && (
                           <div className="flex items-center gap-3 p-3 rounded-xl bg-green-500/5 border border-green-500/20">
                             <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                            <div>
+                      <div>
                               <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Approved Date</p>
                               <p className="text-sm font-semibold text-text">{format(new Date(selectedService.approved_date), "PPp")}</p>
-                            </div>
+                      </div>
                           </div>
                         )}
                         {selectedService.cancelled_date && (
@@ -1014,8 +1014,8 @@ export function PurchasedServicesTable({ purchasedServices }: PurchasedServicesT
                     </div>
                     <div className="p-4 rounded-xl bg-surface/20 border border-surface/30">
                       <p className="text-sm text-text whitespace-pre-wrap leading-relaxed">
-                        {selectedService.notes}
-                      </p>
+                    {selectedService.notes}
+                  </p>
                     </div>
                   </div>
                 </div>

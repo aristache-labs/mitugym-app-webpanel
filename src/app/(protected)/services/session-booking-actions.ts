@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireStaff } from "@/lib/auth";
 import { 
+  createServiceBookingSchema,
   confirmSessionBookingSchema, 
   completeSessionBookingSchema, 
   cancelSessionBookingSchema,
@@ -12,6 +13,115 @@ import {
 import { ActionResult, appendAuditLog } from "../lib/action-utils";
 
 // ===== SESSION BOOKING ACTIONS =====
+
+export async function createSessionBookingAction(formData: FormData): Promise<ActionResult> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    return { success: false, error: "Supabase credentials are missing" };
+  }
+
+  const staff = await requireStaff();
+
+  const parsed = createServiceBookingSchema.safeParse({
+    purchased_service_id: formData.get("purchased_service_id"),
+    member_id: formData.get("member_id"),
+    booking_date: formData.get("booking_date"),
+    status: formData.get("status") || "pending",
+    notes: formData.get("notes") || null,
+  });
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      error: "Validation failed",
+      issues: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const { purchased_service_id, member_id, booking_date, status, notes } = parsed.data;
+
+  // Convert datetime-local format to ISO string if needed
+  let isoBookingDate = booking_date;
+  if (booking_date.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) {
+    isoBookingDate = new Date(booking_date).toISOString();
+  }
+
+  // Get purchased service and member details for validation and audit log
+  const [purchasedServiceResult, memberResult] = await Promise.all([
+    admin.from("purchased_services").select(`
+      *,
+      services (name, is_active)
+    `).eq("id", purchased_service_id).single(),
+    admin.from("profiles").select("first_name, last_name").eq("id", member_id).single()
+  ]);
+
+  if (purchasedServiceResult.error) {
+    return { success: false, error: "Purchased service not found" };
+  }
+
+  if (memberResult.error) {
+    return { success: false, error: "Member not found" };
+  }
+
+  if (!purchasedServiceResult.data.services?.is_active) {
+    return { success: false, error: "Service is not active" };
+  }
+
+  if (purchasedServiceResult.data.status !== 'approved') {
+    return { success: false, error: "Purchased service is not approved" };
+  }
+
+  if (purchasedServiceResult.data.sessions_remaining <= 0) {
+    return { success: false, error: "No sessions remaining for this service" };
+  }
+
+  // Create the session booking
+  const { data: booking, error } = await admin
+    .from("session_bookings")
+    .insert({
+      purchased_service_id,
+      member_id,
+      booking_date: isoBookingDate,
+      status,
+      notes: notes || null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Failed to create session booking", error);
+    return { success: false, error: error.message };
+  }
+
+  const memberName = `${memberResult.data.first_name || ''} ${memberResult.data.last_name || ''}`.trim() || 'Unknown Member';
+  const serviceName = purchasedServiceResult.data.services?.name || 'Unknown Service';
+
+  // Log the creation
+  await appendAuditLog(
+    staff.profile.id,
+    "session_booking.create",
+    "session_bookings",
+    booking.id,
+    { 
+      service_name: serviceName,
+      booking_date: isoBookingDate,
+      status,
+      notes: notes || null,
+    },
+    `${serviceName} for ${memberName}`,
+    {
+      booking_created: {
+        before: null,
+        after: `Status: ${status}, Date: ${isoBookingDate}`
+      }
+    }
+  );
+
+  revalidatePath("/bookings");
+  return { success: true, message: "Session booking created successfully" };
+}
 
 export async function confirmSessionBookingAction(formData: FormData): Promise<ActionResult> {
   const admin = getSupabaseAdmin();
