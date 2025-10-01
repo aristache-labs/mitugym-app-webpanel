@@ -7,15 +7,17 @@ import { TimePicker } from "@/components/ui/time-picker";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { ScheduleDay } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 import { weekdayLabel, sortScheduleByWeekday } from "@/lib/utils";
 import { Clock, Calendar, CheckCircle2, XCircle } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 interface PremiumScheduleEditorProps {
   schedule: ScheduleDay[];
+  timeFormat?: TimeFormat;
 }
 
-export function PremiumScheduleEditor({ schedule }: PremiumScheduleEditorProps) {
+export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumScheduleEditorProps) {
   const [state, setState] = useState<ScheduleDay[]>(sortScheduleByWeekday(schedule));
   const [serverError, setServerError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -66,6 +68,16 @@ export function PremiumScheduleEditor({ schedule }: PremiumScheduleEditorProps) 
     });
   };
 
+  const formatTimeDisplay = (time24: string): string => {
+    if (timeFormat === '12h') {
+      const [hours, minutes] = time24.split(':').map(Number);
+      const period = hours >= 12 ? 'PM' : 'AM';
+      const hours12 = hours % 12 || 12;
+      return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+    }
+    return time24;
+  };
+
   const getDayStatus = (day: ScheduleDay) => {
     if (day.is_closed) {
       return { 
@@ -82,7 +94,7 @@ export function PremiumScheduleEditor({ schedule }: PremiumScheduleEditorProps) 
     
     return { 
       status: 'open', 
-      label: `${openTime} - ${closeTime}`, 
+      label: `${formatTimeDisplay(openTime)} - ${formatTimeDisplay(closeTime)}`, 
       color: 'bg-success/20 text-success border-success/30',
       icon: CheckCircle2 
     };

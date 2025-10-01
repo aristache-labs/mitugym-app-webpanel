@@ -29,7 +29,7 @@ export default async function SettingsPage() {
           <ClearAuditLogsButton />
         </CardHeader>
         <CardContent>
-          <AuditLogTable entries={logs} />
+          <AuditLogTable entries={logs} timeFormat={currentTimeFormat} />
         </CardContent>
       </Card>
 

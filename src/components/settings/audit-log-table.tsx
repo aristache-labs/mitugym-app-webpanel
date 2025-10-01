@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { DataTable } from "@/components/data-table/data-table";
 import { Badge } from "@/components/ui/badge";
 import type { AuditLogEntry } from "@/types";
+import type { TimeFormat } from "@/lib/settings";
 import { formatDate, formatDateTime } from "@/lib/utils";
 
 // Special entity IDs for system-wide operations (must match backend)
@@ -16,6 +17,7 @@ const SYSTEM_ENTITY_IDS = {
 
 interface AuditLogTableProps {
   entries: AuditLogEntry[];
+  timeFormat?: TimeFormat;
 }
 
 function getActionBadgeVariant(action: string): "default" | "success" | "warning" | "destructive" {
@@ -216,7 +218,27 @@ function formatChanges(changes: Record<string, { before: unknown; after: unknown
   );
 }
 
-export function AuditLogTable({ entries }: AuditLogTableProps) {
+export function AuditLogTable({ entries, timeFormat = '24h' }: AuditLogTableProps) {
+  const formatDateTimeWithFormat = (value: string | null | undefined): string => {
+    if (!value) return "—";
+    
+    try {
+      const date = new Date(value);
+      const datePart = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      
+      if (timeFormat === '12h') {
+        const timePart = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        return `${datePart}, ${timePart}`;
+      } else {
+        const timePart = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        return `${datePart}, ${timePart}`;
+      }
+    } catch (error) {
+      console.warn("Failed to format datetime", error);
+      return "—";
+    }
+  };
+
   const columns = useMemo<ColumnDef<AuditLogEntry>[]>(
     () => [
       {
@@ -228,7 +250,7 @@ export function AuditLogTable({ entries }: AuditLogTableProps) {
               {formatDate(row.original.created_at)}
             </div>
             <div className="text-xs text-muted-foreground">
-              {formatDateTime(row.original.created_at)}
+              {formatDateTimeWithFormat(row.original.created_at)}
             </div>
           </div>
         ),
@@ -316,7 +338,7 @@ export function AuditLogTable({ entries }: AuditLogTableProps) {
         size: 80,
       },
     ],
-    []
+    [timeFormat]
   );
 
   return <DataTable columns={columns} data={entries} />;
