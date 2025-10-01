@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toast";
 import { Service, ServiceType } from "@/types";
 import { useRouter } from "next/navigation";
+import { Briefcase } from "lucide-react";
 import type { z } from "zod";
 
 type CreateServiceFormData = z.infer<typeof createServiceSchema>;
@@ -127,14 +128,7 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
   const watchRequiresAdvanceBooking = form.watch("requires_advance_booking");
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>
-          {isEdit ? "Edit Service" : "Create New Service"}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {error && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
               <p className="text-sm text-destructive">{error}</p>
@@ -237,14 +231,25 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
 
           {/* Advance Booking */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <input
-                id="requires_advance_booking"
-                type="checkbox"
-                {...form.register("requires_advance_booking")}
-                className="rounded border-gray-300"
-              />
-              <Label htmlFor="requires_advance_booking">Requires advance booking</Label>
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <input
+                  id="requires_advance_booking"
+                  type="checkbox"
+                  {...form.register("requires_advance_booking")}
+                  className="peer sr-only"
+                />
+                <div className="w-5 h-5 border-2 border-surface/50 rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200 flex items-center justify-center">
+                  <svg 
+                    className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+              <Label htmlFor="requires_advance_booking" className="cursor-pointer">Requires advance booking</Label>
             </div>
 
             {watchRequiresAdvanceBooking && (
@@ -264,36 +269,56 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
           </div>
 
           {/* Active Status */}
-          <div className="flex items-center space-x-2">
-            <input
-              id="is_active"
-              type="checkbox"
-              {...form.register("is_active")}
-              className="rounded border-gray-300"
-            />
-            <Label htmlFor="is_active">Service is active</Label>
+          <div className="flex items-center space-x-3">
+            <div className="relative">
+              <input
+                id="is_active"
+                type="checkbox"
+                {...form.register("is_active")}
+                className="peer sr-only"
+              />
+              <div className="w-5 h-5 border-2 border-surface/50 rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200 flex items-center justify-center">
+                <svg 
+                  className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" 
+                  fill="currentColor" 
+                  viewBox="0 0 20 20"
+                >
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+            </div>
+            <Label htmlFor="is_active" className="cursor-pointer">Service is active</Label>
           </div>
 
           {/* Form Actions */}
           <div className="flex justify-end space-x-4 pt-4">
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               onClick={() => router.push("/services")}
               disabled={isPending}
-              className="px-6"
+              className="px-6 hover:bg-surface/50 transition-all duration-200 rounded-xl"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending} className="px-8">
-              {isPending 
-                ? (isEdit ? "Updating..." : "Creating...") 
-                : (isEdit ? "Update Service" : "Create Service")
-              }
+            <Button 
+              type="submit" 
+              disabled={isPending} 
+              className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl px-8"
+            >
+              {isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                  {isEdit ? "Updating..." : "Creating..."}
+                </>
+              ) : (
+                <>
+                  <Briefcase className="h-4 w-4" />
+                  {isEdit ? "Update Service" : "Create Service"}
+                </>
+              )}
             </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+    </form>
   );
 }
