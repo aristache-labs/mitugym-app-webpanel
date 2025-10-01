@@ -56,6 +56,7 @@ export type CheckIn = {
   id: string;
   member_id: string;
   member_name?: string | null;
+  avatar_url?: string | null;
   checked_in_at: string;
   checked_out_at?: string | null;
   duration_minutes?: number | null;

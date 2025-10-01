@@ -309,21 +309,23 @@ export async function fetchCheckIns(): Promise<CheckIn[]> {
   // Get unique user IDs from checkins
   const userIds = [...new Set(checkinsData.map(c => c.user_id))];
 
-  // Get member names for these users
+  // Get member names and avatars for these users
   const { data: profilesData, error: profilesError } = await admin
     .from("profiles")
-    .select("id, first_name, last_name")
+    .select("id, first_name, last_name, avatar_url")
     .in("id", userIds);
 
   if (profilesError) {
     console.error("Failed to load member profiles", profilesError);
   }
 
-  // Create a map of user_id to member name
+  // Create maps of user_id to member name and avatar
   const memberNames: Record<string, string> = {};
+  const memberAvatars: Record<string, string | null> = {};
   if (profilesData) {
     profilesData.forEach(profile => {
       memberNames[profile.id] = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Unknown Member';
+      memberAvatars[profile.id] = profile.avatar_url || null;
     });
   }
 
@@ -338,6 +340,7 @@ export async function fetchCheckIns(): Promise<CheckIn[]> {
     id: checkIn.id,
     member_id: checkIn.user_id,
     member_name: memberNames[checkIn.user_id] || 'Unknown Member',
+    avatar_url: memberAvatars[checkIn.user_id] || null,
     checked_in_at: checkIn.check_in_time,
     checked_out_at: checkIn.check_out_time,
     duration_minutes: checkIn.duration_minutes,

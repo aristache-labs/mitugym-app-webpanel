@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ServiceBooking } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
+import { AvatarWithPreview } from "@/components/members/avatar-preview-modal";
 import { Calendar, Clock, Briefcase } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -90,9 +91,12 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
                   
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-primary font-bold text-sm group-hover/item:bg-primary/25 transition-colors">
-                        {(booking.member?.full_name || "U").charAt(0).toUpperCase()}
-                      </div>
+                      <AvatarWithPreview
+                        avatarUrl={booking.member?.avatar_url}
+                        memberName={booking.member?.full_name || "Unknown Member"}
+                        size="small"
+                        className="border-primary/20"
+                      />
                       <div className="flex-1">
                         <Link href="/bookings" className="group/member">
                           <span className="font-semibold text-base text-text group-hover/item:text-primary group-hover/member:text-primary transition-colors block cursor-pointer hover:underline">

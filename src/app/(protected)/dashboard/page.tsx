@@ -5,6 +5,7 @@ import { OccupancyChart } from "@/components/dashboard/occupancy-chart";
 import { UpcomingServicesCard } from "@/components/dashboard/upcoming-services-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { AvatarWithPreview } from "@/components/members/avatar-preview-modal";
 import { Users, UserCheck, AlertTriangle, Clock, Settings } from "lucide-react";
 import Link from "next/link";
 import { getTimeFormat } from "@/lib/timezone";
@@ -123,9 +124,12 @@ export default async function DashboardPage() {
                     className="group/item flex items-center justify-between rounded-2xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 px-3 py-3 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
                   >
                     <div className="flex items-center gap-3">
-                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary font-bold text-base group-hover/item:bg-primary/25 transition-colors">
-                         {(checkIn.member_name ?? "W").charAt(0).toUpperCase()}
-                       </div>
+                       <AvatarWithPreview
+                         avatarUrl={checkIn.avatar_url}
+                         memberName={checkIn.member_name || "Walk-in"}
+                         size="small"
+                         className="border-primary/20"
+                       />
                        <div className="flex-1">
                          <div className="flex items-center gap-2">
                            {checkIn.member_name && checkIn.member_name !== "Walk-in" ? (
