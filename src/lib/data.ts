@@ -714,6 +714,8 @@ export async function fetchSessionBookings(): Promise<ServiceBooking[]> {
     status: booking.status === "confirmed" ? "upcoming" : booking.status,
     sessions_remaining: booking.purchased_services?.sessions_remaining || null,
     notes: booking.notes,
+    completed_date: booking.completed_date,
+    cancelled_date: booking.cancelled_date,
     created_at: booking.created_at,
     updated_at: booking.updated_at,
     service: booking.purchased_services?.services ? {
@@ -799,6 +801,8 @@ export async function fetchTodaysSessionBookings(): Promise<ServiceBooking[]> {
     status: booking.status === "confirmed" ? "upcoming" : booking.status,
     sessions_remaining: booking.purchased_services?.sessions_remaining || null,
     notes: booking.notes,
+    completed_date: booking.completed_date,
+    cancelled_date: booking.cancelled_date,
     created_at: booking.created_at,
     updated_at: booking.updated_at,
     service: booking.purchased_services?.services ? {

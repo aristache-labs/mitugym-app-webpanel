@@ -211,6 +211,26 @@ export function SessionBookingView({ booking }: SessionBookingViewProps) {
                         {format(new Date(booking.created_at), "MMM dd, yyyy 'at' h:mm a")}
                       </p>
                     </div>
+                    
+                    {/* Completed Date */}
+                    {booking.completed_date && (
+                      <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border border-emerald-500/20">
+                        <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider mb-2">Completed</p>
+                        <p className="text-sm font-medium text-text">
+                          {format(new Date(booking.completed_date), "MMM dd, yyyy 'at' h:mm a")}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Cancelled Date */}
+                    {booking.cancelled_date && (
+                      <div className="p-4 rounded-2xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20">
+                        <p className="text-xs font-medium text-red-600 uppercase tracking-wider mb-2">Cancelled</p>
+                        <p className="text-sm font-medium text-text">
+                          {format(new Date(booking.cancelled_date), "MMM dd, yyyy 'at' h:mm a")}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -400,7 +420,7 @@ export function SessionBookingView({ booking }: SessionBookingViewProps) {
 
                   {/* View Profile Button */}
                   <div className="pt-2">
-                    <Link href={`/members/${booking.member_id}`}>
+                    <Link href={`/members/${booking.member_id}/view`}>
                       <Button variant="outline" className="w-full gap-2 hover:bg-cyan-500/10 hover:text-cyan-600 hover:border-cyan-500/50 transition-all duration-200 rounded-xl">
                         <User className="h-4 w-4" />
                         View Member Profile

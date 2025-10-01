@@ -160,6 +160,7 @@ export async function completeSessionBookingAction(formData: FormData): Promise<
   const updateData = {
     status: "completed",
     notes: notes || booking.notes,
+    completed_date: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
 
@@ -263,6 +264,7 @@ export async function cancelSessionBookingAction(formData: FormData): Promise<Ac
   const updateData = {
     status: "cancelled",
     notes: reason,
+    cancelled_date: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
 

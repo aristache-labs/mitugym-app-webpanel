@@ -126,6 +126,8 @@ export type ServiceBooking = {
   status: BookingStatus;
   sessions_remaining?: number | null;
   notes?: string | null;
+  completed_date?: string | null;
+  cancelled_date?: string | null;
   created_at: string;
   updated_at: string;
   // Relations
