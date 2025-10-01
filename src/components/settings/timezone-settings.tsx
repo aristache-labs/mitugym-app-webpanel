@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { AVAILABLE_TIMEZONES, TIME_FORMAT_OPTIONS, type TimeFormat } from "@/lib/settings";
 import { updateTimezoneAction } from "@/app/(protected)/settings/actions";
-import { Globe, Clock, AlertCircle, CheckCircle } from "lucide-react";
+import { Globe, Clock, AlertCircle, CheckCircle, Info } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 interface TimezoneSettingsProps {
@@ -155,27 +155,33 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
             </div>
           )}
 
-          <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">About Timezone Settings</h4>
-            <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-              <p>• This timezone is used for all date/time calculations throughout the application</p>
-              <p>• Member expiration dates, check-in times, and reports will use this timezone</p>
-              <p>• Changes take effect immediately and will refresh the page</p>
-              <p>• The timezone automatically handles daylight saving time (DST) transitions</p>
+          {/* Information Panels Side by Side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                <Info className="h-4 w-4" />
+                About Timezone Settings
+              </h4>
+              <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                <p>• This timezone is used for all date/time calculations throughout the application</p>
+                <p>• Member expiration dates, check-in times, and reports will use this timezone</p>
+                <p>• Changes take effect immediately and will refresh the page</p>
+                <p>• The timezone automatically handles daylight saving time (DST) transitions</p>
+              </div>
             </div>
-          </div>
 
-          <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4">
-            <h4 className="font-medium text-green-900 dark:text-green-100 mb-2 flex items-center gap-2">
-              <CheckCircle className="h-4 w-4" />
-              Database Timezone Configuration
-            </h4>
-            <div className="text-sm text-green-800 dark:text-green-200 space-y-1">
-              <p>✅ <strong>Database timezone:</strong> <code className="px-1 py-0.5 bg-green-200 dark:bg-green-900 rounded font-mono">Europe/Bucharest</code></p>
-              <p>• All timestamps are stored in Romania time (EET/EEST with automatic DST)</p>
-              <p>• This configuration works best with Supabase cron jobs and scheduled functions</p>
-              <p>• Cron schedules run according to local time (e.g., midnight = midnight in Bucharest)</p>
-              <p>• The application display timezone should match the database for consistency</p>
+            <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-4">
+              <h4 className="font-medium text-green-900 dark:text-green-100 mb-2 flex items-center gap-2">
+                <CheckCircle className="h-4 w-4" />
+                Database Timezone Configuration
+              </h4>
+              <div className="text-sm text-green-800 dark:text-green-200 space-y-1">
+                <p>✅ <strong>Database timezone:</strong> <code className="px-1 py-0.5 bg-green-200 dark:bg-green-900 rounded font-mono">Europe/Bucharest</code></p>
+                <p>• All timestamps are stored in Romania time (EET/EEST with automatic DST)</p>
+                <p>• This configuration works best with Supabase cron jobs and scheduled functions</p>
+                <p>• Cron schedules run according to local time (e.g., midnight = midnight in Bucharest)</p>
+                <p>• The application display timezone should match the database for consistency</p>
+              </div>
             </div>
           </div>
         </div>
