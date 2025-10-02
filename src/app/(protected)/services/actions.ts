@@ -278,7 +278,7 @@ export async function createServiceBookingAction(formData: FormData): Promise<Ac
     "booking.create",
     "service_bookings",
     data.id,
-    { service_id: parsed.data.service_id, member_id: parsed.data.member_id, booking_date: parsed.data.booking_date },
+    { member_id: parsed.data.member_id, booking_date: parsed.data.booking_date },
     `Service Booking ${data.id}`,
     {
       booking_created: {

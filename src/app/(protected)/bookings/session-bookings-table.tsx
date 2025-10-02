@@ -165,7 +165,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
   const columns = [
     {
       accessorKey: "booking_date",
-      header: ({ column }) => (
+      header: () => (
         <div className="text-center font-semibold">Date & Time</div>
       ),
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
@@ -190,7 +190,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
     },
     {
       id: "service",
-      header: ({ column }) => (
+      header: () => (
         <div className="text-center font-semibold">Service</div>
       ),
       accessorFn: (row: ServiceBooking) => row.service?.name || "Unknown Service",
@@ -211,7 +211,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
     },
     {
       accessorKey: "member",
-      header: ({ column }) => (
+      header: () => (
         <div className="text-center font-semibold">Member</div>
       ),
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
@@ -231,14 +231,14 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
     },
     {
       accessorKey: "status",
-      header: ({ column }) => (
+      header: () => (
         <div className="text-center font-semibold">Status</div>
       ),
       cell: ({ row }: { row: { original: ServiceBooking } }) => getStatusBadge(row.original.status),
     },
     {
       id: "actions",
-      header: ({ column }) => (
+      header: () => (
         <div className="text-center font-semibold">Actions</div>
       ),
       cell: ({ row }: { row: { original: ServiceBooking } }) => {

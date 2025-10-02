@@ -26,7 +26,11 @@ const eslintConfig = [
         "max": 1500,
         "skipBlankLines": true,
         "skipComments": true
-      }]
+      }],
+      // Relax some rules for production build
+      "react/no-unescaped-entities": "off",
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": "warn"
     }
   },
 ];

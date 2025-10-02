@@ -3,9 +3,10 @@ import type { MemberStatus } from "@/types";
 
 const statusMap: Record<MemberStatus, { label: string; variant: "default" | "success" | "warning" | "destructive" }> = {
   active: { label: "Active", variant: "success" },
-  inactive: { label: "Inactive", variant: "destructive" },
+  expired: { label: "Expired", variant: "destructive" },
   frozen: { label: "Frozen", variant: "warning" },
   pending: { label: "Pending", variant: "default" },
+  suspended: { label: "Suspended", variant: "warning" },
 };
 
 export function MemberStatusBadge({ status }: { status: MemberStatus }) {

@@ -24,6 +24,7 @@ type CheckinResponse = {
     membership_status?: string;
     plan_name?: string;
     expires_at?: string;
+    starts_at?: string;
     duration_minutes?: number;
   };
   error?: string;
@@ -372,72 +373,7 @@ export async function POST(request: NextRequest) {
     const expiresAt = member.expires_at ? new Date(member.expires_at) : null;
     const startsAt = member.starts_at ? new Date(member.starts_at) : null;
 
-    // Check if membership is active
-    if (member.status !== "active") {
-      await logApiRequest({
-        request,
-        endpoint: '/api/checkin',
-        method: 'POST',
-        statusCode: 403,
-        success: false,
-        apiAction,
-        memberId,
-        memberName,
-        errorMessage: `Member status: ${member.status}`,
-        durationMs: Date.now() - startTime,
-      });
-      return NextResponse.json<CheckinResponse>(
-        {
-          success: false,
-          message: "Membership is not active",
-          error: `Member status: ${member.status}`,
-          data: {
-            member_id: member.id,
-            member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
-            membership_status: member.status,
-            expires_at: member.expires_at || undefined,
-          },
-        },
-        { status: 403 }
-      );
-    }
-
-    // Check if membership has started
-    if (startsAt && startsAt > now) {
-      return NextResponse.json<CheckinResponse>(
-        {
-          success: false,
-          message: "Membership has not started yet",
-          error: `Membership starts on ${startsAt.toLocaleDateString()}`,
-          data: {
-            member_id: member.id,
-            member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
-            membership_status: member.status,
-          },
-        },
-        { status: 403 }
-      );
-    }
-
-    // Check if membership has expired
-    if (expiresAt && expiresAt < now) {
-      return NextResponse.json<CheckinResponse>(
-        {
-          success: false,
-          message: "Membership has expired",
-          error: `Membership expired on ${expiresAt.toLocaleDateString()}`,
-          data: {
-            member_id: member.id,
-            member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
-            membership_status: "expired",
-            expires_at: member.expires_at || undefined,
-          },
-        },
-        { status: 403 }
-      );
-    }
-
-    // Get plan information
+    // Get plan information first (needed for response data)
     let planName = "Unknown Plan";
     if (member.plan_id) {
       const { data: plan } = await admin
@@ -449,6 +385,118 @@ export async function POST(request: NextRequest) {
       if (plan) {
         planName = plan.name;
       }
+    }
+
+    // Check if membership is active
+    if (member.status !== "active") {
+      // Log with response data for better tracking
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 200, // Changed to 200 so we can see response_data
+        success: false,
+        apiAction,
+        memberId,
+        memberName,
+        errorMessage: `Member status: ${member.status}`,
+        responseData: {
+          member_id: member.id,
+          member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+          membership_status: member.status,
+          plan_name: planName,
+          expires_at: member.expires_at || undefined,
+        },
+        durationMs: Date.now() - startTime,
+      });
+      return NextResponse.json<CheckinResponse>(
+        {
+          success: false,
+          message: `Membership is ${member.status}`,
+          data: {
+            member_id: member.id,
+            member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+            membership_status: member.status,
+            plan_name: planName,
+            expires_at: member.expires_at || undefined,
+          },
+        },
+        { status: 200 } // Changed to 200 to always return data
+      );
+    }
+
+    // Check if membership has started
+    if (startsAt && startsAt > now) {
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 200,
+        success: false,
+        apiAction,
+        memberId,
+        memberName,
+        errorMessage: `Membership starts on ${startsAt.toLocaleDateString()}`,
+        responseData: {
+          member_id: member.id,
+          member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+          membership_status: "pending",
+          plan_name: planName,
+          starts_at: member.starts_at || undefined,
+        },
+        durationMs: Date.now() - startTime,
+      });
+      return NextResponse.json<CheckinResponse>(
+        {
+          success: false,
+          message: "Membership has not started yet",
+          data: {
+            member_id: member.id,
+            member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+            membership_status: "pending",
+            plan_name: planName,
+            starts_at: member.starts_at || undefined,
+          },
+        },
+        { status: 200 }
+      );
+    }
+
+    // Check if membership has expired
+    if (expiresAt && expiresAt < now) {
+      await logApiRequest({
+        request,
+        endpoint: '/api/checkin',
+        method: 'POST',
+        statusCode: 200,
+        success: false,
+        apiAction,
+        memberId,
+        memberName,
+        errorMessage: `Membership expired on ${expiresAt.toLocaleDateString()}`,
+        responseData: {
+          member_id: member.id,
+          member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+          membership_status: "expired",
+          plan_name: planName,
+          expires_at: member.expires_at || undefined,
+        },
+        durationMs: Date.now() - startTime,
+      });
+      return NextResponse.json<CheckinResponse>(
+        {
+          success: false,
+          message: "Membership has expired",
+          data: {
+            member_id: member.id,
+            member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+            membership_status: "expired",
+            plan_name: planName,
+            expires_at: member.expires_at || undefined,
+          },
+        },
+        { status: 200 }
+      );
     }
 
     // Check current check-in status for smart action detection

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const memberStatusEnum = z.enum(["active", "inactive", "frozen", "pending", "suspended"]);
+export const memberStatusEnum = z.enum(["active", "expired", "frozen", "pending", "suspended"]);
 export const memberGenderEnum = z.enum(["male", "female", "other"]);
 
 export const memberBaseSchema = z.object({

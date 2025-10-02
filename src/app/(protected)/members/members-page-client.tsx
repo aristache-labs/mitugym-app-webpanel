@@ -20,7 +20,7 @@ export function MembersPageClient({ members, expiringCount, onFilterChange }: Me
   };
 
   const handleExpiredMembersClick = () => {
-    onFilterChange('inactive');
+    onFilterChange('expired');
   };
 
   const handleExpiringMembersClick = () => {
@@ -47,7 +47,7 @@ export function MembersPageClient({ members, expiringCount, onFilterChange }: Me
         />
         <MetricCard 
           title="Expired Members" 
-          value={members.filter(m => m.status === 'inactive').length} 
+          value={members.filter(m => m.status === 'expired').length} 
           description="Plans have expired" 
           icon={UserX}
           onClick={handleExpiredMembersClick}

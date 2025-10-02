@@ -97,14 +97,14 @@ export function calculateMemberStatus(storedStatus: string, startDate: string | 
     return "pending";
   }
   
-  // If plan has expired, show as inactive
+  // If plan has expired, show as expired
   if (expiresAt) {
     const expires = new Date(expiresAt);
     // Set to end of expiration day in the configured timezone
     expires.setHours(23, 59, 59, 999);
     
     if (localizedTime > expires) {
-      return "inactive";
+      return "expired";
     }
   }
   

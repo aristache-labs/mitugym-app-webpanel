@@ -10,7 +10,7 @@ import { Banknote, Clock, Calendar } from "lucide-react";
 export const serviceColumns: ColumnDef<Service>[] = [
   {
     accessorKey: "name",
-    header: ({ column }) => (
+    header: () => (
       <div className="text-center font-semibold">Service Name</div>
     ),
     cell: ({ row }) => (
@@ -23,7 +23,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "service_type",
-    header: ({ column }) => (
+    header: () => (
       <div className="text-center font-semibold">Type</div>
     ),
     cell: ({ row }) => {
@@ -42,7 +42,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "price",
-    header: ({ column }) => (
+    header: () => (
       <div className="text-center font-semibold">Price</div>
     ),
     cell: ({ row }) => (
@@ -54,7 +54,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "duration_minutes",
-    header: ({ column }) => (
+    header: () => (
       <div className="text-center font-semibold">Duration</div>
     ),
     cell: ({ row }) => (
@@ -66,7 +66,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "max_sessions",
-    header: ({ column }) => (
+    header: () => (
       <div className="text-center font-semibold">Sessions</div>
     ),
     cell: ({ row }) => {
@@ -80,7 +80,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     accessorKey: "is_active",
-    header: ({ column }) => (
+    header: () => (
       <div className="text-center font-semibold">Status</div>
     ),
     cell: ({ row }) => (
@@ -98,7 +98,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
   },
   {
     id: "actions",
-    header: ({ column }) => (
+    header: () => (
       <div className="text-center font-semibold">Actions</div>
     ),
     cell: ({ row }) => (

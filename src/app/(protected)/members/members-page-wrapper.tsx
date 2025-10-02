@@ -31,8 +31,8 @@ export function MembersPageWrapper({ members, expiringCount }: MembersPageWrappe
     switch (currentFilter) {
       case 'active':
         return members.filter(m => m.status === 'active');
-      case 'inactive':
-        return members.filter(m => m.status === 'inactive');
+      case 'expired':
+        return members.filter(m => m.status === 'expired');
       case 'expiring':
         // Use the helper function to ensure consistency with backend
         const expiringMembers = getExpiringMembers(members, 7);

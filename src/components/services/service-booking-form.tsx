@@ -78,8 +78,7 @@ export function ServiceBookingForm({ booking, services, members, mode }: Service
     defaultValues,
   });
 
-  const selectedServiceId = form.watch("service_id");
-  const selectedService = activeServices.find(s => s.id === selectedServiceId);
+  // Note: activeServices is used in serviceOptions for the form select
 
   const onSubmit = async (data: CreateServiceBookingFormData | UpdateServiceBookingFormData) => {
     startTransition(async () => {
