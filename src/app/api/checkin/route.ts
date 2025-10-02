@@ -21,6 +21,7 @@ type CheckinResponse = {
     checkin_id?: string;
     member_id?: string;
     member_name?: string;
+    avatar_url?: string | null;
     membership_status?: string;
     plan_name?: string;
     expires_at?: string;
@@ -222,10 +223,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find member by member ID and get TOTP secret if needed
+    // Find member by member ID and get TOTP secret and avatar if needed
     const { data: member, error: memberError } = await admin
       .from("profiles")
-      .select("id, first_name, last_name, email, status, plan_id, starts_at, expires_at, totp_secret")
+      .select("id, first_name, last_name, email, status, plan_id, starts_at, expires_at, totp_secret, avatar_url")
       .eq("id", actualMemberId)
       .single();
 
@@ -290,12 +291,13 @@ export async function POST(request: NextRequest) {
             success: false,
             message: "TOTP not configured",
             error: "Please set up your mobile app first at /api/member/totp-setup/:memberId",
-            data: {
-              member_id: memberId,
-              member_name: memberName,
-            },
+          data: {
+            member_id: memberId,
+            member_name: memberName,
+            avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
           },
-          { status: 403 }
+        },
+        { status: 403 }
         );
       }
 
@@ -320,12 +322,13 @@ export async function POST(request: NextRequest) {
             success: false,
             message: "Invalid QR code",
             error: "QR code is invalid or expired. Please refresh your QR code.",
-            data: {
-              member_id: memberId,
-              member_name: memberName,
-            },
+          data: {
+            member_id: memberId,
+            member_name: memberName,
+            avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
           },
-          { status: 401 }
+        },
+        { status: 401 }
         );
       }
     }
@@ -354,6 +357,7 @@ export async function POST(request: NextRequest) {
           data: {
             member_id: memberId,
             member_name: memberName,
+            avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
           },
         },
         { 
@@ -403,6 +407,7 @@ export async function POST(request: NextRequest) {
         responseData: {
           member_id: member.id,
           member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+          avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
           membership_status: member.status,
           plan_name: planName,
           expires_at: member.expires_at || undefined,
@@ -416,6 +421,7 @@ export async function POST(request: NextRequest) {
           data: {
             member_id: member.id,
             member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+            avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
             membership_status: member.status,
             plan_name: planName,
             expires_at: member.expires_at || undefined,
@@ -440,6 +446,7 @@ export async function POST(request: NextRequest) {
         responseData: {
           member_id: member.id,
           member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+          avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
           membership_status: "pending",
           plan_name: planName,
           starts_at: member.starts_at || undefined,
@@ -453,6 +460,7 @@ export async function POST(request: NextRequest) {
           data: {
             member_id: member.id,
             member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+            avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
             membership_status: "pending",
             plan_name: planName,
             starts_at: member.starts_at || undefined,
@@ -477,6 +485,7 @@ export async function POST(request: NextRequest) {
         responseData: {
           member_id: member.id,
           member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+          avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
           membership_status: "expired",
           plan_name: planName,
           expires_at: member.expires_at || undefined,
@@ -490,6 +499,7 @@ export async function POST(request: NextRequest) {
           data: {
             member_id: member.id,
             member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+            avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
             membership_status: "expired",
             plan_name: planName,
             expires_at: member.expires_at || undefined,
@@ -528,6 +538,7 @@ export async function POST(request: NextRequest) {
               checkin_id: existingCheckin.id,
               member_id: member.id,
               member_name: memberName,
+              avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
               membership_status: member.status,
               plan_name: planName,
               expires_at: member.expires_at || undefined,
@@ -567,6 +578,7 @@ export async function POST(request: NextRequest) {
           checkin_id: newCheckin.id,
           member_id: member.id,
           member_name: memberName,
+          avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
           membership_status: member.status,
           plan_name: planName,
           expires_at: member.expires_at || undefined,
@@ -613,6 +625,7 @@ export async function POST(request: NextRequest) {
             data: {
               member_id: member.id,
               member_name: memberName,
+              avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
               membership_status: member.status,
               plan_name: planName,
               expires_at: member.expires_at || undefined,
@@ -653,6 +666,7 @@ export async function POST(request: NextRequest) {
           checkin_id: activeCheckin.id,
           member_id: member.id,
           member_name: memberName,
+          avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
           membership_status: member.status,
           plan_name: planName,
           expires_at: member.expires_at || undefined,
