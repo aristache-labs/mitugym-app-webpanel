@@ -99,26 +99,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Build query - fetch from checkins table with profile data
+    // Build query - fetch from checkins table WITHOUT join (no FK constraint exists)
     let query = admin
       .from("checkins")
-      .select(`
-        id,
-        user_id,
-        check_in_time,
-        check_out_time,
-        membership_plan_name,
-        method,
-        duration_minutes,
-        profiles:user_id (
-          first_name,
-          last_name,
-          avatar_url,
-          status
-        )
-      `)
+      .select("id, user_id, check_in_time, check_out_time, membership_plan_name, method, duration_minutes")
       .order("check_in_time", { ascending: false })
-      .limit(limit * 2); // Fetch more since we'll split check-ins and check-outs
+      .limit(limit); // Limit will be applied after transformation
 
     // Apply timestamp filter if provided
     if (created_at) {
@@ -154,16 +140,33 @@ export async function GET(request: NextRequest) {
     const { data: checkins, error: logsError } = await query;
 
     if (logsError) {
-      console.error('Error fetching history:', logsError);
+      console.error('Error fetching checkins:', logsError);
       return NextResponse.json<HistoryResponse>(
         {
           success: false,
-          message: "Failed to fetch history",
+          message: "Failed to fetch checkins",
           error: logsError.message,
         },
         { status: 500 }
       );
     }
+
+    // Fetch profiles separately
+    const userIds = [...new Set(checkins?.map(c => c.user_id) || [])];
+    const { data: profiles, error: profilesError } = await admin
+      .from("profiles")
+      .select("id, first_name, last_name, avatar_url, status")
+      .in("id", userIds);
+
+    if (profilesError) {
+      console.error('Error fetching profiles:', profilesError);
+      // Continue without profiles - we'll use fallback names
+    }
+
+    // Create a map of profiles for quick lookup
+    const profileMap = new Map(
+      profiles?.map(p => [p.id, p]) || []
+    );
 
     // Transform checkins data to match expected format
     // Create separate entries for check-ins and check-outs
@@ -185,10 +188,12 @@ export async function GET(request: NextRequest) {
 
     if (checkins) {
       for (const checkin of checkins) {
-        const profile = checkin.profiles as { first_name?: string; last_name?: string; avatar_url?: string | null; status?: string } | null;
+        // Lookup profile from map
+        const profile = profileMap.get(checkin.user_id);
+        
         const memberName = profile 
           ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() 
-          : 'Unknown Member';
+          : 'Unknown';
 
         // Add check-in entry
         historyEntries.push({
