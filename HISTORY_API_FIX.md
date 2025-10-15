@@ -55,22 +55,24 @@ const profileMap = new Map(
 - Handles missing profiles gracefully
 
 ### Data Transformation
-For each `checkin` record:
-- **Check-in entry**: Created with `check_in_time` as `created_at`
-- **Check-out entry**: Created only if `check_out_time` exists, with `check_out_time` as `created_at`
-
-Both entries include:
+For each `checkin` record, creates **one session entry** containing:
 - `member_id`, `member_name`, `avatar_url`
 - `membership_status`, `plan_name`
-- `api_action`: either `"checkin"` or `"checkout"`
-- `checkin_id`: Reference to the original checkin record
-- `duration_minutes`: Only included in check-out entries
+- `api_action`: `"session"` (single entry per gym session)
+- `check_in_time`: When the member checked in
+- `check_out_time`: When the member checked out (or `null` if still active)
+- `duration_minutes`: Session duration (or `null` if still active)
 
 **Handles Edge Cases:**
-- Supports both single profile objects and arrays from Supabase joins
 - Gracefully handles deleted users (missing profiles) with "Unknown" fallback
-- Final array sorted chronologically by `created_at` (mixing check-ins and check-outs)
-- Respects the `limit` parameter after transformation
+- Sessions without check-out show `check_out_time: null` and `duration_minutes: null`
+- Final array sorted by `check_in_time` descending (most recent first)
+- Respects the `limit` parameter (e.g., limit=100 returns 100 sessions)
+
+**Key Difference from Web Panel:**
+- Web panel shows sessions in a table with check-in/check-out columns
+- API returns one record per session (matching web panel's row structure)
+- Flutter app can display on a card with both times visible
 
 ### Response Format
 ```json
@@ -78,13 +80,13 @@ Both entries include:
   "success": true,
   "data": [
     {
-      "id": "uuid-checkin",
+      "id": "uuid",
       "endpoint": "/api/checkin",
       "method": "POST",
       "status_code": 200,
       "member_id": "uuid",
       "member_name": "John Doe",
-      "api_action": "checkin",
+      "api_action": "session",
       "success": true,
       "response_data": {
         "checkin_id": "uuid",
@@ -93,49 +95,57 @@ Both entries include:
         "avatar_url": "https://...",
         "membership_status": "active",
         "plan_name": "FITNESS 1 LUNĂ",
-        "method": "qr"
+        "method": "qr",
+        "check_in_time": "2025-10-15T20:00:00Z",
+        "check_out_time": "2025-10-15T20:45:00Z",
+        "duration_minutes": 45
       },
       "created_at": "2025-10-15T20:00:00Z"
     },
     {
-      "id": "uuid-checkout",
+      "id": "uuid2",
       "endpoint": "/api/checkin",
       "method": "POST",
       "status_code": 200,
-      "member_id": "uuid",
-      "member_name": "John Doe",
-      "api_action": "checkout",
+      "member_id": "uuid2",
+      "member_name": "Jane Smith",
+      "api_action": "session",
       "success": true,
       "response_data": {
-        "checkin_id": "uuid",
-        "member_id": "uuid",
-        "member_name": "John Doe",
+        "checkin_id": "uuid2",
+        "member_id": "uuid2",
+        "member_name": "Jane Smith",
         "avatar_url": "https://...",
         "membership_status": "active",
         "plan_name": "FITNESS 1 LUNĂ",
-        "duration_minutes": 45,
-        "method": "qr"
+        "method": "qr",
+        "check_in_time": "2025-10-15T19:30:00Z",
+        "check_out_time": null,
+        "duration_minutes": null
       },
-      "created_at": "2025-10-15T20:45:00Z"
+      "created_at": "2025-10-15T19:30:00Z"
     }
   ],
   "count": 2
 }
 ```
 
+**Note:** The first session is complete (has check-out time and duration), while the second is still active (null check-out and duration).
+
 ## Benefits
-- ✅ Returns all check-in/check-out history (not just API logs)
-- ✅ Separates check-ins and check-outs as individual events
+- ✅ Returns all gym session history from `checkins` table (not API logs)
+- ✅ One record per session (matches web panel structure)
+- ✅ Includes both check-in and check-out data in single response
 - ✅ Includes member avatars for rich UI display
-- ✅ Properly ordered by timestamp (most recent first)
+- ✅ Properly ordered by check-in time (most recent first)
 - ✅ Supports incremental sync with `created_at` parameter
-- ✅ Maintains backward compatibility with Flutter app
+- ✅ Handles active sessions (null check-out time and duration)
 
 ## Testing
-The endpoint now returns all 16 checkin records as separate check-in and check-out events, properly formatted for the Flutter app to display in its history view.
+The endpoint now returns all 16 gym sessions (one record per session), properly formatted for the Flutter app to display on cards showing both check-in and check-out times.
 
 ## Deployment
-✅ Deployed to production: https://mitugym-app-webpanel-e9zcf9t58-pateutzs-projects.vercel.app
+✅ Deployed to production: https://mitugym-app-webpanel-lm4t1s94r-pateutzs-projects.vercel.app
 
 ## Files Modified
 - `src/app/api/history/route.ts` - Complete rewrite of query and data transformation logic
