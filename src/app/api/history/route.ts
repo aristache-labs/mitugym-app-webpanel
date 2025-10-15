@@ -35,13 +35,14 @@ type HistoryResponse = {
 /**
  * GET /api/history
  * 
- * Retrieves check-in/check-out history from api_logs table
+ * Retrieves gym session history from checkins table
+ * Returns one record per session (includes both check-in and check-out data)
  * Used by Flutter desktop app to sync server data
  * 
  * Query parameters:
  * - api_key: API authentication key (required)
- * - limit: Number of records to return (default: 100, max: 1000)
- * - created_at: Filter by timestamp (format: gte.2025-10-08T23:06:59.135565)
+ * - limit: Number of sessions to return (default: 100, max: 1000)
+ * - created_at: Filter by check-in timestamp (format: gte.2025-10-08T23:06:59.135565)
  * 
  * Example:
  * GET /api/history?api_key=xxx&limit=50&created_at=gte.2025-10-08T23:06:59.135565
@@ -169,7 +170,7 @@ export async function GET(request: NextRequest) {
     );
 
     // Transform checkins data to match expected format
-    // Create separate entries for check-ins and check-outs
+    // Create one entry per session (not separate check-in/check-out)
     const historyEntries: Array<{
       id: string;
       endpoint: string;
@@ -195,15 +196,15 @@ export async function GET(request: NextRequest) {
           ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() 
           : 'Unknown';
 
-        // Add check-in entry
+        // Add single session entry (includes both check-in and check-out data)
         historyEntries.push({
-          id: `${checkin.id}-checkin`,
+          id: checkin.id,
           endpoint: '/api/checkin',
           method: 'POST',
           status_code: 200,
           member_id: checkin.user_id,
           member_name: memberName,
-          api_action: 'checkin',
+          api_action: 'session', // Single session entry
           success: true,
           error_message: null,
           response_data: {
@@ -214,43 +215,18 @@ export async function GET(request: NextRequest) {
             membership_status: profile?.status || 'unknown',
             plan_name: checkin.membership_plan_name || 'Unknown Plan',
             method: checkin.method || 'qr',
+            check_in_time: checkin.check_in_time,
+            check_out_time: checkin.check_out_time,
+            duration_minutes: checkin.duration_minutes || null,
           },
           ip_address: null,
           duration_ms: null,
-          created_at: checkin.check_in_time,
+          created_at: checkin.check_in_time, // Use check-in time for sorting
         });
-
-        // Add check-out entry if exists
-        if (checkin.check_out_time) {
-          historyEntries.push({
-            id: `${checkin.id}-checkout`,
-            endpoint: '/api/checkin',
-            method: 'POST',
-            status_code: 200,
-            member_id: checkin.user_id,
-            member_name: memberName,
-            api_action: 'checkout',
-            success: true,
-            error_message: null,
-            response_data: {
-              checkin_id: checkin.id,
-              member_id: checkin.user_id,
-              member_name: memberName,
-              avatar_url: profile?.avatar_url || null,
-              membership_status: profile?.status || 'unknown',
-              plan_name: checkin.membership_plan_name || 'Unknown Plan',
-              duration_minutes: checkin.duration_minutes || 0,
-              method: checkin.method || 'qr',
-            },
-            ip_address: null,
-            duration_ms: null,
-            created_at: checkin.check_out_time,
-          });
-        }
       }
     }
 
-    // Sort by created_at descending and apply limit
+    // Sort by check_in_time descending (most recent first)
     historyEntries.sort((a, b) => 
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
