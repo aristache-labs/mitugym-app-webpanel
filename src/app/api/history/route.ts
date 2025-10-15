@@ -99,13 +99,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Build query
+    // Build query - fetch from checkins table with profile data
     let query = admin
-      .from("api_logs")
-      .select("id, endpoint, method, status_code, member_id, member_name, api_action, success, error_message, response_data, ip_address, duration_ms, created_at")
-      .eq("endpoint", "/api/checkin") // Only return check-in/check-out logs
-      .order("created_at", { ascending: false })
-      .limit(limit);
+      .from("checkins")
+      .select(`
+        id,
+        user_id,
+        check_in_time,
+        check_out_time,
+        membership_plan_name,
+        method,
+        duration_minutes,
+        profiles:user_id (
+          first_name,
+          last_name,
+          avatar_url,
+          status
+        )
+      `)
+      .order("check_in_time", { ascending: false })
+      .limit(limit * 2); // Fetch more since we'll split check-ins and check-outs
 
     // Apply timestamp filter if provided
     if (created_at) {
@@ -116,29 +129,29 @@ export async function GET(request: NextRequest) {
         
         switch (operator) {
           case 'gte':
-            query = query.gte('created_at', timestamp);
+            query = query.gte('check_in_time', timestamp);
             break;
           case 'gt':
-            query = query.gt('created_at', timestamp);
+            query = query.gt('check_in_time', timestamp);
             break;
           case 'lte':
-            query = query.lte('created_at', timestamp);
+            query = query.lte('check_in_time', timestamp);
             break;
           case 'lt':
-            query = query.lt('created_at', timestamp);
+            query = query.lt('check_in_time', timestamp);
             break;
           case 'eq':
-            query = query.eq('created_at', timestamp);
+            query = query.eq('check_in_time', timestamp);
             break;
         }
       } else {
         // If no operator, default to gte (greater than or equal)
-        query = query.gte('created_at', created_at);
+        query = query.gte('check_in_time', created_at);
       }
     }
 
     // Execute query
-    const { data: logs, error: logsError } = await query;
+    const { data: checkins, error: logsError } = await query;
 
     if (logsError) {
       console.error('Error fetching history:', logsError);
@@ -152,12 +165,98 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Transform checkins data to match expected format
+    // Create separate entries for check-ins and check-outs
+    const historyEntries: Array<{
+      id: string;
+      endpoint: string;
+      method: string;
+      status_code: number;
+      member_id?: string | null;
+      member_name?: string | null;
+      api_action?: string | null;
+      success: boolean;
+      error_message?: string | null;
+      response_data?: Record<string, unknown> | null;
+      ip_address?: string | null;
+      duration_ms?: number | null;
+      created_at: string;
+    }> = [];
+
+    if (checkins) {
+      for (const checkin of checkins) {
+        const profile = checkin.profiles as { first_name?: string; last_name?: string; avatar_url?: string | null; status?: string } | null;
+        const memberName = profile 
+          ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() 
+          : 'Unknown Member';
+
+        // Add check-in entry
+        historyEntries.push({
+          id: `${checkin.id}-checkin`,
+          endpoint: '/api/checkin',
+          method: 'POST',
+          status_code: 200,
+          member_id: checkin.user_id,
+          member_name: memberName,
+          api_action: 'checkin',
+          success: true,
+          error_message: null,
+          response_data: {
+            checkin_id: checkin.id,
+            member_id: checkin.user_id,
+            member_name: memberName,
+            avatar_url: profile?.avatar_url || null,
+            membership_status: profile?.status || 'unknown',
+            plan_name: checkin.membership_plan_name || 'Unknown Plan',
+            method: checkin.method || 'qr',
+          },
+          ip_address: null,
+          duration_ms: null,
+          created_at: checkin.check_in_time,
+        });
+
+        // Add check-out entry if exists
+        if (checkin.check_out_time) {
+          historyEntries.push({
+            id: `${checkin.id}-checkout`,
+            endpoint: '/api/checkin',
+            method: 'POST',
+            status_code: 200,
+            member_id: checkin.user_id,
+            member_name: memberName,
+            api_action: 'checkout',
+            success: true,
+            error_message: null,
+            response_data: {
+              checkin_id: checkin.id,
+              member_id: checkin.user_id,
+              member_name: memberName,
+              avatar_url: profile?.avatar_url || null,
+              membership_status: profile?.status || 'unknown',
+              plan_name: checkin.membership_plan_name || 'Unknown Plan',
+              duration_minutes: checkin.duration_minutes || 0,
+              method: checkin.method || 'qr',
+            },
+            ip_address: null,
+            duration_ms: null,
+            created_at: checkin.check_out_time,
+          });
+        }
+      }
+    }
+
+    // Sort by created_at descending and apply limit
+    historyEntries.sort((a, b) => 
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    const limitedEntries = historyEntries.slice(0, limit);
+
     // Return results
     return NextResponse.json<HistoryResponse>(
       {
         success: true,
-        data: logs || [],
-        count: logs?.length || 0,
+        data: limitedEntries,
+        count: limitedEntries.length,
       },
       { 
         status: 200,
