@@ -24,10 +24,11 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: Ti
   const [openHour, openMinute] = todaySchedule.opens_at.split(':').map(Number);
   const [closeHour, closeMinute] = todaySchedule.closes_at.split(':').map(Number);
   
-  // Filter check-ins for today only
+  // Filter check-ins for today only, excluding denied check-ins
   const todaysCheckIns = checkIns.filter(checkIn => {
     const checkInDate = new Date(checkIn.checked_in_at);
-    return checkInDate >= todayStart;
+    const status = checkIn.status || 'success';
+    return checkInDate >= todayStart && status !== 'denied';
   });
 
   // Get current hour to limit data display

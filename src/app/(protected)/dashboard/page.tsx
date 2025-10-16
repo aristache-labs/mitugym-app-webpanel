@@ -26,7 +26,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Premium Metrics Section - Compact Single Row */}
-      <section className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+      <section className="grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         <MetricCard 
           title="In Gym Now" 
           value={metrics.occupancy} 
@@ -47,14 +47,6 @@ export default async function DashboardPage() {
           description="Memberships to renew" 
           icon={AlertTriangle}
           href="/members"
-        />
-        <MetricCard 
-          title="Denied Access" 
-          value={metrics.deniedScans} 
-          description="Expired/inactive scans" 
-          icon={AlertTriangle}
-          href="/checkins?tab=denied"
-          variant="error"
         />
         <MetricCard 
           title="Pending Bookings" 
@@ -105,7 +97,7 @@ export default async function DashboardPage() {
               </div>
               <div className="text-right">
                 <div className="text-sm font-semibold text-text">
-                  {latestCheckIns.length} today
+                  {latestCheckIns.length} recent
                 </div>
               </div>
             </div>

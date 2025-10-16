@@ -484,13 +484,12 @@ export async function fetchDeniedScansCount(): Promise<number> {
 export async function fetchDashboardMetrics() {
   const admin = getSupabaseAdmin();
   
-  const [members, checkIns, occupancy, sessionBookings, purchasedServices, deniedScans] = await Promise.all([
+  const [members, checkIns, occupancy, sessionBookings, purchasedServices] = await Promise.all([
     fetchMembers(),
     fetchCheckIns(),
     fetchOccupancy(),
     fetchSessionBookings(),
     fetchPurchasedServices(),
-    fetchDeniedScansCount(),
   ]);
 
   const activeMembers = members.filter((member) => member.status === "active").length;
@@ -529,7 +528,6 @@ export async function fetchDashboardMetrics() {
     expiringSoon,
     pendingBookings,
     pendingServices,
-    deniedScans,
   };
 }
 
