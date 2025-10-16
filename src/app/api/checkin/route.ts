@@ -393,6 +393,18 @@ export async function POST(request: NextRequest) {
 
     // Check if membership is active
     if (member.status !== "active") {
+      // Record the denied attempt in checkins table
+      await admin
+        .from("checkins")
+        .insert({
+          user_id: member.id,
+          check_in_time: now.toISOString(),
+          membership_plan_name: planName,
+          method: 'qr',
+          status: 'denied',
+          denial_reason: `Member status: ${member.status}`,
+        });
+
       // Log with response data for better tracking
       await logApiRequest({
         request,
@@ -433,6 +445,18 @@ export async function POST(request: NextRequest) {
 
     // Check if membership has started
     if (startsAt && startsAt > now) {
+      // Record the denied attempt in checkins table
+      await admin
+        .from("checkins")
+        .insert({
+          user_id: member.id,
+          check_in_time: now.toISOString(),
+          membership_plan_name: planName,
+          method: 'qr',
+          status: 'denied',
+          denial_reason: `Membership starts on ${startsAt.toLocaleDateString()}`,
+        });
+
       await logApiRequest({
         request,
         endpoint: '/api/checkin',
@@ -472,6 +496,18 @@ export async function POST(request: NextRequest) {
 
     // Check if membership has expired
     if (expiresAt && expiresAt < now) {
+      // Record the denied attempt in checkins table
+      await admin
+        .from("checkins")
+        .insert({
+          user_id: member.id,
+          check_in_time: now.toISOString(),
+          membership_plan_name: planName,
+          method: 'qr',
+          status: 'denied',
+          denial_reason: `Membership expired on ${expiresAt.toLocaleDateString()}`,
+        });
+
       await logApiRequest({
         request,
         endpoint: '/api/checkin',

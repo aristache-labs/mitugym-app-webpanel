@@ -61,6 +61,8 @@ export type CheckIn = {
   checked_out_at?: string | null;
   duration_minutes?: number | null;
   method: string | null;
+  status?: 'success' | 'denied';
+  denial_reason?: string | null;
 };
 
 export type NewsItem = {

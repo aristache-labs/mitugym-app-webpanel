@@ -10,6 +10,7 @@ import type { TimeFormat } from "@/lib/settings";
 import { formatDateTime } from "@/lib/utils";
 import { CheckoutButton } from "@/components/checkins/checkout-button";
 import { AvatarWithPreview } from "@/components/members/avatar-preview-modal";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 interface CheckinsTableProps {
@@ -52,6 +53,28 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
             </div>
           </div>
         ),
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => {
+          const status = row.original.status || 'success';
+          const denialReason = row.original.denial_reason;
+          
+          if (status === 'denied') {
+            return (
+              <Badge variant="destructive" title={denialReason || 'Access denied'} className="cursor-help">
+                Denied
+              </Badge>
+            );
+          }
+          
+          return row.original.checked_out_at ? (
+            <Badge variant="secondary">Completed</Badge>
+          ) : (
+            <Badge variant="default" className="bg-success/20 text-success border-success/30">Active</Badge>
+          );
+        },
       },
       {
         accessorKey: "checked_in_at",

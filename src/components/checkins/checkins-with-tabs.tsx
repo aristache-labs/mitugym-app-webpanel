@@ -10,28 +10,20 @@ interface CheckinsWithTabsProps {
   timeFormat?: TimeFormat;
 }
 
-type TabType = "today" | "month" | "all";
+type TabType = "all" | "active" | "denied";
 
 export function CheckinsWithTabs({ data, timeFormat = '24h' }: CheckinsWithTabsProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("today");
+  const [activeTab, setActiveTab] = useState<TabType>("all");
 
   const filteredData = useMemo(() => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
     switch (activeTab) {
-      case "today":
-        return data.filter(checkIn => {
-          const checkInDate = new Date(checkIn.checked_in_at);
-          return checkInDate >= today;
-        });
+      case "active":
+        // Currently in gym (checked in but not checked out)
+        return data.filter(checkIn => checkIn.status !== 'denied' && !checkIn.checked_out_at);
       
-      case "month":
-        return data.filter(checkIn => {
-          const checkInDate = new Date(checkIn.checked_in_at);
-          return checkInDate >= startOfMonth;
-        });
+      case "denied":
+        // Denied access attempts
+        return data.filter(checkIn => checkIn.status === 'denied');
       
       case "all":
       default:
@@ -40,31 +32,20 @@ export function CheckinsWithTabs({ data, timeFormat = '24h' }: CheckinsWithTabsP
   }, [data, activeTab]);
 
   const counts = useMemo(() => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-    const todayCount = data.filter(checkIn => {
-      const checkInDate = new Date(checkIn.checked_in_at);
-      return checkInDate >= today;
-    }).length;
-
-    const monthCount = data.filter(checkIn => {
-      const checkInDate = new Date(checkIn.checked_in_at);
-      return checkInDate >= startOfMonth;
-    }).length;
+    const activeCount = data.filter(checkIn => checkIn.status !== 'denied' && !checkIn.checked_out_at).length;
+    const deniedCount = data.filter(checkIn => checkIn.status === 'denied').length;
 
     return {
-      today: todayCount,
-      month: monthCount,
-      all: data.length
+      all: data.length,
+      active: activeCount,
+      denied: deniedCount
     };
   }, [data]);
 
   const tabs = [
-    { id: "today" as TabType, label: "Today", count: counts.today },
-    { id: "month" as TabType, label: "This Month", count: counts.month },
-    { id: "all" as TabType, label: "All", count: counts.all }
+    { id: "all" as TabType, label: "All Check-ins", count: counts.all },
+    { id: "active" as TabType, label: "Currently In Gym", count: counts.active },
+    { id: "denied" as TabType, label: "Denied", count: counts.denied }
   ];
 
   return (

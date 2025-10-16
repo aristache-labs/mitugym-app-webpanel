@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
     // Build query - fetch from checkins table WITHOUT join (no FK constraint exists)
     let query = admin
       .from("checkins")
-      .select("id, user_id, check_in_time, check_out_time, membership_plan_name, method, duration_minutes")
+      .select("id, user_id, check_in_time, check_out_time, membership_plan_name, method, duration_minutes, status, denial_reason")
       .order("check_in_time", { ascending: false })
       .limit(limit); // Limit will be applied after transformation
 
@@ -218,6 +218,8 @@ export async function GET(request: NextRequest) {
             check_in_time: checkin.check_in_time,
             check_out_time: checkin.check_out_time,
             duration_minutes: checkin.duration_minutes || null,
+            status: checkin.status || 'success',
+            denial_reason: checkin.denial_reason || null,
           },
           ip_address: null,
           duration_ms: null,

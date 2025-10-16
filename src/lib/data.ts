@@ -294,7 +294,7 @@ export async function fetchCheckIns(): Promise<CheckIn[]> {
   // Get checkins data
   const { data: checkinsData, error: checkinsError } = await admin
     .from("checkins")
-    .select("id, user_id, check_in_time, check_out_time, duration_minutes, membership_plan_name, method")
+    .select("id, user_id, check_in_time, check_out_time, duration_minutes, membership_plan_name, method, status, denial_reason")
     .order("check_in_time", { ascending: false })
     .limit(200);
 
@@ -338,6 +338,8 @@ export async function fetchCheckIns(): Promise<CheckIn[]> {
     duration_minutes?: number;
     membership_plan_name?: string;
     method?: string;
+    status?: 'success' | 'denied';
+    denial_reason?: string;
   }) => ({
     id: checkIn.id,
     member_id: checkIn.user_id,
@@ -346,7 +348,9 @@ export async function fetchCheckIns(): Promise<CheckIn[]> {
     checked_in_at: checkIn.check_in_time,
     checked_out_at: checkIn.check_out_time,
     duration_minutes: checkIn.duration_minutes,
-    method: checkIn.method || 'manual'
+    method: checkIn.method || 'manual',
+    status: checkIn.status || 'success',
+    denial_reason: checkIn.denial_reason || null,
   }));
 }
 
@@ -460,15 +464,28 @@ export async function fetchOccupancy(): Promise<OccupancySnapshot> {
   return (data as OccupancySnapshot) ?? { total: 0, capacity: 120 };
 }
 
+export async function fetchDeniedScansCount(): Promise<number> {
+  const admin = getSupabaseAdmin();
+  if (!admin) return 0;
+
+  const { count } = await admin
+    .from("checkins")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "denied");
+
+  return count || 0;
+}
+
 export async function fetchDashboardMetrics() {
   const admin = getSupabaseAdmin();
   
-  const [members, checkIns, occupancy, sessionBookings, purchasedServices] = await Promise.all([
+  const [members, checkIns, occupancy, sessionBookings, purchasedServices, deniedScans] = await Promise.all([
     fetchMembers(),
     fetchCheckIns(),
     fetchOccupancy(),
     fetchSessionBookings(),
     fetchPurchasedServices(),
+    fetchDeniedScansCount(),
   ]);
 
   const activeMembers = members.filter((member) => member.status === "active").length;
@@ -506,6 +523,7 @@ export async function fetchDashboardMetrics() {
     expiringSoon,
     pendingBookings,
     pendingServices,
+    deniedScans,
   };
 }
 
