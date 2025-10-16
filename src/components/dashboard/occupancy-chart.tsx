@@ -4,18 +4,40 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import type { CheckIn, ScheduleDay } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format } from "date-fns";
 
 function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: TimeFormat = '24h', timezone: string = 'Europe/Bucharest') {
-  // Get today's date and day of week in the application's timezone
+  // Get current time
   const now = new Date();
   
-  // Get the current date in the application's timezone
-  const todayInTimezone = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
-  const todayWeekday = todayInTimezone.getDay(); // 0=Sunday, 1=Monday, etc.
+  // Helper function to get date/time parts in the application's timezone
+  const getTimezoneParts = (date: Date) => {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+    
+    const parts = formatter.formatToParts(date);
+    const get = (type: string) => parts.find(p => p.type === type)?.value || '0';
+    
+    return {
+      year: parseInt(get('year')),
+      month: parseInt(get('month')) - 1, // JS months are 0-based
+      day: parseInt(get('day')),
+      hour: parseInt(get('hour')),
+      minute: parseInt(get('minute')),
+    };
+  };
   
-  // Create date strings for comparison (YYYY-MM-DD format in the app's timezone)
-  const todayDateString = todayInTimezone.toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD format
+  // Get today's date parts in the application's timezone
+  const todayParts = getTimezoneParts(now);
+  const todayWeekday = new Date(Date.UTC(todayParts.year, todayParts.month, todayParts.day)).getDay();
+  const todayDateString = `${todayParts.year}-${String(todayParts.month + 1).padStart(2, '0')}-${String(todayParts.day).padStart(2, '0')}`;
   
   // Find today's schedule
   const todaySchedule = schedule.find(day => day.weekday === todayWeekday);
@@ -26,60 +48,47 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: Ti
   }
   
   // Parse opening and closing times
-  const [openHour, openMinute] = todaySchedule.opens_at.split(':').map(Number);
-  const [closeHour, closeMinute] = todaySchedule.closes_at.split(':').map(Number);
+  const [openHour] = todaySchedule.opens_at.split(':').map(Number);
+  const [closeHour] = todaySchedule.closes_at.split(':').map(Number);
   
   // Filter check-ins for today only, excluding denied check-ins
   const todaysCheckIns = checkIns.filter(checkIn => {
     const checkInDate = new Date(checkIn.checked_in_at);
-    // Convert check-in time to the application's timezone and compare dates
-    const checkInInTimezone = new Date(checkInDate.toLocaleString('en-US', { timeZone: timezone }));
-    const checkInDateString = checkInInTimezone.toLocaleDateString('en-CA');
+    const checkInParts = getTimezoneParts(checkInDate);
+    const checkInDateString = `${checkInParts.year}-${String(checkInParts.month + 1).padStart(2, '0')}-${String(checkInParts.day).padStart(2, '0')}`;
     const status = checkIn.status || 'success';
     return checkInDateString === todayDateString && status !== 'denied';
   });
 
   // Get current hour in the application's timezone
-  const currentHour = todayInTimezone.getHours();
-  const isToday = true; // We're always showing today in this view
+  const currentHour = todayParts.hour;
   
   // Create hourly buckets from opening hour to closing hour
   const hourlyOccupancy = [];
   
-  // Create a base date for today at midnight in the application's timezone
-  const todayAtMidnight = new Date(todayInTimezone.getFullYear(), todayInTimezone.getMonth(), todayInTimezone.getDate());
-  
   for (let hour = openHour; hour <= closeHour; hour++) {
-    // Create a timestamp for this hour in local timezone
-    const currentTime = new Date(todayAtMidnight.getTime() + hour * 60 * 60 * 1000);
     const hourKey = timeFormat === '12h' 
-      ? format(currentTime, "h a")
+      ? (hour === 0 ? '12 am' : hour < 12 ? `${hour} am` : hour === 12 ? '12 pm' : `${hour - 12} pm`)
       : hour.toString().padStart(2, '0') + ':00';
-    
-    // Adjust for opening/closing minutes
-    if (hour === openHour && openMinute > 0) {
-      currentTime.setMinutes(openMinute);
-    }
-    if (hour === closeHour && closeMinute < 60) {
-      currentTime.setMinutes(closeMinute);
-    }
     
     // Only show data up to current hour if viewing today
     let occupancy: number | null = null;
-    if (!isToday || hour <= currentHour) {
+    if (hour <= currentHour) {
       // Count people who are in the gym at this hour
       occupancy = 0;
       
       todaysCheckIns.forEach(checkIn => {
-        const checkInTime = new Date(checkIn.checked_in_at);
-        const checkOutTime = checkIn.checked_out_at ? new Date(checkIn.checked_out_at) : null;
+        const checkInParts = getTimezoneParts(new Date(checkIn.checked_in_at));
+        const checkOutParts = checkIn.checked_out_at ? getTimezoneParts(new Date(checkIn.checked_out_at)) : null;
         
-        // Person is in gym if they checked in before/at this hour AND haven't checked out yet OR checked out after this hour
-        // We compare timestamps which automatically handle timezone conversion
-        if (checkInTime <= currentTime) {
-          if (!checkOutTime || checkOutTime > currentTime) {
-            occupancy!++;
-          }
+        // Person is in gym at this hour if:
+        // - They checked in at or before this hour
+        // - AND they either haven't checked out OR checked out after this hour
+        const checkedInByThisHour = checkInParts.hour < hour || (checkInParts.hour === hour);
+        const stillInGym = !checkOutParts || checkOutParts.hour > hour || (checkOutParts.hour === hour && checkOutParts.minute > 0);
+        
+        if (checkedInByThisHour && stillInGym && occupancy !== null) {
+          occupancy++;
         }
       });
     }
