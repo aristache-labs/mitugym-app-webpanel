@@ -11,6 +11,7 @@ const checkinRequestSchema = z.object({
   api_key: z.string().min(1, "API key is required"),
   action: z.enum(["checkin", "checkout", "auto"]).optional(), // Optional - auto-detect if not provided
   device_id: z.string().optional(), // Optional device identifier
+  is_offline_scan: z.boolean().optional(), // Flag for offline scans (skip TOTP validation)
 });
 
 // Member profile type from database
@@ -170,14 +171,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { qr_code, api_key } = validation.data;
+    const { qr_code, api_key, is_offline_scan } = validation.data;
     let { action } = validation.data;
     
     // Parse QR code - check if it's TOTP format or legacy
     let actualMemberId: string;
     let isTOTP = false;
     
-    if (isTOTPFormat(qr_code)) {
+    // For offline scans, qr_code contains just the member_id (no TOTP)
+    if (is_offline_scan) {
+      actualMemberId = qr_code; // Already just the member_id
+      isTOTP = false; // Skip TOTP validation for offline scans
+    } else if (isTOTPFormat(qr_code)) {
       // New TOTP format: member_id:totp_code
       const parsed = parseQRCode(qr_code);
       if (!parsed) {
