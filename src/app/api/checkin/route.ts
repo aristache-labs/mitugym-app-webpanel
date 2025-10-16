@@ -277,10 +277,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find member by member ID and get all relevant details
+    // Find member by member ID and get all relevant details (including role for staff check)
     const { data: member, error: memberError } = await admin
       .from("profiles")
-      .select("id, first_name, last_name, email, phone, date_of_birth, gender, address, city, county, status, plan_id, starts_at, expires_at, totp_secret, avatar_url")
+      .select("id, first_name, last_name, email, phone, date_of_birth, gender, address, city, county, status, plan_id, starts_at, expires_at, totp_secret, avatar_url, role")
       .eq("id", actualMemberId)
       .single();
 
@@ -442,6 +442,111 @@ export async function POST(request: NextRequest) {
       
       if (plan) {
         planName = plan.name;
+      }
+    }
+
+    // ✅ STAFF OVERRIDE: Allow staff/admin members to bypass all membership checks
+    const memberWithRole = member as typeof member & { role?: string };
+    const isStaffOrAdmin = memberWithRole.role === 'staff' || memberWithRole.role === 'admin';
+    
+    if (isStaffOrAdmin) {
+      // Staff always get free entry - skip all validation and record as special check-in
+      
+      // Check for existing active session for staff (auto-detect)
+      const { data: existingCheckin } = await admin
+        .from("checkins")
+        .select("id, check_in_time, check_out_time")
+        .eq("user_id", member.id)
+        .is("check_out_time", null)
+        .order("check_in_time", { ascending: false })
+        .limit(1)
+        .single();
+
+      // Auto-detect action based on existing session
+      const finalAction = apiAction === "auto" 
+        ? (existingCheckin ? "checkout" : "checkin")
+        : apiAction;
+
+      if (finalAction === "checkout" && existingCheckin) {
+        // Staff checkout
+        const checkOutTime = now.toISOString();
+        await admin
+          .from("checkins")
+          .update({ 
+            check_out_time: checkOutTime,
+            updated_at: checkOutTime
+          })
+          .eq("id", existingCheckin.id);
+
+        const duration = Math.round(
+          (now.getTime() - new Date(existingCheckin.check_in_time).getTime()) / 60000
+        );
+
+        await logApiRequest({
+          request,
+          endpoint: '/api/checkin',
+          method: 'POST',
+          statusCode: 200,
+          success: true,
+          apiAction: finalAction,
+          memberId,
+          memberName: `${member.first_name || ""} ${member.last_name || ""}`.trim() + " (STAFF)",
+          responseData: {
+            checkin_id: existingCheckin.id,
+            member_id: member.id,
+            duration_minutes: duration,
+          },
+          durationMs: Date.now() - startTime,
+        });
+
+        return NextResponse.json<CheckinResponse>({
+          success: true,
+          message: "Staff check-out successful",
+          data: buildMemberData(member, "Staff Access", {
+            checkin_id: existingCheckin.id,
+            duration_minutes: duration,
+          }),
+        });
+      } else {
+        // Staff check-in
+        const checkInTime = now.toISOString();
+        const { data: newCheckin } = await admin
+          .from("checkins")
+          .insert({
+            user_id: member.id,
+            check_in_time: checkInTime,
+            membership_plan_name: "Staff Access",
+            method: 'qr',
+            status: 'success',
+            created_at: checkInTime,
+            updated_at: checkInTime,
+          })
+          .select("id")
+          .single();
+
+        await logApiRequest({
+          request,
+          endpoint: '/api/checkin',
+          method: 'POST',
+          statusCode: 200,
+          success: true,
+          apiAction: finalAction,
+          memberId,
+          memberName: `${member.first_name || ""} ${member.last_name || ""}`.trim() + " (STAFF)",
+          responseData: {
+            checkin_id: newCheckin?.id,
+            member_id: member.id,
+          },
+          durationMs: Date.now() - startTime,
+        });
+
+        return NextResponse.json<CheckinResponse>({
+          success: true,
+          message: "Staff check-in successful",
+          data: buildMemberData(member, "Staff Access", {
+            checkin_id: newCheckin?.id,
+          }),
+        });
       }
     }
 
