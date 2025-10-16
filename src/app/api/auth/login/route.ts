@@ -44,10 +44,10 @@ export async function POST(req: NextRequest) {
 
     const userId = authData.user.id;
 
-    // Fetch user profile to get name
+    // Fetch user profile to get name and avatar
     const { data: profile, error: profileError } = await admin
       .from('profiles')
-      .select('first_name, last_name')
+      .select('first_name, last_name, avatar_url')
       .eq('id', userId)
       .single();
 
@@ -114,6 +114,7 @@ export async function POST(req: NextRequest) {
       user_name: userName,
       location_name: locationName,
       email: email,
+      avatar_url: profile.avatar_url || null,
     });
 
   } catch (error) {
