@@ -5,8 +5,8 @@ Write-Host "=== Testing Gym Schedule API ===" -ForegroundColor Cyan
 Write-Host ""
 
 # Configuration
-$baseUrl = "http://localhost:3000"
-$apiKey = $env:CHECKIN_API_KEY
+$baseUrl = "https://mitugym-app-webpanel.vercel.app"
+$apiKey = '847a6e2605d0674043fd8c6fef6e4f2ffb34fcfe8d5cd772636da8fc4b42bb78'
 
 if (-not $apiKey) {
     Write-Host "ERROR: CHECKIN_API_KEY environment variable not set" -ForegroundColor Red

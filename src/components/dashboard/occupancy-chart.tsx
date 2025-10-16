@@ -6,11 +6,16 @@ import type { TimeFormat } from "@/lib/settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 
-function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: TimeFormat = '24h') {
-  // Get today's date and day of week
-  const today = new Date();
-  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const todayWeekday = today.getDay(); // 0=Sunday, 1=Monday, etc.
+function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: TimeFormat = '24h', timezone: string = 'Europe/Bucharest') {
+  // Get today's date and day of week in the application's timezone
+  const now = new Date();
+  
+  // Get the current date in the application's timezone
+  const todayInTimezone = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
+  const todayWeekday = todayInTimezone.getDay(); // 0=Sunday, 1=Monday, etc.
+  
+  // Create date strings for comparison (YYYY-MM-DD format in the app's timezone)
+  const todayDateString = todayInTimezone.toLocaleDateString('en-CA'); // en-CA gives YYYY-MM-DD format
   
   // Find today's schedule
   const todaySchedule = schedule.find(day => day.weekday === todayWeekday);
@@ -27,30 +32,35 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: Ti
   // Filter check-ins for today only, excluding denied check-ins
   const todaysCheckIns = checkIns.filter(checkIn => {
     const checkInDate = new Date(checkIn.checked_in_at);
+    // Convert check-in time to the application's timezone and compare dates
+    const checkInInTimezone = new Date(checkInDate.toLocaleString('en-US', { timeZone: timezone }));
+    const checkInDateString = checkInInTimezone.toLocaleDateString('en-CA');
     const status = checkIn.status || 'success';
-    return checkInDate >= todayStart && status !== 'denied';
+    return checkInDateString === todayDateString && status !== 'denied';
   });
 
-  // Get current hour to limit data display
-  const currentHour = today.getHours();
-  const isToday = today.toDateString() === todayStart.toDateString();
+  // Get current hour in the application's timezone
+  const currentHour = todayInTimezone.getHours();
+  const isToday = true; // We're always showing today in this view
   
   // Create hourly buckets from opening hour to closing hour
   const hourlyOccupancy = [];
   
+  // Create a base date for today at midnight in the application's timezone
+  const todayAtMidnight = new Date(todayInTimezone.getFullYear(), todayInTimezone.getMonth(), todayInTimezone.getDate());
+  
   for (let hour = openHour; hour <= closeHour; hour++) {
-    const currentTime = new Date(todayStart.getTime() + hour * 60 * 60 * 1000);
+    // Create a timestamp for this hour in local timezone
+    const currentTime = new Date(todayAtMidnight.getTime() + hour * 60 * 60 * 1000);
     const hourKey = timeFormat === '12h' 
       ? format(currentTime, "h a")
       : hour.toString().padStart(2, '0') + ':00';
     
-    // Skip if this hour is before opening or after closing (accounting for minutes)
+    // Adjust for opening/closing minutes
     if (hour === openHour && openMinute > 0) {
-      // If gym opens later in the hour, use the actual opening time
       currentTime.setMinutes(openMinute);
     }
     if (hour === closeHour && closeMinute < 60) {
-      // If gym closes earlier in the hour, use the actual closing time
       currentTime.setMinutes(closeMinute);
     }
     
@@ -65,6 +75,7 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: Ti
         const checkOutTime = checkIn.checked_out_at ? new Date(checkIn.checked_out_at) : null;
         
         // Person is in gym if they checked in before/at this hour AND haven't checked out yet OR checked out after this hour
+        // We compare timestamps which automatically handle timezone conversion
         if (checkInTime <= currentTime) {
           if (!checkOutTime || checkOutTime > currentTime) {
             occupancy!++;
@@ -79,8 +90,8 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: Ti
   return hourlyOccupancy;
 }
 
-export function OccupancyChart({ checkIns, schedule, timeFormat = '24h' }: { checkIns: CheckIn[]; schedule: ScheduleDay[]; timeFormat?: TimeFormat }) {
-  const data = buildTrend(checkIns, schedule, timeFormat);
+export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezone = 'Europe/Bucharest' }: { checkIns: CheckIn[]; schedule: ScheduleDay[]; timeFormat?: TimeFormat; timezone?: string }) {
+  const data = buildTrend(checkIns, schedule, timeFormat, timezone);
   
   return (
     <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">
