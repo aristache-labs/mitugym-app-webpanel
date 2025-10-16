@@ -8,7 +8,18 @@ const admin = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, device_name } = await req.json();
+    // Parse request body
+    let body;
+    try {
+      body = await req.json();
+    } catch (parseError) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid JSON in request body' },
+        { status: 400 }
+      );
+    }
+
+    const { email, password, device_name } = body;
 
     // Validate input
     if (!email || !password) {
@@ -33,10 +44,10 @@ export async function POST(req: NextRequest) {
 
     const userId = authData.user.id;
 
-    // Fetch user profile to get name and location
+    // Fetch user profile to get name
     const { data: profile, error: profileError } = await admin
       .from('profiles')
-      .select('first_name, last_name, location_id')
+      .select('first_name, last_name')
       .eq('id', userId)
       .single();
 
@@ -47,19 +58,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Fetch location name separately
-    let locationName = 'Unknown Location';
-    if (profile.location_id) {
-      const { data: location } = await admin
-        .from('locations')
-        .select('name')
-        .eq('id', profile.location_id)
-        .single();
-      
-      if (location) {
-        locationName = location.name;
-      }
-    }
+    // Default location name (can be customized later)
+    const locationName = 'MituGym';
 
     // Get or create API key for this user
     const { data: existingApiKey, error: apiKeyError } = await admin

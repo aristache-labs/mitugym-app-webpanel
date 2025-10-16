@@ -33,9 +33,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Fetch user profile
-    const { data: profile, error: profileError } = await admin
+    const { data: profile, error: profileError} = await admin
       .from('profiles')
-      .select('first_name, last_name, location_id, locations(name)')
+      .select('first_name, last_name')
       .eq('id', apiKeyData.user_id)
       .single();
 
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     // Return validation success
     const userName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
-    const locationName = profile.locations?.name || 'Unknown Location';
+    const locationName = 'MituGym';
 
     return NextResponse.json({
       valid: true,
