@@ -282,10 +282,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find member by member ID and get all relevant details (including role for staff check)
+    // Find member by member ID and get all relevant details
     const { data: member, error: memberError } = await admin
       .from("profiles")
-      .select("id, first_name, last_name, email, phone, date_of_birth, gender, address, city, county, status, plan_id, starts_at, expires_at, totp_secret, avatar_url, role")
+      .select("id, first_name, last_name, email, phone, date_of_birth, gender, address, city, county, status, plan_id, starts_at, expires_at, totp_secret, avatar_url")
       .eq("id", actualMemberId)
       .single();
 
@@ -450,9 +450,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // ✅ STAFF OVERRIDE: Allow staff/admin members to bypass all membership checks
-    const memberWithRole = member as typeof member & { role?: string };
-    const isStaffOrAdmin = memberWithRole.role === 'staff' || memberWithRole.role === 'admin';
+    // Note: Staff override disabled (role column doesn't exist in profiles table)
+    // To enable: Add 'role' column to profiles table and uncomment below
+    const isStaffOrAdmin = false; // Disabled for now
     
     if (isStaffOrAdmin) {
       // Staff always get free entry - skip all validation and record as special check-in
