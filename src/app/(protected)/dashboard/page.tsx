@@ -126,60 +126,80 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-2">
-                {latestCheckIns.map((checkIn, index) => (
-                  <div 
-                    key={checkIn.id} 
-                    className="group/item flex items-center justify-between rounded-2xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 px-3 py-3 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
-                  >
-                    <div className="flex items-center gap-3">
-                       <AvatarWithPreview
-                         avatarUrl={checkIn.avatar_url}
-                         memberName={checkIn.member_name || "Walk-in"}
-                         size="small"
-                         className="border-primary/20"
-                       />
-                       <div className="flex-1">
-                         <div className="flex items-center gap-2">
-                           {checkIn.member_name && checkIn.member_name !== "Walk-in" ? (
-                             <Link href={`/members/${checkIn.member_id}`} className="group/member">
-                               <p className="font-semibold text-text group-hover/item:text-primary group-hover/member:text-primary transition-colors cursor-pointer hover:underline">
-                                 {checkIn.member_name}
+                {latestCheckIns.map((checkIn, index) => {
+                  const status = checkIn.status || 'success';
+                  const isDenied = status === 'denied';
+                  
+                  return (
+                    <div 
+                      key={checkIn.id} 
+                      className={`group/item flex items-center justify-between rounded-2xl bg-gradient-to-r border px-3 py-3 transition-all duration-200 ${
+                        isDenied
+                          ? 'from-destructive/10 to-destructive/5 border-destructive/30 hover:from-destructive/15 hover:to-destructive/10 hover:border-destructive/40'
+                          : 'from-surface/80 to-surface/60 border-surface/40 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                         <AvatarWithPreview
+                           avatarUrl={checkIn.avatar_url}
+                           memberName={checkIn.member_name || "Walk-in"}
+                           size="small"
+                           className="border-primary/20"
+                         />
+                         <div className="flex-1">
+                           <div className="flex items-center gap-2">
+                             {checkIn.member_name && checkIn.member_name !== "Walk-in" ? (
+                               <Link href={`/members/${checkIn.member_id}`} className="group/member">
+                                 <p className="font-semibold text-text group-hover/item:text-primary group-hover/member:text-primary transition-colors cursor-pointer hover:underline">
+                                   {checkIn.member_name}
+                                 </p>
+                               </Link>
+                             ) : (
+                               <p className="font-semibold text-text group-hover/item:text-primary transition-colors">
+                                 Walk-in
                                </p>
-                             </Link>
-                           ) : (
-                             <p className="font-semibold text-text group-hover/item:text-primary transition-colors">
-                               Walk-in
-                             </p>
+                             )}
+                             {isDenied && (
+                               <Badge 
+                                 variant="destructive" 
+                                 className="text-xs"
+                                 title={checkIn.denial_reason || 'Access denied'}
+                               >
+                                 Denied
+                               </Badge>
+                             )}
+                           </div>
+                           <div className="flex items-center gap-2 mt-1">
+                             <svg className="h-3 w-3 text-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                             </svg>
+                             <p className="text-xs text-muted/80">{formatDate(checkIn.checked_in_at)}</p>
+                           </div>
+                         </div>
+                       </div>
+                       <div className="flex flex-col items-end gap-2">
+                         <div className="flex items-center gap-2">
+                           {index === 0 && !isDenied && (
+                             <span className="px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full text-xs font-medium border border-green-500/30">
+                               Latest
+                             </span>
+                           )}
+                           {!isDenied && (
+                             <Badge 
+                               variant="default" 
+                               className="capitalize bg-primary/20 text-primary border-primary/30 hover:bg-primary/30 transition-colors"
+                             >
+                               {checkIn.method ?? "manual"}
+                             </Badge>
                            )}
                          </div>
-                         <div className="flex items-center gap-2 mt-1">
-                           <svg className="h-3 w-3 text-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                           </svg>
-                           <p className="text-xs text-muted/80">{formatDate(checkIn.checked_in_at)}</p>
+                         <div className="text-xs text-muted/60">
+                           Check-in #{latestCheckIns.length - index}
                          </div>
                        </div>
-                     </div>
-                     <div className="flex flex-col items-end gap-2">
-                       <div className="flex items-center gap-2">
-                         {index === 0 && (
-                           <span className="px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full text-xs font-medium border border-green-500/30">
-                             Latest
-                           </span>
-                         )}
-                         <Badge 
-                           variant="default" 
-                           className="capitalize bg-primary/20 text-primary border-primary/30 hover:bg-primary/30 transition-colors"
-                         >
-                           {checkIn.method ?? "manual"}
-                         </Badge>
-                       </div>
-                       <div className="text-xs text-muted/60">
-                         Check-in #{latestCheckIns.length - index}
-                       </div>
-                     </div>
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
              )}
            </CardContent>

@@ -100,6 +100,15 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
         accessorKey: "checked_out_at",
         header: "Checked Out",
         cell: ({ row }) => {
+          const status = row.original.status || 'success';
+          
+          // If denied, show N/A
+          if (status === 'denied') {
+            return (
+              <span className="text-sm text-muted/60">N/A</span>
+            );
+          }
+          
           if (row.original.checked_out_at) {
             const date = new Date(row.original.checked_out_at);
             return (
@@ -128,7 +137,16 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
         accessorKey: "duration_minutes",
         header: "Duration",
         cell: ({ row }) => {
+          const status = row.original.status || 'success';
           const minutes = row.original.duration_minutes;
+          
+          // If denied, show N/A
+          if (status === 'denied') {
+            return (
+              <span className="text-sm text-muted/60">N/A</span>
+            );
+          }
+          
           if (!minutes) {
             return (
               <div className="flex items-center gap-2">
@@ -175,15 +193,28 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
       {
         id: "actions",
         header: "Actions",
-        cell: ({ row }) => (
-          <div className="flex justify-center">
-            <CheckoutButton
-              checkinId={row.original.id}
-              memberName={row.original.member_name ?? "Walk-in"}
-              isCheckedOut={!!row.original.checked_out_at}
-            />
-          </div>
-        ),
+        cell: ({ row }) => {
+          const status = row.original.status || 'success';
+          
+          // If denied, no actions available
+          if (status === 'denied') {
+            return (
+              <div className="flex justify-center">
+                <span className="text-sm text-muted/60">No actions</span>
+              </div>
+            );
+          }
+          
+          return (
+            <div className="flex justify-center">
+              <CheckoutButton
+                checkinId={row.original.id}
+                memberName={row.original.member_name ?? "Walk-in"}
+                isCheckedOut={!!row.original.checked_out_at}
+              />
+            </div>
+          );
+        },
       },
     ],
     []

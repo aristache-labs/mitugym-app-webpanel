@@ -454,14 +454,19 @@ export async function fetchOccupancy(): Promise<OccupancySnapshot> {
     return { total: sampleCheckIns.length, capacity: 120 };
   }
 
-  const { data, error } = await admin.rpc("current_occupancy");
+  // Count only successful check-ins that haven't checked out yet
+  const { count, error } = await admin
+    .from("checkins")
+    .select("*", { count: "exact", head: true })
+    .is("check_out_time", null)
+    .neq("status", "denied"); // Exclude denied check-ins
 
   if (error) {
     console.error("Failed to fetch occupancy", error);
-    return { total: sampleCheckIns.length, capacity: 120 };
+    return { total: 0, capacity: 120 };
   }
 
-  return (data as OccupancySnapshot) ?? { total: 0, capacity: 120 };
+  return { total: count ?? 0, capacity: 120 };
 }
 
 export async function fetchDeniedScansCount(): Promise<number> {
@@ -508,7 +513,8 @@ export async function fetchDashboardMetrics() {
   }
 
   const occupancyNow = occupancy?.total ?? checkIns.filter((checkIn) => {
-    return new Date(checkIn.checked_in_at).getTime() > Date.now() - 1000 * 60 * 60;
+    const status = checkIn.status || 'success';
+    return status !== 'denied' && !checkIn.checked_out_at && new Date(checkIn.checked_in_at).getTime() > Date.now() - 1000 * 60 * 60;
   }).length;
 
   // Count pending session bookings
