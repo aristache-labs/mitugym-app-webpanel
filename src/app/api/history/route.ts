@@ -152,11 +152,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch profiles separately
+    // Fetch profiles separately (including all member details)
     const userIds = [...new Set(checkins?.map(c => c.user_id) || [])];
     const { data: profiles, error: profilesError } = await admin
       .from("profiles")
-      .select("id, first_name, last_name, avatar_url, status")
+      .select("id, first_name, last_name, avatar_url, status, email, phone, date_of_birth, address, city, county, gender, expires_at, starts_at")
       .in("id", userIds);
 
     if (profilesError) {
@@ -217,12 +217,22 @@ export async function GET(request: NextRequest) {
             avatar_url: profile?.avatar_url || null,
             membership_status: profile?.status || 'unknown',
             plan_name: checkin.membership_plan_name || 'Unknown Plan',
+            expires_at: profile?.expires_at || null,
+            starts_at: profile?.starts_at || null,
             method: checkin.method || 'qr',
             check_in_time: checkin.check_in_time,
             check_out_time: checkin.check_out_time,
             duration_minutes: checkin.duration_minutes || null,
             status: checkin.status || 'success',
             denial_reason: checkin.denial_reason || null,
+            // Additional member details
+            email: profile?.email || null,
+            phone: profile?.phone || null,
+            date_of_birth: profile?.date_of_birth || null,
+            address: profile?.address || null,
+            city: profile?.city || null,
+            county: profile?.county || null,
+            gender: profile?.gender || null,
           },
           ip_address: null,
           duration_ms: null,

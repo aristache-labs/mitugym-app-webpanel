@@ -13,6 +13,24 @@ const checkinRequestSchema = z.object({
   device_id: z.string().optional(), // Optional device identifier
 });
 
+// Member profile type from database
+type MemberProfile = {
+  id: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  avatar_url?: string | null;
+  status?: string | null;
+  expires_at?: string | null;
+  starts_at?: string | null;
+  date_of_birth?: string | null;
+  address?: string | null;
+  city?: string | null;
+  county?: string | null;
+  gender?: string | null;
+};
+
 // Response types
 type CheckinResponse = {
   success: boolean;
@@ -22,14 +40,50 @@ type CheckinResponse = {
     member_id?: string;
     member_name?: string;
     avatar_url?: string | null;
-    membership_status?: string;
+    membership_status?: string | null;
     plan_name?: string;
     expires_at?: string;
     starts_at?: string;
     duration_minutes?: number;
+    // Additional member details
+    email?: string;
+    phone?: string | null;
+    date_of_birth?: string | null;
+    address?: string | null;
+    city?: string | null;
+    county?: string | null;
+    gender?: string | null;
   };
   error?: string;
 };
+
+/**
+ * Helper function to build consistent member data response
+ */
+function buildMemberData(member: MemberProfile, planName: string, additionalData?: {
+  checkin_id?: string;
+  duration_minutes?: number;
+}) {
+  return {
+    checkin_id: additionalData?.checkin_id,
+    member_id: member.id,
+    member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
+    avatar_url: member.avatar_url || null,
+    membership_status: member.status,
+    plan_name: planName,
+    expires_at: member.expires_at || undefined,
+    starts_at: member.starts_at || undefined,
+    duration_minutes: additionalData?.duration_minutes,
+    // Additional member details
+    email: member.email || undefined,
+    phone: member.phone || null,
+    date_of_birth: member.date_of_birth || null,
+    address: member.address || null,
+    city: member.city || null,
+    county: member.county || null,
+    gender: member.gender || null,
+  };
+}
 
 /**
  * POST /api/checkin
@@ -223,10 +277,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find member by member ID and get TOTP secret and avatar if needed
+    // Find member by member ID and get all relevant details
     const { data: member, error: memberError } = await admin
       .from("profiles")
-      .select("id, first_name, last_name, email, status, plan_id, starts_at, expires_at, totp_secret, avatar_url")
+      .select("id, first_name, last_name, email, phone, date_of_birth, gender, address, city, county, status, plan_id, starts_at, expires_at, totp_secret, avatar_url")
       .eq("id", actualMemberId)
       .single();
 
@@ -481,14 +535,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message: "Membership has not started yet",
-          data: {
-            member_id: member.id,
-            member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
-            avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
-            membership_status: "pending",
-            plan_name: planName,
-            starts_at: member.starts_at || undefined,
-          },
+          data: buildMemberData(member, planName),
         },
         { status: 200 }
       );
@@ -532,14 +579,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message: "Membership has expired",
-          data: {
-            member_id: member.id,
-            member_name: `${member.first_name || ""} ${member.last_name || ""}`.trim(),
-            avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
-            membership_status: "expired",
-            plan_name: planName,
-            expires_at: member.expires_at || undefined,
-          },
+          data: buildMemberData(member, planName),
         },
         { status: 200 }
       );
@@ -610,15 +650,9 @@ export async function POST(request: NextRequest) {
       const responseData = {
         success: true,
         message: "Check-in successful",
-        data: {
+        data: buildMemberData(member, planName, {
           checkin_id: newCheckin.id,
-          member_id: member.id,
-          member_name: memberName,
-          avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
-          membership_status: member.status,
-          plan_name: planName,
-          expires_at: member.expires_at || undefined,
-        },
+        }),
       };
 
       await logApiRequest({
@@ -658,14 +692,7 @@ export async function POST(request: NextRequest) {
             success: false,
             message: "No active check-in found",
             error: "Member is not currently checked in",
-            data: {
-              member_id: member.id,
-              member_name: memberName,
-              avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
-              membership_status: member.status,
-              plan_name: planName,
-              expires_at: member.expires_at || undefined,
-            },
+            data: buildMemberData(member, planName),
           },
           { status: 404 }
         );
@@ -698,16 +725,10 @@ export async function POST(request: NextRequest) {
       const checkoutResponseData = {
         success: true,
         message: "Check-out successful",
-        data: {
+        data: buildMemberData(member, planName, {
           checkin_id: activeCheckin.id,
-          member_id: member.id,
-          member_name: memberName,
-          avatar_url: (member as typeof member & { avatar_url?: string | null }).avatar_url || null,
-          membership_status: member.status,
-          plan_name: planName,
-          expires_at: member.expires_at || undefined,
           duration_minutes: durationMinutes,
-        },
+        }),
       };
 
       await logApiRequest({
