@@ -196,17 +196,20 @@ export async function GET(request: NextRequest) {
           ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() 
           : 'Unknown';
 
+        // Determine if the entry was successful or denied
+        const wasSuccessful = checkin.status !== 'denied';
+        
         // Add single session entry (includes both check-in and check-out data)
         historyEntries.push({
           id: checkin.id,
           endpoint: '/api/checkin',
           method: 'POST',
-          status_code: 200,
+          status_code: wasSuccessful ? 200 : 403,
           member_id: checkin.user_id,
           member_name: memberName,
           api_action: 'session', // Single session entry
-          success: true,
-          error_message: null,
+          success: wasSuccessful,
+          error_message: wasSuccessful ? null : (checkin.denial_reason || 'Access denied'),
           response_data: {
             checkin_id: checkin.id,
             member_id: checkin.user_id,
