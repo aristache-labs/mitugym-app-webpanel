@@ -56,13 +56,17 @@ export default async function DashboardPage() {
           icon={Clock}
           href="/bookings"
         />
-        <MetricCard 
-          title="Pending Services" 
-          value={metrics.pendingServices} 
-          description="Awaiting approval" 
-          icon={Settings}
-          href="/services"
-        />
+        <div className="col-span-2 flex justify-center md:col-span-1 md:block">
+          <div className="w-1/2 md:w-full">
+            <MetricCard 
+              title="Pending Services" 
+              value={metrics.pendingServices} 
+              description="Awaiting approval" 
+              icon={Settings}
+              href="/services"
+            />
+          </div>
+        </div>
       </section>
 
       {/* Main Content Grid - Stacks on mobile */}
