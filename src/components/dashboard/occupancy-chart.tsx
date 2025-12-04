@@ -142,7 +142,7 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
     return 1;                                   // Above 18 hours: show every 2 hours
   };
 
-  // Generate custom ticks array with equal spacing that always includes the last hour
+  // Generate custom ticks array with truly equal spacing
   const getCustomTicks = () => {
     if (data.length === 0) return undefined;
     
@@ -151,18 +151,23 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
     // If showing every tick, no custom ticks needed
     if (interval === 0) return undefined;
     
+    const hours = data.length;
     const tickInterval = interval + 1;
+    
+    // Calculate how many ticks we can fit with this interval
+    const numTicks = Math.floor((hours - 1) / tickInterval) + 1;
+    
+    // Calculate the actual spacing to distribute ticks evenly from first to last
+    const actualSpacing = (hours - 1) / (numTicks - 1);
+    
     const ticks: string[] = [];
     
-    // Add ticks at regular intervals
-    for (let i = 0; i < data.length; i += tickInterval) {
-      ticks.push(data[i].time);
-    }
-    
-    // Always ensure the last hour is included if it's not already
-    const lastIndex = data.length - 1;
-    if (lastIndex > 0 && !ticks.includes(data[lastIndex].time)) {
-      ticks.push(data[lastIndex].time);
+    // Generate evenly spaced ticks
+    for (let i = 0; i < numTicks; i++) {
+      const index = Math.round(i * actualSpacing);
+      if (index < data.length) {
+        ticks.push(data[index].time);
+      }
     }
     
     return ticks;
