@@ -130,10 +130,11 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
     const hours = data.length;
     
     if (isMobile) {
-      // Mobile: Show fewer labels to prevent crowding
-      if (hours <= 12) return "preserveStartEnd";  // 10-12 hours: smart spacing
-      if (hours <= 18) return 2;  // 13-18 hours: show every 3 hours
-      return 3;                    // 19+ hours: show every 4 hours
+      // Mobile: Show fewer labels with equal spacing
+      if (hours <= 8) return 0;   // 8 or less hours: show every hour
+      if (hours <= 12) return 1;  // 9-12 hours: show every 2 hours
+      if (hours <= 16) return 2;  // 13-16 hours: show every 3 hours
+      return 3;                    // 17+ hours: show every 4 hours
     }
     
     // Desktop: Original logic
@@ -141,29 +142,27 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
     return 1;                                   // Above 18 hours: show every 2 hours
   };
 
-  // Generate custom ticks array to ensure first and last are always included
+  // Generate custom ticks array with equal spacing that always includes the last hour
   const getCustomTicks = () => {
     if (data.length === 0) return undefined;
     
     const interval = getXAxisInterval();
     
-    // If using preserveStartEnd, let Recharts handle it
-    if (interval === "preserveStartEnd") return undefined;
+    // If showing every tick, no custom ticks needed
+    if (interval === 0) return undefined;
     
-    const tickInterval = typeof interval === 'number' ? interval + 1 : 1;
+    const tickInterval = interval + 1;
     const ticks: string[] = [];
     
-    // Always include first hour
-    ticks.push(data[0].time);
-    
-    // Add intermediate ticks based on interval
-    for (let i = tickInterval; i < data.length - 1; i += tickInterval) {
+    // Add ticks at regular intervals
+    for (let i = 0; i < data.length; i += tickInterval) {
       ticks.push(data[i].time);
     }
     
-    // Always include last hour (if not already added)
-    if (data.length > 1 && ticks[ticks.length - 1] !== data[data.length - 1].time) {
-      ticks.push(data[data.length - 1].time);
+    // Always ensure the last hour is included if it's not already
+    const lastIndex = data.length - 1;
+    if (lastIndex > 0 && !ticks.includes(data[lastIndex].time)) {
+      ticks.push(data[lastIndex].time);
     }
     
     return ticks;
@@ -236,6 +235,7 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
                 axisLine={false}
                 tick={{ fill: 'rgba(77,212,212,0.7)', fontSize: isMobile ? 9 : 11 }}
                 ticks={getCustomTicks()}
+                interval={0}
                 tickMargin={isMobile ? 4 : 8}
                 angle={isMobile ? -45 : 0}
                 textAnchor={isMobile ? 'end' : 'middle'}
