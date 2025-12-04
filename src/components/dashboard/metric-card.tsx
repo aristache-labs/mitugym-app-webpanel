@@ -26,30 +26,30 @@ export function MetricCard({
       <div className={`absolute inset-0 ${isError ? 'bg-gradient-to-br from-error/2 via-error/1 to-destructive/2' : 'bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2'} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[20px]`} />
       
       <div className="relative text-center flex flex-col h-full">
-        <div className="relative px-4 pt-3 pb-2">
+        <div className="relative px-3 sm:px-4 pt-2.5 sm:pt-3 pb-2">
           {/* Gradient border */}
           <div className={`absolute bottom-0 left-0 right-0 h-px ${isError ? 'bg-gradient-to-r from-transparent via-error to-transparent' : 'bg-gradient-to-r from-transparent via-primary to-transparent'}`}></div>
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2">
             {Icon && (
-              <div className={`p-1.5 rounded-lg ${isError ? 'bg-error/10 group-hover:bg-error/20' : 'bg-primary/10 group-hover:bg-primary/20'} transition-colors`}>
-                <Icon className={`h-3.5 w-3.5 ${isError ? 'text-error/60 group-hover:text-error' : 'text-primary/60 group-hover:text-primary'} transition-colors`} />
+              <div className={`p-1 sm:p-1.5 rounded-lg ${isError ? 'bg-error/10 group-hover:bg-error/20' : 'bg-primary/10 group-hover:bg-primary/20'} transition-colors`}>
+                <Icon className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${isError ? 'text-error/60 group-hover:text-error' : 'text-primary/60 group-hover:text-primary'} transition-colors`} />
               </div>
             )}
-            <CardDescription className={`text-[14px] uppercase tracking-[0.15em] text-muted/70 font-semibold ${isError ? 'group-hover:text-error/70' : 'group-hover:text-primary/70'} transition-colors whitespace-nowrap`}>
+            <CardDescription className={`text-[11px] sm:text-[14px] uppercase tracking-[0.1em] sm:tracking-[0.15em] text-muted/70 font-semibold ${isError ? 'group-hover:text-error/70' : 'group-hover:text-primary/70'} transition-colors truncate`}>
               {title}
             </CardDescription>
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center p-4">
-          <CardTitle className={`text-2xl font-bold text-text ${isError ? 'group-hover:text-error' : 'group-hover:text-primary'} transition-colors duration-300 leading-none`}>
+        <div className="flex-1 flex items-center justify-center p-3 sm:p-4">
+          <CardTitle className={`text-xl sm:text-2xl font-bold text-text ${isError ? 'group-hover:text-error' : 'group-hover:text-primary'} transition-colors duration-300 leading-none`}>
             {value}
           </CardTitle>
         </div>
         {description && (
-          <div className="relative px-4 pb-3 pt-2">
+          <div className="relative px-3 sm:px-4 pb-2.5 sm:pb-3 pt-2">
             {/* Gradient border */}
             <div className={`absolute top-0 left-0 right-0 h-px ${isError ? 'bg-gradient-to-r from-transparent via-error to-transparent' : 'bg-gradient-to-r from-transparent via-primary to-transparent'}`}></div>
-            <p className="text-xs text-muted/80 group-hover:text-muted transition-colors">
+            <p className="text-[10px] sm:text-xs text-muted/80 group-hover:text-muted transition-colors leading-tight">
               {description}
             </p>
           </div>

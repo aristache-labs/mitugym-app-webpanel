@@ -55,32 +55,37 @@ export function LoginForm() {
   });
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-6">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-8 sm:px-6">
       {/* Logo */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <Image
           src="/logo.png"
           alt="MITUGYM Logo"
-          width={150}
-          height={150}
-          className="mx-auto"
+          width={120}
+          height={120}
+          className="mx-auto sm:w-[150px] sm:h-[150px]"
         />
       </div>
       
-      <Card className="w-full max-w-md border-primary/20 bg-surface/80">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl font-semibold text-primary">Staff Portal</CardTitle>
+      <Card className="w-full max-w-md border-primary/20 bg-surface/80 shadow-2xl">
+        <CardHeader className="pb-4 sm:pb-6">
+          <CardTitle className="text-center text-xl font-semibold text-primary sm:text-2xl">Staff Portal</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 pb-6 sm:px-6 sm:pb-8">
           <Form {...form}>
-            <form onSubmit={onSubmit} className="space-y-6">
+            <form onSubmit={onSubmit} className="space-y-5 sm:space-y-6">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <Input type="email" placeholder="staff@mitugym.dev" {...field} />
+                    <FormLabel className="text-sm">Email</FormLabel>
+                    <Input 
+                      type="email" 
+                      placeholder="staff@mitugym.dev" 
+                      {...field}
+                      className="h-11 sm:h-10"
+                    />
                     <FormMessage>{form.formState.errors.email?.message}</FormMessage>
                   </FormItem>
                 )}
@@ -90,20 +95,25 @@ export function LoginForm() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <FormLabel className="text-sm">Password</FormLabel>
+                    <Input 
+                      type="password" 
+                      placeholder="••••••••" 
+                      {...field}
+                      className="h-11 sm:h-10"
+                    />
                     <FormMessage>{form.formState.errors.password?.message}</FormMessage>
                   </FormItem>
                 )}
               />
               {error ? <p className="text-sm text-error">{error}</p> : null}
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full h-11 sm:h-10 text-base sm:text-sm">
                 Sign in
               </Button>
             </form>
           </Form>
-          <p className="mt-6 text-center text-xs text-muted">
-            Need access? Contact <Link href="mailto:ops@mitugym.dev">ops@mitugym.dev</Link>
+          <p className="mt-5 text-center text-xs text-muted sm:mt-6">
+            Need access? Contact <Link href="mailto:ops@mitugym.dev" className="underline">ops@mitugym.dev</Link>
           </p>
         </CardContent>
       </Card>

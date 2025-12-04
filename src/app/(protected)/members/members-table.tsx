@@ -28,15 +28,17 @@ export function MembersTable({ members }: { members: Member[] }) {
       data={members}
       filterKey="full_name"
       toolbarSlot={
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Link href="/members/new">
-            <Button className="gap-2 bg-primary hover:bg-primary/90 text-white">
-              <Plus className="h-4 w-4" />
-              Add Member
+            <Button className="gap-2 bg-primary hover:bg-primary/90 text-white h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4">
+              <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Add Member</span>
+              <span className="sm:hidden">Add</span>
             </Button>
           </Link>
-          <Button variant="outline" onClick={handleExport}>
-            Export CSV
+          <Button variant="outline" onClick={handleExport} className="h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4">
+            <span className="hidden sm:inline">Export CSV</span>
+            <span className="sm:hidden">Export</span>
           </Button>
         </div>
       }

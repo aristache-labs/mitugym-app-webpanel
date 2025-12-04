@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { CheckIn, ScheduleDay } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
@@ -101,6 +102,16 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: Ti
 
 export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezone = 'Europe/Bucharest' }: { checkIns: CheckIn[]; schedule: ScheduleDay[]; timeFormat?: TimeFormat; timezone?: string }) {
   const data = buildTrend(checkIns, schedule, timeFormat, timezone);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Calculate peak value
+  const peakValue = data.filter(d => d.total !== null).length > 0 
+    ? Math.max(...data.filter(d => d.total !== null).map(d => d.total as number))
+    : null;
   
   return (
     <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">
@@ -126,10 +137,7 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
           </div>
           <div className="text-right">
             <div className="text-sm font-semibold text-text">
-              {data.filter(d => d.total !== null).length > 0 
-                ? `Peak: ${Math.max(...data.filter(d => d.total !== null).map(d => d.total as number))}`
-                : "No data"
-              }
+              {!mounted ? "Loading..." : peakValue !== null ? `Peak: ${peakValue}` : "No data"}
             </div>
             <div className="text-xs text-muted/70">people</div>
           </div>

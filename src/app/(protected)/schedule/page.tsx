@@ -12,7 +12,7 @@ export default async function SchedulePage() {
     getTimeFormat(),
   ]);
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-0">
       <PremiumScheduleEditor schedule={schedule} timeFormat={timeFormat} />
     </div>
   );
