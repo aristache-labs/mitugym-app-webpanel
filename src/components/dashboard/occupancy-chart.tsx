@@ -113,6 +113,14 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
     ? Math.max(...data.filter(d => d.total !== null).map(d => d.total as number))
     : null;
   
+  // Smart interval based on data length (number of hours)
+  // The interval property in Recharts means: 0=every tick, 1=every 2nd tick, 2=every 3rd tick, etc.
+  const getXAxisInterval = () => {
+    const hours = data.length;
+    if (hours >= 10 && hours <= 18) return 0;  // 10-16 hours: show every hour (e.g., 5 AM - 11 PM is 18 hours)
+    return 1;                                    // Above 16 hours: show every 2 hours
+  };
+  
   return (
     <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">
       {/* Full card hover overlay */}
@@ -173,7 +181,8 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
                 tickLine={false} 
                 axisLine={false}
                 tick={{ fill: 'rgba(77,212,212,0.7)', fontSize: 11 }}
-                interval={0}
+                interval={getXAxisInterval()}
+                includeHidden
                 tickMargin={8}
               />
               <YAxis 
