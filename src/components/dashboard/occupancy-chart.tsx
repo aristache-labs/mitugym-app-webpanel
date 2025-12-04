@@ -103,9 +103,20 @@ function buildTrend(checkIns: CheckIn[], schedule: ScheduleDay[], timeFormat: Ti
 export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezone = 'Europe/Bucharest' }: { checkIns: CheckIn[]; schedule: ScheduleDay[]; timeFormat?: TimeFormat; timezone?: string }) {
   const data = buildTrend(checkIns, schedule, timeFormat, timezone);
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    
+    // Check if screen is mobile/tablet
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // Tailwind's md breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Calculate peak value
@@ -113,13 +124,51 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
     ? Math.max(...data.filter(d => d.total !== null).map(d => d.total as number))
     : null;
   
-  // Smart interval based on data length (number of hours)
+  // Smart interval based on data length (number of hours) and screen size
   // The interval property in Recharts means: 0=every tick, 1=every 2nd tick, 2=every 3rd tick, etc.
   const getXAxisInterval = () => {
     const hours = data.length;
-    if (hours >= 10 && hours <= 18) return 0;  // 10-16 hours: show every hour (e.g., 5 AM - 11 PM is 18 hours)
-    return 1;                                    // Above 16 hours: show every 2 hours
+    
+    if (isMobile) {
+      // Mobile: Show fewer labels to prevent crowding
+      if (hours <= 12) return "preserveStartEnd";  // 10-12 hours: smart spacing
+      if (hours <= 18) return 2;  // 13-18 hours: show every 3 hours
+      return 3;                    // 19+ hours: show every 4 hours
+    }
+    
+    // Desktop: Original logic
+    if (hours >= 10 && hours <= 18) return 0;  // 10-18 hours: show every hour
+    return 1;                                   // Above 18 hours: show every 2 hours
   };
+
+  // Generate custom ticks array to ensure first and last are always included
+  const getCustomTicks = () => {
+    if (data.length === 0) return undefined;
+    
+    const interval = getXAxisInterval();
+    
+    // If using preserveStartEnd, let Recharts handle it
+    if (interval === "preserveStartEnd") return undefined;
+    
+    const tickInterval = typeof interval === 'number' ? interval + 1 : 1;
+    const ticks: string[] = [];
+    
+    // Always include first hour
+    ticks.push(data[0].time);
+    
+    // Add intermediate ticks based on interval
+    for (let i = tickInterval; i < data.length - 1; i += tickInterval) {
+      ticks.push(data[i].time);
+    }
+    
+    // Always include last hour (if not already added)
+    if (data.length > 1 && ticks[ticks.length - 1] !== data[data.length - 1].time) {
+      ticks.push(data[data.length - 1].time);
+    }
+    
+    return ticks;
+  };
+
   
   return (
     <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">
@@ -152,10 +201,15 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
         </div>
       </CardHeader>
       
-      <CardContent className="relative p-6">
-        <div className="h-[250px] w-full">
+      <CardContent className="relative p-4 md:p-6">
+        <div className={isMobile ? "h-[280px] w-full" : "h-[250px] w-full"}>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 25, right: 25, left: 15, bottom: 25 }}>
+            <AreaChart 
+              data={data} 
+              margin={isMobile 
+                ? { top: 15, right: 10, left: 5, bottom: 50 } 
+                : { top: 25, right: 25, left: 15, bottom: 25 }
+              }>
               <defs>
                 <linearGradient id="occupancyGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#4dd4d4" stopOpacity={0.8} />
@@ -177,24 +231,26 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
               <XAxis 
                 dataKey="time" 
                 stroke="rgba(77,212,212,0.6)" 
-                fontSize={11} 
+                fontSize={isMobile ? 9 : 11} 
                 tickLine={false} 
                 axisLine={false}
-                tick={{ fill: 'rgba(77,212,212,0.7)', fontSize: 11 }}
-                interval={getXAxisInterval()}
-                includeHidden
-                tickMargin={8}
+                tick={{ fill: 'rgba(77,212,212,0.7)', fontSize: isMobile ? 9 : 11 }}
+                ticks={getCustomTicks()}
+                tickMargin={isMobile ? 4 : 8}
+                angle={isMobile ? -45 : 0}
+                textAnchor={isMobile ? 'end' : 'middle'}
+                height={isMobile ? 60 : 30}
               />
               <YAxis 
                 stroke="rgba(77,212,212,0.6)" 
-                fontSize={11} 
+                fontSize={isMobile ? 9 : 11} 
                 tickLine={false} 
                 axisLine={false} 
                 allowDecimals={false}
-                tick={{ fill: 'rgba(77,212,212,0.7)', fontSize: 11 }}
-                tickMargin={8}
-                width={35}
-                domain={[0, 'dataMax']}
+                tick={{ fill: 'rgba(77,212,212,0.7)', fontSize: isMobile ? 9 : 11 }}
+                tickMargin={isMobile ? 4 : 8}
+                width={isMobile ? 25 : 35}
+                domain={[1, (dataMax: number) => Math.max(dataMax, 5)]}
               />
               <Tooltip
                 contentStyle={{ 
@@ -203,7 +259,7 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
                   border: "1px solid rgba(77,212,212,0.3)",
                   backdropFilter: "blur(16px)",
                   boxShadow: "0 12px 40px rgba(0,0,0,0.6)",
-                  fontSize: "13px"
+                  fontSize: isMobile ? "11px" : "13px"
                 }}
                 labelStyle={{ color: "#4dd4d4", fontWeight: "600", marginBottom: "4px" }}
                 formatter={(value: unknown) => {
