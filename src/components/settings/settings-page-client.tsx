@@ -63,44 +63,47 @@ export function SettingsPageClient({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
       {/* Page Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
-          <Settings className="h-6 w-6 text-primary" />
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-primary/10 border border-primary/20">
+          <Settings className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-text">Settings</h1>
-          <p className="text-sm text-muted/70">Configure your gym management system</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-text">Settings</h1>
+          <p className="text-xs sm:text-sm text-muted/70">Configure your gym management system</p>
         </div>
       </div>
 
       {/* Tabbed Interface */}
       <Tabs defaultValue="general" value={activeTab} onValueChange={handleTabChange}>
         <TabsList>
-          <TabsTrigger value="general" icon={<Globe className="h-4 w-4" />}>
-            General Settings
+          <TabsTrigger value="general" icon={<Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}>
+            <span className="hidden sm:inline">General Settings</span>
+            <span className="sm:hidden">General</span>
           </TabsTrigger>
-          <TabsTrigger value="security" icon={<Shield className="h-4 w-4" />}>
-            Security & API
+          <TabsTrigger value="security" icon={<Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}>
+            <span className="hidden sm:inline">Security & API</span>
+            <span className="sm:hidden">Security</span>
           </TabsTrigger>
-          <TabsTrigger value="logs" icon={<Activity className="h-4 w-4" />}>
-            Activity Logs
+          <TabsTrigger value="logs" icon={<Activity className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}>
+            <span className="hidden sm:inline">Activity Logs</span>
+            <span className="sm:hidden">Logs</span>
           </TabsTrigger>
         </TabsList>
 
         {/* Tab 1: General Settings */}
         <TabsContent value="general">
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Timezone Settings - Always Expanded */}
-            <div className="rounded-[16px] border border-surface/60 bg-card/80 backdrop-blur p-6 shadow-lg shadow-black/10">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 rounded-xl bg-primary/10">
-                  <Globe className="h-5 w-5 text-primary" />
+            <div className="rounded-xl sm:rounded-[16px] border border-surface/60 bg-card/80 backdrop-blur p-4 sm:p-6 shadow-lg shadow-black/10">
+              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-primary/10">
+                  <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-text">Timezone Configuration</h2>
-                  <p className="text-xs text-muted/60 mt-0.5">Set your application timezone and time format</p>
+                  <h2 className="text-base sm:text-lg font-semibold text-text">Timezone Configuration</h2>
+                  <p className="text-[10px] sm:text-xs text-muted/60 mt-0.5">Set your application timezone and time format</p>
                 </div>
               </div>
               <TimezoneSettings currentTimezone={currentTimezone} currentTimeFormat={currentTimeFormat} />
@@ -110,13 +113,13 @@ export function SettingsPageClient({
 
         {/* Tab 2: Security & API */}
         <TabsContent value="security">
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {/* Rate Limiting - Collapsible */}
             <Collapsible
               title="Rate Limiting Configuration"
-              icon={<Shield className="h-5 w-5" />}
+              icon={<Shield className="h-4 w-4 sm:h-5 sm:w-5" />}
               badge={
-                <Badge variant="default" className="bg-primary/20 text-primary border-primary/30">
+                <Badge variant="default" className="bg-primary/20 text-primary border-primary/30 text-[10px] sm:text-xs">
                   {stats.ip.activeIdentifiers + stats.apiKey.activeIdentifiers + stats.member.activeIdentifiers} Active
                 </Badge>
               }
@@ -128,15 +131,15 @@ export function SettingsPageClient({
             {/* Integrations - Collapsible */}
             <Collapsible
               title="Integrations"
-              icon={<Plug className="h-5 w-5" />}
+              icon={<Plug className="h-4 w-4 sm:h-5 sm:w-5" />}
               defaultOpen={false}
             >
-              <div className="space-y-3 text-sm text-muted">
+              <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-muted">
                 <p>
-                  Supabase service role mutations already append to <code className="px-2 py-1 bg-surface/50 rounded text-primary text-xs">audit_logs</code>. The mobile scanner will call the <code className="px-2 py-1 bg-surface/50 rounded text-primary text-xs">/api/checkin</code> endpoint to validate QR codes against active memberships.
+                  Supabase service role mutations already append to <code className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-surface/50 rounded text-primary text-[10px] sm:text-xs">audit_logs</code>. The mobile scanner will call the <code className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-surface/50 rounded text-primary text-[10px] sm:text-xs">/api/checkin</code> endpoint to validate QR codes against active memberships.
                 </p>
                 <p>
-                  Update environment variables in the <code className="px-2 py-1 bg-surface/50 rounded text-primary text-xs">.env</code> file or using your hosting provider&apos;s secrets dashboard. Values are loaded at build time.
+                  Update environment variables in the <code className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-surface/50 rounded text-primary text-[10px] sm:text-xs">.env</code> file or using your hosting provider&apos;s secrets dashboard. Values are loaded at build time.
                 </p>
               </div>
             </Collapsible>
@@ -145,21 +148,21 @@ export function SettingsPageClient({
 
         {/* Tab 3: Activity Logs */}
         <TabsContent value="logs">
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {/* API Logs - Collapsible */}
             <Collapsible
               title="API Logs"
-              icon={<Activity className="h-5 w-5" />}
+              icon={<Activity className="h-4 w-4 sm:h-5 sm:w-5" />}
               badge={
-                <Badge variant="default" className="bg-primary/20 text-primary border-primary/30">
+                <Badge variant="default" className="bg-primary/20 text-primary border-primary/30 text-[10px] sm:text-xs">
                   {apiLogs.length} Requests
                 </Badge>
               }
               defaultOpen={false}
             >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted/60">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-2 sm:gap-0">
+                  <p className="text-xs sm:text-sm text-muted/60 text-center sm:text-left">
                     Check-in API requests from barcode scanners and mobile devices
                   </p>
                   <ClearApiLogsButton />
@@ -171,17 +174,17 @@ export function SettingsPageClient({
             {/* Audit Log - Collapsible */}
             <Collapsible
               title="Audit Log"
-              icon={<FileText className="h-5 w-5" />}
+              icon={<FileText className="h-4 w-4 sm:h-5 sm:w-5" />}
               badge={
-                <Badge variant="default" className="bg-primary/20 text-primary border-primary/30">
+                <Badge variant="default" className="bg-primary/20 text-primary border-primary/30 text-[10px] sm:text-xs">
                   {logs.length} Entries
                 </Badge>
               }
               defaultOpen={false}
             >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted/60">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center justify-between gap-2 sm:gap-0">
+                  <p className="text-xs sm:text-sm text-muted/60 text-center sm:text-left">
                     Complete history of system activities and changes
                   </p>
                   <ClearAuditLogsButton />

@@ -62,9 +62,10 @@ export function ClearApiLogsButton() {
         variant="destructive"
         onClick={() => setShowConfirmDialog(true)}
         disabled={isPending}
-        size="sm"
+        className="h-8 sm:h-9 text-xs sm:text-sm px-3 sm:px-4"
       >
-        Clear API Logs
+        <span className="hidden sm:inline">Clear API Logs</span>
+        <span className="sm:hidden">Clear</span>
       </Button>
 
       <Modal
@@ -72,16 +73,16 @@ export function ClearApiLogsButton() {
         onClose={() => !isPending && setShowConfirmDialog(false)}
         title="Clear API Logs"
       >
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">
+        <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-1.5 sm:space-y-2">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               This action will permanently delete all API log entries. This cannot be undone.
             </p>
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-              <p className="text-sm font-medium text-destructive">
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-2.5 sm:p-3">
+              <p className="text-xs sm:text-sm font-medium text-destructive">
                 ⚠️ Warning: This will clear all check-in API request history
               </p>
-              <ul className="text-xs text-destructive/80 mt-1 space-y-1">
+              <ul className="text-[10px] sm:text-xs text-destructive/80 mt-1 space-y-0.5 sm:space-y-1">
                 <li>• All check-in and checkout requests</li>
                 <li>• API verification attempts</li>
                 <li>• Rate limiting data</li>
@@ -91,16 +92,17 @@ export function ClearApiLogsButton() {
           </div>
 
           {error && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
-              <p className="text-sm text-destructive">{error}</p>
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-2.5 sm:p-3">
+              <p className="text-xs sm:text-sm text-destructive">{error}</p>
             </div>
           )}
 
-          <div className="flex justify-end space-x-2">
+          <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-0 sm:space-x-2">
             <Button
               variant="outline"
               onClick={() => setShowConfirmDialog(false)}
               disabled={isPending}
+              className="h-8 sm:h-9 text-xs sm:text-sm"
             >
               Cancel
             </Button>
@@ -108,6 +110,7 @@ export function ClearApiLogsButton() {
               variant="destructive"
               onClick={handleClearLogs}
               disabled={isPending}
+              className="h-8 sm:h-9 text-xs sm:text-sm"
             >
               {isPending ? "Clearing..." : "Clear All Logs"}
             </Button>
@@ -121,20 +124,20 @@ export function ClearApiLogsButton() {
         onClose={() => setShowSuccessDialog(false)}
         title="Success"
       >
-        <div className="space-y-4">
-          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm">✓</span>
+        <div className="space-y-3 sm:space-y-4">
+          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-2.5 sm:p-3">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="w-4 h-4 sm:w-5 sm:h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-xs sm:text-sm">✓</span>
               </div>
-              <p className="text-sm font-medium text-green-700">{successMessage}</p>
+              <p className="text-xs sm:text-sm font-medium text-green-700">{successMessage}</p>
             </div>
           </div>
           
           <div className="flex justify-end">
             <Button
               onClick={() => setShowSuccessDialog(false)}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 h-8 sm:h-9 text-xs sm:text-sm px-3 sm:px-4"
             >
               OK
             </Button>

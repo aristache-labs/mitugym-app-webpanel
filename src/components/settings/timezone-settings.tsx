@@ -86,28 +86,28 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Status Message */}
       {message && (
-        <div className={`flex items-center gap-2 p-3 rounded-lg border ${
+        <div className={`flex items-center gap-2 p-2.5 sm:p-3 rounded-lg border ${
           message.type === 'success' 
             ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-950/30 dark:border-green-800 dark:text-green-200'
             : 'bg-red-50 border-red-200 text-red-800 dark:bg-red-950/30 dark:border-red-800 dark:text-red-200'
         }`}>
           {message.type === 'success' ? (
-            <CheckCircle className="h-4 w-4" />
+            <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           ) : (
-            <AlertCircle className="h-4 w-4" />
+            <AlertCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           )}
-          <span className="text-sm">{message.text}</span>
+          <span className="text-xs sm:text-sm">{message.text}</span>
         </div>
       )}
 
       {/* Compact Grid Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label className="text-sm font-medium text-text mb-2 flex items-center gap-2">
-            <Globe className="h-4 w-4 text-primary" />
+          <label className="text-xs sm:text-sm font-medium text-text mb-1.5 sm:mb-2 flex items-center gap-1.5 sm:gap-2">
+            <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
             Application Timezone
           </label>
           <CustomSelect
@@ -123,8 +123,8 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
         </div>
 
         <div>
-          <label className="text-sm font-medium text-text mb-2 flex items-center gap-2">
-            <Clock className="h-4 w-4 text-primary" />
+          <label className="text-xs sm:text-sm font-medium text-text mb-1.5 sm:mb-2 flex items-center gap-1.5 sm:gap-2">
+            <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
             Time Format
           </label>
           <CustomSelect
@@ -142,22 +142,22 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
 
       {/* Current Time Preview - Compact */}
       {selectedTimezone && (
-        <div className="bg-surface/60 rounded-lg p-3 border border-surface/40">
+        <div className="bg-surface/60 rounded-lg p-2.5 sm:p-3 border border-surface/40">
           <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-primary flex-shrink-0" />
-            <div className="flex-1">
-              <span className="text-xs text-muted/70">Current time:</span>
-              <p className="text-sm text-text font-mono mt-0.5">{currentTime}</p>
+            <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+            <div className="flex-1 min-w-0">
+              <span className="text-[10px] sm:text-xs text-muted/70">Current time:</span>
+              <p className="text-xs sm:text-sm text-text font-mono mt-0.5 break-words">{currentTime}</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Compact Info Notice */}
-      <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
+      <div className="bg-primary/5 border border-primary/20 rounded-lg p-2.5 sm:p-3">
         <div className="flex gap-2">
-          <Info className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
-          <div className="text-xs text-muted/80 space-y-1">
+          <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0 mt-0.5" />
+          <div className="text-[10px] sm:text-xs text-muted/80 space-y-1">
             <p><strong className="text-primary">Note:</strong> This timezone is used for all date/time calculations. Changes apply immediately after saving and the page will refresh.</p>
             <p className="text-muted/70">Ensure your database timezone matches to avoid scheduling discrepancies.</p>
           </div>
@@ -165,11 +165,11 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-1 sm:pt-2">
         <Button 
           onClick={handleSave}
           disabled={!hasChanges || isPending}
-          className="bg-primary hover:bg-primary/90 text-white"
+          className="bg-primary hover:bg-primary/90 text-white text-xs sm:text-sm h-9 sm:h-10"
         >
           {isPending ? "Saving..." : "Save Changes"}
         </Button>
@@ -179,13 +179,14 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
             variant="outline"
             onClick={handleReset}
             disabled={isPending}
+            className="text-xs sm:text-sm h-9 sm:h-10"
           >
             Reset
           </Button>
         )}
         
         {!hasChanges && (
-          <span className="text-sm text-muted/60">No changes to save</span>
+          <span className="text-xs sm:text-sm text-muted/60 text-center sm:text-left">No changes to save</span>
         )}
       </div>
     </div>

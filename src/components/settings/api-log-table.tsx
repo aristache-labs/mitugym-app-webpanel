@@ -54,7 +54,7 @@ export function ApiLogTable({ logs, timeFormat = '24h', statsOnly = false }: Api
   const columns = useMemo<ColumnDef<ApiLog>[]>(() => [
     {
       accessorKey: "created_at",
-      header: "Timestamp",
+      header: () => <div className="text-center md:text-left">Timestamp</div>,
       cell: ({ row }) => {
         const date = new Date(row.original.created_at);
         const dateStr = date.toLocaleDateString();
@@ -63,33 +63,33 @@ export function ApiLogTable({ logs, timeFormat = '24h', statsOnly = false }: Api
           : date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
         
         return (
-          <div className="flex flex-col">
-            <span className="text-sm text-text">{dateStr}</span>
-            <span className="text-xs text-muted/60">{timeStr}</span>
+          <div className="flex flex-col min-w-[120px] px-2 text-center md:text-left">
+            <span className="text-xs sm:text-sm text-text">{dateStr}</span>
+            <span className="text-[10px] sm:text-xs text-muted/60">{timeStr}</span>
           </div>
         );
       },
     },
     {
       accessorKey: "api_action",
-      header: "Action",
+      header: () => <div className="text-center">Action</div>,
       cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <Activity className="h-4 w-4 text-primary" />
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2 min-w-[120px] px-2">
+          <Activity className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
           {getActionBadge(row.original.api_action)}
         </div>
       ),
     },
     {
       accessorKey: "member_name",
-      header: "Member",
+      header: () => <div className="text-center">Member</div>,
       cell: ({ row }) => (
-        <div className="flex flex-col">
-          <span className="text-sm text-text font-semibold">
+        <div className="flex flex-col min-w-[140px] px-2 text-center">
+          <span className="text-xs sm:text-sm text-text font-semibold">
             {row.original.member_name || 'Unknown'}
           </span>
           {row.original.member_id && (
-            <span className="text-xs text-muted/60 font-mono">
+            <span className="text-[10px] sm:text-xs text-muted/60 font-mono">
               {row.original.member_id.slice(0, 8)}...
             </span>
           )}
@@ -98,27 +98,29 @@ export function ApiLogTable({ logs, timeFormat = '24h', statsOnly = false }: Api
     },
     {
       accessorKey: "endpoint",
-      header: "Endpoint",
+      header: () => <div className="text-center">Endpoint</div>,
       cell: ({ row }) => (
-        <code className="text-xs bg-surface/40 px-2 py-1 rounded border border-surface/60 text-primary">
-          {row.original.method} {row.original.endpoint}
-        </code>
+        <div className="min-w-[180px] px-2 flex justify-center">
+          <code className="text-[10px] sm:text-xs bg-surface/40 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded border border-surface/60 text-primary break-all">
+            {row.original.method} {row.original.endpoint}
+          </code>
+        </div>
       ),
     },
     {
       accessorKey: "status_code",
-      header: "Status",
+      header: () => <div className="text-center">Status</div>,
       cell: ({ row }) => {
         const statusCode = row.original.status_code;
         const variant = getStatusBadgeVariant(statusCode);
         const Icon = row.original.success ? CheckCircle2 : AlertCircle;
         
         return (
-          <div className="flex items-center gap-2">
-            <Icon className={`h-4 w-4 ${
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2 min-w-[100px] px-2">
+            <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0 ${
               row.original.success ? 'text-success' : 'text-error'
             }`} />
-            <Badge variant={variant}>
+            <Badge variant={variant} className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1">
               {statusCode}
             </Badge>
           </div>
@@ -127,32 +129,40 @@ export function ApiLogTable({ logs, timeFormat = '24h', statsOnly = false }: Api
     },
     {
       accessorKey: "duration_ms",
-      header: "Duration",
+      header: () => <div className="text-center">Duration</div>,
       cell: ({ row }) => {
         const duration = row.original.duration_ms;
         if (duration === null || duration === undefined) return (
-          <span className="text-muted/40">-</span>
+          <div className="text-center min-w-[80px] px-2">
+            <span className="text-muted/40">-</span>
+          </div>
         );
         
         const color = duration < 100 ? 'text-success' : duration < 500 ? 'text-warning' : 'text-error';
         
         return (
-          <span className={`text-sm font-mono ${color}`}>
-            {duration}ms
-          </span>
+          <div className="text-center min-w-[80px] px-2">
+            <span className={`text-xs sm:text-sm font-mono ${color}`}>
+              {duration}ms
+            </span>
+          </div>
         );
       },
     },
     {
       accessorKey: "error_message",
-      header: "Error",
+      header: () => <div className="text-center">Error</div>,
       cell: ({ row }) => {
         const error = row.original.error_message;
-        if (!error) return <span className="text-muted/40">-</span>;
+        if (!error) return (
+          <div className="text-center min-w-[100px] px-2">
+            <span className="text-muted/40">-</span>
+          </div>
+        );
         
         return (
-          <div className="max-w-xs">
-            <span className="text-xs text-error line-clamp-2" title={error}>
+          <div className="min-w-[140px] px-2">
+            <span className="text-[10px] sm:text-xs text-error line-clamp-2 text-center" title={error}>
               {error}
             </span>
           </div>
@@ -161,46 +171,57 @@ export function ApiLogTable({ logs, timeFormat = '24h', statsOnly = false }: Api
     },
     {
       accessorKey: "ip_address",
-      header: "IP Address",
+      header: () => <div className="text-center">IP Address</div>,
       cell: ({ row }) => (
-        <code className="text-xs font-mono text-muted/70">
-          {row.original.ip_address || '-'}
-        </code>
+        <div className="text-center min-w-[120px] px-2">
+          <code className="text-[10px] sm:text-xs font-mono text-muted/70">
+            {row.original.ip_address || '-'}
+          </code>
+        </div>
       ),
     },
   ], [timeFormat]);
 
   // Statistics component
   const statsComponent = (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 p-3 bg-surface/30 rounded-lg border border-surface/40">
-      <div>
-        <p className="text-xs text-muted/60">Total Requests</p>
-        <p className="text-xl font-bold text-text">{stats.total}</p>
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 p-2.5 sm:p-3 bg-surface/30 rounded-lg border border-surface/40">
+      {/* Total Requests */}
+      <div className="flex flex-col items-center text-center md:items-start md:text-left">
+        <p className="text-[10px] sm:text-xs text-muted/60 mb-0.5">Total Requests</p>
+        <p className="text-base sm:text-xl font-bold text-text">{stats.total}</p>
       </div>
-      <div>
-        <p className="text-xs text-muted/60">Successful</p>
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
-          <p className="text-xl font-bold text-success">{stats.successful}</p>
+      
+      {/* Successful */}
+      <div className="flex flex-col items-center text-center md:items-start md:text-left">
+        <p className="text-[10px] sm:text-xs text-muted/60 mb-0.5">Successful</p>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-success animate-pulse" />
+          <p className="text-base sm:text-xl font-bold text-success">{stats.successful}</p>
         </div>
       </div>
-      <div>
-        <p className="text-xs text-muted/60">Failed</p>
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-error" />
-          <p className="text-xl font-bold text-error">{stats.failed}</p>
+      
+      {/* Failed */}
+      <div className="flex flex-col items-center text-center md:items-start md:text-left col-span-2 sm:col-span-1">
+        <p className="text-[10px] sm:text-xs text-muted/60 mb-0.5">Failed</p>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-error" />
+          <p className="text-base sm:text-xl font-bold text-error">{stats.failed}</p>
         </div>
       </div>
-      <div>
-        <p className="text-xs text-muted/60">Rate Limited</p>
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-warning" />
-          <p className="text-xl font-bold text-warning">{stats.rateLimited}</p>
+      
+      {/* Rate Limited - Second row on mobile, same row on tablet/desktop */}
+      <div className="flex flex-col items-center text-center md:items-start md:text-left">
+        <p className="text-[10px] sm:text-xs text-muted/60 mb-0.5">Rate Limited</p>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-warning" />
+          <p className="text-base sm:text-xl font-bold text-warning">{stats.rateLimited}</p>
         </div>
       </div>
-      <div>
-        <p className="text-xs text-muted/60">Avg Response</p>
-        <p className="text-xl font-bold text-primary">{stats.avgDuration}ms</p>
+      
+      {/* Avg Response */}
+      <div className="flex flex-col items-center text-center md:items-start md:text-left">
+        <p className="text-[10px] sm:text-xs text-muted/60 mb-0.5">Avg Response</p>
+        <p className="text-base sm:text-xl font-bold text-primary">{stats.avgDuration}ms</p>
       </div>
     </div>
   );
@@ -209,10 +230,10 @@ export function ApiLogTable({ logs, timeFormat = '24h', statsOnly = false }: Api
     return (
       <div>
         {statsComponent}
-        <div className="text-center py-8 mt-4">
-          <Activity className="h-10 w-10 text-muted/40 mx-auto mb-3" />
-          <p className="text-sm text-muted/60">No API logs yet</p>
-          <p className="text-xs text-muted/40 mt-1">
+        <div className="text-center py-6 sm:py-8 mt-3 sm:mt-4">
+          <Activity className="h-8 w-8 sm:h-10 sm:w-10 text-muted/40 mx-auto mb-2 sm:mb-3" />
+          <p className="text-xs sm:text-sm text-muted/60">No API logs yet</p>
+          <p className="text-[10px] sm:text-xs text-muted/40 mt-1">
             Logs will appear here when the check-in API is used
           </p>
         </div>
@@ -226,7 +247,7 @@ export function ApiLogTable({ logs, timeFormat = '24h', statsOnly = false }: Api
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {statsComponent}
       <DataTable columns={columns} data={logs} />
     </div>

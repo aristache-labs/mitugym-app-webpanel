@@ -192,25 +192,25 @@ function formatChanges(changes: Record<string, { before: unknown; after: unknown
   const maxDisplayed = 4;
   
   return (
-    <div className="space-y-2 text-xs">
+    <div className="space-y-1.5 sm:space-y-2 text-xs">
       {changeEntries.slice(0, maxDisplayed).map(([field, change]) => (
-        <div key={field} className="bg-surface/30 rounded p-2">
-          <div className="font-medium text-foreground mb-1">
+        <div key={field} className="bg-surface/30 rounded p-1.5 sm:p-2">
+          <div className="text-[10px] sm:text-xs font-medium text-foreground mb-0.5 sm:mb-1">
             {formatFieldName(field)}
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-muted-foreground bg-surface/50 px-2 py-1 rounded text-xs">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="text-muted-foreground bg-surface/50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs">
               {formatValue(change.before)}
             </span>
-            <span className="text-foreground">→</span>
-            <span className="font-medium bg-primary/10 text-primary px-2 py-1 rounded text-xs">
+            <span className="text-foreground text-xs">→</span>
+            <span className="font-medium bg-primary/10 text-primary px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs">
               {formatValue(change.after)}
             </span>
           </div>
         </div>
       ))}
       {changeEntries.length > maxDisplayed && (
-        <div className="text-muted-foreground font-medium">
+        <div className="text-muted-foreground font-medium text-[10px] sm:text-xs">
           +{changeEntries.length - maxDisplayed} more changes
         </div>
       )}
@@ -245,11 +245,11 @@ export function AuditLogTable({ entries, timeFormat = '24h' }: AuditLogTableProp
         accessorKey: "created_at",
         header: "When",
         cell: ({ row }) => (
-          <div className="space-y-1">
-            <div className="font-medium">
+          <div className="space-y-0.5 sm:space-y-1 min-w-[120px] px-2">
+            <div className="text-xs sm:text-sm font-medium">
               {formatDate(row.original.created_at)}
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-[10px] sm:text-xs text-muted-foreground">
               {formatDateTimeWithFormat(row.original.created_at)}
             </div>
           </div>
@@ -260,11 +260,11 @@ export function AuditLogTable({ entries, timeFormat = '24h' }: AuditLogTableProp
         accessorKey: "action",
         header: "Action",
         cell: ({ row }) => (
-          <div className="space-y-2">
-            <Badge variant={getActionBadgeVariant(row.original.action)}>
+          <div className="space-y-1.5 sm:space-y-2 min-w-[180px] px-2 flex flex-col items-center">
+            <Badge variant={getActionBadgeVariant(row.original.action)} className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1">
               {row.original.action}
             </Badge>
-            <div className="text-sm">
+            <div className="text-xs sm:text-sm text-center">
               {formatActionDescription(row.original)}
             </div>
           </div>
@@ -275,12 +275,12 @@ export function AuditLogTable({ entries, timeFormat = '24h' }: AuditLogTableProp
         accessorKey: "actor_name",
         header: "Who",
         cell: ({ row }) => (
-          <div className="space-y-1">
-            <div className="font-medium">
+          <div className="space-y-0.5 sm:space-y-1 min-w-[120px] px-2 flex flex-col items-center">
+            <div className="text-xs sm:text-sm font-medium">
               {row.original.actor_name || "System"}
             </div>
             {row.original.actor_role && (
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1">
                 {row.original.actor_role}
               </Badge>
             )}
@@ -291,7 +291,13 @@ export function AuditLogTable({ entries, timeFormat = '24h' }: AuditLogTableProp
       {
         accessorKey: "changes",
         header: "Changes",
-        cell: ({ row }) => formatChanges(row.original.changes),
+        cell: ({ row }) => (
+          <div className="min-w-[200px] px-2 flex justify-center">
+            <div className="w-full">
+              {formatChanges(row.original.changes)}
+            </div>
+          </div>
+        ),
         size: 400,
       },
       {
@@ -301,38 +307,46 @@ export function AuditLogTable({ entries, timeFormat = '24h' }: AuditLogTableProp
           const { entity_id } = row.original;
           
           if (!entity_id) {
-            return "—";
+            return <div className="text-center min-w-[80px] px-2">—</div>;
           }
           
           // Handle special system identifiers
           if (entity_id === SYSTEM_ENTITY_IDS.GYM_SCHEDULE) {
             return (
-              <code className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                SCHEDULE
-              </code>
+              <div className="flex justify-center min-w-[80px] px-2">
+                <code className="text-[10px] sm:text-xs bg-primary/10 text-primary px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
+                  SCHEDULE
+                </code>
+              </div>
             );
           }
           
           if (entity_id === SYSTEM_ENTITY_IDS.SYSTEM_SETTINGS) {
             return (
-              <code className="text-xs bg-warning/10 text-warning px-2 py-1 rounded">
-                SETTINGS
-              </code>
+              <div className="flex justify-center min-w-[80px] px-2">
+                <code className="text-[10px] sm:text-xs bg-warning/10 text-warning px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
+                  SETTINGS
+                </code>
+              </div>
             );
           }
           
           if (entity_id === SYSTEM_ENTITY_IDS.BULK_OPERATIONS) {
             return (
-              <code className="text-xs bg-info/10 text-info px-2 py-1 rounded">
-                BULK
-              </code>
+              <div className="flex justify-center min-w-[80px] px-2">
+                <code className="text-[10px] sm:text-xs bg-info/10 text-info px-1.5 sm:h-4 sm:w-4 rounded">
+                  BULK
+                </code>
+              </div>
             );
           }
           
           return (
-            <code className="text-xs bg-surface/50 px-2 py-1 rounded">
-              {entity_id.substring(0, 8)}...
-            </code>
+            <div className="flex justify-center min-w-[80px] px-2">
+              <code className="text-[10px] sm:text-xs bg-surface/50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
+                {entity_id.substring(0, 8)}...
+              </code>
+            </div>
           );
         },
         size: 80,
