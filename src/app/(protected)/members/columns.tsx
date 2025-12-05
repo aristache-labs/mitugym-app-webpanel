@@ -19,7 +19,7 @@ export const memberColumns: ColumnDef<Member>[] = [
             memberName={row.original.full_name}
             size="small"
           />
-          <span className="font-semibold text-text">
+          <span className="font-semibold text-text whitespace-nowrap">
             {row.original.full_name}
           </span>
         </div>
