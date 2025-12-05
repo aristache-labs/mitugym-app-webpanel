@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,28 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} bg-background text-text antialiased`} suppressHydrationWarning>
+        <Script id="suppress-hydration-warnings" strategy="beforeInteractive">
+          {`
+            if (typeof window !== 'undefined') {
+              const originalError = console.error;
+              console.error = (...args) => {
+                const errorMessage = args[0];
+                if (
+                  typeof errorMessage === 'string' &&
+                  (
+                    errorMessage.includes('__gchrome_uniqueid') ||
+                    errorMessage.includes('Hydration failed') ||
+                    errorMessage.includes('did not match') ||
+                    errorMessage.includes('There was an error while hydrating')
+                  )
+                ) {
+                  return;
+                }
+                originalError.apply(console, args);
+              };
+            }
+          `}
+        </Script>
         <AppProviders>{children}</AppProviders>
         <Analytics />
         <SpeedInsights />

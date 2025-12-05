@@ -24,6 +24,29 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Allow cross-origin requests from local network devices (e.g., testing on mobile)
+  devIndicators: {
+    buildActivityPosition: 'bottom-left',
+  },
+  // Configure allowed dev origins for local network testing
+  allowedDevOrigins: [
+    '192.168.1.12',
+    'http://192.168.1.12',
+    'http://192.168.1.12:3000',
+  ],
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

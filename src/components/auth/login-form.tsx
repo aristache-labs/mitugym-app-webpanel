@@ -55,38 +55,38 @@ export function LoginForm() {
   });
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-2 sm:py-8 sm:px-6">
+    <div className="flex h-screen max-h-screen flex-col items-center justify-center overflow-hidden px-4 py-2 sm:min-h-screen sm:max-h-none sm:overflow-visible sm:py-8 sm:px-6">
       {/* Logo */}
-      <div className="mb-3 sm:mb-8">
+      <div className="mb-2 flex-shrink-0 sm:mb-8">
         <Image
           src="/logo.png"
           alt="MITUGYM Logo"
-          width={80}
-          height={80}
+          width={70}
+          height={70}
           className="mx-auto sm:w-[150px] sm:h-[150px]"
         />
       </div>
       
-      <Card className="w-full max-w-md border-primary/20 bg-surface/80 shadow-2xl">
-        <CardHeader className="pb-2 sm:pb-6">
-          <CardTitle className="text-center text-base font-semibold text-primary sm:text-2xl">Staff Portal</CardTitle>
+      <Card className="w-full max-w-md flex-shrink-0 border-primary/20 bg-surface/80 shadow-2xl">
+        <CardHeader className="pb-1.5 sm:pb-6">
+          <CardTitle className="text-center text-sm font-semibold text-primary sm:text-2xl">Staff Portal</CardTitle>
         </CardHeader>
-        <CardContent className="px-4 pb-3 sm:px-6 sm:pb-8">
+        <CardContent className="px-3 pb-2 sm:px-6 sm:pb-8">
           <Form {...form}>
-            <form onSubmit={onSubmit} className="space-y-3 sm:space-y-6">
+            <form onSubmit={onSubmit} className="space-y-2.5 sm:space-y-6">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs sm:text-sm">Email</FormLabel>
+                    <FormLabel className="text-[11px] sm:text-sm">Email</FormLabel>
                     <Input 
                       type="email" 
                       placeholder="staff@mitugym.dev" 
                       {...field}
-                      className="h-10 sm:h-10 text-sm"
+                      className="h-9 text-xs sm:h-10 sm:text-sm"
                     />
-                    <FormMessage>{form.formState.errors.email?.message}</FormMessage>
+                    <FormMessage className="text-[10px] sm:text-xs">{form.formState.errors.email?.message}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -95,24 +95,24 @@ export function LoginForm() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs sm:text-sm">Password</FormLabel>
+                    <FormLabel className="text-[11px] sm:text-sm">Password</FormLabel>
                     <Input 
                       type="password" 
                       placeholder="••••••••" 
                       {...field}
-                      className="h-10 sm:h-10 text-sm"
+                      className="h-9 text-xs sm:h-10 sm:text-sm"
                     />
-                    <FormMessage>{form.formState.errors.password?.message}</FormMessage>
+                    <FormMessage className="text-[10px] sm:text-xs">{form.formState.errors.password?.message}</FormMessage>
                   </FormItem>
                 )}
               />
-              {error ? <p className="text-xs sm:text-sm text-error">{error}</p> : null}
-              <Button type="submit" className="w-full h-10 text-sm">
+              {error ? <p className="text-[10px] text-error sm:text-sm">{error}</p> : null}
+              <Button type="submit" className="h-9 w-full text-xs sm:h-10 sm:text-sm">
                 Sign in
               </Button>
             </form>
           </Form>
-          <p className="mt-3 text-center text-[10px] text-muted sm:mt-6 sm:text-xs">
+          <p className="mt-2 text-center text-[9px] text-muted sm:mt-6 sm:text-xs">
             Need access? Contact <Link href="mailto:ops@mitugym.dev" className="underline">ops@mitugym.dev</Link>
           </p>
         </CardContent>
