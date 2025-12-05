@@ -10,7 +10,7 @@ import { AvatarWithPreview } from "@/components/members/avatar-preview-modal";
 export const memberColumns: ColumnDef<Member>[] = [
   {
     accessorKey: "full_name",
-    header: "Member",
+    header: () => <div className="text-left">Member</div>,
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-3">
@@ -29,30 +29,49 @@ export const memberColumns: ColumnDef<Member>[] = [
   {
     accessorKey: "email",
     header: "Email",
+    cell: ({ row }) => (
+      <div className="text-center">
+        {row.original.email}
+      </div>
+    ),
   },
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <MemberStatusBadge status={row.original.status} />,
+    cell: ({ row }) => (
+      <div className="flex justify-center">
+        <MemberStatusBadge status={row.original.status} />
+      </div>
+    ),
   },
   {
     accessorKey: "plan_name",
     header: "Plan",
-    cell: ({ row }) => row.original.plan_name ?? "Unassigned",
+    cell: ({ row }) => (
+      <div className="text-center">
+        {row.original.plan_name ?? "Unassigned"}
+      </div>
+    ),
   },
   {
     accessorKey: "expires_at",
     header: "Expires",
-    cell: ({ row }) => formatDate(row.original.expires_at),
+    cell: ({ row }) => (
+      <div className="text-center">
+        {formatDate(row.original.expires_at)}
+      </div>
+    ),
   },
   {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => (
-      <MemberActions 
-        memberId={row.original.id} 
-        memberName={row.original.full_name} 
-      />
+      <div className="flex justify-center">
+        <MemberActions 
+          memberId={row.original.id} 
+          memberName={row.original.full_name} 
+        />
+      </div>
     ),
   },
 ];

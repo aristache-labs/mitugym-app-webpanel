@@ -32,13 +32,13 @@ export default async function MembersPage() {
   ]);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       {/* Header Section */}
       <div className="flex items-center gap-2 sm:gap-3">
         <div className="p-1.5 sm:p-2 rounded-xl bg-primary/10 flex-shrink-0">
           <Users className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className="text-xl sm:text-2xl font-bold text-text">Members</h1>
           <p className="text-xs sm:text-sm text-muted/80 truncate">
             Manage member profiles, plans, and membership status

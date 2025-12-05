@@ -23,7 +23,7 @@ export function ProtectedLayoutClient({
   const { isOpen, toggle, close } = useMobileNav();
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       {/* Fixed Header */}
       <Topbar
         staff={staff}
@@ -36,7 +36,7 @@ export function ProtectedLayoutClient({
       <div className="pt-16 lg:pt-20">
         <div className="mx-auto flex max-w-[1600px] gap-0 lg:gap-6 px-0 lg:px-4 py-4 lg:py-6 xl:px-10">
           <Sidebar isOpen={isOpen} onClose={close} />
-          <main className="flex-1 space-y-6 px-4 lg:px-0">
+          <main className="flex-1 space-y-6 px-4 lg:px-0 min-w-0">
             {children}
           </main>
         </div>
