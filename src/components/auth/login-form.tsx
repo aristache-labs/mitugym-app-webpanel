@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSupabase } from "@/components/providers/supabase-provider";
 import { loginSchema, type LoginInput } from "@/schemas/auth";
@@ -21,6 +21,52 @@ export function LoginForm() {
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
+
+  // Prevent body scroll on mobile portrait only
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // Only disable scroll on mobile portrait mode
+    const isPortraitMobile = window.matchMedia('(max-width: 640px) and (orientation: portrait)').matches;
+    
+    if (isPortraitMobile) {
+      // Prevent scrolling on mobile portrait
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+    }
+
+    // Listen for orientation changes
+    const handleOrientationChange = () => {
+      const isStillPortraitMobile = window.matchMedia('(max-width: 640px) and (orientation: portrait)').matches;
+      
+      if (isStillPortraitMobile) {
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+        document.body.style.height = '100%';
+      } else {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.height = '';
+      }
+    };
+
+    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('orientationchange', handleOrientationChange);
+
+    return () => {
+      // Cleanup on unmount
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+      window.removeEventListener('resize', handleOrientationChange);
+      window.removeEventListener('orientationchange', handleOrientationChange);
+    };
+  }, []);
 
   const onSubmit = form.handleSubmit(async (values) => {
     setError(null);
@@ -55,38 +101,38 @@ export function LoginForm() {
   });
 
   return (
-    <div className="flex h-screen max-h-screen flex-col items-center justify-center overflow-hidden px-4 py-2 sm:min-h-screen sm:max-h-none sm:overflow-visible sm:py-8 sm:px-6">
+    <div className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden px-4 sm:static sm:min-h-screen sm:overflow-visible sm:px-6 sm:py-8">
       {/* Logo */}
       <div className="mb-2 flex-shrink-0 sm:mb-8">
         <Image
           src="/logo.png"
           alt="MITUGYM Logo"
-          width={70}
-          height={70}
+          width={60}
+          height={60}
           className="mx-auto sm:w-[150px] sm:h-[150px]"
         />
       </div>
       
       <Card className="w-full max-w-md flex-shrink-0 border-primary/20 bg-surface/80 shadow-2xl">
-        <CardHeader className="pb-1.5 sm:pb-6">
+        <CardHeader className="pb-1 pt-3 sm:pb-6 sm:pt-6">
           <CardTitle className="text-center text-sm font-semibold text-primary sm:text-2xl">Staff Portal</CardTitle>
         </CardHeader>
         <CardContent className="px-3 pb-2 sm:px-6 sm:pb-8">
           <Form {...form}>
-            <form onSubmit={onSubmit} className="space-y-2.5 sm:space-y-6">
+            <form onSubmit={onSubmit} className="space-y-2 sm:space-y-6">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] sm:text-sm">Email</FormLabel>
+                    <FormLabel className="text-[10px] leading-tight sm:text-sm">Email</FormLabel>
                     <Input 
                       type="email" 
                       placeholder="staff@mitugym.dev" 
                       {...field}
-                      className="h-9 text-xs sm:h-10 sm:text-sm"
+                      className="h-8 text-[11px] sm:h-10 sm:text-sm"
                     />
-                    <FormMessage className="text-[10px] sm:text-xs">{form.formState.errors.email?.message}</FormMessage>
+                    <FormMessage className="text-[9px] sm:text-xs">{form.formState.errors.email?.message}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -95,24 +141,24 @@ export function LoginForm() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[11px] sm:text-sm">Password</FormLabel>
+                    <FormLabel className="text-[10px] leading-tight sm:text-sm">Password</FormLabel>
                     <Input 
                       type="password" 
                       placeholder="••••••••" 
                       {...field}
-                      className="h-9 text-xs sm:h-10 sm:text-sm"
+                      className="h-8 text-[11px] sm:h-10 sm:text-sm"
                     />
-                    <FormMessage className="text-[10px] sm:text-xs">{form.formState.errors.password?.message}</FormMessage>
+                    <FormMessage className="text-[9px] sm:text-xs">{form.formState.errors.password?.message}</FormMessage>
                   </FormItem>
                 )}
               />
-              {error ? <p className="text-[10px] text-error sm:text-sm">{error}</p> : null}
-              <Button type="submit" className="h-9 w-full text-xs sm:h-10 sm:text-sm">
+              {error ? <p className="text-[9px] text-error sm:text-sm">{error}</p> : null}
+              <Button type="submit" className="h-8 w-full text-[11px] sm:h-10 sm:text-sm">
                 Sign in
               </Button>
             </form>
           </Form>
-          <p className="mt-2 text-center text-[9px] text-muted sm:mt-6 sm:text-xs">
+          <p className="mt-2 text-center text-[8px] text-muted sm:mt-6 sm:text-xs">
             Need access? Contact <Link href="mailto:ops@mitugym.dev" className="underline">ops@mitugym.dev</Link>
           </p>
         </CardContent>
