@@ -172,13 +172,13 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="flex items-center justify-center md:justify-start gap-2">
-            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+          <div className="flex items-center justify-center md:justify-start gap-3 min-w-[140px] md:min-w-0">
+            <CalendarIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <div>
               <div className="font-medium whitespace-nowrap">
                 {format(new Date(booking.booking_date), "MMM dd, yyyy")}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">
+              <div className="text-sm text-muted-foreground mt-1.5">
                 {timeFormat === '12h' 
                   ? format(new Date(booking.booking_date), "h:mm a")
                   : format(new Date(booking.booking_date), "HH:mm")
@@ -198,12 +198,12 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="max-w-[180px] mx-auto text-center">
+          <div className="min-w-[160px] md:max-w-[180px] mx-auto text-center px-2">
             <div className="font-medium line-clamp-2 leading-tight">
               {booking.service?.name || "Unknown Service"}
             </div>
-            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mt-1">
-              <Clock className="h-3 w-3" />
+            <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground mt-2">
+              <Clock className="h-3.5 w-3.5" />
               {booking.service?.duration_minutes || 60} min
             </div>
           </div>
@@ -218,12 +218,12 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="flex items-center justify-center gap-2">
-            <User className="h-4 w-4 text-muted-foreground" />
-            <div className="min-w-0 max-w-[160px]">
+          <div className="flex items-center justify-center gap-3 min-w-[180px] md:min-w-0 px-2">
+            <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            <div className="min-w-0 md:max-w-[160px]">
               <div className="font-medium line-clamp-1">{booking.member?.full_name || "Unknown Member"}</div>
               {booking.member?.email && (
-                <div className="text-sm text-muted-foreground truncate">{booking.member.email}</div>
+                <div className="text-sm text-muted-foreground truncate mt-1">{booking.member.email}</div>
               )}
             </div>
           </div>
@@ -236,7 +236,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
         <div className="text-center font-semibold">Status</div>
       ),
       cell: ({ row }: { row: { original: ServiceBooking } }) => (
-        <div className="flex justify-center">
+        <div className="flex justify-center min-w-[100px] px-2">
           {getStatusBadge(row.original.status)}
         </div>
       ),
@@ -249,7 +249,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="flex items-center justify-center gap-1">
+          <div className="flex items-center justify-center gap-2 min-w-[140px] px-2">
             <Link href={`/bookings/${booking.id}`}>
               <Button 
                 variant="ghost" 
