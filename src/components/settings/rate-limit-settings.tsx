@@ -98,7 +98,7 @@ export function RateLimitSettings({ currentSettings, stats }: RateLimitSettingsP
             {/* IP Addresses */}
             <div className="flex flex-col items-center text-center sm:flex-row sm:items-center sm:text-left gap-1.5 sm:gap-2">
               <Activity className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
-              <div>
+            <div>
                 <p className="text-[10px] sm:text-xs text-muted/60">IP Addresses</p>
                 <p className="text-base sm:text-lg font-bold text-text">{stats.ip.activeIdentifiers}</p>
               </div>
@@ -110,7 +110,7 @@ export function RateLimitSettings({ currentSettings, stats }: RateLimitSettingsP
               <div>
                 <p className="text-[10px] sm:text-xs text-muted/60">API Keys</p>
                 <p className="text-base sm:text-lg font-bold text-text">{stats.apiKey.activeIdentifiers}</p>
-              </div>
+          </div>
             </div>
             
             {/* Members */}
@@ -119,7 +119,7 @@ export function RateLimitSettings({ currentSettings, stats }: RateLimitSettingsP
               <div>
                 <p className="text-[10px] sm:text-xs text-muted/60">Members</p>
                 <p className="text-base sm:text-lg font-bold text-text">{stats.member.activeIdentifiers}</p>
-              </div>
+          </div>
             </div>
           </div>
         </div>

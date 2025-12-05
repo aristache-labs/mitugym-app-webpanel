@@ -103,7 +103,7 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
             <div className="flex justify-center min-w-[100px] px-2">
               <div className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold border ${style.bg} ${style.text} ${style.border}`}>
                 <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${style.dot}`}></div>
-                {priority.charAt(0).toUpperCase() + priority.slice(1)}
+              {priority.charAt(0).toUpperCase() + priority.slice(1)}
               </div>
             </div>
           );
@@ -118,12 +118,12 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
           return (
             <div className="flex justify-center min-w-[100px] px-2">
               <div className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold border ${
-                isActive
-                  ? "bg-success/10 text-success border-success/30"
-                  : "bg-gray-500/10 text-gray-400 border-gray-500/30"
-              }`}>
+              isActive
+                ? "bg-success/10 text-success border-success/30"
+                : "bg-gray-500/10 text-gray-400 border-gray-500/30"
+            }`}>
                 <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${isActive ? "bg-success" : "bg-gray-500"}`}></div>
-                {isActive ? "Active" : "Inactive"}
+              {isActive ? "Active" : "Inactive"}
               </div>
             </div>
           );
@@ -243,19 +243,19 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                <div className="space-y-0.5 sm:space-y-1 flex-1 min-w-0 pr-2 sm:pr-0">
                  <h1 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent">
-                   News & Announcements
-                 </h1>
+                  News & Announcements
+                </h1>
                  <p className="text-[10px] sm:text-xs md:text-sm text-muted/80 truncate">
-                   Manage announcements that sync to the mobile app and in-gym displays
-                 </p>
-               </div>
+                  Manage announcements that sync to the mobile app and in-gym displays
+                </p>
+              </div>
               <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
                 <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg sm:rounded-xl border border-primary/30">
                   <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full animate-pulse"></div>
                   <span className="text-[10px] sm:text-xs font-semibold text-primary whitespace-nowrap">
-                    {items.filter(item => item.is_active !== false).length} Active {items.filter(item => item.is_active !== false).length === 1 ? 'Announcement' : 'Announcements'}
-                  </span>
-                </div>
+                  {items.filter(item => item.is_active !== false).length} Active {items.filter(item => item.is_active !== false).length === 1 ? 'Announcement' : 'Announcements'}
+                </span>
+              </div>
                 <Button
                   onClick={() => router.push("/news/new")}
                   className="gap-2 h-8 sm:h-10 text-xs sm:text-sm px-4 sm:px-6 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium"

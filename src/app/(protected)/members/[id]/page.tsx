@@ -62,7 +62,7 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
               <div className="flex items-center gap-2">
                 <DeleteMemberButton memberId={member.id} memberName={member.full_name} />
                 <Link href="/members">
-                  <Button variant="ghost" size="sm" className="gap-2 hover:bg-primary/10 hover:text-primary transition-all duration-200 rounded-xl">
+                  <Button className="gap-2 h-9 text-sm px-4 bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium">
                     <ArrowLeft className="h-4 w-4" />
                     Back to Members
                   </Button>

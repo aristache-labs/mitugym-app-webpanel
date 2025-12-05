@@ -429,7 +429,14 @@ export function MemberForm({ plans, member }: MemberFormProps) {
         )}
         {serverError ? <p className="text-sm text-error">{serverError}</p> : null}
         <div className="flex items-center justify-between">
-          <Button type="submit" disabled={isPending || isUploadingAvatar} className={cn((isPending || isUploadingAvatar) && "opacity-70")}> 
+          <Button 
+            type="submit" 
+            disabled={isPending || isUploadingAvatar} 
+            className={cn(
+              "h-10 text-sm px-6 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium",
+              (isPending || isUploadingAvatar) && "opacity-70"
+            )}
+          > 
             {isPending 
               ? "Saving..." 
               : isUploadingAvatar 

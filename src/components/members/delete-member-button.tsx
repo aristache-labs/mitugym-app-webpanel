@@ -71,7 +71,7 @@ export function DeleteMemberButton({ memberId, memberName }: DeleteMemberButtonP
               <Button
                 onClick={handleDelete}
                 disabled={isPending}
-                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white flex-1 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl border border-red-600/30"
+                className="flex-1 h-10 text-sm px-6 bg-gradient-to-br from-red-600/90 via-red-600/95 to-red-700 hover:from-red-600 hover:via-red-600/95 hover:to-red-700 text-white border border-red-500/40 hover:border-red-500/60 transition-all duration-300 shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 backdrop-blur-sm font-medium disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isPending ? (
                   <>
@@ -86,10 +86,9 @@ export function DeleteMemberButton({ memberId, memberName }: DeleteMemberButtonP
                 )}
               </Button>
               <Button
-                variant="ghost"
                 onClick={() => setShowConfirm(false)}
                 disabled={isPending}
-                className="flex-1 hover:bg-surface/50 transition-all duration-200 rounded-xl"
+                className="flex-1 h-10 text-sm px-6 bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 Cancel
               </Button>
@@ -102,10 +101,8 @@ export function DeleteMemberButton({ memberId, memberName }: DeleteMemberButtonP
 
   return (
     <Button
-      variant="destructive"
-      size="default"
       onClick={() => setShowConfirm(true)}
-      className="gap-2 bg-red-500 hover:bg-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl border border-red-600/20"
+      className="gap-2 h-9 text-sm px-4 bg-gradient-to-br from-red-600/90 via-red-600/95 to-red-700 hover:from-red-600 hover:via-red-600/95 hover:to-red-700 text-white border border-red-500/40 hover:border-red-500/60 transition-all duration-300 shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 backdrop-blur-sm font-medium"
     >
       <Trash2 className="h-4 w-4" />
       Delete Member
