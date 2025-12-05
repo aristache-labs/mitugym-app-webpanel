@@ -39,12 +39,14 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <CardTitle className="text-lg font-semibold text-text group-hover:text-primary transition-colors">
-                  Today&apos;s Bookings
-                </CardTitle>
+                <Link href="/bookings" className="md:pointer-events-none">
+                  <CardTitle className="text-lg font-semibold text-text group-hover:text-primary transition-colors md:cursor-default">
+                    Today&apos;s Bookings
+                  </CardTitle>
+                </Link>
                 <Link 
                   href="/bookings" 
-                  className="text-xs text-muted/80 hover:text-primary transition-colors font-medium bg-surface/60 px-3 py-1.5 rounded-full hover:bg-primary/10 border border-surface/40 hover:border-primary/30"
+                  className="hidden md:inline-flex text-xs text-muted/80 hover:text-primary transition-colors font-medium bg-surface/60 px-3 py-1.5 rounded-full hover:bg-primary/10 border border-surface/40 hover:border-primary/30"
                 >
                   View all →
                 </Link>
