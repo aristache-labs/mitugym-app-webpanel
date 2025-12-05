@@ -39,7 +39,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex h-full w-[280px] flex-col border-r border-surface/40 bg-surface/95 backdrop-blur-xl px-6 pt-4 pb-4 lg:py-8 shadow-2xl transition-transform duration-300 ease-in-out lg:relative lg:z-auto lg:w-full lg:max-w-[260px] lg:translate-x-0 lg:shadow-none lg:justify-between",
+          "fixed inset-y-0 left-0 z-50 flex h-full w-[280px] flex-col border-r border-surface/40 bg-surface/95 backdrop-blur-xl px-6 pt-4 pb-4 lg:py-8 shadow-2xl transition-transform duration-300 ease-in-out lg:relative lg:z-auto lg:w-full lg:max-w-[260px] lg:translate-x-0 lg:shadow-none lg:justify-between lg:bg-transparent lg:backdrop-blur-none lg:border-r-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -72,7 +72,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                     "flex items-center gap-3 rounded-[16px] px-4 py-3 text-sm font-medium transition-all duration-200",
                     active
                       ? "bg-primary/20 text-primary shadow-lg shadow-primary/10"
-                      : "text-muted hover:bg-surface/80 hover:text-text hover:shadow-md"
+                      : "text-muted hover:bg-surface/80 lg:hover:bg-transparent hover:text-text hover:shadow-md lg:hover:shadow-none"
                   )}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" />
