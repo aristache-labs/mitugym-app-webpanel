@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import type { CheckIn } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
-import { formatDateTime } from "@/lib/utils";
 import { CheckoutButton } from "@/components/checkins/checkout-button";
 import { AvatarWithPreview } from "@/components/members/avatar-preview-modal";
 import { Badge } from "@/components/ui/badge";
@@ -28,17 +27,17 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
         accessorKey: "member_name",
         header: () => <div className="text-center md:text-left font-semibold">Member</div>,
         cell: ({ row }) => (
-          <div className="flex items-center justify-center md:justify-start gap-3 min-w-[160px] md:min-w-0 px-2">
+          <div className="flex items-center justify-center md:justify-start gap-3 px-2">
             <AvatarWithPreview
               avatarUrl={row.original.avatar_url}
               memberName={row.original.member_name ?? "Walk-in"}
               size="small"
               className="w-8 h-8 flex-shrink-0"
             />
-            <div>
+            <div className="min-w-0 flex-1">
               {row.original.member_name && row.original.member_id ? (
-                <Link href={`/members/${row.original.member_id}/view`} className="group">
-                  <p className="font-semibold text-text group-hover:text-primary transition-colors cursor-pointer hover:underline">
+                <Link href={`/members/${row.original.member_id}/view`} className="group block">
+                  <p className="font-semibold text-text group-hover:text-primary transition-colors cursor-pointer hover:underline truncate">
                     {row.original.member_name}
                   </p>
                 </Link>
@@ -63,7 +62,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           
           if (status === 'denied') {
             return (
-              <div className="flex justify-center min-w-[100px] px-2">
+              <div className="flex justify-center px-2">
                 <Badge variant="destructive" title={denialReason || 'Access denied'} className="cursor-help">
                   Denied
                 </Badge>
@@ -72,7 +71,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           }
           
           return (
-            <div className="flex justify-center min-w-[100px] px-2">
+            <div className="flex justify-center px-2">
               {row.original.checked_out_at ? (
                 <Badge variant="secondary">Completed</Badge>
               ) : (
@@ -88,11 +87,11 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
         cell: ({ row }) => {
           const date = new Date(row.original.checked_in_at);
           return (
-            <div className="space-y-1.5 text-center min-w-[120px] px-2">
-              <p className="text-sm font-semibold text-text">
+            <div className="space-y-1.5 text-center px-2">
+              <p className="text-sm font-semibold text-text whitespace-nowrap">
                 {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </p>
-              <p className="text-xs text-muted/60">
+              <p className="text-xs text-muted/60 whitespace-nowrap">
                 {timeFormat === '12h'
                   ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
                   : date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -111,7 +110,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           // If denied, show N/A
           if (status === 'denied') {
             return (
-              <div className="text-center min-w-[120px] px-2">
+              <div className="text-center px-2">
                 <span className="text-sm text-muted/60">N/A</span>
               </div>
             );
@@ -120,11 +119,11 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           if (row.original.checked_out_at) {
             const date = new Date(row.original.checked_out_at);
             return (
-              <div className="space-y-1.5 text-center min-w-[120px] px-2">
-                <p className="text-sm font-semibold text-text">
+              <div className="space-y-1.5 text-center px-2">
+                <p className="text-sm font-semibold text-text whitespace-nowrap">
                   {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
-                <p className="text-xs text-muted/60">
+                <p className="text-xs text-muted/60 whitespace-nowrap">
                   {timeFormat === '12h'
                     ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
                     : date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -134,9 +133,9 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
             );
           }
           return (
-            <div className="flex items-center justify-center gap-2 min-w-[120px] px-2">
-              <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-success">Still in gym</span>
+            <div className="flex items-center justify-center gap-2 px-2">
+              <div className="w-2 h-2 bg-success rounded-full animate-pulse flex-shrink-0"></div>
+              <span className="text-sm font-medium text-success whitespace-nowrap">Still in gym</span>
             </div>
           );
         },
@@ -151,7 +150,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           // If denied, show N/A
           if (status === 'denied') {
             return (
-              <div className="text-center min-w-[120px] px-2">
+              <div className="text-center px-2">
                 <span className="text-sm text-muted/60">N/A</span>
               </div>
             );
@@ -159,9 +158,9 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           
           if (!minutes) {
             return (
-              <div className="flex items-center justify-center gap-2 min-w-[120px] px-2">
-                <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                <span className="text-sm text-muted">Active session</span>
+              <div className="flex items-center justify-center gap-2 px-2">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse flex-shrink-0"></div>
+                <span className="text-sm text-muted whitespace-nowrap">Active session</span>
               </div>
             );
           }
@@ -170,9 +169,9 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           const duration = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
           
           return (
-            <div className="space-y-1.5 text-center min-w-[120px] px-2">
-              <p className="text-sm font-bold text-text">{duration}</p>
-              <p className="text-xs text-muted/60">
+            <div className="space-y-1.5 text-center px-2">
+              <p className="text-sm font-bold text-text whitespace-nowrap">{duration}</p>
+              <p className="text-xs text-muted/60 whitespace-nowrap">
                 {minutes < 60 ? "Short session" : minutes > 180 ? "Extended session" : "Regular session"}
               </p>
             </div>
@@ -187,13 +186,13 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           const isQR = method === "qr";
           
           return (
-            <div className="flex justify-center min-w-[100px] px-2">
-              <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${
+            <div className="flex justify-center px-2">
+              <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border whitespace-nowrap ${
                 isQR 
                   ? "bg-primary/10 text-primary border-primary/30" 
                   : "bg-accent/10 text-accent border-accent/30"
               }`}>
-                <div className={`w-2 h-2 rounded-full ${
+                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
                   isQR ? "bg-primary" : "bg-accent"
                 }`}></div>
                 {isQR ? "QR Scan" : "Manual"}
@@ -211,14 +210,14 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           // If denied, no actions available
           if (status === 'denied') {
             return (
-              <div className="flex justify-center min-w-[100px] px-2">
-                <span className="text-sm text-muted/60">No actions</span>
+              <div className="flex justify-center px-2">
+                <span className="text-sm text-muted/60 whitespace-nowrap">No actions</span>
               </div>
             );
           }
           
           return (
-            <div className="flex justify-center min-w-[100px] px-2">
+            <div className="flex justify-center px-2">
               <CheckoutButton
                 checkinId={row.original.id}
                 memberName={row.original.member_name ?? "Walk-in"}
@@ -305,10 +304,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
 
       {/* Enhanced Data Table */}
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-card/20 to-surface/20 rounded-lg sm:rounded-xl blur-lg"></div>
-        <div className="relative">
-          <DataTable columns={columns} data={filteredData} />
-        </div>
+        <DataTable columns={columns} data={filteredData} />
       </div>
     </div>
   );

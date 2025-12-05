@@ -51,41 +51,45 @@ export function CheckinsWithTabs({ data, timeFormat = '24h' }: CheckinsWithTabsP
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Tabs bar */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex flex-1 gap-2 sm:gap-3 rounded-full bg-surface/70 p-1 border border-white/5">
-          {tabs.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+      <div className="flex items-center gap-2 sm:gap-3">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={[
+                "group relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-2",
+                "bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75",
+                "text-slate-200 font-medium text-xs sm:text-sm",
+                "rounded-2xl backdrop-blur-sm",
+                "shadow-md shadow-black/20",
+                "transition-all duration-500 ease-out",
+                "overflow-hidden",
+                "active:scale-95",
+                isActive
+                  ? "hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 hover:shadow-lg hover:shadow-cyan-950/25"
+                  : "opacity-60 hover:opacity-100 hover:from-slate-700/85 hover:via-cyan-900/55 hover:to-slate-700/85",
+              ].join(" ")}
+            >
+              <span className="truncate">{tab.label}</span>
+              <span
                 className={[
-                  "group flex-1 inline-flex items-center justify-center gap-2 rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-all",
+                  "inline-flex items-center justify-center rounded-full min-w-[28px] px-2 py-0.5 text-xs font-bold transition-all",
                   isActive
-                    ? "bg-gradient-to-r from-emerald-400/90 to-cyan-400/90 text-slate-950 shadow-md"
-                    : "bg-slate-800/60 border border-slate-700/50 text-slate-300 hover:text-text hover:bg-slate-700/70 hover:border-slate-600/60",
+                    ? "bg-slate-950/40 backdrop-blur-sm text-white shadow-sm"
+                    : "bg-slate-950/30 text-slate-300 group-hover:bg-slate-950/40 group-hover:text-slate-200",
                 ].join(" ")}
               >
-                <span className="truncate">{tab.label}</span>
-                <span
-                  className={[
-                    "inline-flex items-center justify-center rounded-full min-w-[28px] px-2 py-0.5 text-xs font-bold transition-all",
-                    isActive
-                      ? "bg-slate-950/30 backdrop-blur-sm text-white shadow-sm"
-                      : "bg-slate-700/50 text-slate-300 group-hover:bg-slate-600/60 group-hover:text-slate-200",
-                  ].join(" ")}
-                >
-                  {tab.count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                {tab.count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Enhanced Table Container */}
       <div className="relative animate-fade-in-up animate-stagger-1">
-        <div className="absolute inset-0 bg-gradient-to-br from-card/40 to-surface/40 rounded-2xl sm:rounded-3xl blur-xl"></div>
         <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500">
           <CheckinsTable data={filteredData} timeFormat={timeFormat} />
         </div>

@@ -59,13 +59,7 @@ export function MembersPageWrapper({ members, expiringCount }: MembersPageWrappe
 
       {/* Members Table */}
       <section className="relative">
-        {/* Background Glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-primary/5 rounded-2xl sm:rounded-3xl blur-2xl"></div>
-        
         <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-xl shadow-black/15 transition-all duration-300 hover:shadow-2xl hover:shadow-secondary/10 hover:border-secondary/50 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6">
-          {/* Card Hover Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-secondary/2 via-secondary/1 to-primary/2 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
-          
           <div className="relative">
             <MembersTable members={filteredMembers} />
           </div>
