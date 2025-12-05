@@ -28,7 +28,7 @@ export function MembersTable({ members }: { members: Member[] }) {
       data={members}
       filterKey="full_name"
       toolbarSlot={
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center justify-center md:justify-end gap-2 w-full md:w-auto">
           <Link href="/members/new">
             <Button className="gap-2 bg-primary hover:bg-primary/90 text-white h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4">
               <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
