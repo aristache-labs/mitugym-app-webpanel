@@ -41,8 +41,8 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
               <div className="flex items-center gap-3">
                 <Link href="/bookings" className="md:pointer-events-none">
                   <CardTitle className="text-lg font-semibold text-text group-hover:text-primary transition-colors md:cursor-default">
-                    Today&apos;s Bookings
-                  </CardTitle>
+                  Today&apos;s Bookings
+                </CardTitle>
                 </Link>
                 <Link 
                   href="/bookings" 
