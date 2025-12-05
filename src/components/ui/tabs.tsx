@@ -83,7 +83,7 @@ export function TabsTrigger({ value, className, children, icon }: TabsTriggerPro
         "disabled:pointer-events-none disabled:opacity-50",
         isActive
           ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/30 shadow-md shadow-primary/5"
-          : "text-muted/80 hover:text-primary border border-primary/10 hover:border-primary/30 hover:bg-primary/4 hover:shadow-sm hover:shadow-primary/1",
+          : "text-muted/80 hover:text-primary ring-1 ring-primary/10 hover:ring-primary/20 hover:bg-primary/5",
         className
       )}
     >
