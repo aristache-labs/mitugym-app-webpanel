@@ -77,20 +77,22 @@ export function SettingsPageClient({
 
       {/* Tabbed Interface */}
       <Tabs defaultValue="general" value={activeTab} onValueChange={handleTabChange}>
-        <TabsList>
-          <TabsTrigger value="general" icon={<Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}>
+        <div className="flex justify-center sm:justify-start">
+          <TabsList>
+          <TabsTrigger value="general" icon={<Globe className="h-4 w-4" />}>
             <span className="hidden sm:inline">General Settings</span>
             <span className="sm:hidden">General</span>
           </TabsTrigger>
-          <TabsTrigger value="security" icon={<Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}>
+          <TabsTrigger value="security" icon={<Shield className="h-4 w-4" />}>
             <span className="hidden sm:inline">Security & API</span>
             <span className="sm:hidden">Security</span>
           </TabsTrigger>
-          <TabsTrigger value="logs" icon={<Activity className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}>
+          <TabsTrigger value="logs" icon={<Activity className="h-4 w-4" />}>
             <span className="hidden sm:inline">Activity Logs</span>
             <span className="sm:hidden">Logs</span>
           </TabsTrigger>
         </TabsList>
+        </div>
 
         {/* Tab 1: General Settings */}
         <TabsContent value="general">

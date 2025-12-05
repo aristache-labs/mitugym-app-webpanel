@@ -10,6 +10,7 @@ import type { TimeFormat } from "@/lib/settings";
 import { CheckoutButton } from "@/components/checkins/checkout-button";
 import { AvatarWithPreview } from "@/components/members/avatar-preview-modal";
 import { Badge } from "@/components/ui/badge";
+import { formatTime } from "@/lib/utils";
 import Link from "next/link";
 
 interface CheckinsTableProps {
@@ -92,10 +93,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
                 {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </p>
               <p className="text-xs text-muted/60 whitespace-nowrap">
-                {timeFormat === '12h'
-                  ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-                  : date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
-                }
+                {formatTime(date, timeFormat)}
               </p>
             </div>
           );
@@ -124,10 +122,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
                   {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
                 <p className="text-xs text-muted/60 whitespace-nowrap">
-                  {timeFormat === '12h'
-                    ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-                    : date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
-                  }
+                  {formatTime(date, timeFormat)}
                 </p>
               </div>
             );

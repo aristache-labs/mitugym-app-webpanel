@@ -62,7 +62,7 @@ export default async function CheckinsPage() {
       <div className="relative animate-fade-in-up">
         <div className="relative space-y-3 sm:space-y-4">
           {/* Header Row with Occupancy Badge */}
-          <div className="flex items-center justify-between gap-3 sm:gap-4">
+          <div className="flex items-start sm:items-center justify-between gap-2 sm:gap-4">
             <div className="space-y-0.5 sm:space-y-1 flex-1 min-w-0">
               <h1 className="text-base sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent">
                 Check-ins Management
@@ -75,7 +75,7 @@ export default async function CheckinsPage() {
             {/* Occupancy Card */}
             <div className="relative flex-shrink-0 animate-scale-in">
               <div
-                className={`relative overflow-hidden rounded-lg sm:rounded-xl border px-3 sm:px-4 py-2 sm:py-3 
+                className={`relative overflow-hidden rounded-md sm:rounded-xl border px-2 sm:px-4 py-1.5 sm:py-3 
                             bg-surface/80 backdrop-blur-xl shadow-lg 
                             transition-all duration-500 hover:shadow-xl ${occupancyStyle.border}`}
               >
@@ -85,27 +85,28 @@ export default async function CheckinsPage() {
                 />
 
                 {/* content */}
-                <div className="relative space-y-1.5">
-                  <div className="flex items-center gap-2">
+                <div className="relative space-y-1 sm:space-y-1.5">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
                     <span
-                      className={`h-1.5 w-1.5 rounded-full animate-pulse ${occupancyStyle.indicator}`}
+                      className={`h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full animate-pulse ${occupancyStyle.indicator}`}
                     />
-                    <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-muted">
-                      In Gym Now
+                    <span className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider text-muted whitespace-nowrap">
+                      <span className="hidden sm:inline">In Gym Now</span>
+                      <span className="sm:hidden">In Gym</span>
                     </span>
                     <span
-                      className={`ml-auto inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] 
+                      className={`inline-flex items-center rounded-full border px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] 
                                   font-semibold uppercase tracking-wide bg-black/40 ${occupancyStyle.text}`}
                     >
                       {occupancyStyle.status}
                     </span>
                   </div>
 
-                  <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-xl sm:text-2xl font-black leading-none text-text">
+                  <div className="flex items-baseline justify-center gap-0.5 sm:gap-1">
+                    <span className="text-lg sm:text-2xl font-black leading-none text-text">
                       {occupancy.total}
                     </span>
-                    <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-muted/90">
+                    <span className="text-[8px] sm:text-[10px] font-semibold uppercase tracking-wider text-muted/90">
                       people
                     </span>
                   </div>

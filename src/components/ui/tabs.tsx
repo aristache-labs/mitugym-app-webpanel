@@ -51,7 +51,7 @@ export function TabsList({ className, children }: TabsListProps) {
     <div
       role="tablist"
       className={cn(
-        "inline-flex items-center gap-2 rounded-[16px] bg-surface/60 p-2 backdrop-blur border border-surface/60",
+        "flex sm:inline-flex items-center justify-center gap-1 sm:gap-2 rounded-[16px] bg-surface/60 p-2 backdrop-blur border border-surface/60",
         className
       )}
     >
@@ -77,7 +77,7 @@ export function TabsTrigger({ value, className, children, icon }: TabsTriggerPro
       aria-selected={isActive}
       onClick={() => onValueChange(value)}
       className={cn(
-        "relative inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium transition-all duration-200",
+        "relative inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-medium transition-all duration-200",
         "rounded-[12px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         "disabled:pointer-events-none disabled:opacity-50",
         isActive
