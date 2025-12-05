@@ -5,12 +5,14 @@ import { DataTable } from "@/components/data-table/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
+import { AnimatedCreateButton } from "@/components/ui/animated-create-button";
 import { ServiceBooking } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
 import { confirmSessionBookingAction, completeSessionBookingAction, cancelSessionBookingAction, deleteSessionBookingAction } from "@/app/(protected)/actions";
-import { Calendar as CalendarIcon, User, Clock, CheckCircle, XCircle, Trash2, Eye, Edit, X, Package, Plus } from "lucide-react";
+import { Calendar as CalendarIcon, User, Clock, CheckCircle, XCircle, Trash2, Eye, Edit, X, Package } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CalendarViewButton } from "@/components/bookings/calendar-view-button";
 
 interface SessionBookingsTableProps {
@@ -19,6 +21,7 @@ interface SessionBookingsTableProps {
 }
 
 export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBookingsTableProps) {
+  const router = useRouter();
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [completeModalOpen, setCompleteModalOpen] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
@@ -26,6 +29,10 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
   const [selectedBooking, setSelectedBooking] = useState<ServiceBooking | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const handleNewBooking = () => {
+    router.push("/bookings/new");
+  };
 
   const handleConfirmClick = (booking: ServiceBooking) => {
     setSelectedBooking(booking);
@@ -342,13 +349,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
         toolbarSlot={
           <div className="flex items-center justify-center md:justify-end gap-3 w-full md:w-auto">
             <CalendarViewButton bookings={bookings} timeFormat={timeFormat} />
-            <Link href="/bookings/new">
-              <Button className="gap-2 h-9 sm:h-10 text-xs sm:text-sm px-4 sm:px-6 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium">
-                <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">New Booking</span>
-                <span className="sm:hidden">New</span>
-              </Button>
-            </Link>
+            <AnimatedCreateButton onClick={handleNewBooking} label="New Booking" shortLabel="New" />
           </div>
         }
       />

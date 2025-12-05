@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table/data-table";
 import { Button } from "@/components/ui/button";
+import { AnimatedCreateButton } from "@/components/ui/animated-create-button";
 import { deleteNewsAction, toggleNewsActiveAction } from "@/app/(protected)/actions";
 import type { NewsItem } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
 import { ConfirmationModal } from "@/components/ui/modal";
-import { Pencil, Trash2, Power, Plus } from "lucide-react";
+import { Pencil, Trash2, Power } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
 
 interface NewsManagerProps {
@@ -24,6 +25,10 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<NewsItem | null>(null);
   const { addToast } = useToast();
+
+  const handleCreateNew = () => {
+    router.push("/news/new");
+  };
 
   const handleDelete = async () => {
     if (!itemToDelete) return;
@@ -256,14 +261,7 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
                   {items.filter(item => item.is_active !== false).length} Active {items.filter(item => item.is_active !== false).length === 1 ? 'Announcement' : 'Announcements'}
                 </span>
               </div>
-                <Button
-                  onClick={() => router.push("/news/new")}
-                  className="gap-2 h-8 sm:h-10 text-xs sm:text-sm px-4 sm:px-6 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium"
-                >
-                  <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">Create New</span>
-                  <span className="sm:hidden">Create</span>
-                </Button>
+                <AnimatedCreateButton onClick={handleCreateNew} label="Create New" shortLabel="Create" />
               </div>
             </div>
           </div>
