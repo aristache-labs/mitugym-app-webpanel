@@ -169,17 +169,16 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
         <Button 
           onClick={handleSave}
           disabled={!hasChanges || isPending}
-          className="bg-primary hover:bg-primary/90 text-white text-xs sm:text-sm h-9 sm:h-10"
+          className="text-xs sm:text-sm h-9 sm:h-10 px-4 sm:px-6 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isPending ? "Saving..." : "Save Changes"}
         </Button>
         
         {hasChanges && (
           <Button 
-            variant="outline"
             onClick={handleReset}
             disabled={isPending}
-            className="text-xs sm:text-sm h-9 sm:h-10"
+            className="text-xs sm:text-sm h-9 sm:h-10 px-4 sm:px-6 bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium"
           >
             Reset
           </Button>

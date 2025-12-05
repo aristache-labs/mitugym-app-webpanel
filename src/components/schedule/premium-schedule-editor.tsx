@@ -287,7 +287,7 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
           onClick={onSubmit}
           disabled={isPending}
           size="lg"
-          className="px-6 sm:px-8 text-sm sm:text-base"
+          className="px-6 sm:px-8 text-sm sm:text-base bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium"
         >
           {isPending ? "Saving..." : "Save Schedule"}
         </AnimatedButton>

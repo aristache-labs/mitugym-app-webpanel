@@ -250,7 +250,7 @@ export function TimePicker({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="px-3 py-1 text-xs text-muted hover:text-text transition-colors"
+                className="px-4 py-2 text-xs bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium rounded-lg"
               >
                 Cancel
               </button>
@@ -260,7 +260,7 @@ export function TimePicker({
                   updateTime(hours, minutes);
                   setIsOpen(false);
                 }}
-                className="px-3 py-1 text-xs bg-primary text-background rounded hover:bg-primary/90 transition-colors"
+                className="px-4 py-2 text-xs bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium rounded-lg"
               >
                 Done
               </button>
