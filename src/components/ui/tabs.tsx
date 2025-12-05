@@ -82,8 +82,8 @@ export function TabsTrigger({ value, className, children, icon }: TabsTriggerPro
         "rounded-[12px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         "disabled:pointer-events-none disabled:opacity-50",
         isActive
-          ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/30 shadow-lg shadow-primary/20"
-          : "text-muted/80 hover:text-text hover:bg-surface/40 border border-transparent",
+          ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/30 shadow-md shadow-primary/5"
+          : "text-muted/80 hover:text-primary border border-primary/10 hover:border-primary/30 hover:bg-primary/4 hover:shadow-sm hover:shadow-primary/1",
         className
       )}
     >
