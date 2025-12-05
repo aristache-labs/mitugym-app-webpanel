@@ -69,10 +69,10 @@ export function CheckinsWithTabs({ data, timeFormat = '24h' }: CheckinsWithTabsP
                 <span className="truncate">{tab.label}</span>
                 <span
                   className={[
-                    "inline-flex items-center justify-center rounded-full border px-2 h-6 text-[10px] font-semibold uppercase tracking-[0.16em]",
+                    "inline-flex items-center justify-center rounded-full min-w-[28px] px-2 py-0.5 text-xs font-bold transition-all",
                     isActive
-                      ? "bg-black/10 border-black/20 text-slate-50"
-                      : "bg-slate-900/70 border-slate-600/40 text-slate-400",
+                      ? "bg-slate-950/30 backdrop-blur-sm text-white shadow-sm"
+                      : "bg-slate-700/50 text-slate-300 group-hover:bg-slate-600/60 group-hover:text-slate-200",
                   ].join(" ")}
                 >
                   {tab.count}
