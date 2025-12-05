@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { AVAILABLE_TIMEZONES, TIME_FORMAT_OPTIONS, type TimeFormat } from "@/lib/settings";
 import { updateTimezoneAction } from "@/app/(protected)/settings/actions";
@@ -166,22 +167,22 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 pt-1 sm:pt-2">
-        <Button 
+        <AnimatedButton 
           onClick={handleSave}
           disabled={!hasChanges || isPending}
-          className="text-xs sm:text-sm h-9 sm:h-10 px-4 sm:px-6 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium"
         >
           {isPending ? "Saving..." : "Save Changes"}
-        </Button>
+        </AnimatedButton>
         
         {hasChanges && (
-          <Button 
+          <AnimatedButton 
             onClick={handleReset}
             disabled={isPending}
-            className="text-xs sm:text-sm h-9 sm:h-10 px-4 sm:px-6 bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium"
+            className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/60 via-slate-800/50 to-slate-700/60 hover:from-slate-600/70 hover:via-slate-700/60 hover:to-slate-600/70 text-slate-300 hover:text-slate-100 !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/15 hover:shadow-lg hover:shadow-black/25 backdrop-blur-sm font-medium"
           >
             Reset
-          </Button>
+          </AnimatedButton>
         )}
         
         {!hasChanges && (

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Modal } from "@/components/ui/modal";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/toast";
@@ -58,14 +59,13 @@ export function ClearApiLogsButton() {
 
   return (
     <>
-      <Button
+      <AnimatedButton
         onClick={() => setShowConfirmDialog(true)}
         disabled={isPending}
-        className="h-8 sm:h-9 text-xs sm:text-sm px-3 sm:px-4 bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium"
+        className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium"
       >
-        <span className="hidden sm:inline">Clear API Logs</span>
-        <span className="sm:hidden">Clear</span>
-      </Button>
+        Clear API Logs
+      </AnimatedButton>
 
       <Modal
         isOpen={showConfirmDialog}
@@ -97,20 +97,20 @@ export function ClearApiLogsButton() {
           )}
 
           <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-0 sm:space-x-2">
-            <Button
+            <AnimatedButton
               onClick={() => setShowConfirmDialog(false)}
               disabled={isPending}
-              className="h-8 sm:h-9 text-xs sm:text-sm px-4 bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium"
+              className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/60 via-slate-800/50 to-slate-700/60 hover:from-slate-600/70 hover:via-slate-700/60 hover:to-slate-600/70 text-slate-300 hover:text-slate-100 !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/15 hover:shadow-lg hover:shadow-black/25 backdrop-blur-sm font-medium"
             >
               Cancel
-            </Button>
-            <Button
+            </AnimatedButton>
+            <AnimatedButton
               onClick={handleClearLogs}
               disabled={isPending}
-              className="h-8 sm:h-9 text-xs sm:text-sm px-4 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium"
+              className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium"
             >
               {isPending ? "Clearing..." : "Clear All Logs"}
-            </Button>
+            </AnimatedButton>
           </div>
         </div>
       </Modal>
