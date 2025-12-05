@@ -58,7 +58,7 @@ export function MetricCard({
     </>
   );
 
-  const cardClassName = `group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-md shadow-black/5 transition-all duration-300 ${isError ? 'hover:shadow-lg hover:shadow-error/10 hover:border-error/50' : 'hover:shadow-lg hover:shadow-primary/10 hover:border-primary/50'} overflow-hidden`;
+  const cardClassName = `group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-md shadow-black/5 transition-all duration-300 ${isError ? 'hover:shadow-md hover:shadow-error/3 hover:border-error/40' : 'hover:shadow-md hover:shadow-primary/3 hover:border-primary/40'} overflow-hidden`;
 
   if (href) {
     return (

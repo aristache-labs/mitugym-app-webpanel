@@ -25,7 +25,7 @@ export default async function BookingsPage() {
     <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
 
       {/* Metrics Section */}
-      <section className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-2 sm:gap-3 grid-cols-2 lg:grid-cols-4 px-1 sm:px-2">
         <MetricCard 
           title="Total Bookings" 
           value={bookings.length} 
@@ -54,13 +54,7 @@ export default async function BookingsPage() {
 
       {/* Bookings Table */}
       <section className="relative">
-        {/* Background Glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-primary/5 rounded-2xl sm:rounded-3xl blur-2xl"></div>
-        
-        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-xl shadow-black/15 transition-all duration-300 hover:shadow-2xl hover:shadow-secondary/10 hover:border-secondary/50 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6">
-          {/* Card Hover Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-secondary/2 via-secondary/1 to-primary/2 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
-          
+        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-xl shadow-black/15 transition-all duration-300 hover:shadow-2xl hover:shadow-black/20 hover:border-surface/60 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6">
           <div className="relative">
             <SessionBookingsTable bookings={bookings} timeFormat={timeFormat} />
           </div>

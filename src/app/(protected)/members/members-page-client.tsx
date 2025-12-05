@@ -30,7 +30,7 @@ export function MembersPageClient({ members, expiringCount, onFilterChange }: Me
   return (
     <>
       {/* Premium Metrics Section */}
-      <section className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-2 sm:gap-3 grid-cols-2 lg:grid-cols-4 px-1 sm:px-2">
         <MetricCard 
           title="Total Members" 
           value={members.length} 
