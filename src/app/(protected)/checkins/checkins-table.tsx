@@ -26,14 +26,14 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
     () => [
       {
         accessorKey: "member_name",
-        header: "Member",
+        header: () => <div className="text-center md:text-left font-semibold">Member</div>,
         cell: ({ row }) => (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center md:justify-start gap-3 min-w-[160px] md:min-w-0 px-2">
             <AvatarWithPreview
               avatarUrl={row.original.avatar_url}
               memberName={row.original.member_name ?? "Walk-in"}
               size="small"
-              className="w-8 h-8"
+              className="w-8 h-8 flex-shrink-0"
             />
             <div>
               {row.original.member_name && row.original.member_id ? (
@@ -56,33 +56,39 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
       },
       {
         accessorKey: "status",
-        header: "Status",
+        header: () => <div className="text-center font-semibold">Status</div>,
         cell: ({ row }) => {
           const status = row.original.status || 'success';
           const denialReason = row.original.denial_reason;
           
           if (status === 'denied') {
             return (
-              <Badge variant="destructive" title={denialReason || 'Access denied'} className="cursor-help">
-                Denied
-              </Badge>
+              <div className="flex justify-center min-w-[100px] px-2">
+                <Badge variant="destructive" title={denialReason || 'Access denied'} className="cursor-help">
+                  Denied
+                </Badge>
+              </div>
             );
           }
           
-          return row.original.checked_out_at ? (
-            <Badge variant="secondary">Completed</Badge>
-          ) : (
-            <Badge variant="default" className="bg-success/20 text-success border-success/30">Active</Badge>
+          return (
+            <div className="flex justify-center min-w-[100px] px-2">
+              {row.original.checked_out_at ? (
+                <Badge variant="secondary">Completed</Badge>
+              ) : (
+                <Badge variant="default" className="bg-success/20 text-success border-success/30">Active</Badge>
+              )}
+            </div>
           );
         },
       },
       {
         accessorKey: "checked_in_at",
-        header: "Checked In",
+        header: () => <div className="text-center font-semibold">Checked In</div>,
         cell: ({ row }) => {
           const date = new Date(row.original.checked_in_at);
           return (
-            <div className="space-y-1">
+            <div className="space-y-1.5 text-center min-w-[120px] px-2">
               <p className="text-sm font-semibold text-text">
                 {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </p>
@@ -98,21 +104,23 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
       },
       {
         accessorKey: "checked_out_at",
-        header: "Checked Out",
+        header: () => <div className="text-center font-semibold">Checked Out</div>,
         cell: ({ row }) => {
           const status = row.original.status || 'success';
           
           // If denied, show N/A
           if (status === 'denied') {
             return (
-              <span className="text-sm text-muted/60">N/A</span>
+              <div className="text-center min-w-[120px] px-2">
+                <span className="text-sm text-muted/60">N/A</span>
+              </div>
             );
           }
           
           if (row.original.checked_out_at) {
             const date = new Date(row.original.checked_out_at);
             return (
-              <div className="space-y-1">
+              <div className="space-y-1.5 text-center min-w-[120px] px-2">
                 <p className="text-sm font-semibold text-text">
                   {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
@@ -126,7 +134,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
             );
           }
           return (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2 min-w-[120px] px-2">
               <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
               <span className="text-sm font-medium text-success">Still in gym</span>
             </div>
@@ -135,7 +143,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
       },
       {
         accessorKey: "duration_minutes",
-        header: "Duration",
+        header: () => <div className="text-center font-semibold">Duration</div>,
         cell: ({ row }) => {
           const status = row.original.status || 'success';
           const minutes = row.original.duration_minutes;
@@ -143,13 +151,15 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           // If denied, show N/A
           if (status === 'denied') {
             return (
-              <span className="text-sm text-muted/60">N/A</span>
+              <div className="text-center min-w-[120px] px-2">
+                <span className="text-sm text-muted/60">N/A</span>
+              </div>
             );
           }
           
           if (!minutes) {
             return (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center gap-2 min-w-[120px] px-2">
                 <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
                 <span className="text-sm text-muted">Active session</span>
               </div>
@@ -160,7 +170,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           const duration = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
           
           return (
-            <div className="space-y-1">
+            <div className="space-y-1.5 text-center min-w-[120px] px-2">
               <p className="text-sm font-bold text-text">{duration}</p>
               <p className="text-xs text-muted/60">
                 {minutes < 60 ? "Short session" : minutes > 180 ? "Extended session" : "Regular session"}
@@ -171,42 +181,44 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
       },
       {
         accessorKey: "method",
-        header: "Method",
+        header: () => <div className="text-center font-semibold">Method</div>,
         cell: ({ row }) => {
           const method = row.original.method ?? "manual";
           const isQR = method === "qr";
           
           return (
-            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${
-              isQR 
-                ? "bg-primary/10 text-primary border-primary/30" 
-                : "bg-accent/10 text-accent border-accent/30"
-            }`}>
-              <div className={`w-2 h-2 rounded-full ${
-                isQR ? "bg-primary" : "bg-accent"
-              }`}></div>
-              {isQR ? "QR Scan" : "Manual"}
+            <div className="flex justify-center min-w-[100px] px-2">
+              <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${
+                isQR 
+                  ? "bg-primary/10 text-primary border-primary/30" 
+                  : "bg-accent/10 text-accent border-accent/30"
+              }`}>
+                <div className={`w-2 h-2 rounded-full ${
+                  isQR ? "bg-primary" : "bg-accent"
+                }`}></div>
+                {isQR ? "QR Scan" : "Manual"}
+              </div>
             </div>
           );
         },
       },
       {
         id: "actions",
-        header: "Actions",
+        header: () => <div className="text-center font-semibold">Actions</div>,
         cell: ({ row }) => {
           const status = row.original.status || 'success';
           
           // If denied, no actions available
           if (status === 'denied') {
             return (
-              <div className="flex justify-center">
+              <div className="flex justify-center min-w-[100px] px-2">
                 <span className="text-sm text-muted/60">No actions</span>
               </div>
             );
           }
           
           return (
-            <div className="flex justify-center">
+            <div className="flex justify-center min-w-[100px] px-2">
               <CheckoutButton
                 checkinId={row.original.id}
                 memberName={row.original.member_name ?? "Walk-in"}
@@ -217,7 +229,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
         },
       },
     ],
-    []
+    [timeFormat]
   );
 
   const filteredData = data.filter((checkIn) => {
@@ -229,16 +241,16 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Premium Filters Section */}
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl blur-lg"></div>
-        <div className="relative bg-surface/40 backdrop-blur-sm rounded-xl border border-surface/50 p-6">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end">
-            <div className="flex-1 space-y-3">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg sm:rounded-xl blur-lg"></div>
+        <div className="relative bg-surface/40 backdrop-blur-sm rounded-lg sm:rounded-xl border border-surface/50 p-4 sm:p-6">
+          <div className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-end">
+            <div className="flex-1 space-y-2 sm:space-y-3">
               <div className="flex items-center gap-2">
-                <div className="w-1 h-4 bg-gradient-to-b from-primary to-accent rounded-full"></div>
-                <label className="text-xs font-bold uppercase tracking-wider text-primary">
+                <div className="w-1 h-3 sm:h-4 bg-gradient-to-b from-primary to-accent rounded-full"></div>
+                <label className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-primary">
                   Search Members
                 </label>
               </div>
@@ -247,16 +259,16 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder="Type member name..."
-                  className="bg-card/60 border-surface/60 focus:border-primary/50 focus:bg-card/80 transition-all duration-300 pl-4 pr-4 py-3 rounded-lg text-text placeholder:text-muted/60"
+                  className="bg-card/60 border-surface/60 focus:border-primary/50 focus:bg-card/80 transition-all duration-300 pl-3 sm:pl-4 pr-3 sm:pr-4 py-2 sm:py-3 rounded-lg text-sm sm:text-base text-text placeholder:text-muted/60"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
             </div>
             
-            <div className="lg:w-64 space-y-3">
+            <div className="lg:w-64 space-y-2 sm:space-y-3">
               <div className="flex items-center gap-2">
-                <div className="w-1 h-4 bg-gradient-to-b from-accent to-secondary rounded-full"></div>
-                <label className="text-xs font-bold uppercase tracking-wider text-accent">
+                <div className="w-1 h-3 sm:h-4 bg-gradient-to-b from-accent to-secondary rounded-full"></div>
+                <label className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-accent">
                   Filter Method
                 </label>
               </div>
@@ -264,7 +276,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
                 <Select 
                   value={methodFilter} 
                   onChange={(event) => setMethodFilter(event.target.value)}
-                  className="bg-card/60 border-surface/60 focus:border-accent/50 focus:bg-card/80 transition-all duration-300 rounded-lg text-text"
+                  className="bg-card/60 border-surface/60 focus:border-accent/50 focus:bg-card/80 transition-all duration-300 rounded-lg text-sm sm:text-base text-text"
                 >
                   <option value="" className="bg-surface text-text">
                     All methods
@@ -282,8 +294,8 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
           </div>
           
           {/* Results Summary */}
-          <div className="mt-4 pt-4 border-t border-surface/30">
-            <p className="text-xs text-muted/80 font-medium">
+          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-surface/30">
+            <p className="text-[10px] sm:text-xs text-muted/80 font-medium">
               Showing <span className="text-primary font-bold">{filteredData.length}</span> of{" "}
               <span className="text-accent font-bold">{data.length}</span> check-ins
             </p>
@@ -293,7 +305,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
 
       {/* Enhanced Data Table */}
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-card/20 to-surface/20 rounded-xl blur-lg"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-card/20 to-surface/20 rounded-lg sm:rounded-xl blur-lg"></div>
         <div className="relative">
           <DataTable columns={columns} data={filteredData} />
         </div>
