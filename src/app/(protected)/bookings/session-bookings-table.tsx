@@ -8,9 +8,10 @@ import { Modal } from "@/components/ui/modal";
 import { ServiceBooking } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
 import { confirmSessionBookingAction, completeSessionBookingAction, cancelSessionBookingAction, deleteSessionBookingAction } from "@/app/(protected)/actions";
-import { Calendar, User, Clock, CheckCircle, XCircle, Trash2, Eye, Edit, X, Package } from "lucide-react";
+import { Calendar as CalendarIcon, User, Clock, CheckCircle, XCircle, Trash2, Eye, Edit, X, Package, Plus } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
+import { CalendarViewButton } from "@/components/bookings/calendar-view-button";
 
 interface SessionBookingsTableProps {
   bookings: ServiceBooking[];
@@ -166,13 +167,13 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
     {
       accessorKey: "booking_date",
       header: () => (
-        <div className="text-center font-semibold">Date & Time</div>
+        <div className="text-center md:text-left font-semibold">Date & Time</div>
       ),
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+          <div className="flex items-center justify-center md:justify-start gap-2">
+            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
             <div>
               <div className="font-medium whitespace-nowrap">
                 {format(new Date(booking.booking_date), "MMM dd, yyyy")}
@@ -197,11 +198,11 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="max-w-[180px]">
+          <div className="max-w-[180px] mx-auto text-center">
             <div className="font-medium line-clamp-2 leading-tight">
               {booking.service?.name || "Unknown Service"}
             </div>
-            <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+            <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground mt-1">
               <Clock className="h-3 w-3" />
               {booking.service?.duration_minutes || 60} min
             </div>
@@ -217,7 +218,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <User className="h-4 w-4 text-muted-foreground" />
             <div className="min-w-0 max-w-[160px]">
               <div className="font-medium line-clamp-1">{booking.member?.full_name || "Unknown Member"}</div>
@@ -234,7 +235,11 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
       header: () => (
         <div className="text-center font-semibold">Status</div>
       ),
-      cell: ({ row }: { row: { original: ServiceBooking } }) => getStatusBadge(row.original.status),
+      cell: ({ row }: { row: { original: ServiceBooking } }) => (
+        <div className="flex justify-center">
+          {getStatusBadge(row.original.status)}
+        </div>
+      ),
     },
     {
       id: "actions",
@@ -244,7 +249,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center justify-center gap-1">
             <Link href={`/bookings/${booking.id}`}>
               <Button 
                 variant="ghost" 
@@ -334,6 +339,18 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
         columns={columns}
         data={bookings}
         filterKey="service"
+        toolbarSlot={
+          <div className="flex items-center justify-center md:justify-end gap-2 w-full md:w-auto">
+            <CalendarViewButton bookings={bookings} timeFormat={timeFormat} />
+            <Link href="/bookings/new">
+              <Button className="gap-2 bg-primary hover:bg-primary/90 text-white h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4">
+                <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">New Booking</span>
+                <span className="sm:hidden">New</span>
+              </Button>
+            </Link>
+          </div>
+        }
       />
 
       {/* Confirm Modal */}
@@ -382,7 +399,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
                 <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-green-600/10 rounded-2xl blur-xl"></div>
                 <div className="relative bg-green-500/5 backdrop-blur-sm border border-green-500/20 rounded-2xl p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <Calendar className="h-5 w-5 text-green-600" />
+                    <CalendarIcon className="h-5 w-5 text-green-600" />
                     <h4 className="font-semibold text-text">Booking Details</h4>
                   </div>
                   
@@ -498,7 +515,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-emerald-600/10 rounded-2xl blur-xl"></div>
                 <div className="relative bg-emerald-500/5 backdrop-blur-sm border border-emerald-500/20 rounded-2xl p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <Calendar className="h-5 w-5 text-emerald-600" />
+                    <CalendarIcon className="h-5 w-5 text-emerald-600" />
                     <h4 className="font-semibold text-text">Session Details</h4>
                   </div>
                   
@@ -630,7 +647,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
                 <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-red-600/10 rounded-2xl blur-xl"></div>
                 <div className="relative bg-red-500/5 backdrop-blur-sm border border-red-500/20 rounded-2xl p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <Calendar className="h-5 w-5 text-red-600" />
+                    <CalendarIcon className="h-5 w-5 text-red-600" />
                     <h4 className="font-semibold text-text">Booking to Cancel</h4>
                   </div>
                   
@@ -762,7 +779,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
                 <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-red-600/10 rounded-2xl blur-xl"></div>
                 <div className="relative bg-red-500/5 backdrop-blur-sm border border-red-500/20 rounded-2xl p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <Calendar className="h-5 w-5 text-red-600" />
+                    <CalendarIcon className="h-5 w-5 text-red-600" />
                     <h4 className="font-semibold text-text">Booking to Delete</h4>
                   </div>
                   

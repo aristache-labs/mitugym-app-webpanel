@@ -1,11 +1,7 @@
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { fetchSessionBookings } from "@/lib/data";
 import { SessionBookingsTable } from "./session-bookings-table";
-import { CalendarViewButton } from "@/components/bookings/calendar-view-button";
 import { MetricCard } from "@/components/dashboard/metric-card";
-import { Plus, Calendar, Clock, CheckCircle, AlertCircle, Package } from "lucide-react";
-import Link from "next/link";
+import { Clock, CheckCircle, AlertCircle, Package } from "lucide-react";
 import { getTimeFormat } from "@/lib/timezone";
 
 export const metadata = {
@@ -26,10 +22,10 @@ export default async function BookingsPage() {
   const completedBookings = bookings.filter((booking) => booking.status === "completed");
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
 
       {/* Metrics Section */}
-      <section className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+      <section className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         <MetricCard 
           title="Total Bookings" 
           value={bookings.length} 
@@ -56,58 +52,20 @@ export default async function BookingsPage() {
         />
       </section>
 
-      {/* Premium Bookings Table */}
-      <div className="relative">
+      {/* Bookings Table */}
+      <section className="relative">
         {/* Background Glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-primary/5 rounded-3xl blur-2xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-primary/5 rounded-2xl sm:rounded-3xl blur-2xl"></div>
         
-        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-2xl shadow-black/20 transition-all duration-300 hover:shadow-3xl hover:shadow-secondary/10 hover:border-secondary/50 overflow-hidden rounded-3xl">
+        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-xl shadow-black/15 transition-all duration-300 hover:shadow-2xl hover:shadow-secondary/10 hover:border-secondary/50 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6">
           {/* Card Hover Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-secondary/2 via-secondary/1 to-primary/2 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-secondary/2 via-secondary/1 to-primary/2 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
           
-          {/* Gradient Border */}
-          <div className="absolute inset-0 rounded-3xl">
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-secondary/30 to-transparent" 
-                 style={{ 
-                   mask: 'linear-gradient(white, white) content-box, linear-gradient(white, white)',
-                   maskComposite: 'exclude',
-                   WebkitMask: 'linear-gradient(white, white) content-box, linear-gradient(white, white)',
-                   WebkitMaskComposite: 'xor',
-                   padding: '1px'
-                 }}>
-            </div>
+          <div className="relative">
+            <SessionBookingsTable bookings={bookings} timeFormat={timeFormat} />
           </div>
-          
-          <CardHeader className="relative p-8 pb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="p-2 rounded-xl bg-secondary/10 hover:bg-secondary/20 transition-colors">
-                  <Calendar className="h-6 w-6 text-secondary/60 hover:text-secondary transition-colors" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl font-semibold text-text hover:text-secondary transition-colors">
-                    All Session Bookings
-                  </CardTitle>
-                  <p className="text-sm text-muted/70 mt-1">Manage and track all booking sessions</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <CalendarViewButton bookings={bookings} timeFormat={timeFormat} />
-                <Link href="/bookings/new">
-                  <Button className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl">
-                    <Plus className="h-4 w-4" />
-                    New Booking
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="relative p-8 pt-0">
-          <SessionBookingsTable bookings={bookings} timeFormat={timeFormat} />
-        </CardContent>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
