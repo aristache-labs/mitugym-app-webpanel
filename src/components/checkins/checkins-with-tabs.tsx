@@ -49,35 +49,37 @@ export function CheckinsWithTabs({ data, timeFormat = '24h' }: CheckinsWithTabsP
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      {/* Premium Tabs */}
-      <div className="relative animate-scale-in">
-        <div className="relative bg-card/40 backdrop-blur-sm rounded-xl sm:rounded-2xl p-1 sm:p-1.5">
-          <nav className="flex flex-col sm:flex-row gap-1.5 sm:gap-2">
-            {tabs.map((tab, index) => (
+    <div className="space-y-4 sm:space-y-6">
+      {/* Tabs bar */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-1 gap-2 sm:gap-3 rounded-full bg-surface/70 p-1 border border-white/5">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex-1 py-2.5 sm:py-3 px-3 sm:px-5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm transition-all duration-500 ease-out group animate-fade-in-up ${
-                  activeTab === tab.id
-                    ? "bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 text-slate-200 shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25"
-                    : "bg-gradient-to-br from-slate-700/40 via-slate-800/30 to-slate-700/40 text-slate-400 hover:text-slate-200 hover:from-slate-700/60 hover:via-slate-800/50 hover:to-slate-700/60 shadow-sm shadow-black/10"
-                }`}
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className={[
+                  "group flex-1 inline-flex items-center justify-center gap-2 rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold transition-all",
+                  isActive
+                    ? "bg-gradient-to-r from-emerald-400/90 to-cyan-400/90 text-slate-950 shadow-md"
+                    : "bg-slate-800/60 border border-slate-700/50 text-slate-300 hover:text-text hover:bg-slate-700/70 hover:border-slate-600/60",
+                ].join(" ")}
               >
-                <div className="flex items-center justify-center gap-2 sm:gap-2.5">
-                  <span className="relative z-10 transition-all duration-300">{tab.label}</span>
-                  <div className={`relative ${
-                    activeTab === tab.id 
-                      ? "bg-cyan-500/20 text-cyan-300" 
-                      : "bg-slate-700/60 text-slate-400 group-hover:bg-slate-600/60 group-hover:text-slate-300"
-                  } px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold rounded-md transition-all duration-300`}>
-                    {tab.count}
-                  </div>
-                </div>
+                <span className="truncate">{tab.label}</span>
+                <span
+                  className={[
+                    "inline-flex items-center justify-center rounded-full border px-2 h-6 text-[10px] font-semibold uppercase tracking-[0.16em]",
+                    isActive
+                      ? "bg-black/10 border-black/20 text-slate-50"
+                      : "bg-slate-900/70 border-slate-600/40 text-slate-400",
+                  ].join(" ")}
+                >
+                  {tab.count}
+                </span>
               </button>
-            ))}
-          </nav>
+            );
+          })}
         </div>
       </div>
 

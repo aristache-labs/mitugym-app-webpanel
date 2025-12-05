@@ -1,6 +1,4 @@
 import { CheckinsWithTabs } from "@/components/checkins/checkins-with-tabs";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchCheckIns, fetchOccupancy } from "@/lib/data";
 import { getTimeFormat } from "@/lib/timezone";
 
@@ -75,29 +73,42 @@ export default async function CheckinsPage() {
               </p>
             </div>
 
-            {/* Compact Occupancy Badge */}
-            <div className="relative animate-scale-in flex-shrink-0">
-              <div className="relative bg-gradient-to-br from-slate-800/60 via-slate-700/50 to-slate-800/60 rounded-lg sm:rounded-xl px-3 sm:px-5 py-2 sm:py-3 shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm border border-slate-700/40">
-                <div className="flex items-center gap-2 sm:gap-4">
-                  <div className="hidden sm:block">
-                    <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
+            {/* Occupancy Card */}
+            <div className="relative flex-shrink-0 animate-scale-in">
+              <div
+                className={`relative overflow-hidden rounded-lg sm:rounded-xl border px-3 sm:px-4 py-2 sm:py-3 
+                            bg-surface/80 backdrop-blur-xl shadow-lg 
+                            transition-all duration-500 hover:shadow-xl ${occupancyStyle.border}`}
+              >
+                {/* subtle gradient background */}
+                <div
+                  className={`pointer-events-none absolute inset-0 opacity-40 bg-gradient-to-br ${occupancyStyle.bg}`}
+                />
+
+                {/* content */}
+                <div className="relative space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full animate-pulse ${occupancyStyle.indicator}`}
+                    />
+                    <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-muted">
                       In Gym Now
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 ${occupancyStyle.indicator} rounded-full animate-pulse`}></div>
-                      <span className="text-xs font-semibold text-slate-400">
-                        {occupancyStyle.status} capacity
-                      </span>
-                    </div>
+                    </span>
+                    <span
+                      className={`ml-auto inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] 
+                                  font-semibold uppercase tracking-wide bg-black/40 ${occupancyStyle.text}`}
+                    >
+                      {occupancyStyle.status}
+                    </span>
                   </div>
-                  <div className="hidden sm:block h-10 sm:h-12 w-px bg-slate-700/60"></div>
-                  <div className="text-center min-w-[50px] sm:min-w-[60px]">
-                    <div className="text-xl sm:text-3xl font-black tracking-tight text-cyan-300 drop-shadow-lg">
+
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-xl sm:text-2xl font-black leading-none text-text">
                       {occupancy.total}
-                    </div>
-                    <div className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                      People
-                    </div>
+                    </span>
+                    <span className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-muted/90">
+                      people
+                    </span>
                   </div>
                 </div>
               </div>
