@@ -54,7 +54,7 @@ export default async function BookingsPage() {
 
       {/* Bookings Table */}
       <section className="relative">
-        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-xl shadow-black/15 transition-all duration-300 hover:shadow-2xl hover:shadow-black/20 hover:border-surface/60 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6">
+        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 transition-all duration-300 hover:border-surface/60 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6">
           <div className="relative">
             <SessionBookingsTable bookings={bookings} timeFormat={timeFormat} />
           </div>

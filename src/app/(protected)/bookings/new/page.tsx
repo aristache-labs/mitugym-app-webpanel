@@ -27,7 +27,7 @@ export default async function NewBookingPage() {
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-primary/5 rounded-3xl blur-2xl"></div>
         
-        <Card className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-2xl shadow-black/20 transition-all duration-300 hover:shadow-3xl hover:shadow-secondary/10 hover:border-secondary/50 overflow-hidden rounded-3xl">
+        <Card className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-surface/60 overflow-hidden rounded-3xl">
           <div className="absolute inset-0 bg-gradient-to-br from-secondary/2 via-secondary/1 to-primary/2 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
           
           <CardHeader className="relative p-8 pb-6">
@@ -61,3 +61,4 @@ export default async function NewBookingPage() {
     </div>
   );
 }
+

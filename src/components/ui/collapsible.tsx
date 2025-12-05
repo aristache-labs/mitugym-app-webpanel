@@ -34,8 +34,8 @@ export function Collapsible({
     <div
       className={cn(
         "group relative rounded-[16px] border border-surface/60 bg-card/80 backdrop-blur overflow-hidden",
-        "shadow-lg shadow-black/10 transition-all duration-300",
-        isOpen && "shadow-xl shadow-primary/15 border-primary/30",
+        "transition-all duration-300",
+        isOpen && "border-primary/30",
         className
       )}
     >

@@ -99,7 +99,7 @@ export function DataTable<TData, TValue>({
         <div className="flex w-full items-center justify-end gap-2 md:w-auto">{toolbarSlot}</div>
       </div>
       
-      <div className="overflow-x-auto rounded-xl sm:rounded-2xl border border-surface/30 bg-card/95 backdrop-blur-sm shadow-2xl shadow-black/20">
+      <div className="overflow-x-auto rounded-xl sm:rounded-2xl border border-surface/30 bg-card/95 backdrop-blur-sm shadow-md">
         <Table className="min-w-full">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -96,7 +96,7 @@ export function SettingsPageClient({
         <TabsContent value="general">
           <div className="space-y-4 sm:space-y-6">
             {/* Timezone Settings - Always Expanded */}
-            <div className="rounded-xl sm:rounded-[16px] border border-surface/60 bg-card/80 backdrop-blur p-4 sm:p-6 shadow-lg shadow-black/10">
+            <div className="rounded-xl sm:rounded-[16px] border border-surface/60 bg-card/80 backdrop-blur p-4 sm:p-6">
               <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                 <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-primary/10">
                   <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />

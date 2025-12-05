@@ -241,8 +241,7 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
     <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       {/* News Table Section with Header */}
       <div className="relative animate-fade-in-up">
-        <div className="absolute inset-0 bg-gradient-to-br from-card/40 to-surface/40 rounded-2xl sm:rounded-3xl blur-xl"></div>
-        <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 shadow-xl overflow-hidden">
+        <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 overflow-hidden">
           {/* Header Inside Container */}
           <div className="p-4 sm:p-6 border-b border-surface/30 bg-gradient-to-r from-surface/40 to-card/40">
              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
