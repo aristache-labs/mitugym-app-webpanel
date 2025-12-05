@@ -55,25 +55,25 @@ export function LoginForm() {
   });
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-8 sm:px-6">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-4 sm:py-8 sm:px-6">
       {/* Logo */}
-      <div className="mb-6 sm:mb-8">
+      <div className="mb-4 sm:mb-8">
         <Image
           src="/logo.png"
           alt="MITUGYM Logo"
-          width={120}
-          height={120}
+          width={100}
+          height={100}
           className="mx-auto sm:w-[150px] sm:h-[150px]"
         />
       </div>
       
       <Card className="w-full max-w-md border-primary/20 bg-surface/80 shadow-2xl">
-        <CardHeader className="pb-4 sm:pb-6">
-          <CardTitle className="text-center text-xl font-semibold text-primary sm:text-2xl">Staff Portal</CardTitle>
+        <CardHeader className="pb-3 sm:pb-6">
+          <CardTitle className="text-center text-lg font-semibold text-primary sm:text-2xl">Staff Portal</CardTitle>
         </CardHeader>
-        <CardContent className="px-4 pb-6 sm:px-6 sm:pb-8">
+        <CardContent className="px-4 pb-4 sm:px-6 sm:pb-8">
           <Form {...form}>
-            <form onSubmit={onSubmit} className="space-y-5 sm:space-y-6">
+            <form onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
               <FormField
                 control={form.control}
                 name="email"
@@ -112,7 +112,7 @@ export function LoginForm() {
               </Button>
             </form>
           </Form>
-          <p className="mt-5 text-center text-xs text-muted sm:mt-6">
+          <p className="mt-4 text-center text-xs text-muted sm:mt-6">
             Need access? Contact <Link href="mailto:ops@mitugym.dev" className="underline">ops@mitugym.dev</Link>
           </p>
         </CardContent>
