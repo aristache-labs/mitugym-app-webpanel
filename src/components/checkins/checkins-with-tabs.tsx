@@ -73,19 +73,19 @@ export function CheckinsWithTabs({ data, timeFormat = '24h' }: CheckinsWithTabsP
         </TabsList>
 
         <TabsContent value="all">
-          <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500">
+          <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 p-4 sm:p-6 shadow-md hover:shadow-lg transition-all duration-500">
             <CheckinsTable data={filteredData} timeFormat={timeFormat} />
           </div>
         </TabsContent>
 
         <TabsContent value="active">
-          <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500">
+          <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 p-4 sm:p-6 shadow-md hover:shadow-lg transition-all duration-500">
             <CheckinsTable data={filteredData} timeFormat={timeFormat} />
           </div>
         </TabsContent>
 
         <TabsContent value="denied">
-          <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500">
+          <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 p-4 sm:p-6 shadow-md hover:shadow-lg transition-all duration-500">
             <CheckinsTable data={filteredData} timeFormat={timeFormat} />
           </div>
         </TabsContent>

@@ -52,7 +52,6 @@ export function TabsList({ className, children }: TabsListProps) {
       role="tablist"
       className={cn(
         "inline-flex items-center gap-2 rounded-[16px] bg-surface/60 p-2 backdrop-blur border border-surface/60",
-        "shadow-lg shadow-black/10",
         className
       )}
     >

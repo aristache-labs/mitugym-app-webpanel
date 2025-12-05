@@ -28,7 +28,7 @@ export default async function ServicesPage() {
 
       {/* Services Table */}
       <div className="relative">
-        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-xl shadow-black/15 transition-all duration-300 hover:shadow-2xl hover:shadow-black/20 hover:border-surface/60 overflow-hidden rounded-3xl p-6">
+        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-surface/60 overflow-hidden rounded-3xl p-6">
           
           <div className="relative">
             <div className="flex items-center justify-between mb-6">
@@ -49,7 +49,7 @@ export default async function ServicesPage() {
 
       {/* Purchased Services Section */}
       <div className="relative">
-        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-xl shadow-black/15 transition-all duration-300 hover:shadow-2xl hover:shadow-black/20 hover:border-surface/60 overflow-hidden rounded-3xl p-6">
+        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-surface/60 overflow-hidden rounded-3xl p-6">
           
           <div className="relative">
             <div className="flex items-center gap-3 mb-6">

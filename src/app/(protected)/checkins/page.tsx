@@ -60,7 +60,6 @@ export default async function CheckinsPage() {
     <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       {/* Integrated Layout with Occupancy Card */}
       <div className="relative animate-fade-in-up">
-        <div className="absolute inset-0 bg-gradient-to-r from-surface/20 to-card/20 rounded-2xl sm:rounded-3xl blur-2xl"></div>
         <div className="relative space-y-3 sm:space-y-4">
           {/* Header Row with Occupancy Badge */}
           <div className="flex items-center justify-between gap-3 sm:gap-4">
