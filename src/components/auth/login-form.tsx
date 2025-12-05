@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function LoginForm() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: "", password: "", rememberMe: false },
   });
 
   // Prevent body scroll on mobile portrait only
@@ -75,10 +76,22 @@ export function LoginForm() {
       return;
     }
 
-    const { data, error: signInError } = await supabase.auth.signInWithPassword(values);
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
+    });
+    
     if (signInError) {
       setError(signInError.message);
       return;
+    }
+
+    // If rememberMe is false, we need to clear the session on browser close
+    // Supabase stores session in localStorage by default (persistent)
+    // For "don't remember me", we'll need to manually handle session expiry
+    if (!values.rememberMe && data.session) {
+      // Store a flag to indicate this is a temporary session
+      sessionStorage.setItem('tempSession', 'true');
     }
 
     // Check if user is staff after successful login
@@ -149,6 +162,26 @@ export function LoginForm() {
                       className="h-8 text-[11px] sm:h-10 sm:text-sm"
                     />
                     <FormMessage className="text-[9px] sm:text-xs">{form.formState.errors.password?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="rememberMe"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                    <Checkbox
+                      id="rememberMe"
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      className="h-3.5 w-3.5 sm:h-4 sm:w-4"
+                    />
+                    <FormLabel
+                      htmlFor="rememberMe"
+                      className="text-[10px] leading-tight sm:text-sm font-normal cursor-pointer"
+                    >
+                      Remember me
+                    </FormLabel>
                   </FormItem>
                 )}
               />
