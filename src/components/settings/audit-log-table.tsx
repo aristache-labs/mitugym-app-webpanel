@@ -315,8 +315,8 @@ export function AuditLogTable({ entries, timeFormat = '24h' }: AuditLogTableProp
             return (
               <div className="flex justify-center min-w-[80px] px-2">
                 <code className="text-[10px] sm:text-xs bg-primary/10 text-primary px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
-                  SCHEDULE
-                </code>
+                SCHEDULE
+              </code>
               </div>
             );
           }
@@ -325,8 +325,8 @@ export function AuditLogTable({ entries, timeFormat = '24h' }: AuditLogTableProp
             return (
               <div className="flex justify-center min-w-[80px] px-2">
                 <code className="text-[10px] sm:text-xs bg-warning/10 text-warning px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
-                  SETTINGS
-                </code>
+                SETTINGS
+              </code>
               </div>
             );
           }
@@ -335,8 +335,8 @@ export function AuditLogTable({ entries, timeFormat = '24h' }: AuditLogTableProp
             return (
               <div className="flex justify-center min-w-[80px] px-2">
                 <code className="text-[10px] sm:text-xs bg-info/10 text-info px-1.5 sm:h-4 sm:w-4 rounded">
-                  BULK
-                </code>
+                BULK
+              </code>
               </div>
             );
           }
@@ -344,8 +344,8 @@ export function AuditLogTable({ entries, timeFormat = '24h' }: AuditLogTableProp
           return (
             <div className="flex justify-center min-w-[80px] px-2">
               <code className="text-[10px] sm:text-xs bg-surface/50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded">
-                {entity_id.substring(0, 8)}...
-              </code>
+              {entity_id.substring(0, 8)}...
+            </code>
             </div>
           );
         },
