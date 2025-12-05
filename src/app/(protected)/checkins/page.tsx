@@ -77,26 +77,25 @@ export default async function CheckinsPage() {
 
             {/* Compact Occupancy Badge */}
             <div className="relative animate-scale-in flex-shrink-0">
-              <div className={`absolute inset-0 bg-gradient-to-r ${occupancyStyle.glow} rounded-xl sm:rounded-2xl blur-lg animate-glow`}></div>
-              <div className={`relative bg-gradient-to-br ${occupancyStyle.bg} ${occupancyStyle.border} border-2 rounded-lg sm:rounded-xl px-3 sm:px-6 py-2 sm:py-3 shadow-xl hover:scale-105 transition-all duration-300 backdrop-blur-sm`}>
+              <div className="relative bg-gradient-to-br from-slate-800/60 via-slate-700/50 to-slate-800/60 rounded-lg sm:rounded-xl px-3 sm:px-5 py-2 sm:py-3 shadow-md shadow-black/20 hover:shadow-lg hover:shadow-black/30 transition-all duration-500 backdrop-blur-sm border border-slate-700/40">
                 <div className="flex items-center gap-2 sm:gap-4">
                   <div className="hidden sm:block">
-                    <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted/60 mb-1">
+                    <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
                       In Gym Now
                     </div>
                     <div className="flex items-center gap-2">
                       <div className={`w-2 h-2 ${occupancyStyle.indicator} rounded-full animate-pulse`}></div>
-                      <span className="text-xs font-semibold text-muted/80">
+                      <span className="text-xs font-semibold text-slate-400">
                         {occupancyStyle.status} capacity
                       </span>
                     </div>
                   </div>
-                  <div className="hidden sm:block h-12 w-px bg-surface/40"></div>
+                  <div className="hidden sm:block h-10 sm:h-12 w-px bg-slate-700/60"></div>
                   <div className="text-center min-w-[50px] sm:min-w-[60px]">
-                    <div className={`text-xl sm:text-3xl font-black tracking-tight ${occupancyStyle.text} drop-shadow-lg`}>
+                    <div className="text-xl sm:text-3xl font-black tracking-tight text-cyan-300 drop-shadow-lg">
                       {occupancy.total}
                     </div>
-                    <div className="text-[10px] sm:text-xs font-semibold text-muted/60 uppercase tracking-wider">
+                    <div className="text-[10px] sm:text-xs font-semibold text-slate-400 uppercase tracking-wider">
                       People
                     </div>
                   </div>

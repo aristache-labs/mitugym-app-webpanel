@@ -52,33 +52,29 @@ export function CheckinsWithTabs({ data, timeFormat = '24h' }: CheckinsWithTabsP
     <div className="space-y-6 sm:space-y-8">
       {/* Premium Tabs */}
       <div className="relative animate-scale-in">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl sm:rounded-2xl blur-xl"></div>
-        <div className="relative bg-card/60 backdrop-blur-sm rounded-xl sm:rounded-2xl border border-surface/30 p-1.5 sm:p-2 hover:border-surface/50 transition-all duration-300">
+        <div className="relative bg-card/40 backdrop-blur-sm rounded-xl sm:rounded-2xl p-1 sm:p-1.5">
           <nav className="flex flex-col sm:flex-row gap-1.5 sm:gap-2">
             {tabs.map((tab, index) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative flex-1 py-3 sm:py-4 px-4 sm:px-6 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 group animate-fade-in-up ${
+                className={`relative flex-1 py-2.5 sm:py-3 px-3 sm:px-5 rounded-lg sm:rounded-xl font-medium text-xs sm:text-sm transition-all duration-500 ease-out group animate-fade-in-up ${
                   activeTab === tab.id
-                    ? "bg-gradient-to-r from-primary/20 to-accent/20 text-primary border border-primary/30 shadow-lg transform scale-[1.02] sm:scale-105"
-                    : "text-muted hover:text-text hover:bg-surface/40 border border-transparent hover:scale-[1.01] sm:hover:scale-102"
+                    ? "bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 text-slate-200 shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25"
+                    : "bg-gradient-to-br from-slate-700/40 via-slate-800/30 to-slate-700/40 text-slate-400 hover:text-slate-200 hover:from-slate-700/60 hover:via-slate-800/50 hover:to-slate-700/60 shadow-sm shadow-black/10"
                 }`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="flex items-center justify-center gap-2 sm:gap-3">
+                <div className="flex items-center justify-center gap-2 sm:gap-2.5">
                   <span className="relative z-10 transition-all duration-300">{tab.label}</span>
                   <div className={`relative ${
                     activeTab === tab.id 
-                      ? "bg-gradient-to-r from-primary/30 to-accent/30 border-primary/40 animate-pulse" 
-                      : "bg-surface/60 border-surface/80 group-hover:bg-surface/80"
-                  } px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-bold rounded-full border transition-all duration-300`}>
+                      ? "bg-cyan-500/20 text-cyan-300" 
+                      : "bg-slate-700/60 text-slate-400 group-hover:bg-slate-600/60 group-hover:text-slate-300"
+                  } px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold rounded-md transition-all duration-300`}>
                     {tab.count}
                   </div>
                 </div>
-                {activeTab === tab.id && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg sm:rounded-xl blur-sm animate-glow"></div>
-                )}
               </button>
             ))}
           </nav>
