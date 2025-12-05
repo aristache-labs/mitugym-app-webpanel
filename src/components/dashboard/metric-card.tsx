@@ -46,7 +46,7 @@ export function MetricCard({
           </CardTitle>
         </div>
         {description && (
-          <div className="relative px-3 sm:px-4 pb-2.5 sm:pb-3 pt-2">
+          <div className="relative px-3 sm:px-4 pb-2.5 sm:pb-3 pt-2 min-h-[40px]">
             {/* Gradient border */}
             <div className={`absolute top-0 left-0 right-0 h-px ${isError ? 'bg-gradient-to-r from-transparent via-error to-transparent' : 'bg-gradient-to-r from-transparent via-primary to-transparent'}`}></div>
             <p className="text-[10px] sm:text-xs text-muted/80 group-hover:text-muted transition-colors leading-tight text-center">

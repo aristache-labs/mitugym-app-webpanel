@@ -39,7 +39,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex h-full w-[280px] flex-col justify-between border-r border-surface/40 bg-surface/95 backdrop-blur-xl px-6 py-8 shadow-2xl transition-transform duration-300 ease-in-out lg:relative lg:z-auto lg:w-full lg:max-w-[260px] lg:translate-x-0 lg:shadow-none",
+          "fixed inset-y-0 left-0 z-50 flex h-full w-[280px] flex-col border-r border-surface/40 bg-surface/95 backdrop-blur-xl px-6 pt-4 pb-4 lg:py-8 shadow-2xl transition-transform duration-300 ease-in-out lg:relative lg:z-auto lg:w-full lg:max-w-[260px] lg:translate-x-0 lg:shadow-none lg:justify-between",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -58,7 +58,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           </button>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-4 lg:space-y-8 flex-1 overflow-y-auto">
           <nav className="space-y-2">
             {NAVIGATION.map((item) => {
               const active = pathname?.startsWith(item.href);
@@ -82,7 +82,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             })}
           </nav>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-3 mt-auto">
           <form action={signOutAction}>
             <Button
               type="submit"
@@ -93,7 +93,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
               {signOutItem.label}
             </Button>
           </form>
-          <p className="text-xs text-muted/80">
+          <p className="text-xs text-muted/80 text-center lg:text-left">
             Signed in as staff. Actions here are recorded in the audit log.
           </p>
         </div>
