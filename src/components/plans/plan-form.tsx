@@ -282,7 +282,11 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
         />
         {serverError ? <p className="text-sm text-error">{serverError}</p> : null}
         <div className="flex justify-end">
-          <Button type="submit" className="px-8" disabled={isPending}>
+          <Button 
+            type="submit" 
+            disabled={isPending}
+            className="h-10 text-sm px-8 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+          >
             {plan ? "Update Plan" : "Create Plan"}
           </Button>
         </div>
