@@ -13,7 +13,7 @@ export default async function PlansPage() {
     <div className="space-y-4 sm:space-y-6">
       {/* Header Section */}
       <div className="relative">
-        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-surface/60 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8">
+        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 transition-all duration-300 hover:border-surface/60 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8">
           
           <div className="relative flex items-center justify-between gap-3 sm:gap-4">
             <div className="flex items-center gap-2 sm:gap-3 md:gap-4 min-w-0 flex-1">
@@ -35,7 +35,7 @@ export default async function PlansPage() {
 
       {/* Plans Table */}
       <div className="relative">
-        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-surface/60 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6">
+        <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 transition-all duration-300 hover:border-surface/60 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6">
           <div className="relative">
             <PlansTable plans={plans} />
           </div>
