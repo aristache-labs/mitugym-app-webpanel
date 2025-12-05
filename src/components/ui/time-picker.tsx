@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { ChevronUp, ChevronDown, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,25 +43,91 @@ export function TimePicker({
     }
   }, [value]);
 
-  // Calculate dropdown position when opened
-  useEffect(() => {
-    if (isOpen && containerRef.current) {
+  // Calculate dropdown position when opened or when scrolling
+  const updateDropdownPosition = useCallback(() => {
+    if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
       const dropdownHeight = 400; // Approximate height of the dropdown
       const spaceBelow = window.innerHeight - rect.bottom;
       const spaceAbove = rect.top;
       const shouldOpenUpward = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
       
+      // Use fixed positioning (relative to viewport) instead of absolute
+      // This works better with nested scroll containers
       setDropdownPosition({
         top: shouldOpenUpward 
-          ? rect.top + window.scrollY - dropdownHeight - 4
-          : rect.bottom + window.scrollY + 4,
-        left: rect.left + window.scrollX,
+          ? rect.top - dropdownHeight - 4
+          : rect.bottom + 4,
+        left: rect.left,
         width: rect.width,
         shouldOpenUpward
       });
     }
-  }, [isOpen]);
+  }, []);
+
+  // Update position when opened
+  useEffect(() => {
+    if (isOpen) {
+      updateDropdownPosition();
+    }
+  }, [isOpen, updateDropdownPosition]);
+
+  // Find all scrollable parents
+  const getScrollParents = useCallback((element: HTMLElement | null): HTMLElement[] => {
+    const parents: HTMLElement[] = [];
+    let current = element?.parentElement;
+    
+    while (current) {
+      const overflow = window.getComputedStyle(current).overflow;
+      const overflowY = window.getComputedStyle(current).overflowY;
+      const overflowX = window.getComputedStyle(current).overflowX;
+      
+      if (
+        overflow === 'auto' || overflow === 'scroll' ||
+        overflowY === 'auto' || overflowY === 'scroll' ||
+        overflowX === 'auto' || overflowX === 'scroll'
+      ) {
+        parents.push(current);
+      }
+      
+      current = current.parentElement;
+    }
+    
+    return parents;
+  }, []);
+
+  // Update position on scroll and resize
+  useEffect(() => {
+    if (isOpen) {
+      // Use RAF for smooth updates
+      let rafId: number;
+      const handleUpdate = () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          updateDropdownPosition();
+        });
+      };
+      
+      // Add listeners to window
+      window.addEventListener('scroll', handleUpdate, true);
+      window.addEventListener('resize', handleUpdate);
+      
+      // Add listeners to all scroll parents
+      const scrollParents = getScrollParents(containerRef.current);
+      scrollParents.forEach(parent => {
+        parent.addEventListener('scroll', handleUpdate, true);
+      });
+      
+      return () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        window.removeEventListener('scroll', handleUpdate, true);
+        window.removeEventListener('resize', handleUpdate);
+        scrollParents.forEach(parent => {
+          parent.removeEventListener('scroll', handleUpdate, true);
+        });
+      };
+    }
+  }, [isOpen, updateDropdownPosition, getScrollParents]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -250,7 +316,7 @@ export function TimePicker({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="px-4 py-2 text-xs bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium rounded-lg"
+                className="px-4 py-2 text-xs bg-gradient-to-br from-slate-700/60 via-slate-800/50 to-slate-700/60 hover:from-slate-600/70 hover:via-slate-700/60 hover:to-slate-600/70 text-slate-300 hover:text-slate-100 !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/15 hover:shadow-lg hover:shadow-black/25 backdrop-blur-sm font-medium rounded-lg"
               >
                 Cancel
               </button>
@@ -260,7 +326,7 @@ export function TimePicker({
                   updateTime(hours, minutes);
                   setIsOpen(false);
                 }}
-                className="px-4 py-2 text-xs bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium rounded-lg"
+                className="px-4 py-2 text-xs bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium rounded-lg"
               >
                 Done
               </button>
