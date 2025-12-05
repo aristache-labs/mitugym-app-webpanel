@@ -116,7 +116,7 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
       {/* Days Grid */}
       <div className="space-y-3 sm:space-y-4">
         {/* First 4 days */}
-        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 px-1 sm:px-2">
           {state.filter(day => [1, 2, 3, 4].includes(day.weekday)).map((day) => {
           const label = weekdayLabel(day.weekday);
           const dayStatus = getDayStatus(day);
@@ -124,7 +124,7 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
           const isToday = new Date().getDay() === day.weekday;
 
           return (
-            <Card key={day.weekday} className={`bg-card/90 border-surface/50 transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 ${isToday ? 'ring-2 ring-primary/20' : ''}`}>
+            <Card key={day.weekday} className={`bg-card/90 border-surface/50 shadow-none transition-all duration-200 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 ${isToday ? 'ring-2 ring-primary/20' : ''}`}>
               <CardContent className="p-4 sm:p-6">
                 {/* Day Header */}
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
@@ -194,7 +194,7 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
         </div>
 
         {/* Last 3 days - centered on desktop */}
-        <div className="flex justify-center">
+        <div className="flex justify-center px-1 sm:px-2">
           <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full lg:max-w-5xl">
             {state.filter(day => [5, 6, 0].includes(day.weekday)).map((day) => {
           const label = weekdayLabel(day.weekday);
@@ -203,7 +203,7 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
           const isToday = new Date().getDay() === day.weekday;
 
           return (
-            <Card key={day.weekday} className={`bg-card/90 border-surface/50 transition-all duration-200 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 ${isToday ? 'ring-2 ring-primary/20' : ''}`}>
+            <Card key={day.weekday} className={`bg-card/90 border-surface/50 shadow-none transition-all duration-200 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 ${isToday ? 'ring-2 ring-primary/20' : ''}`}>
               <CardContent className="p-4 sm:p-6">
                 {/* Day Header */}
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
