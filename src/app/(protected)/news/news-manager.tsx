@@ -258,7 +258,7 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
                 </div>
                 <Button
                   onClick={() => router.push("/news/new")}
-                  className="gap-1.5 sm:gap-2 bg-primary hover:bg-primary/90 text-white h-8 sm:h-10 text-xs sm:text-sm px-3 sm:px-4"
+                  className="gap-2 h-8 sm:h-10 text-xs sm:text-sm px-4 sm:px-6 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium"
                 >
                   <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">Create New</span>
