@@ -62,22 +62,14 @@ export default async function ServicesPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-green-500/2 via-green-500/1 to-blue-500/2 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
           
           <div className="relative">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-green-500/10">
-                  <ShoppingBag className="h-5 w-5 text-green-500" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-text">Purchased Services</h2>
-                  <p className="text-sm text-muted/70">{approvedServices.length} approved purchases</p>
-                </div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 rounded-xl bg-green-500/10">
+                <ShoppingBag className="h-5 w-5 text-green-500" />
               </div>
-              <Link href="/services/purchased/new">
-                <Button className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl">
-                  <Plus className="h-4 w-4" />
-                  New Purchase
-                </Button>
-              </Link>
+              <div>
+                <h2 className="text-xl font-semibold text-text">Purchased Services</h2>
+                <p className="text-sm text-muted/70">{approvedServices.length} approved purchases</p>
+              </div>
             </div>
             <PurchasedServicesTable purchasedServices={purchasedServices} services={services} timeFormat={timeFormat} />
           </div>

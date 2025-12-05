@@ -11,10 +11,10 @@ export const serviceColumns: ColumnDef<Service>[] = [
   {
     accessorKey: "name",
     header: () => (
-      <div className="text-center font-semibold">Service Name</div>
+      <div className="text-center md:text-left font-semibold">Service Name</div>
     ),
     cell: ({ row }) => (
-      <div className="max-w-[200px]">
+      <div className="max-w-[200px] text-center md:text-left">
         <span className="font-semibold text-text line-clamp-2 leading-tight">
           {row.original.name}
         </span>
@@ -32,7 +32,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
         'professional_massage': 'Professional Massage'
       };
       return (
-        <div className="max-w-[140px]">
+        <div className="flex justify-center max-w-[140px] mx-auto">
           <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/30 whitespace-nowrap">
             {typeLabels[row.original.service_type as keyof typeof typeLabels] || row.original.service_type}
           </Badge>
@@ -46,7 +46,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
       <div className="text-center font-semibold">Price</div>
     ),
     cell: ({ row }) => (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center gap-2">
         <Banknote className="h-4 w-4 text-primary" />
         <span className="font-medium text-text">{formatCurrency(row.original.price)}</span>
       </div>
@@ -58,7 +58,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
       <div className="text-center font-semibold">Duration</div>
     ),
     cell: ({ row }) => (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center gap-2">
         <Clock className="h-4 w-4 text-secondary" />
         <span className="text-text">{row.original.duration_minutes} min</span>
       </div>
@@ -72,9 +72,11 @@ export const serviceColumns: ColumnDef<Service>[] = [
     cell: ({ row }) => {
       const sessions = row.original.max_sessions || 1;
       return (
-        <span className="text-text">
-          {sessions} session{sessions > 1 ? 's' : ''}
-        </span>
+        <div className="text-center">
+          <span className="text-text">
+            {sessions} session{sessions > 1 ? 's' : ''}
+          </span>
+        </div>
       );
     },
   },
@@ -84,16 +86,18 @@ export const serviceColumns: ColumnDef<Service>[] = [
       <div className="text-center font-semibold">Status</div>
     ),
     cell: ({ row }) => (
-      <Badge 
-        variant={row.original.is_active ? "default" : "secondary"}
-        className={
-          row.original.is_active 
-            ? "bg-green-500/20 text-green-600 border-green-500/30" 
-            : "bg-red-500/20 text-red-600 border-red-500/30"
-        }
-      >
-        {row.original.is_active ? "Active" : "Inactive"}
-      </Badge>
+      <div className="flex justify-center">
+        <Badge 
+          variant={row.original.is_active ? "default" : "secondary"}
+          className={
+            row.original.is_active 
+              ? "bg-green-500/20 text-green-600 border-green-500/30" 
+              : "bg-red-500/20 text-red-600 border-red-500/30"
+          }
+        >
+          {row.original.is_active ? "Active" : "Inactive"}
+        </Badge>
+      </div>
     ),
   },
   {
@@ -102,10 +106,12 @@ export const serviceColumns: ColumnDef<Service>[] = [
       <div className="text-center font-semibold">Actions</div>
     ),
     cell: ({ row }) => (
-      <ServiceActions 
-        serviceId={row.original.id} 
-        serviceName={row.original.name}
-      />
+      <div className="flex justify-center">
+        <ServiceActions 
+          serviceId={row.original.id} 
+          serviceName={row.original.name}
+        />
+      </div>
     ),
   },
 ];

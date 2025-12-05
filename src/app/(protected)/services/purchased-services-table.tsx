@@ -9,9 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { PurchasedService, Service } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
-import { Calendar, User, Package, Trash2, CheckCircle, XCircle, Eye, Briefcase, Banknote, StickyNote, Hash } from "lucide-react";
+import { Calendar, User, Package, Trash2, CheckCircle, XCircle, Eye, Briefcase, Banknote, StickyNote, Hash, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { approvePurchasedServiceAction, cancelPurchasedServiceAction, deletePurchasedServiceAction } from "@/app/(protected)/actions";
+import Link from "next/link";
 
 interface PurchasedServicesTableProps {
   purchasedServices: PurchasedService[];
@@ -144,11 +145,11 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
   const columns = [
     {
       accessorKey: "purchase_date",
-      header: () => <div className="flex justify-center w-full whitespace-nowrap">Purchase Date</div>,
+      header: () => <div className="text-center md:text-left w-full whitespace-nowrap">Purchase Date</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
-          <div className="flex items-start gap-2">
+          <div className="flex items-start justify-center md:justify-start gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground mt-0.5" />
             <div className="min-w-0">
               <div className="font-medium text-sm leading-tight">
@@ -167,12 +168,12 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
     },
     {
       id: "service",
-      header: () => <div className="flex justify-center w-full">Service</div>,
+      header: () => <div className="text-center w-full">Service</div>,
       accessorFn: (row: PurchasedService) => row.service?.name || "Unknown Service",
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
-          <div className="max-w-[180px]">
+          <div className="max-w-[180px] text-center mx-auto">
             <div className="font-medium text-sm line-clamp-2 leading-tight">
               {service.service?.name || "Unknown Service"}
             </div>
@@ -182,11 +183,11 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
     },
     {
       accessorKey: "member",
-      header: () => <div className="flex justify-center w-full">Member</div>,
+      header: () => <div className="text-center w-full">Member</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
-          <div className="flex items-start gap-2">
+          <div className="flex items-start justify-center gap-2">
             <User className="h-4 w-4 text-muted-foreground mt-0.5" />
             <div className="min-w-0 max-w-[160px]">
               <div className="font-medium text-sm leading-tight line-clamp-1">
@@ -204,12 +205,16 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
     },
     {
       accessorKey: "status",
-      header: () => <div className="flex justify-center w-full">Status</div>,
-      cell: ({ row }: { row: { original: PurchasedService } }) => getStatusBadge(row.original.status),
+      header: () => <div className="text-center w-full">Status</div>,
+      cell: ({ row }: { row: { original: PurchasedService } }) => (
+        <div className="flex justify-center">
+          {getStatusBadge(row.original.status)}
+        </div>
+      ),
     },
     {
       accessorKey: "sessions",
-      header: () => <div className="flex justify-center w-full">Sessions</div>,
+      header: () => <div className="text-center w-full">Sessions</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
@@ -222,11 +227,11 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
     },
     {
       id: "actions",
-        header: () => <div className="flex justify-center w-full">Actions</div>,
+        header: () => <div className="text-center w-full">Actions</div>,
       cell: ({ row }: { row: { original: PurchasedService } }) => {
         const service = row.original;
         return (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center justify-center gap-1">
             <Button 
               variant="ghost" 
               size="sm"
@@ -292,6 +297,17 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
         columns={columns}
         data={purchasedServices}
         filterKey="service"
+        toolbarSlot={
+          <div className="flex items-center justify-center md:justify-end w-full md:w-auto">
+            <Link href="/services/purchased/new">
+              <Button className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl h-9 sm:h-10 text-xs sm:text-sm px-3 sm:px-4">
+                <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">New Purchase</span>
+                <span className="sm:hidden">New</span>
+              </Button>
+            </Link>
+          </div>
+        }
       />
 
       {/* Delete Confirmation Modal */}
