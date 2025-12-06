@@ -22,25 +22,6 @@ export function LoginForm() {
     defaultValues: { email: "", password: "", rememberMe: false },
   });
 
-  // Prevent body scroll on mobile portrait only
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    // Don't disable scroll anymore - allow natural scrolling
-    const handleOrientationChange = () => {
-      // Removed scroll locking logic
-    };
-
-    window.addEventListener('resize', handleOrientationChange);
-    window.addEventListener('orientationchange', handleOrientationChange);
-
-    return () => {
-      // Cleanup on unmount
-      window.removeEventListener('resize', handleOrientationChange);
-      window.removeEventListener('orientationchange', handleOrientationChange);
-    };
-  }, []);
-
   // Generate stars effect
   useEffect(() => {
     const createStars = () => {
@@ -107,17 +88,28 @@ export function LoginForm() {
 
   return (
     <>
-      {/* Stars background - covering entire scrollable area */}
-      <div className="absolute inset-0 min-h-screen pointer-events-none z-[1]">
-        <div id="stars-container" className="absolute inset-0 w-full" style={{ minHeight: '200vh' }}></div>
+      {/* Background layer - completely separate from content */}
+      <div 
+        className="fixed inset-0 z-0 bg-background"
+        style={{ 
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          WebkitTransform: 'translateZ(0)',
+          transform: 'translateZ(0)',
+        }}
+      >
+        {/* Stars */}
+        <div id="stars-container" className="absolute inset-0 pointer-events-none"></div>
+        
+        {/* Cyan gradient - mobile only */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/10 pointer-events-none sm:opacity-0"></div>
       </div>
       
-      {/* Cyan gradient background - covering entire scrollable area */}
-      <div className="absolute inset-0 min-h-screen pointer-events-none z-[1] sm:opacity-0">
-        <div className="absolute inset-0 w-full bg-gradient-to-br from-primary/10 via-transparent to-primary/10" style={{ minHeight: '200vh' }}></div>
-      </div>
-      
-      <div className="min-h-screen flex flex-col items-center justify-start pt-4 sm:pt-4 px-4 sm:px-6 sm:py-2 pb-4 relative z-10">
+      {/* Scrollable content layer */}
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-start pt-4 sm:pt-4 px-4 sm:px-6 sm:py-2 pb-8">
         {/* Logo */}
         <div className="mb-2 sm:-mb-8 flex-shrink-0 animate-fade-in">
           <div className="relative w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] mx-auto">
@@ -317,6 +309,11 @@ export function LoginForm() {
       </div>
 
       <style jsx global>{`
+        /* Fix for iOS fixed background */
+        html, body {
+          background: var(--background);
+        }
+        
         .login-star {
           position: absolute;
           width: 2px;

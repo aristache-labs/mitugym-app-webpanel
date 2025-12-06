@@ -11,11 +11,7 @@ export default async function LoginPage() {
   const supabase = await getSupabaseServerClient();
   
   if (!supabase) {
-    return (
-      <div className="h-screen overflow-hidden sm:h-auto sm:overflow-visible">
-        <LoginForm />
-      </div>
-    );
+    return <LoginForm />;
   }
 
   const {
@@ -36,9 +32,5 @@ export default async function LoginPage() {
     }
   }
 
-  return (
-    <div className="h-screen overflow-hidden sm:h-auto sm:overflow-visible">
-      <LoginForm />
-    </div>
-  );
+  return <LoginForm />;
 }
