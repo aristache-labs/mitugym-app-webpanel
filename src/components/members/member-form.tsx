@@ -32,11 +32,12 @@ import { AnimatedButton } from "@/components/ui/animated-button";
 interface MemberFormProps {
   plans: MembershipPlan[];
   member?: Member;
+  deleteButton?: React.ReactNode;
 }
 
 type FormValues = CreateMemberInput | UpdateMemberInput;
 
-export function MemberForm({ plans, member }: MemberFormProps) {
+export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
@@ -442,7 +443,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
           />
         )}
         {serverError ? <p className="text-xs sm:text-sm text-error">{serverError}</p> : null}
-        <div className="flex items-center justify-between pt-2 sm:pt-0">
+        <div className="flex items-center justify-between gap-3 pt-2 sm:pt-0">
           <AnimatedButton
             type="submit" 
             disabled={isPending || isUploadingAvatar} 
@@ -456,6 +457,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
                   ? "Save changes" 
                   : "Create member"}
           </AnimatedButton>
+          {deleteButton && <div>{deleteButton}</div>}
         </div>
       </form>
     </Form>

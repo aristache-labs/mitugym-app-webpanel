@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
-import { Trash2, AlertTriangle, X } from "lucide-react";
+import { Trash2, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface DeleteMemberButtonProps {
@@ -68,30 +67,30 @@ export function DeleteMemberButton({ memberId, memberName }: DeleteMemberButtonP
             </div>
             
             <div className="flex items-center gap-3">
-              <Button
+              <button
                 onClick={handleDelete}
                 disabled={isPending}
-                className="flex-1 h-10 text-sm px-6 bg-gradient-to-br from-red-600/90 via-red-600/95 to-red-700 hover:from-red-600 hover:via-red-600/95 hover:to-red-700 text-white border border-red-500/40 hover:border-red-500/60 transition-all duration-300 shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 backdrop-blur-sm font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                className="flex-1 h-10 text-sm px-6 bg-gradient-to-br from-red-600/90 via-red-600/95 to-red-700 hover:from-red-600 hover:via-red-600/95 hover:to-red-700 text-white border-0 transition-all duration-300 shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 backdrop-blur-sm font-medium disabled:opacity-70 disabled:cursor-not-allowed rounded-xl"
               >
                 {isPending ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2 inline-block" />
                     Deleting...
                   </>
                 ) : (
-                  <>
-                    <Trash2 className="h-4 w-4 mr-2" />
+                  <div className="flex items-center justify-center gap-2">
+                    <Trash2 className="h-4 w-4" />
                     Delete Member
-                  </>
+                  </div>
                 )}
-              </Button>
-              <Button
+              </button>
+              <button
                 onClick={() => setShowConfirm(false)}
                 disabled={isPending}
-                className="flex-1 h-10 text-sm px-6 bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+                className="flex-1 h-10 text-sm px-6 bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border-0 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium disabled:opacity-70 disabled:cursor-not-allowed rounded-xl"
               >
                 Cancel
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -100,12 +99,25 @@ export function DeleteMemberButton({ memberId, memberName }: DeleteMemberButtonP
   }
 
   return (
-    <Button
+    <button
       onClick={() => setShowConfirm(true)}
-      className="gap-2 h-9 text-sm px-4 bg-gradient-to-br from-red-600/90 via-red-600/95 to-red-700 hover:from-red-600 hover:via-red-600/95 hover:to-red-700 text-white border border-red-500/40 hover:border-red-500/60 transition-all duration-300 shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/30 backdrop-blur-sm font-medium"
+      className="group/delete relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
     >
-      <Trash2 className="h-4 w-4" />
-      Delete Member
-    </Button>
+      {/* Shine Effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/delete:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+      
+      {/* Icon with animation */}
+      <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/delete:scale-125 group-hover/delete:translate-x-[3.4em]">
+        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-red-200/70 group-hover/delete:text-red-50 group-hover/delete:scale-110" />
+      </div>
+      
+      {/* Text */}
+      <span className="hidden sm:inline transition-all duration-500 ease-in-out group-hover/delete:opacity-0">
+        Delete Member
+      </span>
+      <span className="sm:hidden transition-all duration-500 ease-in-out group-hover/delete:opacity-0">
+        Delete Member
+      </span>
+    </button>
   );
 }
