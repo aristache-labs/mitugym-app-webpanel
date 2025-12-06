@@ -18,11 +18,12 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
           id={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}
           type={type}
           className={cn(
-            "peer w-full px-4 py-3 text-sm font-medium outline-none border-2 rounded-[10px] bg-transparent text-text caret-primary transition-all duration-300",
-            "border-surface/50",
-            "focus:border-primary focus:bg-primary/5",
-            "valid:border-primary valid:bg-primary/5",
-            error && "border-error focus:border-error focus:bg-error/5",
+            "peer w-full h-11 px-4 text-sm font-medium outline-none rounded-[16px] bg-surface text-text caret-primary transition",
+            "border border-surface/50 shadow-[0_0_0_1px_rgba(77,212,212,0.08)]",
+            "focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+            "focus:border-primary focus:ring-2 focus:ring-primary/40",
+            "valid:border-primary valid:ring-2 valid:ring-primary/40",
+            error && "border-error focus:border-error focus-visible:border-error focus:ring-error/40",
             className
           )}
           ref={ref}
@@ -32,7 +33,7 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
         <label
           htmlFor={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}
           className={cn(
-            "absolute -top-[20px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
+            "absolute -top-[23px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
             "peer-focus:translate-x-5 peer-focus:opacity-100",
             "peer-valid:translate-x-5 peer-valid:opacity-100",
             error && "text-error"
@@ -43,7 +44,7 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
         <svg
           viewBox="0 0 448 512"
           className={cn(
-            "absolute -top-[17px] -left-[12px] w-3 h-3 opacity-0 transition-all duration-200 pointer-events-none",
+            "absolute -top-[20px] -left-[12px] w-3 h-3 opacity-0 transition-all duration-200 pointer-events-none",
             "peer-focus:translate-x-5 peer-focus:opacity-100",
             "peer-valid:translate-x-5 peer-valid:opacity-100",
             error ? "fill-error" : "fill-primary"
