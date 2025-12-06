@@ -627,7 +627,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     <p className="text-[10px] sm:text-xs text-muted/60 mt-0.5">Service packages</p>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-green-600 border-green-500/30 bg-green-500/10 text-[10px] sm:text-xs px-2 py-0.5">
+                <Badge variant="outline" className="text-green-600 border-0 bg-green-500/10 text-xs sm:text-sm px-2.5 py-1">
                   {memberPurchasedServices.length}
                 </Badge>
               </div>
@@ -639,7 +639,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     memberPurchasedServices.map((service) => (
                       <div
                         key={service.id}
-                      className="group/item relative rounded-xl bg-surface/30 backdrop-blur-sm p-2.5 sm:p-3 border border-surface/40 transition-all duration-200 hover:bg-surface/50 hover:border-green-500/30 hover:shadow-md"
+                      className="group/item relative rounded-xl bg-gradient-to-br from-surface/70 to-surface/50 backdrop-blur-sm p-2.5 sm:p-3 border-0 transition-all duration-200 hover:from-surface/80 hover:to-surface/60 shadow-sm"
                       >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-start gap-2 flex-1 min-w-0">
@@ -665,12 +665,12 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                             </p>
                             <Badge 
                               variant="outline" 
-                            className={`text-[9px] sm:text-[10px] font-medium px-1.5 py-0 ${
+                            className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 border-0 ${
                                 service.status === 'approved' 
-                                  ? 'border-green-500/40 text-green-600 bg-green-500/10' 
+                                  ? 'text-green-600 bg-green-500/10' 
                                   : service.status === 'pending'
-                                  ? 'border-yellow-500/40 text-yellow-600 bg-yellow-500/10'
-                                  : 'border-red-500/40 text-red-600 bg-red-500/10'
+                                  ? 'text-yellow-600 bg-yellow-500/10'
+                                  : 'text-red-600 bg-red-500/10'
                               }`}
                             >
                               {service.status}
@@ -679,7 +679,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                         </div>
                         
                         {service.sessions_remaining !== null && (
-                        <div className="flex items-center justify-between mt-2 p-1.5 sm:p-2 rounded-lg bg-gradient-to-r from-surface/30 to-surface/10 border border-surface/20">
+                        <div className="flex items-center justify-between mt-2 p-1.5 sm:p-2 rounded-lg bg-gradient-to-r from-surface/30 to-surface/10 border-0">
                           <div className="flex items-center gap-1 sm:gap-1.5">
                             <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-green-500/60"></div>
                             <span className="text-[9px] sm:text-[10px] font-medium text-muted/60">Sessions</span>
@@ -695,7 +695,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     ))
                   ) : (
                   <div className="flex flex-col items-center justify-center py-6 sm:py-8 text-center">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-surface/20 to-surface/10 border border-surface/30 mb-2 sm:mb-3">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-surface/20 to-surface/10 border-0 mb-2 sm:mb-3">
                       <ShoppingBag className="h-5 w-5 sm:h-6 sm:w-6 text-muted/50" />
                               </div>
                     <h4 className="font-medium text-text mb-0.5 text-xs sm:text-sm">No Services Purchased</h4>
@@ -723,7 +723,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     <p className="text-[10px] sm:text-xs text-muted/60 mt-0.5">Scheduled sessions</p>
                 </div>
               </div>
-                <Badge variant="outline" className="text-blue-600 border-blue-500/30 bg-blue-500/10 text-[10px] sm:text-xs px-2 py-0.5">
+                <Badge variant="outline" className="text-blue-600 border-0 bg-blue-500/10 text-xs sm:text-sm px-2.5 py-1">
                   {memberBookings.length}
                 </Badge>
               </div>
@@ -735,7 +735,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     memberBookings.map((booking) => (
                       <div
                         key={booking.id}
-                      className="group/item relative rounded-xl bg-surface/30 backdrop-blur-sm p-2.5 sm:p-3 border border-surface/40 transition-all duration-200 hover:bg-surface/50 hover:border-blue-500/30 hover:shadow-md"
+                      className="group/item relative rounded-xl bg-gradient-to-br from-surface/70 to-surface/50 backdrop-blur-sm p-2.5 sm:p-3 border-0 transition-all duration-200 hover:from-surface/80 hover:to-surface/60 shadow-sm"
                       >
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-start gap-2 flex-1 min-w-0">
@@ -774,14 +774,14 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                           <div className="text-right flex-shrink-0">
                             <Badge 
                               variant="outline" 
-                            className={`text-[9px] sm:text-[10px] font-medium px-1.5 py-0 ${
+                            className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 border-0 ${
                               booking.status === 'confirmed' || booking.status === 'upcoming'
-                                  ? 'border-green-500/40 text-green-600 bg-green-500/10' 
+                                  ? 'text-green-600 bg-green-500/10' 
                                   : booking.status === 'pending'
-                                  ? 'border-yellow-500/40 text-yellow-600 bg-yellow-500/10'
+                                  ? 'text-yellow-600 bg-yellow-500/10'
                                   : booking.status === 'completed'
-                                  ? 'border-blue-500/40 text-blue-600 bg-blue-500/10'
-                                  : 'border-red-500/40 text-red-600 bg-red-500/10'
+                                  ? 'text-blue-600 bg-blue-500/10'
+                                  : 'text-red-600 bg-red-500/10'
                               }`}
                             >
                               {booking.status}
@@ -792,7 +792,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     ))
                   ) : (
                   <div className="flex flex-col items-center justify-center py-6 sm:py-8 text-center">
-                    <div className="p-3 rounded-xl bg-gradient-to-br from-surface/20 to-surface/10 border border-surface/30 mb-2 sm:mb-3">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-surface/20 to-surface/10 border-0 mb-2 sm:mb-3">
                       <CalendarCheck className="h-5 w-5 sm:h-6 sm:w-6 text-muted/50" />
                       </div>
                     <h4 className="font-medium text-text mb-0.5 text-xs sm:text-sm">No Bookings Scheduled</h4>
