@@ -21,6 +21,7 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
     const handlePlaceholderClick = () => {
+      if (props.readOnly || props.disabled) return;
       inputRef.current?.showPicker?.();
       inputRef.current?.focus();
     };
@@ -31,14 +32,19 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
           type="date"
           id={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}
           className={cn(
-            "peer w-full h-11 px-4 text-sm font-medium outline-none rounded-[16px] bg-surface text-text caret-primary transition cursor-pointer",
+            "peer w-full h-11 px-4 text-sm font-medium outline-none rounded-[16px] transition",
+            !props.readOnly && !props.disabled && "cursor-pointer",
+            props.readOnly || props.disabled ? "cursor-not-allowed bg-surface/50" : "bg-surface",
+            props.readOnly || props.disabled ? "text-text/40" : "text-text",
+            "caret-primary",
             "border border-surface/50 shadow-[0_0_0_1px_rgba(77,212,212,0.08)]",
             "focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
             "focus:border-primary focus:ring-2 focus:ring-primary/40",
             hasValue && "border-primary ring-2 ring-primary/40",
             "[&::-webkit-datetime-edit]:opacity-0 [&::-webkit-datetime-edit]:peer-focus:opacity-100",
             hasValue && "[&::-webkit-datetime-edit]:opacity-100",
-            "[&::-webkit-calendar-picker-indicator]:cursor-pointer",
+            !props.readOnly && !props.disabled && "[&::-webkit-calendar-picker-indicator]:cursor-pointer",
+            props.readOnly || props.disabled ? "[&::-webkit-calendar-picker-indicator]:cursor-not-allowed [&::-webkit-calendar-picker-indicator]:opacity-40" : "",
             error && "border-error focus:border-error focus-visible:border-error focus:ring-error/40",
             className
           )}
@@ -54,7 +60,10 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
         {!hasValue && (
           <span 
             onClick={handlePlaceholderClick}
-            className="absolute inset-0 flex items-center px-4 cursor-pointer text-sm text-text peer-focus:opacity-0 transition-opacity"
+            className={cn(
+              "absolute inset-0 flex items-center px-4 text-sm peer-focus:opacity-0 transition-opacity",
+              props.readOnly || props.disabled ? "cursor-not-allowed text-text/40" : "cursor-pointer text-text"
+            )}
           >
             {label}
           </span>

@@ -26,7 +26,7 @@ import { FloatingLabelInput } from "@/components/ui/floating-label-input";
 import { FloatingLabelSelect } from "@/components/ui/floating-label-select";
 import { FloatingLabelDateInput } from "@/components/ui/floating-label-date-input";
 import { useToast } from "@/components/ui/toast";
-import { calculateExpirationDate, calculateMemberStatus } from "@/lib/utils";
+import { calculateExpirationDate } from "@/lib/utils";
 import { AvatarUpload } from "./avatar-upload";
 import { AnimatedButton } from "@/components/ui/animated-button";
 
@@ -67,7 +67,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
           gender: null,
           email: "",
           phone: "",
-          status: undefined as any,
+          status: "" as "active" | "expired" | "frozen" | "pending" | "suspended",
           plan_id: null,
           starts_at: "",
           expires_at: "",
@@ -99,20 +99,59 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
       if (name === 'plan_id' || name === 'starts_at') {
         const { plan_id, starts_at } = values;
         
-        if (plan_id && starts_at) {
+        // If plan is "unassigned", clear dates and allow manual status selection
+        if (plan_id === 'unassigned') {
+          const currentExpiresAt = form.getValues('expires_at');
+          const currentStartsAt = form.getValues('starts_at');
+          
+          if (currentExpiresAt) {
+            form.setValue('expires_at', '', { shouldValidate: false });
+          }
+          if (currentStartsAt && name === 'plan_id') {
+            form.setValue('starts_at', '', { shouldValidate: false });
+          }
+          return;
+        }
+        
+        if (plan_id && plan_id !== 'unassigned' && starts_at) {
           const selectedPlan = plans.find(plan => plan.id === plan_id);
           if (selectedPlan) {
             const expirationDate = calculateExpirationDate(starts_at, selectedPlan.duration_months);
-            form.setValue('expires_at', expirationDate, { shouldValidate: true });
+            const currentExpiresAt = form.getValues('expires_at');
             
-            // Calculate and set the appropriate status based on timing
-            const calculatedStatus = calculateMemberStatus('active', starts_at, expirationDate);
-            form.setValue('status', calculatedStatus, { shouldValidate: true });
+            // Only update if the value actually changed
+            if (currentExpiresAt !== expirationDate) {
+              form.setValue('expires_at', expirationDate, { shouldValidate: false });
+            }
+            
+            // Calculate status based on start date
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const startDate = new Date(starts_at);
+            startDate.setHours(0, 0, 0, 0);
+            
+            const newStatus = startDate <= today ? 'active' : 'pending';
+            const currentStatus = form.getValues('status');
+            
+            // Only update if the value actually changed
+            if (currentStatus !== newStatus) {
+              form.setValue('status', newStatus, { shouldValidate: false });
+            }
           }
-        } else if (!plan_id || !starts_at) {
-          // Clear expiration date and reset status if either plan or start date is removed
-          form.setValue('expires_at', '', { shouldValidate: true });
-          form.setValue('status', 'active', { shouldValidate: true });
+        } else if (!plan_id || plan_id === '' || !starts_at) {
+          // Clear expiration date if either plan or start date is removed
+          const currentExpiresAt = form.getValues('expires_at');
+          if (currentExpiresAt) {
+            form.setValue('expires_at', '', { shouldValidate: false });
+          }
+          
+          // Clear status if no plan
+          if (!plan_id || plan_id === '') {
+            const currentStatus = form.getValues('status');
+            if (currentStatus) {
+              form.setValue('status', '' as "active" | "expired" | "frozen" | "pending" | "suspended", { shouldValidate: false });
+            }
+          }
         }
       }
     });
@@ -317,7 +356,8 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                 render={({ field }) => {
                   const planId = form.watch('plan_id');
                   const startsAt = form.watch('starts_at');
-                  const isAutoCalculated = Boolean(planId && startsAt);
+                  // Status is auto-calculated if plan (not unassigned) and start date are selected
+                  const isAutoCalculated = Boolean(planId && planId !== 'unassigned' && startsAt);
                   
                   return (
                     <FloatingLabelSelect
@@ -332,7 +372,6 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                           label: status.charAt(0).toUpperCase() + status.slice(1)
                         }))
                       ]}
-                      className={isAutoCalculated ? "bg-muted/50 cursor-not-allowed" : ""}
                       error={form.formState.errors.status?.message}
                     />
                   );
@@ -387,7 +426,6 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                     {...field}
                     value={field.value ?? ""}
                     readOnly
-                    className="bg-muted/50 cursor-not-allowed"
                     error={form.formState.errors.expires_at?.message}
                   />
                 )}
@@ -399,7 +437,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                   render={({ field }) => (
                     <FloatingLabelInput
                       type="password"
-                      label="Temporary password (Optional)"
+                      label="Temporary password"
                       {...field}
                       error={!member && form.formState.errors && 'password' in form.formState.errors 
                         ? form.formState.errors.password?.message 

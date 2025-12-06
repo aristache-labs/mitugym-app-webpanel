@@ -79,7 +79,8 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
           onKeyDown={handleKeyDown}
           disabled={disabled}
           className={cn(
-            "peer w-full h-11 px-4 text-sm font-medium outline-none rounded-[16px] bg-surface text-text transition",
+            "peer w-full h-11 px-4 text-sm font-medium outline-none rounded-[16px] transition",
+            disabled ? "bg-surface/50" : "bg-surface",
             "border border-surface/50 shadow-[0_0_0_1px_rgba(77,212,212,0.08)]",
             "flex items-center justify-between",
             "focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
@@ -87,15 +88,17 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
             "disabled:cursor-not-allowed disabled:opacity-60",
             isOpen && "border-primary ring-2 ring-primary/40",
             hasValue && "border-primary ring-2 ring-primary/40",
-            error && "border-error focus-visible:border-error ring-error/40"
+            error && "border-error focus-visible:border-error ring-error/40",
+            disabled ? "text-text/40" : "text-text"
           )}
         >
-          <span className={cn(selectedOption ? "text-text" : "text-text")}>
+          <span className={cn(selectedOption ? (disabled ? "text-text/40" : "text-text") : (disabled ? "text-text/40" : "text-text"))}>
             {selectedOption ? selectedOption.label : (!isOpen && !hasValue ? label : "")}
           </span>
           <ChevronDown
             className={cn(
-              "h-4 w-4 text-muted transition-transform",
+              "h-4 w-4 transition-transform",
+              disabled ? "text-muted/40" : "text-muted",
               isOpen && "rotate-180"
             )}
           />
