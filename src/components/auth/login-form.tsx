@@ -19,8 +19,21 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "", rememberMe: false },
+    defaultValues: { 
+      email: "", 
+      password: "", 
+      rememberMe: false 
+    },
   });
+
+  // Load saved email on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    if (savedEmail) {
+      form.setValue('email', savedEmail);
+      form.setValue('rememberMe', true);
+    }
+  }, [form]);
 
   // Generate stars effect
   useEffect(() => {
@@ -59,10 +72,13 @@ export function LoginForm() {
       return;
     }
 
-    // If rememberMe is false, we need to clear the session on browser close
-    // Supabase stores session in localStorage by default (persistent)
-    // For "don't remember me", we'll need to manually handle session expiry
-    if (!values.rememberMe && data.session) {
+    // Handle remember me functionality
+    if (values.rememberMe) {
+      // Save email to localStorage
+      localStorage.setItem('rememberedEmail', values.email);
+    } else {
+      // Remove saved email if remember me is unchecked
+      localStorage.removeItem('rememberedEmail');
       // Store a flag to indicate this is a temporary session
       sessionStorage.setItem('tempSession', 'true');
     }
@@ -151,6 +167,7 @@ export function LoginForm() {
                           placeholder="staff@mitugym.dev" 
                           {...field}
                           className="h-8 text-[11px] sm:h-10 sm:text-sm bg-surface/50 border-surface/60 focus:border-primary focus:bg-primary/5 focus:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 focus:-translate-y-0.5"
+                          style={{ fontSize: '16px' }}
                         />
                         <div className="absolute -inset-0.5 bg-gradient-to-r from-primary via-transparent to-primary rounded-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 -z-10 blur-sm"></div>
                       </div>
@@ -170,6 +187,7 @@ export function LoginForm() {
                           placeholder="••••••••" 
                           {...field}
                           className="h-8 text-[11px] sm:h-10 sm:text-sm bg-surface/50 border-surface/60 focus:border-primary focus:bg-primary/5 focus:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 focus:-translate-y-0.5 pr-10"
+                          style={{ fontSize: '16px' }}
                         />
                         <button
                           type="button"
