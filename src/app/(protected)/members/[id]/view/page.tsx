@@ -47,6 +47,14 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
   const isExpired = member.expires_at && new Date(member.expires_at) < new Date();
   const isPending = member.starts_at && new Date(member.starts_at) > new Date();
 
+  // Calculate total timeline items (milestones + audit logs)
+  const totalTimelineItems = 
+    1 + // Account Created (always present)
+    (member.plan_name ? 1 : 0) + // Plan Subscribed
+    (recentCheckIns.length > 0 ? 1 : 0) + // First Check-in
+    memberAuditLogs.length + // Audit log entries
+    (member.expires_at ? 1 : 0); // Membership expiry
+
   return (
     <div className="space-y-4 sm:space-y-6 md:space-y-8">
       {/* Modern Header with Status */}
@@ -105,7 +113,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                 {/* Edit Member Button */}
                 <Link href={`/members/${member.id}`} className="flex-1 sm:flex-none">
                   <button
-                    className="group relative h-8 sm:h-9 md:h-10 px-3 sm:px-4 md:px-6 w-full sm:w-auto flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden !border-none !ring-0 !outline-none active:scale-95"
+                    className="group relative h-8 sm:h-9 md:h-10 px-3 sm:px-4 md:px-6 w-full sm:w-auto flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
                   >
                     {/* Edit Icon */}
                     <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover:scale-125 group-hover:translate-x-[3.2em]">
@@ -124,7 +132,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                 {/* Back Button - Secondary Style */}
                 <Link 
                   href="/members"
-                  className="group/link relative h-8 sm:h-9 w-full sm:w-auto px-3 sm:px-4 md:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-800/60 via-slate-800/50 to-slate-900/60 hover:from-slate-700/70 hover:via-slate-700/60 hover:to-slate-800/70 text-slate-300 hover:text-slate-100 font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 transition-all duration-500 ease-out overflow-hidden border border-slate-700/40 hover:border-slate-600/60 !ring-0 !outline-none active:scale-95 !no-underline flex-1 sm:flex-none"
+                  className="group/link relative h-8 sm:h-9 w-full sm:w-auto px-3 sm:px-4 md:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-800/60 via-slate-800/50 to-slate-900/60 hover:from-slate-700/70 hover:via-slate-700/60 hover:to-slate-800/70 text-slate-300 hover:text-slate-100 font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 !no-underline flex-1 sm:flex-none"
                 >
                   {/* Arrow Icon */}
                   <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/link:scale-125 group-hover/link:translate-x-[1.3em]">
@@ -813,20 +821,20 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
           <div className="absolute inset-0 bg-gradient-to-br from-secondary/2 via-secondary/1 to-primary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
           
           <CardHeader className="relative p-4 sm:p-6 pb-3 sm:pb-4">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-secondary/10 group-hover:bg-secondary/20 transition-colors">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-secondary/10 group-hover:bg-secondary/20 transition-colors flex-shrink-0">
                   <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-secondary/60 group-hover:text-secondary transition-colors" />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <CardTitle className="text-base sm:text-lg md:text-xl font-semibold text-text group-hover:text-secondary transition-colors">
                     Member Timeline
                   </CardTitle>
                   <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Account history and important milestones</p>
                 </div>
               </div>
-              <Badge variant="outline" className="text-secondary border-0 bg-secondary/10 text-xs sm:text-sm px-2.5 py-1">
-                {memberAuditLogs.length} Events
+              <Badge variant="outline" className="text-secondary border-0 bg-secondary/10 text-xs sm:text-sm px-2.5 py-1 flex-shrink-0">
+                {totalTimelineItems} {totalTimelineItems === 1 ? 'Item' : 'Items'}
               </Badge>
             </div>
           </CardHeader>
