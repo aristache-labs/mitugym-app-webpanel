@@ -244,7 +244,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   {/* Cards */}
                   <div className="space-y-2">
                   {member.date_of_birth ? (
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
                         <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
                           <Cake className="h-3.5 w-3.5 text-primary" />
                         </div>
@@ -266,7 +266,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   )}
                   
                   {member.gender ? (
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
                         <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
                           <Users className="h-3.5 w-3.5 text-primary" />
                         </div>
@@ -287,7 +287,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     </div>
                   )}
                   
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
                       <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
                         <CreditCard className="h-3.5 w-3.5 text-primary" />
                       </div>
@@ -322,7 +322,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   
                   {/* Cards */}
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
                       <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
                         <Mail className="h-3.5 w-3.5 text-primary" />
                       </div>
@@ -333,7 +333,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   </div>
                   
                   {member.phone ? (
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
                         <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
                           <Phone className="h-3.5 w-3.5 text-primary" />
                         </div>
@@ -369,7 +369,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   {/* Cards */}
                   <div className="space-y-2">
                    {member.address ? (
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
                         <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
                           <MapPin className="h-3.5 w-3.5 text-primary" />
                         </div>
@@ -391,7 +391,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                    )}
                    
                    {member.city ? (
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
                         <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
                           <Building className="h-3.5 w-3.5 text-primary" />
                         </div>
@@ -413,7 +413,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                    )}
                    
                    {member.county ? (
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
                         <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
                           <Map className="h-3.5 w-3.5 text-primary" />
                         </div>
