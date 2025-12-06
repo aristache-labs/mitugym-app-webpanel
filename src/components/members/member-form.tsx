@@ -21,13 +21,13 @@ import {
   type ActionResult 
 } from "@/app/(protected)/actions";
 import type { Member, MembershipPlan } from "@/types";
-import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { useToast } from "@/components/ui/toast";
-import { cn, calculateExpirationDate, calculateMemberStatus } from "@/lib/utils";
+import { calculateExpirationDate, calculateMemberStatus } from "@/lib/utils";
 import { AvatarUpload } from "./avatar-upload";
+import { AnimatedButton } from "@/components/ui/animated-button";
 
 interface MemberFormProps {
   plans: MembershipPlan[];
@@ -216,10 +216,10 @@ export function MemberForm({ plans, member }: MemberFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="space-y-6">
+      <form onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
         {/* Avatar Upload Section */}
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-text">Member Photo</h3>
+          <h3 className="text-base sm:text-lg font-semibold text-text">Member Photo</h3>
           <AvatarUpload
             currentAvatarUrl={member?.avatar_url}
             onAvatarChange={handleAvatarChange}
@@ -229,21 +229,21 @@ export function MemberForm({ plans, member }: MemberFormProps) {
           />
         </div>
 
-        <div className="border-t border-surface/20 pt-6">
-          <h3 className="text-lg font-semibold text-text mb-4">Basic Information</h3>
+        <div className="border-t border-surface/20 pt-4 sm:pt-6">
+          <h3 className="text-base sm:text-lg font-semibold text-text mb-3 sm:mb-4">Basic Information</h3>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
           <FormField
             control={form.control}
             name="first_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First name</FormLabel>
+                <FormLabel className="text-sm sm:text-base">First name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Alex" {...field} />
+                  <Input placeholder="Alex" {...field} className="h-9 sm:h-10" />
                 </FormControl>
-                <FormMessage>{form.formState.errors.first_name?.message}</FormMessage>
+                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.first_name?.message}</FormMessage>
               </FormItem>
             )}
           />
@@ -252,11 +252,11 @@ export function MemberForm({ plans, member }: MemberFormProps) {
             name="last_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Last name</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Last name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Johnson" {...field} />
+                  <Input placeholder="Johnson" {...field} className="h-9 sm:h-10" />
                 </FormControl>
-                <FormMessage>{form.formState.errors.last_name?.message}</FormMessage>
+                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.last_name?.message}</FormMessage>
               </FormItem>
             )}
           />
@@ -265,7 +265,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
             name="gender"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Gender</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Gender</FormLabel>
                 <FormControl>
                   <CustomSelect
                     value={field.value ?? ""}
@@ -280,7 +280,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
                     ]}
                   />
                 </FormControl>
-                <FormMessage>{form.formState.errors.gender?.message}</FormMessage>
+                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.gender?.message}</FormMessage>
               </FormItem>
             )}
           />
@@ -289,11 +289,11 @@ export function MemberForm({ plans, member }: MemberFormProps) {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="alex@mitugym.dev" {...field} />
+                  <Input type="email" placeholder="alex@mitugym.dev" {...field} className="h-9 sm:h-10" />
                 </FormControl>
-                <FormMessage>{form.formState.errors.email?.message}</FormMessage>
+                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.email?.message}</FormMessage>
               </FormItem>
             )}
           />
@@ -302,15 +302,16 @@ export function MemberForm({ plans, member }: MemberFormProps) {
             name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Phone</FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="0712345678" 
                     {...field} 
                     value={field.value ?? ""} 
+                    className="h-9 sm:h-10"
                   />
                 </FormControl>
-                <FormMessage>{form.formState.errors.phone?.message}</FormMessage>
+                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.phone?.message}</FormMessage>
               </FormItem>
             )}
           />
@@ -324,10 +325,10 @@ export function MemberForm({ plans, member }: MemberFormProps) {
               
               return (
                 <FormItem>
-                  <FormLabel>
+                  <FormLabel className="text-sm sm:text-base">
                     Status
                     {isAutoCalculated && (
-                      <span className="text-xs text-muted-foreground ml-2">(auto-calculated)</span>
+                      <span className="text-[10px] sm:text-xs text-muted-foreground ml-2">(auto-calculated)</span>
                     )}
                   </FormLabel>
                   <FormControl>
@@ -343,7 +344,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
                       className={isAutoCalculated ? "bg-muted/50 cursor-not-allowed" : ""}
                     />
                   </FormControl>
-                  <FormMessage>{form.formState.errors.status?.message}</FormMessage>
+                  <FormMessage className="text-xs sm:text-sm">{form.formState.errors.status?.message}</FormMessage>
                 </FormItem>
               );
             }}
@@ -353,7 +354,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
             name="plan_id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Membership plan</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Membership plan</FormLabel>
                 <FormControl>
                   <CustomSelect
                     value={field.value ?? ""}
@@ -368,7 +369,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
                     ]}
                   />
                 </FormControl>
-                <FormMessage>{form.formState.errors.plan_id?.message}</FormMessage>
+                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.plan_id?.message}</FormMessage>
               </FormItem>
             )}
           />
@@ -377,11 +378,11 @@ export function MemberForm({ plans, member }: MemberFormProps) {
             name="starts_at"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Start from</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Start from</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} value={field.value ?? ""} />
+                  <Input type="date" {...field} value={field.value ?? ""} className="h-9 sm:h-10" />
                 </FormControl>
-                <FormMessage>{form.formState.errors.starts_at?.message}</FormMessage>
+                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.starts_at?.message}</FormMessage>
               </FormItem>
             )}
           />
@@ -390,9 +391,9 @@ export function MemberForm({ plans, member }: MemberFormProps) {
             name="expires_at"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>
+                <FormLabel className="text-sm sm:text-base">
                   Expires at
-                  <span className="text-xs text-muted-foreground ml-2">(auto-calculated)</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground ml-2">(auto-calculated)</span>
                 </FormLabel>
                 <FormControl>
                   <Input 
@@ -400,10 +401,10 @@ export function MemberForm({ plans, member }: MemberFormProps) {
                     {...field} 
                     value={field.value ?? ""} 
                     readOnly
-                    className="bg-muted/50 cursor-not-allowed"
+                    className="bg-muted/50 cursor-not-allowed h-9 sm:h-10"
                   />
                 </FormControl>
-                <FormMessage>{form.formState.errors.expires_at?.message}</FormMessage>
+                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.expires_at?.message}</FormMessage>
               </FormItem>
             )}
           />
@@ -414,11 +415,11 @@ export function MemberForm({ plans, member }: MemberFormProps) {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Temporary password</FormLabel>
+                <FormLabel className="text-sm sm:text-base">Temporary password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="Optional" {...field} />
+                  <Input type="password" placeholder="Optional" {...field} className="h-9 sm:h-10" />
                 </FormControl>
-                <FormMessage>
+                <FormMessage className="text-xs sm:text-sm">
                   {!member && form.formState.errors && 'password' in form.formState.errors 
                     ? form.formState.errors.password?.message 
                     : undefined}
@@ -427,16 +428,13 @@ export function MemberForm({ plans, member }: MemberFormProps) {
             )}
           />
         )}
-        {serverError ? <p className="text-sm text-error">{serverError}</p> : null}
-        <div className="flex items-center justify-between">
-          <Button 
-            type="submit" 
-            disabled={isPending || isUploadingAvatar} 
-            className={cn(
-              "h-10 text-sm px-6 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium",
-              (isPending || isUploadingAvatar) && "opacity-70"
-            )}
-          > 
+        {serverError ? <p className="text-xs sm:text-sm text-error">{serverError}</p> : null}
+        <div className="flex items-center justify-between pt-2 sm:pt-0">
+          <AnimatedButton
+            type="submit"
+            disabled={isPending || isUploadingAvatar}
+            className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium"
+          >
             {isPending 
               ? "Saving..." 
               : isUploadingAvatar 
@@ -444,7 +442,7 @@ export function MemberForm({ plans, member }: MemberFormProps) {
                 : member 
                   ? "Save changes" 
                   : "Create member"}
-          </Button>
+          </AnimatedButton>
         </div>
       </form>
     </Form>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Button } from "@/components/ui/button";
 import { AnimatedButton } from "@/components/ui/animated-button";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { AVAILABLE_TIMEZONES, TIME_FORMAT_OPTIONS, type TimeFormat } from "@/lib/settings";
