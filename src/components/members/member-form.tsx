@@ -380,7 +380,20 @@ export function MemberForm({ plans, member }: MemberFormProps) {
               <FormItem>
                 <FormLabel className="text-sm sm:text-base">Start from</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} value={field.value ?? ""} className="h-9 sm:h-10" />
+                  <div className="relative">
+                    <Input 
+                      type="date" 
+                      {...field} 
+                      value={field.value ?? ""} 
+                      className="h-9 sm:h-10"
+                      placeholder="Select date"
+                    />
+                    {!field.value && (
+                      <div className="absolute inset-0 flex items-center px-3 sm:px-4 pointer-events-none text-muted/60 text-xs sm:text-sm sm:hidden">
+                        Select start date
+                      </div>
+                    )}
+                  </div>
                 </FormControl>
                 <FormMessage className="text-xs sm:text-sm">{form.formState.errors.starts_at?.message}</FormMessage>
               </FormItem>
