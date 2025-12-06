@@ -650,10 +650,10 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                             <h4 className="font-semibold text-text text-xs sm:text-sm truncate">
                                 {service.service?.name || 'Service Package'}
                               </h4>
-                            <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5">
-                              <span className="text-[9px] sm:text-[10px] text-muted/50">Purchased</span>
-                              <div className="w-0.5 h-0.5 rounded-full bg-muted/30"></div>
-                              <span className="text-[9px] sm:text-[10px] font-medium text-muted/70">
+                            <div className="flex items-center gap-1.5 sm:gap-2 mt-1">
+                              <span className="text-[10px] sm:text-xs text-primary/70 font-medium">Purchased</span>
+                              <div className="w-1 h-1 rounded-full bg-primary/40"></div>
+                              <span className="text-[10px] sm:text-xs font-semibold text-text">
                                   {formatDate(service.purchase_date)}
                                 </span>
                               </div>
@@ -679,14 +679,14 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                         </div>
                         
                         {service.sessions_remaining !== null && (
-                        <div className="flex items-center justify-between mt-2 p-1.5 sm:p-2 rounded-lg bg-gradient-to-r from-surface/30 to-surface/10 border-0">
-                          <div className="flex items-center gap-1 sm:gap-1.5">
-                            <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-green-500/60"></div>
-                            <span className="text-[9px] sm:text-[10px] font-medium text-muted/60">Sessions</span>
+                        <div className="flex items-center justify-between mt-2.5 p-2 sm:p-2.5 rounded-lg bg-gradient-to-r from-surface/40 to-surface/20 border-0">
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-500/70"></div>
+                            <span className="text-[10px] sm:text-xs font-semibold text-primary/80 uppercase tracking-wide">Sessions</span>
                             </div>
                             <div className="text-right">
-                            <span className="text-[10px] sm:text-xs font-bold text-text">
-                                {service.sessions_remaining} / {service.sessions_total}
+                            <span className="text-xs sm:text-sm font-bold text-text">
+                                {service.sessions_remaining} <span className="text-muted/60">/</span> {service.sessions_total}
                               </span>
                             </div>
                           </div>
@@ -746,17 +746,17 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                             <h4 className="font-semibold text-text text-xs sm:text-sm truncate">
                                 {booking.service?.name || 'Service Booking'}
                               </h4>
-                            <div className="space-y-1 mt-1.5">
-                              <div className="flex items-center gap-1.5 p-1 sm:p-1.5 rounded-md bg-surface/20">
-                                <Calendar className="h-2.5 w-2.5 text-blue-600/60 flex-shrink-0" />
-                                <span className="text-[9px] sm:text-[10px] font-medium text-text truncate">
+                            <div className="grid grid-cols-2 gap-1.5 mt-2">
+                              <div className="flex items-center gap-1.5 p-1.5 sm:p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm">
+                                <Calendar className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-blue-600/70 flex-shrink-0" />
+                                <span className="text-[10px] sm:text-xs font-semibold text-text truncate">
                                     {formatDate(booking.booking_date)}
                                   </span>
                                 </div>
-                              <div className="flex items-center justify-between gap-1.5 p-1 sm:p-1.5 rounded-md bg-surface/20">
+                              <div className="flex items-center justify-between gap-1.5 p-1.5 sm:p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm">
                                 <div className="flex items-center gap-1.5">
-                                  <Clock className="h-2.5 w-2.5 text-blue-600/60 flex-shrink-0" />
-                                  <span className="text-[9px] sm:text-[10px] font-medium text-text">
+                                  <Clock className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-blue-600/70 flex-shrink-0" />
+                                  <span className="text-[10px] sm:text-xs font-semibold text-text">
                                     {new Date(booking.booking_date).toLocaleTimeString('en-US', {
                                       hour: '2-digit',
                                       minute: '2-digit',
@@ -764,7 +764,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                                     })}
                                   </span>
                                 </div>
-                                <span className="text-[9px] sm:text-[10px] text-muted/60">
+                                  <span className="text-[10px] sm:text-xs text-primary/80 font-semibold">
                                       {booking.service?.duration_minutes || 'N/A'} min
                                     </span>
                                 </div>
