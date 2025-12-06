@@ -13,7 +13,7 @@ export interface FloatingLabelInputProps
 const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInputProps>(
   ({ className, label, error, type = "text", icon, ...props }, ref) => {
     return (
-      <div className="relative flex flex-col">
+      <div className="relative flex flex-col pt-3 sm:pt-0">
         <input
           required
           id={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}

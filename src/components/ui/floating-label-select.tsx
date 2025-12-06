@@ -73,7 +73,7 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
     const hasValue = !!(selectedOption && selectedOption.value);
 
     return (
-      <div ref={ref} className={cn("relative", className)}>
+      <div ref={ref} className={cn("relative pt-3 sm:pt-0", className)}>
         <button
           type="button"
           onClick={toggleDropdown}

@@ -28,7 +28,7 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
     };
 
     return (
-      <div className="relative flex flex-col">
+      <div className="relative flex flex-col pt-3 sm:pt-0">
         <input
           type="date"
           id={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}

@@ -260,7 +260,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
         {/* Avatar Upload and Basic Information Section */}
-        <div className="flex flex-col sm:flex-row gap-30 sm:gap-32 lg:gap-34 items-start">
+        <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 lg:gap-12 items-start">
           {/* Avatar Upload - Left Side Container */}
           <div className="flex-shrink-0 w-full sm:w-auto">
             <AvatarUpload
@@ -274,10 +274,10 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
 
           {/* Basic Information - Right Side Container */}
           <div className="flex-1 w-full max-w-3x2 space-y-4">
-            <h3 className="text-base sm:text-lg font-semibold text-text mb-1 sm:mb-2">Basic Information</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-text -mb-2 sm:mb-1">Basic Information</h3>
             
             {/* Row 1: First Name | Last Name */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8 sm:mt-8">
               <FormField
                 control={form.control}
                 name="first_name"
@@ -305,7 +305,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
             </div>
 
             {/* Row 2: Email | Phone */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8 sm:mt-8">
               <FormField
                 control={form.control}
                 name="email"
@@ -335,7 +335,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
             </div>
 
             {/* Row 3: Gender | Status */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8 sm:mt-8">
               <FormField
                 control={form.control}
                 name="gender"
@@ -387,7 +387,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
             </div>
 
             {/* Row 4: Membership Plan | Start From */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8 sm:mt-8">
               <FormField
                 control={form.control}
                 name="plan_id"
@@ -425,7 +425,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
             </div>
 
             {/* Row 5: Expires At | Password */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8 sm:mt-8">
               <FormField
                 control={form.control}
                 name="expires_at"
