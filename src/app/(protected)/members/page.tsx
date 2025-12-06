@@ -33,13 +33,15 @@ export default async function MembersPage() {
   ]);
 
   return (
-    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
+    <div className="space-y-6 sm:space-y-8 overflow-hidden">
       {/* Header Section */}
+      <div className="animate-fade-in-up">
       <PageHeader
         icon={Users}
         title="Members"
         subtitle="Manage member profiles, plans, and membership status"
       />
+      </div>
 
       <MembersPageWrapper members={members} expiringCount={expiringCount} />
     </div>

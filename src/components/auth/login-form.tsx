@@ -125,10 +125,10 @@ export function LoginForm() {
       </div>
       
       {/* Scrollable content layer */}
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-start pt-4 sm:pt-4 px-4 sm:px-6 sm:py-2 pb-8">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 py-4 -mt-16 sm:-mt-20">
         {/* Logo */}
-        <div className="mb-2 sm:-mb-8 flex-shrink-0 animate-fade-in">
-          <div className="relative w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] mx-auto">
+        <div className="mb-0 sm:-mb-8 flex-shrink-0 animate-fade-in">
+          <div className="relative w-[260px] h-[260px] sm:w-[360px] sm:h-[360px] mx-auto">
             <Image
               src="/logo.png"
               alt="MITUGYM Logo"

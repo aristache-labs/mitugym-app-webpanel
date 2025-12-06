@@ -22,10 +22,10 @@ export default async function BookingsPage() {
   const completedBookings = bookings.filter((booking) => booking.status === "completed");
 
   return (
-    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
+    <div className="space-y-6 sm:space-y-8 overflow-hidden">
 
       {/* Metrics Section */}
-      <section className="grid gap-2 sm:gap-3 grid-cols-2 lg:grid-cols-4 px-1 sm:px-2">
+      <section className="grid gap-2 sm:gap-3 grid-cols-2 lg:grid-cols-4 px-1 sm:px-2 animate-fade-in-up">
         <MetricCard 
           title="Total Bookings" 
           value={bookings.length} 
@@ -53,7 +53,7 @@ export default async function BookingsPage() {
       </section>
 
       {/* Bookings Table */}
-      <section className="relative">
+      <section className="relative animate-scale-in">
         <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 transition-all duration-300 hover:border-surface/60 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6">
           <div className="relative">
             <SessionBookingsTable bookings={bookings} timeFormat={timeFormat} />

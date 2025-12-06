@@ -24,10 +24,10 @@ export default async function ServicesPage() {
   const approvedServices = purchasedServices.filter((purchase) => purchase.status === "approved");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-hidden">
 
       {/* Services Table */}
-      <div className="relative">
+      <div className="relative animate-fade-in-up">
         <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 transition-all duration-300 hover:border-surface/60 overflow-hidden rounded-3xl p-6">
           
           <div className="relative">
@@ -48,7 +48,7 @@ export default async function ServicesPage() {
       </div>
 
       {/* Purchased Services Section */}
-      <div className="relative">
+      <div className="relative animate-scale-in">
         <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 transition-all duration-300 hover:border-surface/60 overflow-hidden rounded-3xl p-6">
           
           <div className="relative">

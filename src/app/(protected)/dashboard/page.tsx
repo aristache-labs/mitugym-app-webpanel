@@ -25,9 +25,9 @@ export default async function DashboardPage() {
   const spotlightNews = news.slice(0, 3);
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6 sm:space-y-8 overflow-hidden">
       {/* Premium Metrics Section - Responsive Grid */}
-      <section className="grid gap-3 grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <section className="grid gap-3 grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 animate-fade-in-up">
         <MetricCard 
           title="In Gym Now" 
           value={metrics.occupancy} 
@@ -70,13 +70,18 @@ export default async function DashboardPage() {
       </section>
 
       {/* Main Content Grid - Stacks on mobile */}
-      <section className="grid gap-6 sm:gap-8 lg:grid-cols-[2fr_1fr]">
+      <section className="grid gap-6 sm:gap-8 lg:grid-cols-[2fr_1fr] animate-fade-in-up">
         <div className="space-y-6 sm:space-y-8">
+          <div className="animate-scale-in">
           <OccupancyChart checkIns={checkIns} schedule={schedule} timeFormat={timeFormat} timezone={appTimezone} />
+          </div>
+          <div className="animate-scale-in">
           <UpcomingServicesCard bookings={todaysServices} timeFormat={timeFormat} />
+          </div>
         </div>
         
         {/* Enhanced Check-ins Card */}
+        <div className="animate-scale-in">
         <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">
           {/* Full card hover overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[20px]" />
@@ -201,10 +206,11 @@ export default async function DashboardPage() {
              )}
            </CardContent>
          </Card>
+         </div>
       </section>
 
       {/* Enhanced Announcements Section */}
-      <section>
+      <section className="animate-fade-in-up">
         <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">
           {/* Full card hover overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[20px]" />

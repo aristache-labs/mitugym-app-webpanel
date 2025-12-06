@@ -51,14 +51,16 @@ export function MembersPageWrapper({ members, expiringCount }: MembersPageWrappe
 
   return (
     <>
+      <div className="animate-scale-in">
       <MembersPageClient 
         members={members} 
         expiringCount={expiringCount} 
         onFilterChange={handleFilterChange}
       />
+      </div>
 
       {/* Members Table */}
-      <section className="relative">
+      <section className="relative animate-fade-in-up">
         <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 transition-all duration-300 hover:border-surface/60 overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6">
           <div className="relative">
             <MembersTable members={filteredMembers} />
