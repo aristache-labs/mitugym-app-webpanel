@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { User, Mail, Phone, Users, Calendar, Lock, ShieldCheck } from "lucide-react";
 import {
   createMemberSchema,
   memberStatusEnum,
@@ -283,6 +284,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                 render={({ field }) => (
                   <FloatingLabelInput
                     label="First name"
+                    icon={<User className="w-full h-full" />}
                     {...field}
                     error={form.formState.errors.first_name?.message}
                   />
@@ -294,6 +296,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                 render={({ field }) => (
                   <FloatingLabelInput
                     label="Last name"
+                    icon={<User className="w-full h-full" />}
                     {...field}
                     error={form.formState.errors.last_name?.message}
                   />
@@ -310,6 +313,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                   <FloatingLabelInput
                     type="email"
                     label="Email"
+                    icon={<Mail className="w-full h-full" />}
                     {...field}
                     error={form.formState.errors.email?.message}
                   />
@@ -321,6 +325,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                 render={({ field }) => (
                   <FloatingLabelInput
                     label="Phone"
+                    icon={<Phone className="w-full h-full" />}
                     {...field}
                     value={field.value ?? ""}
                     error={form.formState.errors.phone?.message}
@@ -339,6 +344,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                     value={field.value ?? ""}
                     onChange={(value) => field.onChange(value || null)}
                     label="Gender"
+                    icon={<Users className="w-full h-full" />}
                     options={[
                       { value: "", label: "Gender", disabled: true },
                       ...memberGenderEnum.options.map((gender) => ({
@@ -365,6 +371,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                       onChange={field.onChange}
                       label={isAutoCalculated ? "Status (auto)" : "Status"}
                       disabled={isAutoCalculated}
+                      icon={<ShieldCheck className="w-full h-full" />}
                       options={[
                         { value: "", label: "Status", disabled: true },
                         ...memberStatusEnum.options.map((status) => ({
@@ -389,6 +396,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                     value={field.value ?? ""}
                     onChange={(value) => field.onChange(value || null)}
                     label="Membership plan"
+                    icon={<Calendar className="w-full h-full" />}
                     options={[
                       { value: "", label: "Membership plan", disabled: true },
                       { value: "unassigned", label: "Unassigned" },
@@ -407,6 +415,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                 render={({ field }) => (
                   <FloatingLabelDateInput
                     label="Start from"
+                    icon={<Calendar className="w-full h-full" />}
                     {...field}
                     value={field.value ?? ""}
                     error={form.formState.errors.starts_at?.message}
@@ -423,6 +432,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                 render={({ field }) => (
                   <FloatingLabelDateInput
                     label="Expires at (auto)"
+                    icon={<Calendar className="w-full h-full" />}
                     {...field}
                     value={field.value ?? ""}
                     readOnly
@@ -438,6 +448,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                     <FloatingLabelInput
                       type="password"
                       label="Temporary password"
+                      icon={<Lock className="w-full h-full" />}
                       {...field}
                       error={!member && form.formState.errors && 'password' in form.formState.errors 
                         ? form.formState.errors.password?.message 
