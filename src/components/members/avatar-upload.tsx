@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Camera, Upload, X, User } from "lucide-react";
+import { Camera, X } from "lucide-react";
 import Image from "next/image";
 
 interface AvatarUploadProps {
@@ -95,102 +95,83 @@ export function AvatarUpload({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start gap-6">
-        {/* Avatar Preview */}
-        <div className="relative group">
-          <div className={`relative w-32 h-32 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
-            previewUrl 
-              ? 'border-primary/30 shadow-lg' 
-              : 'border-surface/40 bg-gradient-to-br from-surface/40 to-card/40'
-          }`}>
-            {previewUrl ? (
-              <Image
-                src={previewUrl}
-                alt={memberName}
-                fill
-                className="object-cover"
-                sizes="128px"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                <span className="text-3xl font-bold text-primary">
-                  {getInitials()}
-                </span>
-              </div>
-            )}
-            
-            {/* Overlay on hover */}
-            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-              <Camera className="h-8 w-8 text-white" />
-            </div>
-          </div>
+    <div className="flex items-center gap-4">
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileInput}
+        className="hidden"
+      />
 
-          {/* Delete button */}
-          {previewUrl && (
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="absolute -top-2 -right-2 p-1.5 rounded-full bg-error text-white shadow-lg hover:bg-error/90 transition-all duration-200 hover:scale-110"
-              title="Remove avatar"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-
-        {/* Upload Area */}
-        <div className="flex-1 space-y-3">
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            onClick={handleClickUpload}
-            className={`relative border-2 border-dashed rounded-xl p-6 transition-all duration-200 cursor-pointer ${
-              isDragging
-                ? 'border-primary bg-primary/5 scale-[1.02]'
-                : 'border-surface/40 hover:border-primary/50 hover:bg-surface/20'
-            }`}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileInput}
-              className="hidden"
+      {/* Clickable Avatar Preview */}
+      <div className="relative group">
+        <button
+          type="button"
+          onClick={handleClickUpload}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
+            isDragging
+              ? 'border-primary bg-primary/10 scale-105'
+              : previewUrl 
+                ? 'border-primary/30 shadow-lg hover:border-primary/50 hover:shadow-xl' 
+                : 'border-surface/40 bg-gradient-to-br from-surface/40 to-card/40 hover:border-primary/40'
+          }`}
+          title="Click to upload photo"
+        >
+          {previewUrl ? (
+            <Image
+              src={previewUrl}
+              alt={memberName}
+              fill
+              className="object-cover"
+              sizes="112px"
             />
-
-            <div className="flex flex-col items-center gap-3 text-center">
-              <div className={`p-3 rounded-xl transition-all duration-200 ${
-                isDragging 
-                  ? 'bg-primary/20 scale-110' 
-                  : 'bg-primary/10'
-              }`}>
-                <Upload className={`h-6 w-6 transition-colors duration-200 ${
-                  isDragging ? 'text-primary' : 'text-primary/70'
-                }`} />
-              </div>
-              
-              <div>
-                <p className="text-sm font-medium text-text">
-                  {isDragging ? 'Drop image here' : 'Click to upload or drag and drop'}
-                </p>
-                <p className="text-xs text-muted/60 mt-1">
-                  PNG, JPG, GIF up to 5MB
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {isEditing && currentAvatarUrl && (
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
-              <User className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-              <p className="text-xs text-blue-800 dark:text-blue-200">
-                Current avatar will be replaced if you upload a new one
-              </p>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
+              <span className="text-2xl sm:text-3xl font-bold text-primary">
+                {getInitials()}
+              </span>
             </div>
           )}
-        </div>
+          
+          {/* Overlay on hover */}
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-1.5">
+            <Camera className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+            <span className="text-[10px] sm:text-xs text-white font-medium">
+              {isDragging ? 'Drop here' : previewUrl ? 'Change' : 'Upload'}
+            </span>
+          </div>
+        </button>
+
+        {/* Delete button */}
+        {previewUrl && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete();
+            }}
+            className="absolute -top-2 -right-2 p-1.5 rounded-full bg-error text-white shadow-lg hover:bg-error/90 transition-all duration-200 hover:scale-110 z-10"
+            title="Remove avatar"
+          >
+            <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          </button>
+        )}
+      </div>
+
+      {/* Upload Info */}
+      <div className="flex-1 space-y-1.5">
+        <h4 className="text-xs sm:text-sm font-semibold text-text">Member Photo</h4>
+        <p className="text-[10px] sm:text-xs text-muted/70">
+          Click on the photo to upload
+        </p>
+        <p className="text-[9px] sm:text-[10px] text-muted/50">
+          PNG, JPG, GIF up to 5MB
+        </p>
       </div>
     </div>
   );

@@ -219,16 +219,13 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
         {/* Avatar Upload Section */}
-        <div className="space-y-2">
-          <h3 className="text-base sm:text-lg font-semibold text-text">Member Photo</h3>
-          <AvatarUpload
-            currentAvatarUrl={member?.avatar_url}
-            onAvatarChange={handleAvatarChange}
-            onAvatarDelete={handleAvatarDelete}
-            memberName={member?.full_name || form.watch('first_name') || 'Member'}
-            isEditing={!!member}
-          />
-        </div>
+        <AvatarUpload
+          currentAvatarUrl={member?.avatar_url}
+          onAvatarChange={handleAvatarChange}
+          onAvatarDelete={handleAvatarDelete}
+          memberName={member?.full_name || form.watch('first_name') || 'Member'}
+          isEditing={!!member}
+        />
 
         <div className="border-t border-surface/20 pt-4 sm:pt-6">
           <h3 className="text-base sm:text-lg font-semibold text-text mb-3 sm:mb-4">Basic Information</h3>
