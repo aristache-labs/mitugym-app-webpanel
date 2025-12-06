@@ -825,56 +825,71 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Account history and important milestones</p>
                 </div>
               </div>
-              <Badge variant="outline" className="text-secondary border-secondary/30 bg-secondary/10 text-xs sm:text-sm">
+              <Badge variant="outline" className="text-secondary border-0 bg-secondary/10 text-xs sm:text-sm px-2.5 py-1">
                 {memberAuditLogs.length} Events
               </Badge>
             </div>
           </CardHeader>
             
           <CardContent className="relative p-4 sm:p-6 pt-0">
-            <div className="space-y-2 sm:space-y-3 max-h-96 overflow-y-auto">
+            <div className="space-y-3 max-h-96 overflow-y-auto">
               {/* Key Milestones */}
-              <div className="group/item relative rounded-lg sm:rounded-xl bg-gradient-to-r from-green-500/5 to-green-500/10 border border-green-500/20 p-3 sm:p-4 transition-all duration-200 hover:from-green-500/10 hover:to-green-500/15">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="p-1.5 sm:p-2 rounded-lg bg-green-500/20 flex-shrink-0">
-                    <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500" />
+              <div className="group/item relative rounded-xl bg-gradient-to-br from-surface/70 to-surface/50 border-0 p-3 sm:p-4 transition-all duration-200 hover:from-surface/80 hover:to-surface/60 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="relative flex-shrink-0">
+                    <div className="absolute left-1/2 top-12 bottom-0 w-0.5 bg-gradient-to-b from-green-500/40 to-transparent -translate-x-1/2"></div>
+                    <div className="relative p-2 rounded-lg bg-gradient-to-br from-green-500/25 to-green-500/15 backdrop-blur-sm">
+                      <UserCheck className="h-4 w-4 text-green-500" />
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-text text-sm sm:text-base">Account Created</p>
-                    <p className="text-xs sm:text-sm text-muted/60 truncate">
-                      {formatDate(member.created_at)} • Welcome to MituGym!
-                    </p>
+                  <div className="min-w-0 flex-1 pt-1">
+                    <p className="font-semibold text-text text-sm sm:text-base mb-1">Account Created</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs sm:text-sm text-primary/80 font-medium">{formatDate(member.created_at)}</span>
+                      <div className="w-1 h-1 rounded-full bg-primary/40"></div>
+                      <span className="text-xs sm:text-sm text-muted/70">Welcome to MituGym!</span>
+                    </div>
                   </div>
                 </div>
               </div>
               
               {member.plan_name && (
-                <div className="group/item relative rounded-lg sm:rounded-xl bg-gradient-to-r from-blue-500/5 to-blue-500/10 border border-blue-500/20 p-3 sm:p-4 transition-all duration-200 hover:from-blue-500/10 hover:to-blue-500/15">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="p-1.5 sm:p-2 rounded-lg bg-blue-500/20 flex-shrink-0">
-                      <Package className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-500" />
+                <div className="group/item relative rounded-xl bg-gradient-to-br from-surface/70 to-surface/50 border-0 p-3 sm:p-4 transition-all duration-200 hover:from-surface/80 hover:to-surface/60 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="relative flex-shrink-0">
+                      <div className="absolute left-1/2 top-12 bottom-0 w-0.5 bg-gradient-to-b from-blue-500/40 to-transparent -translate-x-1/2"></div>
+                      <div className="relative p-2 rounded-lg bg-gradient-to-br from-blue-500/25 to-blue-500/15 backdrop-blur-sm">
+                        <Package className="h-4 w-4 text-blue-500" />
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-text text-sm sm:text-base">Plan Subscribed</p>
-                      <p className="text-xs sm:text-sm text-muted/60 truncate">
-                        {formatDate(member.starts_at || member.created_at)} • {member.plan_name}
-                      </p>
+                    <div className="min-w-0 flex-1 pt-1">
+                      <p className="font-semibold text-text text-sm sm:text-base mb-1">Plan Subscribed</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs sm:text-sm text-primary/80 font-medium">{formatDate(member.starts_at || member.created_at)}</span>
+                        <div className="w-1 h-1 rounded-full bg-primary/40"></div>
+                        <span className="text-xs sm:text-sm text-muted/70 truncate">{member.plan_name}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
 
               {recentCheckIns.length > 0 && (
-                <div className="group/item relative rounded-lg sm:rounded-xl bg-gradient-to-r from-purple-500/5 to-purple-500/10 border border-purple-500/20 p-3 sm:p-4 transition-all duration-200 hover:from-purple-500/10 hover:to-purple-500/15">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="p-1.5 sm:p-2 rounded-lg bg-purple-500/20 flex-shrink-0">
-                      <Activity className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-500" />
+                <div className="group/item relative rounded-xl bg-gradient-to-br from-surface/70 to-surface/50 border-0 p-3 sm:p-4 transition-all duration-200 hover:from-surface/80 hover:to-surface/60 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="relative flex-shrink-0">
+                      <div className="absolute left-1/2 top-12 bottom-0 w-0.5 bg-gradient-to-b from-purple-500/40 to-transparent -translate-x-1/2"></div>
+                      <div className="relative p-2 rounded-lg bg-gradient-to-br from-purple-500/25 to-purple-500/15 backdrop-blur-sm">
+                        <Activity className="h-4 w-4 text-purple-500" />
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-text text-sm sm:text-base">First Check-in</p>
-                      <p className="text-xs sm:text-sm text-muted/60 truncate">
-                        {formatDate(recentCheckIns[recentCheckIns.length - 1]?.checked_in_at)} • Started gym activities
-                      </p>
+                    <div className="min-w-0 flex-1 pt-1">
+                      <p className="font-semibold text-text text-sm sm:text-base mb-1">First Check-in</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs sm:text-sm text-primary/80 font-medium">{formatDate(recentCheckIns[recentCheckIns.length - 1]?.checked_in_at)}</span>
+                        <div className="w-1 h-1 rounded-full bg-primary/40"></div>
+                        <span className="text-xs sm:text-sm text-muted/70">Started gym activities</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -882,40 +897,48 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
 
               {/* Real Audit Log Events */}
               {memberAuditLogs.map((log) => (
-                <div key={log.id} className="group/item relative rounded-lg sm:rounded-xl bg-gradient-to-r from-surface/60 to-surface/40 border border-surface/30 p-3 sm:p-4 transition-all duration-200 hover:from-surface/80 hover:to-surface/60">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="p-1.5 sm:p-2 rounded-lg bg-surface/40 flex-shrink-0">
-                      <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted" />
+                <div key={log.id} className="group/item relative rounded-xl bg-gradient-to-br from-surface/70 to-surface/50 border-0 p-3 sm:p-4 transition-all duration-200 hover:from-surface/80 hover:to-surface/60 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="relative flex-shrink-0">
+                      <div className="relative p-2 rounded-lg bg-gradient-to-br from-primary/15 to-primary/10 backdrop-blur-sm">
+                        <Clock className="h-4 w-4 text-primary/70" />
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-text capitalize text-sm sm:text-base truncate">
+                    <div className="min-w-0 flex-1 pt-1">
+                      <p className="font-semibold text-text capitalize text-sm sm:text-base truncate mb-1">
                         {log.action.replace('.', ' ').replace('_', ' ')}
                       </p>
-                      <p className="text-xs sm:text-sm text-muted/60 truncate">
-                        {formatDate(log.created_at)} • {log.actor_name || 'System'}
-                      </p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs sm:text-sm text-primary/80 font-medium">{formatDate(log.created_at)}</span>
+                        <div className="w-1 h-1 rounded-full bg-primary/40"></div>
+                        <span className="text-xs sm:text-sm text-muted/70 truncate">{log.actor_name || 'System'}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               ))}
 
               {member.expires_at && (
-                <div className={`group/item relative rounded-lg sm:rounded-xl p-3 sm:p-4 transition-all duration-200 ${
+                <div className={`group/item relative rounded-xl border-0 p-3 sm:p-4 transition-all duration-200 shadow-sm ${
                   isExpired 
-                    ? 'bg-gradient-to-r from-red-500/5 to-red-500/10 border border-red-500/20 hover:from-red-500/10 hover:to-red-500/15'
-                    : 'bg-gradient-to-r from-yellow-500/5 to-yellow-500/10 border border-yellow-500/20 hover:from-yellow-500/10 hover:to-yellow-500/15'
+                    ? 'bg-gradient-to-br from-surface/70 to-surface/50 hover:from-surface/80 hover:to-surface/60'
+                    : 'bg-gradient-to-br from-surface/70 to-surface/50 hover:from-surface/80 hover:to-surface/60'
                 }`}>
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className={`p-1.5 sm:p-2 rounded-lg flex-shrink-0 ${isExpired ? 'bg-red-500/20' : 'bg-yellow-500/20'}`}>
-                      <AlertCircle className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${isExpired ? 'text-red-500' : 'text-yellow-500'}`} />
+                  <div className="flex items-start gap-3">
+                    <div className="relative flex-shrink-0">
+                      <div className={`relative p-2 rounded-lg bg-gradient-to-br backdrop-blur-sm ${isExpired ? 'from-red-500/25 to-red-500/15' : 'from-yellow-500/25 to-yellow-500/15'}`}>
+                        <AlertCircle className={`h-4 w-4 ${isExpired ? 'text-red-500' : 'text-yellow-500'}`} />
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-text text-sm sm:text-base">
+                    <div className="min-w-0 flex-1 pt-1">
+                      <p className="font-semibold text-text text-sm sm:text-base mb-1">
                         {isExpired ? 'Membership Expired' : 'Membership Expires'}
                       </p>
-                      <p className="text-xs sm:text-sm text-muted/60 truncate">
-                        {formatDate(member.expires_at)} • {member.plan_name}
-                      </p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs sm:text-sm text-primary/80 font-medium">{formatDate(member.expires_at)}</span>
+                        <div className="w-1 h-1 rounded-full bg-primary/40"></div>
+                        <span className="text-xs sm:text-sm text-muted/70 truncate">{member.plan_name}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
