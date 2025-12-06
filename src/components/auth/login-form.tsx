@@ -26,32 +26,9 @@ export function LoginForm() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    // Only disable scroll on mobile portrait mode
-    const isPortraitMobile = window.matchMedia('(max-width: 640px) and (orientation: portrait)').matches;
-    
-    if (isPortraitMobile) {
-      // Prevent scrolling on mobile portrait
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.height = '100%';
-    }
-
-    // Listen for orientation changes
+    // Don't disable scroll anymore - allow natural scrolling
     const handleOrientationChange = () => {
-      const isStillPortraitMobile = window.matchMedia('(max-width: 640px) and (orientation: portrait)').matches;
-      
-      if (isStillPortraitMobile) {
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
-        document.body.style.height = '100%';
-      } else {
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.height = '';
-      }
+      // Removed scroll locking logic
     };
 
     window.addEventListener('resize', handleOrientationChange);
@@ -59,10 +36,6 @@ export function LoginForm() {
 
     return () => {
       // Cleanup on unmount
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.height = '';
       window.removeEventListener('resize', handleOrientationChange);
       window.removeEventListener('orientationchange', handleOrientationChange);
     };
@@ -134,15 +107,19 @@ export function LoginForm() {
 
   return (
     <>
-      {/* Stars background */}
-      <div id="stars-container" className="fixed inset-0 pointer-events-none z-[1]"></div>
+      {/* Stars background - covering entire scrollable area */}
+      <div className="absolute inset-0 min-h-screen pointer-events-none z-[1]">
+        <div id="stars-container" className="absolute inset-0 w-full" style={{ minHeight: '200vh' }}></div>
+      </div>
       
-      {/* Cyan gradient background - visible on mobile */}
-      <div className="fixed inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/10 pointer-events-none z-[1] sm:opacity-0"></div>
+      {/* Cyan gradient background - covering entire scrollable area */}
+      <div className="absolute inset-0 min-h-screen pointer-events-none z-[1] sm:opacity-0">
+        <div className="absolute inset-0 w-full bg-gradient-to-br from-primary/10 via-transparent to-primary/10" style={{ minHeight: '200vh' }}></div>
+      </div>
       
-      <div className="fixed inset-0 flex flex-col items-center justify-start pt-8 sm:pt-4 overflow-hidden px-4 sm:static sm:min-h-screen sm:overflow-visible sm:px-6 sm:py-2">
+      <div className="min-h-screen flex flex-col items-center justify-start pt-4 sm:pt-4 px-4 sm:px-6 sm:py-2 pb-4 relative z-10">
         {/* Logo */}
-        <div className="mb-3 sm:-mb-8 flex-shrink-0 animate-fade-in">
+        <div className="mb-2 sm:-mb-8 flex-shrink-0 animate-fade-in">
           <div className="relative w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] mx-auto">
             <Image
               src="/logo.png"
