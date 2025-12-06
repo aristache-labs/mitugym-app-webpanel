@@ -46,7 +46,7 @@ export default async function NewMemberPage() {
                   <div className="flex items-center justify-between gap-2">
                     <CardTitle className="text-base sm:text-xl font-semibold text-text group-hover:text-primary transition-colors">
                       Add Member
-                    </CardTitle>
+                  </CardTitle>
                     {/* Back button on mobile - right side */}
                     <Link 
                       href="/members"

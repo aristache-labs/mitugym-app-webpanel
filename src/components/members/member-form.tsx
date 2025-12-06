@@ -444,10 +444,10 @@ export function MemberForm({ plans, member }: MemberFormProps) {
         {serverError ? <p className="text-xs sm:text-sm text-error">{serverError}</p> : null}
         <div className="flex items-center justify-between pt-2 sm:pt-0">
           <AnimatedButton
-            type="submit"
-            disabled={isPending || isUploadingAvatar}
+            type="submit" 
+            disabled={isPending || isUploadingAvatar} 
             className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium"
-          >
+          > 
             {isPending 
               ? "Saving..." 
               : isUploadingAvatar 

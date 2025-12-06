@@ -227,158 +227,214 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
               </div>
             </CardHeader>
               
-            <CardContent className="relative p-4 sm:p-6 md:p-8 pt-0">
-              <div className="grid lg:grid-cols-3 gap-4 sm:gap-6">
-                {/* Personal Information */}
-                <div className="space-y-3 sm:space-y-4">
-                  <h3 className="text-xs sm:text-sm font-semibold text-text uppercase tracking-wider">Personal Information</h3>
-                  
-                  {member.date_of_birth ? (
-                    <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                      <Cake className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
-                      <div className="min-w-0">
-                        <p className="text-xs sm:text-sm font-medium text-muted/70">Birth Date</p>
-                        <p className="text-sm sm:text-base text-text font-semibold truncate">{formatDate(member.date_of_birth)}</p>
-                      </div>
+            <CardContent className="relative p-4 sm:p-5 md:p-6 pt-0">
+              <div className="grid lg:grid-cols-3 gap-2.5 sm:gap-3">
+                
+                {/* Personal Information Container */}
+                <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-3 shadow-md hover:shadow-lg transition-all duration-300">
+                  {/* Header */}
+                  <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-primary/10">
+                    <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                      <Users className="h-3.5 w-3.5 text-primary" />
                     </div>
-                  ) : (
-                    <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
-                      <Cake className="h-4 w-4 sm:h-5 sm:w-5 text-muted/40 flex-shrink-0" />
-                      <div>
-                        <p className="text-xs sm:text-sm font-medium text-muted/50">Birth Date</p>
-                        <p className="text-muted/60 text-xs sm:text-sm">Not provided</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {member.gender ? (
-                    <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                      <Users className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs sm:text-sm font-medium text-muted/70">Gender</p>
-                        <p className="text-sm sm:text-base text-text font-semibold capitalize">{member.gender}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
-                      <Users className="h-4 w-4 sm:h-5 sm:w-5 text-muted/40 flex-shrink-0" />
-                      <div>
-                        <p className="text-xs sm:text-sm font-medium text-muted/50">Gender</p>
-                        <p className="text-muted/60 text-xs sm:text-sm">Not provided</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                   <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                     <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
-                     <div className="min-w-0">
-                       <p className="text-xs sm:text-sm font-medium text-muted/70">Membership Plan</p>
-                       <p className="text-sm sm:text-base text-text font-semibold truncate">
-                         {member.plan_name || 'No plan assigned'}
-                       </p>
-                       {(member.expires_at || member.starts_at) && (
-                         <p className={`text-xs sm:text-sm mt-1 truncate ${isExpired ? 'text-red-500' : isPending ? 'text-yellow-600' : 'text-muted/60'}`}>
-                           {isExpired 
-                             ? `Expired on: ${formatDate(member.expires_at)}` 
-                             : isPending 
-                             ? `Starts: ${formatDate(member.starts_at)}` 
-                             : `Expires: ${formatDate(member.expires_at)}`}
-                         </p>
-                       )}
-                     </div>
-                   </div>
-                </div>
-
-                {/* Contact Information */}
-                <div className="space-y-3 sm:space-y-4">
-                  <h3 className="text-xs sm:text-sm font-semibold text-text uppercase tracking-wider">Contact Information</h3>
-                  
-                  <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                    <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs sm:text-sm font-medium text-muted/70">Email Address</p>
-                      <p className="text-sm sm:text-base text-text font-semibold truncate">{member.email}</p>
-                    </div>
+                    <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Personal Information</h3>
                   </div>
                   
-                  {member.phone ? (
-                    <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                      <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs sm:text-sm font-medium text-muted/70">Phone Number</p>
-                        <p className="text-sm sm:text-base text-text font-semibold">{member.phone}</p>
+                  {/* Cards */}
+                  <div className="space-y-2">
+                    {member.date_of_birth ? (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Cake className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Birth Date</p>
+                          <p className="text-xs text-text font-semibold truncate">{formatDate(member.date_of_birth)}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-surface/10 backdrop-blur-sm border-0 opacity-40">
+                        <div className="p-1.5 rounded-md bg-surface/20">
+                          <Cake className="h-3.5 w-3.5 text-muted/40" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-muted/40 uppercase tracking-wide">Birth Date</p>
+                          <p className="text-muted/50 text-[10px]">Not provided</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {member.gender ? (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Users className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Gender</p>
+                          <p className="text-xs text-text font-semibold capitalize">{member.gender}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-surface/10 backdrop-blur-sm border-0 opacity-40">
+                        <div className="p-1.5 rounded-md bg-surface/20">
+                          <Users className="h-3.5 w-3.5 text-muted/40" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-muted/40 uppercase tracking-wide">Gender</p>
+                          <p className="text-muted/50 text-[10px]">Not provided</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <CreditCard className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Membership Plan</p>
+                        <p className="text-xs text-text font-semibold truncate">
+                          {member.plan_name || 'No plan assigned'}
+                        </p>
+                        {(member.expires_at || member.starts_at) && (
+                          <p className={`text-[9px] mt-0.5 truncate font-medium ${isExpired ? 'text-red-400' : isPending ? 'text-yellow-500' : 'text-primary/60'}`}>
+                            {isExpired 
+                              ? `Expired: ${formatDate(member.expires_at)}` 
+                              : isPending 
+                              ? `Starts: ${formatDate(member.starts_at)}` 
+                              : `Expires: ${formatDate(member.expires_at)}`}
+                          </p>
+                        )}
                       </div>
                     </div>
-                  ) : (
-                    <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
-                      <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-muted/40 flex-shrink-0" />
-                      <div>
-                        <p className="text-xs sm:text-sm font-medium text-muted/50">Phone Number</p>
-                        <p className="text-muted/60 text-xs sm:text-sm">Not provided</p>
-                      </div>
-                    </div>
-                  )}
-                  
+                  </div>
                 </div>
 
-                 {/* Location & Membership Details */}
-                 <div className="space-y-3 sm:space-y-4">
-                   <h3 className="text-xs sm:text-sm font-semibold text-text uppercase tracking-wider">Location & Membership</h3>
-                   
-                   {member.address ? (
-                     <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                       <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
-                       <div className="min-w-0">
-                         <p className="text-xs sm:text-sm font-medium text-muted/70">Address</p>
-                         <p className="text-sm sm:text-base text-text font-semibold truncate">{member.address}</p>
-                       </div>
-                     </div>
-                   ) : (
-                     <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
-                       <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-muted/40 flex-shrink-0" />
-                       <div>
-                         <p className="text-xs sm:text-sm font-medium text-muted/50">Address</p>
-                         <p className="text-muted/60 text-xs sm:text-sm">Not provided</p>
-                       </div>
-                     </div>
-                   )}
-                   
-                   {member.city ? (
-                     <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                       <Building className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
-                       <div>
-                         <p className="text-xs sm:text-sm font-medium text-muted/70">City</p>
-                         <p className="text-sm sm:text-base text-text font-semibold">{member.city}</p>
-                       </div>
-                     </div>
-                   ) : (
-                     <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
-                       <Building className="h-4 w-4 sm:h-5 sm:w-5 text-muted/40 flex-shrink-0" />
-                       <div>
-                         <p className="text-xs sm:text-sm font-medium text-muted/50">City</p>
-                         <p className="text-muted/60 text-xs sm:text-sm">Not provided</p>
-                       </div>
-                     </div>
-                   )}
-                   
-                   {member.county ? (
-                     <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/20 border border-surface/30 hover:bg-surface/30 transition-colors">
-                       <Map className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
-                       <div>
-                         <p className="text-xs sm:text-sm font-medium text-muted/70">County</p>
-                         <p className="text-sm sm:text-base text-text font-semibold">{member.county}</p>
-                       </div>
-                     </div>
-                   ) : (
-                     <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-surface/10 border border-surface/20 opacity-50">
-                       <Map className="h-4 w-4 sm:h-5 sm:w-5 text-muted/40 flex-shrink-0" />
-                       <div>
-                         <p className="text-xs sm:text-sm font-medium text-muted/50">County</p>
-                         <p className="text-muted/60 text-xs sm:text-sm">Not provided</p>
-                       </div>
-                     </div>
-                   )}
-                 </div>
+                {/* Contact Information Container */}
+                <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-3 shadow-md hover:shadow-lg transition-all duration-300">
+                  {/* Header */}
+                  <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-primary/10">
+                    <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                      <Mail className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Contact Information</h3>
+                  </div>
+                  
+                  {/* Cards */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <Mail className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Email Address</p>
+                        <p className="text-xs text-text font-semibold truncate">{member.email}</p>
+                      </div>
+                    </div>
+                    
+                    {member.phone ? (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Phone className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Phone Number</p>
+                          <p className="text-xs text-text font-semibold">{member.phone}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-surface/10 backdrop-blur-sm border-0 opacity-40">
+                        <div className="p-1.5 rounded-md bg-surface/20">
+                          <Phone className="h-3.5 w-3.5 text-muted/40" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-muted/40 uppercase tracking-wide">Phone Number</p>
+                          <p className="text-muted/50 text-[10px]">Not provided</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Location & Membership Container */}
+                <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-3 shadow-md hover:shadow-lg transition-all duration-300">
+                  {/* Header */}
+                  <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-primary/10">
+                    <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                      <MapPin className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Location & Membership</h3>
+                  </div>
+                  
+                  {/* Cards */}
+                  <div className="space-y-2">
+                    {member.address ? (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <MapPin className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Address</p>
+                          <p className="text-xs text-text font-semibold truncate">{member.address}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-surface/10 backdrop-blur-sm border-0 opacity-40">
+                        <div className="p-1.5 rounded-md bg-surface/20">
+                          <MapPin className="h-3.5 w-3.5 text-muted/40" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-muted/40 uppercase tracking-wide">Address</p>
+                          <p className="text-muted/50 text-[10px]">Not provided</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {member.city ? (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Building className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">City</p>
+                          <p className="text-xs text-text font-semibold">{member.city}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-surface/10 backdrop-blur-sm border-0 opacity-40">
+                        <div className="p-1.5 rounded-md bg-surface/20">
+                          <Building className="h-3.5 w-3.5 text-muted/40" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-muted/40 uppercase tracking-wide">City</p>
+                          <p className="text-muted/50 text-[10px]">Not provided</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {member.county ? (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/40 to-surface/20 backdrop-blur-sm border-0 hover:from-surface/60 hover:to-surface/40 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Map className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">County</p>
+                          <p className="text-xs text-text font-semibold">{member.county}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-surface/10 backdrop-blur-sm border-0 opacity-40">
+                        <div className="p-1.5 rounded-md bg-surface/20">
+                          <Map className="h-3.5 w-3.5 text-muted/40" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-medium text-muted/40 uppercase tracking-wide">County</p>
+                          <p className="text-muted/50 text-[10px]">Not provided</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
               </div>
             </CardContent>
           </Card>
