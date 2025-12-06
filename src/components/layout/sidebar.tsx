@@ -92,18 +92,18 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             })}
           </nav>
         </div>
-        <div className="space-y-3 mt-auto">
+        <div className="space-y-3 mt-auto pt-6">
           <form action={signOutAction}>
             <Button
               type="submit"
               variant="ghost"
-              className="group w-full justify-start text-sm font-medium text-muted/80 hover:text-primary transition-all duration-200 hover:bg-primary/5 ring-1 ring-inset ring-primary/10 hover:ring-primary/20 rounded-[12px] px-4 py-2.5"
+              className="group w-full justify-start text-sm font-medium text-muted/60 hover:text-error transition-all duration-200 hover:bg-error/5 ring-1 ring-inset ring-muted/10 hover:ring-error/20 rounded-[12px] px-4 py-2.5"
             >
-              <SignOutIcon className="mr-3 h-5 w-5 transition-colors duration-200 text-muted/60 group-hover:text-primary" />
+              <SignOutIcon className="mr-3 h-5 w-5 transition-colors duration-200 text-muted/40 group-hover:text-error" />
               {signOutItem.label}
             </Button>
           </form>
-          <p className="text-xs text-muted/80 text-center lg:text-left">
+          <p className="text-xs text-muted/80 text-center">
             Signed in as staff. Actions here are recorded in the audit log.
           </p>
         </div>
