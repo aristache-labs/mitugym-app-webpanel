@@ -69,14 +69,24 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                   href={item.href}
                   onClick={handleLinkClick}
                   className={cn(
-                    "flex items-center gap-3 rounded-[16px] px-4 py-3 text-sm font-medium transition-all duration-200",
+                    "group relative flex items-center gap-3 rounded-[12px] px-4 py-2.5 text-sm font-medium transition-all duration-200 overflow-hidden",
                     active
-                      ? "bg-primary/20 text-primary"
-                      : "text-muted hover:bg-surface/80 lg:hover:bg-transparent hover:text-text hover:shadow-md lg:hover:shadow-none"
+                      ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary ring-1 ring-inset ring-primary/30"
+                      : "text-muted/80 hover:text-primary ring-1 ring-inset ring-primary/10 hover:ring-primary/20 hover:bg-primary/5"
                   )}
                 >
-                  <Icon className="h-5 w-5 flex-shrink-0" />
-                  {item.label}
+                  <Icon className={cn(
+                    "h-5 w-5 flex-shrink-0 transition-colors duration-200 relative z-10",
+                    active 
+                      ? "text-primary" 
+                      : "text-muted/60 group-hover:text-primary"
+                  )} />
+                  <span className="relative z-10">{item.label}</span>
+                  
+                  {/* Active bottom indicator line */}
+                  {active && (
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent" />
+                  )}
                 </Link>
               );
             })}
@@ -87,9 +97,9 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             <Button
               type="submit"
               variant="ghost"
-              className="w-full justify-start text-sm text-muted hover:text-text"
+              className="group w-full justify-start text-sm font-medium text-muted/80 hover:text-primary transition-all duration-200 hover:bg-primary/5 ring-1 ring-inset ring-primary/10 hover:ring-primary/20 rounded-[12px] px-4 py-2.5"
             >
-              <SignOutIcon className="mr-3 h-5 w-5" />
+              <SignOutIcon className="mr-3 h-5 w-5 transition-colors duration-200 text-muted/60 group-hover:text-primary" />
               {signOutItem.label}
             </Button>
           </form>
