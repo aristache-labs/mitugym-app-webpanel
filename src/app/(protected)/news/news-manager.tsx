@@ -239,7 +239,7 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
   );
 
   return (
-    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
+    <div className="space-y-6 sm:space-y-8 overflow-hidden">
       {/* News Table Section with Header */}
       <div className="relative animate-fade-in-up">
         <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 overflow-hidden">

@@ -64,7 +64,7 @@ export function SettingsPageClient({
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
+    <div className="space-y-6 sm:space-y-8 overflow-hidden">
       {/* Page Header */}
       <PageHeader
         icon={SettingsIcon}
