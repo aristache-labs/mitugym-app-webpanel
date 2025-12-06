@@ -22,7 +22,7 @@ export default async function BookingsPage() {
   const completedBookings = bookings.filter((booking) => booking.status === "completed");
 
   return (
-    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
+    <div className="space-y-6 sm:space-y-8 overflow-clip">
 
       {/* Metrics Section */}
       <section className="grid gap-2 sm:gap-3 grid-cols-2 lg:grid-cols-4 px-1 sm:px-2">

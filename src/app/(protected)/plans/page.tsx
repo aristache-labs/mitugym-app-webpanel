@@ -12,7 +12,7 @@ export default async function PlansPage() {
   const plans = await fetchPlans();
 
   return (
-    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
+    <div className="space-y-6 sm:space-y-8 overflow-clip">
       {/* Header Section */}
       <div className="flex items-start gap-2 sm:gap-3">
         <div className="p-1.5 sm:p-2 rounded-xl bg-primary/10 flex-shrink-0">

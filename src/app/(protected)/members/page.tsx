@@ -33,7 +33,7 @@ export default async function MembersPage() {
   ]);
 
   return (
-    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
+    <div className="space-y-6 sm:space-y-8 overflow-clip">
       {/* Header Section */}
       <PageHeader
         icon={Users}

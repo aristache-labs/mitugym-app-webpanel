@@ -26,7 +26,7 @@ export default async function EditAnnouncementPage({ params }: EditAnnouncementP
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 overflow-clip">
       {/* Premium Form Container */}
       <div className="max-w-4xl animate-fade-in-up">
         <div className="relative">

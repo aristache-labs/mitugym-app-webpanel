@@ -59,7 +59,7 @@ export default async function CheckinsPage() {
   const occupancyStyle = getOccupancyColor(occupancy.total);
 
   return (
-    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
+    <div className="space-y-6 sm:space-y-8 overflow-clip">
       {/* Integrated Layout with Occupancy Card */}
       <div className="relative animate-fade-in-up">
         <div className="relative space-y-3 sm:space-y-4">
