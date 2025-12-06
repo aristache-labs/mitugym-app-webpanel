@@ -84,17 +84,17 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Member since {formatDate(member.created_at)}</p>
                   <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-3 flex-wrap">
                     {isPending ? (
-                      <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-600 border-0 text-xs sm:text-sm">
+                      <Badge variant="secondary" className="bg-yellow-500/30 text-white border-0 text-xs sm:text-sm rounded-full">
                         <AlertCircle className="h-3 w-3 mr-1" />
                         Pending
                     </Badge>
                     ) : isExpired ? (
-                      <Badge variant="destructive" className="bg-red-500/20 text-red-600 border-0 text-xs sm:text-sm">
+                      <Badge variant="destructive" className="bg-red-500/30 text-white border-0 text-xs sm:text-sm rounded-full">
                         <AlertCircle className="h-3 w-3 mr-1" />
                         Expired
                       </Badge>
                     ) : (
-                      <Badge variant="default" className="bg-green-500/20 text-green-600 border-0 text-xs sm:text-sm">
+                      <Badge variant="default" className="bg-green-500/30 text-white border-0 text-xs sm:text-sm rounded-full">
                         ✓ Active
                       </Badge>
                     )}
@@ -455,14 +455,14 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
               <CardContent className="relative p-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <div className={`p-1.5 rounded-lg bg-gradient-to-br flex-shrink-0 ${
+                    <div className={`p-2 rounded-xl bg-gradient-to-br flex-shrink-0 ${
                       isExpired 
                         ? 'from-red-500/25 to-red-500/15' 
                         : isPending 
                         ? 'from-yellow-500/25 to-yellow-500/15'
                         : 'from-green-500/25 to-green-500/15'
                     }`}>
-                      <CreditCard className={`h-4 w-4 ${
+                      <CreditCard className={`h-5 w-5 ${
                         isExpired 
                           ? 'text-red-600' 
                           : isPending 
@@ -472,13 +472,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1 mb-0.5">
-                        <span className={`text-[9px] font-semibold uppercase tracking-wider ${
-                          isExpired 
-                            ? 'text-red-600/80' 
-                            : isPending 
-                            ? 'text-yellow-600/80'
-                            : 'text-green-600/80'
-                        }`}>Membership Plan</span>
+                        <span className="text-[9px] font-semibold uppercase tracking-wider text-white/90">Membership Plan</span>
                   </div>
                       <h3 className={`text-base sm:text-lg font-bold transition-colors truncate ${
                         isExpired 
@@ -522,12 +516,12 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
               </div>
                   <Badge 
                     variant="outline" 
-                    className={`text-[10px] font-bold px-1.5 py-0.5 flex-shrink-0 border-0 ${
+                    className={`text-xs font-bold px-2.5 py-1 flex-shrink-0 border-0 rounded-full ${
                       isExpired 
-                        ? 'text-red-700 bg-red-500/20' 
+                        ? 'text-white bg-red-500/30' 
                         : isPending 
-                        ? 'text-yellow-700 bg-yellow-500/20'
-                        : 'text-green-700 bg-green-500/20'
+                        ? 'text-white bg-yellow-500/30'
+                        : 'text-white bg-green-500/30'
                     }`}
                   >
                     {isExpired ? 'EXPIRED' : isPending ? 'PENDING' : member.status.toUpperCase()}
