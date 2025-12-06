@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSupabase } from "@/components/providers/supabase-provider";
 import { loginSchema, type LoginInput } from "@/schemas/auth";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -141,16 +140,19 @@ export function LoginForm() {
       {/* Cyan gradient background - visible on mobile */}
       <div className="fixed inset-0 bg-gradient-to-br from-primary/10 via-transparent to-primary/10 pointer-events-none z-[1] sm:opacity-0"></div>
       
-      <div className="fixed inset-0 flex flex-col items-center justify-center overflow-hidden px-4 sm:static sm:min-h-screen sm:overflow-visible sm:px-6 sm:py-8">
+      <div className="fixed inset-0 flex flex-col items-center justify-start pt-8 sm:pt-4 overflow-hidden px-4 sm:static sm:min-h-screen sm:overflow-visible sm:px-6 sm:py-2">
         {/* Logo */}
-        <div className="mb-2 flex-shrink-0 sm:mb-8 animate-fade-in">
-          <Image
-            src="/logo.png"
-            alt="MITUGYM Logo"
-            width={60}
-            height={60}
-            className="mx-auto sm:w-[150px] sm:h-[150px]"
-          />
+        <div className="mb-3 sm:-mb-8 flex-shrink-0 animate-fade-in">
+          <div className="relative w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] mx-auto">
+            <Image
+              src="/logo.png"
+              alt="MITUGYM Logo"
+              fill
+              priority
+              quality={100}
+              className="object-contain drop-shadow-[0_0_15px_rgba(77,212,212,0.3)]"
+            />
+          </div>
         </div>
         
         <Card className="w-full max-w-md flex-shrink-0 !border-primary/40 sm:!border-primary/20 bg-surface/80 shadow-2xl backdrop-blur-xl transition-all duration-500 hover:shadow-[0_0_40px_rgba(6,182,212,0.15)] animate-scale-in relative overflow-hidden">
@@ -300,13 +302,34 @@ export function LoginForm() {
                   )}
                 />
                 {error ? <p className="text-[9px] text-error sm:text-sm animate-shake">{error}</p> : null}
-                <Button 
-                  type="submit" 
-                  className="h-8 w-full text-[11px] sm:h-10 sm:text-sm bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(6,182,212,0.3)] relative overflow-hidden group"
-                >
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
-                  <span className="relative">Sign in</span>
-                </Button>
+                <div className="flex justify-center">
+                  <button 
+                    type="submit" 
+                    className="group relative h-9 sm:h-10 w-full max-w-[200px] sm:max-w-[240px] px-4 sm:px-6 flex items-center justify-center gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden !border-none !ring-0 !outline-none active:scale-95"
+                  >
+                    {/* Login Icon */}
+                    <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover:scale-125 group-hover:translate-x-[3.2em]">
+                      <svg 
+                        className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover:text-cyan-100 group-hover:scale-110" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round" 
+                          strokeWidth={2} 
+                          d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                        />
+                      </svg>
+                    </div>
+                    
+                    {/* Text */}
+                    <span className="transition-all duration-500 ease-in-out group-hover:opacity-0">
+                      Sign in
+                    </span>
+                  </button>
+                </div>
               </form>
             </Form>
             <p className="mt-2 text-center text-[8px] text-muted sm:mt-6 sm:text-xs">
