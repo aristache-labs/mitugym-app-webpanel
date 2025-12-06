@@ -71,7 +71,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                   className={cn(
                     "flex items-center gap-3 rounded-[16px] px-4 py-3 text-sm font-medium transition-all duration-200",
                     active
-                      ? "bg-primary/20 text-primary shadow-lg shadow-primary/10"
+                      ? "bg-primary/20 text-primary"
                       : "text-muted hover:bg-surface/80 lg:hover:bg-transparent hover:text-text hover:shadow-md lg:hover:shadow-none"
                   )}
                 >
