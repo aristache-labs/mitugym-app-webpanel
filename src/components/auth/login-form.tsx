@@ -127,7 +127,7 @@ export function LoginForm() {
       {/* Scrollable content layer */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 py-4 -mt-16 sm:-mt-20">
         {/* Logo */}
-        <div className="mb-0 sm:-mb-8 flex-shrink-0 animate-fade-in">
+        <div className="mb-0 sm:-mb-8 flex-shrink-0 opacity-0 animate-fade-in">
           <div className="relative w-[260px] h-[260px] sm:w-[360px] sm:h-[360px] mx-auto">
             <Image
               src="/logo.png"
@@ -140,7 +140,7 @@ export function LoginForm() {
           </div>
         </div>
         
-        <Card className="w-full max-w-md flex-shrink-0 !border-primary/40 sm:!border-primary/20 bg-surface/80 shadow-2xl backdrop-blur-xl transition-all duration-500 hover:shadow-[0_0_40px_rgba(6,182,212,0.15)] animate-scale-in relative overflow-hidden">
+        <Card className="w-full max-w-md flex-shrink-0 !border-primary/40 sm:!border-primary/20 bg-surface/80 shadow-2xl backdrop-blur-xl transition-all duration-500 hover:shadow-[0_0_40px_rgba(6,182,212,0.15)] opacity-0 animate-scale-in relative overflow-hidden">
           {/* Input glow effect container */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="input-focus-glow opacity-0 transition-opacity duration-300"></div>
@@ -384,11 +384,11 @@ export function LoginForm() {
         }
         
         .animate-fade-in {
-          animation: fade-in 0.6s ease-out;
+          animation: fade-in 0.6s ease-out 0.1s forwards;
         }
         
         .animate-scale-in {
-          animation: scale-in 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: scale-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
         }
         
         .animate-shake {
