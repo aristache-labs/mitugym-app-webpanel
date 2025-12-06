@@ -245,21 +245,22 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
         <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 overflow-hidden">
           {/* Header Inside Container */}
           <div className="p-4 sm:p-6 border-b border-surface/30 bg-gradient-to-r from-surface/40 to-card/40">
-             <PageHeader
-              icon={Megaphone}
-              title="News & Announcements"
-              subtitle="Manage announcements that sync to the mobile app and in-gym displays"
-            >
-              <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+            <div className="space-y-3 sm:space-y-0">
+              <PageHeader
+                icon={Megaphone}
+                title="News & Announcements"
+                subtitle="Manage announcements that sync to the mobile app and in-gym displays"
+              />
+              <div className="flex items-center gap-2 sm:gap-3 justify-between sm:justify-end">
                 <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg sm:rounded-xl border border-primary/30">
                   <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full animate-pulse"></div>
                   <span className="text-[10px] sm:text-xs font-semibold text-primary whitespace-nowrap">
-                  {items.filter(item => item.is_active !== false).length} Active {items.filter(item => item.is_active !== false).length === 1 ? 'Announcement' : 'Announcements'}
-                </span>
-              </div>
+                    {items.filter(item => item.is_active !== false).length} Active {items.filter(item => item.is_active !== false).length === 1 ? 'Announcement' : 'Announcements'}
+                  </span>
+                </div>
                 <AnimatedCreateButton onClick={handleCreateNew} label="Create New" shortLabel="Create" />
               </div>
-            </PageHeader>
+            </div>
           </div>
 
           {/* Table Content */}
