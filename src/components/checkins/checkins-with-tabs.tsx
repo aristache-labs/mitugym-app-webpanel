@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { CheckinsTable } from "@/app/(protected)/checkins/checkins-table";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,11 @@ type TabType = "all" | "active" | "denied";
 
 export function CheckinsWithTabs({ data, timeFormat = '24h' }: CheckinsWithTabsProps) {
   const [activeTab, setActiveTab] = useState<TabType>("all");
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const filteredData = useMemo(() => {
     switch (activeTab) {
