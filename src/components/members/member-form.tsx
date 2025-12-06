@@ -23,6 +23,7 @@ import {
 import type { Member, MembershipPlan } from "@/types";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { FloatingLabelInput } from "@/components/ui/floating-label-input";
 import { CustomSelect } from "@/components/ui/custom-select";
 import { useToast } from "@/components/ui/toast";
 import { calculateExpirationDate, calculateMemberStatus } from "@/lib/utils";
@@ -218,227 +219,236 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
-        {/* Avatar Upload Section */}
-        <AvatarUpload
-          currentAvatarUrl={member?.avatar_url}
-          onAvatarChange={handleAvatarChange}
-          onAvatarDelete={handleAvatarDelete}
-          memberName={member?.full_name || form.watch('first_name') || 'Member'}
-          isEditing={!!member}
-        />
+        {/* Avatar Upload and Basic Information Section */}
+        <div className="flex flex-col sm:flex-row gap-30 sm:gap-32 lg:gap-34 items-start">
+          {/* Avatar Upload - Left Side Container */}
+          <div className="flex-shrink-0 w-full sm:w-auto">
+            <AvatarUpload
+              currentAvatarUrl={member?.avatar_url}
+              onAvatarChange={handleAvatarChange}
+              onAvatarDelete={handleAvatarDelete}
+              memberName={member?.full_name || form.watch('first_name') || 'Member'}
+              isEditing={!!member}
+            />
+          </div>
 
-        <div className="border-t border-surface/20 pt-4 sm:pt-6">
-          <h3 className="text-base sm:text-lg font-semibold text-text mb-3 sm:mb-4">Basic Information</h3>
-        </div>
+          {/* Basic Information - Right Side Container */}
+          <div className="flex-1 w-full max-w-3x2 space-y-4">
+            <h3 className="text-base sm:text-lg font-semibold text-text mb-3 sm:mb-4">Basic Information</h3>
+            
+            {/* Row 1: First Name | Last Name */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <FormField
+                control={form.control}
+                name="first_name"
+                render={({ field }) => (
+                  <FloatingLabelInput
+                    label="First name"
+                    {...field}
+                    error={form.formState.errors.first_name?.message}
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="last_name"
+                render={({ field }) => (
+                  <FloatingLabelInput
+                    label="Last name"
+                    {...field}
+                    error={form.formState.errors.last_name?.message}
+                  />
+                )}
+              />
+            </div>
 
-        <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="first_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm sm:text-base">First name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Alex" {...field} className="h-9 sm:h-10" />
-                </FormControl>
-                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.first_name?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="last_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm sm:text-base">Last name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Johnson" {...field} className="h-9 sm:h-10" />
-                </FormControl>
-                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.last_name?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm sm:text-base">Gender</FormLabel>
-                <FormControl>
-                  <CustomSelect
+            {/* Row 2: Email | Phone */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FloatingLabelInput
+                    type="email"
+                    label="Email"
+                    {...field}
+                    error={form.formState.errors.email?.message}
+                  />
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FloatingLabelInput
+                    label="Phone"
+                    {...field}
                     value={field.value ?? ""}
-                    onChange={(value) => field.onChange(value || null)}
-                    placeholder="Select gender"
-                    options={[
-                      { value: "", label: "Select gender" },
-                      ...memberGenderEnum.options.map((gender) => ({
-                        value: gender,
-                        label: gender.charAt(0).toUpperCase() + gender.slice(1)
-                      }))
-                    ]}
+                    error={form.formState.errors.phone?.message}
                   />
-                </FormControl>
-                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.gender?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm sm:text-base">Email</FormLabel>
-                <FormControl>
-                  <Input type="email" placeholder="alex@mitugym.dev" {...field} className="h-9 sm:h-10" />
-                </FormControl>
-                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.email?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm sm:text-base">Phone</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="0712345678" 
-                    {...field} 
-                    value={field.value ?? ""} 
-                    className="h-9 sm:h-10"
-                  />
-                </FormControl>
-                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.phone?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => {
-              const planId = form.watch('plan_id');
-              const startsAt = form.watch('starts_at');
-              const isAutoCalculated = Boolean(planId && startsAt);
-              
-              return (
-                <FormItem>
-                  <FormLabel className="text-sm sm:text-base">
-                    Status
-                    {isAutoCalculated && (
-                      <span className="text-[10px] sm:text-xs text-muted-foreground ml-2">(auto-calculated)</span>
-                    )}
-                  </FormLabel>
-                  <FormControl>
-                    <CustomSelect
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="Select status"
-                      disabled={isAutoCalculated}
-                      options={memberStatusEnum.options.map((status) => ({
-                        value: status,
-                        label: status.charAt(0).toUpperCase() + status.slice(1)
-                      }))}
-                      className={isAutoCalculated ? "bg-muted/50 cursor-not-allowed" : ""}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-xs sm:text-sm">{form.formState.errors.status?.message}</FormMessage>
-                </FormItem>
-              );
-            }}
-          />
-          <FormField
-            control={form.control}
-            name="plan_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm sm:text-base">Membership plan</FormLabel>
-                <FormControl>
-                  <CustomSelect
-                    value={field.value ?? ""}
-                    onChange={(value) => field.onChange(value || null)}
-                    placeholder="Unassigned"
-                    options={[
-                      { value: "", label: "Unassigned" },
-                      ...plans.map((plan) => ({
-                        value: plan.id,
-                        label: plan.name
-                      }))
-                    ]}
-                  />
-                </FormControl>
-                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.plan_id?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="starts_at"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm sm:text-base">Start from</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input 
-                      type="date" 
-                      {...field} 
-                      value={field.value ?? ""} 
-                      className="h-9 sm:h-10"
-                      placeholder="Select date"
-                    />
-                    {!field.value && (
-                      <div className="absolute inset-0 flex items-center px-3 sm:px-4 pointer-events-none text-muted/60 text-xs sm:text-sm sm:hidden">
-                        Select start date
+                )}
+              />
+            </div>
+
+            {/* Row 3: Gender | Status */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs sm:text-sm">Gender</FormLabel>
+                    <FormControl>
+                      <CustomSelect
+                        value={field.value ?? ""}
+                        onChange={(value) => field.onChange(value || null)}
+                        placeholder="Select gender"
+                        options={[
+                          { value: "", label: "Select gender" },
+                          ...memberGenderEnum.options.map((gender) => ({
+                            value: gender,
+                            label: gender.charAt(0).toUpperCase() + gender.slice(1)
+                          }))
+                        ]}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs">{form.formState.errors.gender?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => {
+                  const planId = form.watch('plan_id');
+                  const startsAt = form.watch('starts_at');
+                  const isAutoCalculated = Boolean(planId && startsAt);
+                  
+                  return (
+                    <FormItem>
+                      <FormLabel className="text-xs sm:text-sm">
+                        Status
+                        {isAutoCalculated && (
+                          <span className="text-[9px] sm:text-[10px] text-muted-foreground ml-1">(auto)</span>
+                        )}
+                      </FormLabel>
+                      <FormControl>
+                        <CustomSelect
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="Select status"
+                          disabled={isAutoCalculated}
+                          options={memberStatusEnum.options.map((status) => ({
+                            value: status,
+                            label: status.charAt(0).toUpperCase() + status.slice(1)
+                          }))}
+                          className={isAutoCalculated ? "bg-muted/50 cursor-not-allowed" : ""}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs">{form.formState.errors.status?.message}</FormMessage>
+                    </FormItem>
+                  );
+                }}
+              />
+            </div>
+
+            {/* Row 4: Membership Plan | Start From */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <FormField
+                control={form.control}
+                name="plan_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs sm:text-sm">Membership plan</FormLabel>
+                    <FormControl>
+                      <CustomSelect
+                        value={field.value ?? ""}
+                        onChange={(value) => field.onChange(value || null)}
+                        placeholder="Unassigned"
+                        options={[
+                          { value: "", label: "Unassigned" },
+                          ...plans.map((plan) => ({
+                            value: plan.id,
+                            label: plan.name
+                          }))
+                        ]}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs">{form.formState.errors.plan_id?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="starts_at"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs sm:text-sm">Start from</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input 
+                          type="date" 
+                          {...field} 
+                          value={field.value ?? ""} 
+                          className="h-9 sm:h-10"
+                          placeholder="Select date"
+                        />
+                        {!field.value && (
+                          <div className="absolute inset-0 flex items-center px-3 sm:px-4 pointer-events-none text-muted/60 text-xs sm:text-sm sm:hidden">
+                            Select start date
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </FormControl>
-                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.starts_at?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="expires_at"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm sm:text-base">
-                  Expires at
-                  <span className="text-[10px] sm:text-xs text-muted-foreground ml-2">(auto-calculated)</span>
-                </FormLabel>
-                <FormControl>
-                  <Input 
-                    type="date" 
-                    {...field} 
-                    value={field.value ?? ""} 
-                    readOnly
-                    className="bg-muted/50 cursor-not-allowed h-9 sm:h-10"
-                  />
-                </FormControl>
-                <FormMessage className="text-xs sm:text-sm">{form.formState.errors.expires_at?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
+                    </FormControl>
+                    <FormMessage className="text-xs">{form.formState.errors.starts_at?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Row 5: Expires At | Password */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <FormField
+                control={form.control}
+                name="expires_at"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs sm:text-sm">
+                      Expires at
+                      <span className="text-[9px] sm:text-[10px] text-muted-foreground ml-1">(auto)</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="date" 
+                        {...field} 
+                        value={field.value ?? ""} 
+                        readOnly
+                        className="bg-muted/50 cursor-not-allowed h-9 sm:h-10"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs">{form.formState.errors.expires_at?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+              {!member && (
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FloatingLabelInput
+                      type="password"
+                      label="Temporary password (Optional)"
+                      {...field}
+                      error={!member && form.formState.errors && 'password' in form.formState.errors 
+                        ? form.formState.errors.password?.message 
+                        : undefined}
+                    />
+                  )}
+                />
+              )}
+            </div>
+          </div>
         </div>
-        {!member && (
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm sm:text-base">Temporary password</FormLabel>
-                <FormControl>
-                  <Input type="password" placeholder="Optional" {...field} className="h-9 sm:h-10" />
-                </FormControl>
-                <FormMessage className="text-xs sm:text-sm">
-                  {!member && form.formState.errors && 'password' in form.formState.errors 
-                    ? form.formState.errors.password?.message 
-                    : undefined}
-                </FormMessage>
-              </FormItem>
-            )}
-          />
-        )}
         {serverError ? <p className="text-xs sm:text-sm text-error">{serverError}</p> : null}
         <div className="flex items-center justify-between gap-3 pt-2 sm:pt-0">
           <AnimatedButton

@@ -95,7 +95,7 @@ export function AvatarUpload({
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-col items-center gap-3">
       {/* Hidden file input */}
       <input
         ref={fileInputRef}
@@ -113,7 +113,7 @@ export function AvatarUpload({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
+          className={`relative w-36 h-36 sm:w-44 sm:h-44 lg:w-48 lg:h-48 rounded-2xl overflow-hidden border-2 transition-all duration-300 cursor-pointer ${
             isDragging
               ? 'border-primary bg-primary/10 scale-105'
               : previewUrl 
@@ -128,20 +128,20 @@ export function AvatarUpload({
               alt={memberName}
               fill
               className="object-cover"
-              sizes="112px"
+              sizes="192px"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-              <span className="text-2xl sm:text-3xl font-bold text-primary">
+              <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary">
                 {getInitials()}
               </span>
             </div>
           )}
           
           {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-1.5">
-            <Camera className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
-            <span className="text-[10px] sm:text-xs text-white font-medium">
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-2">
+            <Camera className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
+            <span className="text-xs sm:text-sm text-white font-medium">
               {isDragging ? 'Drop here' : previewUrl ? 'Change' : 'Upload'}
             </span>
           </div>
@@ -158,19 +158,19 @@ export function AvatarUpload({
             className="absolute -top-2 -right-2 p-1.5 rounded-full bg-error text-white shadow-lg hover:bg-error/90 transition-all duration-200 hover:scale-110 z-10"
             title="Remove avatar"
           >
-            <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+            <X className="h-4 w-4" />
           </button>
         )}
       </div>
 
       {/* Upload Info */}
-      <div className="flex-1 space-y-1.5">
-        <h4 className="text-xs sm:text-sm font-semibold text-text">Member Photo</h4>
-        <p className="text-[10px] sm:text-xs text-muted/70">
-          Click on the photo to upload
+      <div className="text-center space-y-1">
+        <h4 className="text-sm sm:text-base font-semibold text-text">Member Photo</h4>
+        <p className="text-xs sm:text-sm text-muted/70">
+          Click to upload
         </p>
-        <p className="text-[9px] sm:text-[10px] text-muted/50">
-          PNG, JPG, GIF up to 5MB
+        <p className="text-[10px] sm:text-xs text-muted/50">
+          PNG, JPG, GIF (5MB)
         </p>
       </div>
     </div>
