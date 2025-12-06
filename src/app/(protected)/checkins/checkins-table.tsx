@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table/data-table";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { CustomSelect } from "@/components/ui/custom-select";
 import type { CheckIn } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
 import { CheckoutButton } from "@/components/checkins/checkout-button";
@@ -12,6 +12,7 @@ import { AvatarWithPreview } from "@/components/members/avatar-preview-modal";
 import { Badge } from "@/components/ui/badge";
 import { formatTime } from "@/lib/utils";
 import Link from "next/link";
+import { Filter, Search } from "lucide-react";
 
 interface CheckinsTableProps {
   data: CheckIn[];
@@ -237,17 +238,15 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Premium Filters Section */}
-      <div className="relative">
+      <div className="relative z-10">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg sm:rounded-xl blur-lg"></div>
         <div className="relative bg-surface/40 backdrop-blur-sm rounded-lg sm:rounded-xl border border-surface/50 p-4 sm:p-6">
           <div className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-end">
             <div className="flex-1 space-y-2 sm:space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-1 h-3 sm:h-4 bg-gradient-to-b from-primary to-accent rounded-full"></div>
-                <label className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-primary">
-                  Search Members
-                </label>
-              </div>
+              <label className="text-xs sm:text-sm font-medium text-text flex items-center gap-1.5 sm:gap-2">
+                <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+                Search Members
+              </label>
               <div className="relative group">
                 <Input
                   value={search}
@@ -259,31 +258,22 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
               </div>
             </div>
             
-            <div className="lg:w-64 space-y-2 sm:space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-1 h-3 sm:h-4 bg-gradient-to-b from-accent to-secondary rounded-full"></div>
-                <label className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-accent">
-                  Filter Method
-                </label>
-              </div>
-              <div className="relative group">
-                <Select 
-                  value={methodFilter} 
-                  onChange={(event) => setMethodFilter(event.target.value)}
-                  className="bg-card/60 border-surface/60 focus:border-accent/50 focus:bg-card/80 transition-all duration-300 rounded-lg text-sm sm:text-base text-text"
-                >
-                  <option value="" className="bg-surface text-text">
-                    All methods
-                  </option>
-                  <option value="qr" className="bg-surface text-text">
-                    QR scan
-                  </option>
-                  <option value="manual" className="bg-surface text-text">
-                    Manual
-                  </option>
-                </Select>
-                <div className="absolute inset-0 bg-gradient-to-r from-accent/10 to-secondary/10 rounded-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-              </div>
+            <div className="lg:w-64 space-y-2 sm:space-y-3 relative z-20">
+              <label className="text-xs sm:text-sm font-medium text-text flex items-center gap-1.5 sm:gap-2">
+                <Filter className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+                Filter Method
+              </label>
+              <CustomSelect
+                value={methodFilter}
+                onChange={(value) => setMethodFilter(value)}
+                options={[
+                  { value: "", label: "All methods" },
+                  { value: "qr", label: "QR scan" },
+                  { value: "manual", label: "Manual" }
+                ]}
+                placeholder="Select method..."
+                className="w-full"
+              />
             </div>
           </div>
           
