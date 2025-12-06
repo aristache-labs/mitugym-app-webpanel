@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
   },
   // Allow cross-origin requests from local network devices (e.g., testing on mobile)
   devIndicators: {
-    buildActivityPosition: 'bottom-left',
+    position: 'bottom-left',
   },
   // Configure allowed dev origins for local network testing
   allowedDevOrigins: [
