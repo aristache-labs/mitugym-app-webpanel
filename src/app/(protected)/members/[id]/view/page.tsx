@@ -217,7 +217,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
       <div className="grid lg:grid-cols-[2fr_1fr] gap-4 sm:gap-6">
         {/* Left Column: Member Information + Membership Plan */}
         <div className="space-y-4 sm:space-y-5">
-          {/* Member Information Card */}
+        {/* Member Information Card */}
           <Card className="group relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
             {/* Card Hover Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
@@ -372,7 +372,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                       <MapPin className="h-3.5 w-3.5 text-primary" />
                     </div>
                     <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Location & Membership</h3>
-                  </div>
+                </div>
 
                   {/* Cards */}
                   <div className="space-y-2">
@@ -621,26 +621,26 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
           {/* Purchased Services Section */}
           <Card className="group relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-green-500/40 overflow-hidden rounded-2xl sm:rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/2 via-green-500/1 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            
+          
             <CardHeader className="relative p-3 sm:p-4 md:p-5 pb-2 sm:pb-3">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className="p-1.5 sm:p-2 rounded-lg bg-green-500/10 group-hover:bg-green-500/20 transition-colors">
                     <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-              </div>
-                  <div>
+                </div>
+                <div>
                     <CardTitle className="text-sm sm:text-base md:text-lg font-semibold text-text">
                       Purchased Services
-                    </CardTitle>
+                  </CardTitle>
                     <p className="text-[10px] sm:text-xs text-muted/60 mt-0.5">Service packages</p>
-                  </div>
                 </div>
+              </div>
                 <Badge variant="outline" className="text-green-600 border-0 bg-green-500/10 text-xs sm:text-sm px-2.5 py-1">
                   {memberPurchasedServices.length}
                 </Badge>
-              </div>
-            </CardHeader>
-
+            </div>
+          </CardHeader>
+            
             <CardContent className="relative p-3 sm:p-4 md:p-5 pt-0">
               <div className="space-y-2 max-h-[400px] overflow-y-auto">
                   {memberPurchasedServices.length > 0 ? (
@@ -688,7 +688,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                         
                         {service.sessions_remaining !== null && (
                         <div className="flex items-center justify-between mt-2.5 p-2 sm:p-2.5 rounded-lg bg-gradient-to-r from-surface/40 to-surface/20 border-0">
-                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
                             <div className="w-1.5 h-1.5 rounded-full bg-green-500/70"></div>
                             <span className="text-[10px] sm:text-xs font-semibold text-primary/80 uppercase tracking-wide">Sessions</span>
                             </div>
@@ -847,8 +847,8 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   <div className="relative flex-shrink-0">
                     <div className="absolute left-1/2 top-12 bottom-0 w-0.5 bg-gradient-to-b from-green-500/40 to-transparent -translate-x-1/2"></div>
                     <div className="relative p-2 rounded-lg bg-gradient-to-br from-green-500/25 to-green-500/15 backdrop-blur-sm">
-                      <UserCheck className="h-4 w-4 text-green-500" />
-                    </div>
+                    <UserCheck className="h-4 w-4 text-green-500" />
+                  </div>
                   </div>
                   <div className="min-w-0 flex-1 pt-1">
                     <p className="font-semibold text-text text-sm sm:text-base mb-1">Account Created</p>
@@ -867,8 +867,8 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     <div className="relative flex-shrink-0">
                       <div className="absolute left-1/2 top-12 bottom-0 w-0.5 bg-gradient-to-b from-blue-500/40 to-transparent -translate-x-1/2"></div>
                       <div className="relative p-2 rounded-lg bg-gradient-to-br from-blue-500/25 to-blue-500/15 backdrop-blur-sm">
-                        <Package className="h-4 w-4 text-blue-500" />
-                      </div>
+                      <Package className="h-4 w-4 text-blue-500" />
+                    </div>
                     </div>
                     <div className="min-w-0 flex-1 pt-1">
                       <p className="font-semibold text-text text-sm sm:text-base mb-1">Plan Subscribed</p>
@@ -888,8 +888,8 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     <div className="relative flex-shrink-0">
                       <div className="absolute left-1/2 top-12 bottom-0 w-0.5 bg-gradient-to-b from-purple-500/40 to-transparent -translate-x-1/2"></div>
                       <div className="relative p-2 rounded-lg bg-gradient-to-br from-purple-500/25 to-purple-500/15 backdrop-blur-sm">
-                        <Activity className="h-4 w-4 text-purple-500" />
-                      </div>
+                      <Activity className="h-4 w-4 text-purple-500" />
+                    </div>
                     </div>
                     <div className="min-w-0 flex-1 pt-1">
                       <p className="font-semibold text-text text-sm sm:text-base mb-1">First Check-in</p>
@@ -910,7 +910,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                     <div className="relative flex-shrink-0">
                       <div className="relative p-2 rounded-lg bg-gradient-to-br from-primary/15 to-primary/10 backdrop-blur-sm">
                         <Clock className="h-4 w-4 text-primary/70" />
-                      </div>
+                    </div>
                     </div>
                     <div className="min-w-0 flex-1 pt-1">
                       <p className="font-semibold text-text capitalize text-sm sm:text-base truncate mb-1">
@@ -935,8 +935,8 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   <div className="flex items-start gap-3">
                     <div className="relative flex-shrink-0">
                       <div className={`relative p-2 rounded-lg bg-gradient-to-br backdrop-blur-sm ${isExpired ? 'from-red-500/25 to-red-500/15' : 'from-yellow-500/25 to-yellow-500/15'}`}>
-                        <AlertCircle className={`h-4 w-4 ${isExpired ? 'text-red-500' : 'text-yellow-500'}`} />
-                      </div>
+                      <AlertCircle className={`h-4 w-4 ${isExpired ? 'text-red-500' : 'text-yellow-500'}`} />
+                    </div>
                     </div>
                     <div className="min-w-0 flex-1 pt-1">
                       <p className="font-semibold text-text text-sm sm:text-base mb-1">
