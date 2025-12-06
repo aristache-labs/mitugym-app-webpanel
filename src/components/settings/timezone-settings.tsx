@@ -104,40 +104,56 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
         </div>
       )}
 
-      {/* Compact Grid Layout */}
+      {/* Organized Containers Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-        <div>
-          <label className="text-xs sm:text-sm font-medium text-text mb-1.5 sm:mb-2 flex items-center gap-1.5 sm:gap-2">
-            <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
-            Application Timezone
-          </label>
-          <CustomSelect
-            value={selectedTimezone}
-            onChange={setSelectedTimezone}
-            options={AVAILABLE_TIMEZONES.map(tz => ({
-              value: tz.value,
-              label: `${tz.country} ${tz.label}`
-            }))}
-            placeholder="Select timezone..."
-            className="w-full"
-          />
+        {/* Application Timezone Container */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="relative bg-surface/60 backdrop-blur-sm rounded-xl border border-surface/50 p-3 sm:p-4 transition-all duration-300 hover:border-primary/30">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+              </div>
+              <label className="text-xs sm:text-sm font-semibold text-text">
+                Application Timezone
+              </label>
+            </div>
+            <CustomSelect
+              value={selectedTimezone}
+              onChange={setSelectedTimezone}
+              options={AVAILABLE_TIMEZONES.map(tz => ({
+                value: tz.value,
+                label: `${tz.country} ${tz.label}`
+              }))}
+              placeholder="Select timezone..."
+              className="w-full"
+            />
+          </div>
         </div>
 
-        <div>
-          <label className="text-xs sm:text-sm font-medium text-text mb-1.5 sm:mb-2 flex items-center gap-1.5 sm:gap-2">
-            <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
-            Time Format
-          </label>
-          <CustomSelect
-            value={selectedTimeFormat}
-            onChange={(value) => setSelectedTimeFormat(value as TimeFormat)}
-            options={TIME_FORMAT_OPTIONS.map(format => ({
-              value: format.value,
-              label: format.label
-            }))}
-            placeholder="Select time format..."
-            className="w-full"
-          />
+        {/* Time Format Container */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="relative bg-surface/60 backdrop-blur-sm rounded-xl border border-surface/50 p-3 sm:p-4 transition-all duration-300 hover:border-primary/30">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+              </div>
+              <label className="text-xs sm:text-sm font-semibold text-text">
+                Time Format
+              </label>
+            </div>
+            <CustomSelect
+              value={selectedTimeFormat}
+              onChange={(value) => setSelectedTimeFormat(value as TimeFormat)}
+              options={TIME_FORMAT_OPTIONS.map(format => ({
+                value: format.value,
+                label: format.label
+              }))}
+              placeholder="Select time format..."
+              className="w-full"
+            />
+          </div>
         </div>
       </div>
 
