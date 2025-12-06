@@ -560,8 +560,8 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                       key={checkIn.id}
                       className={`group/item relative rounded-lg sm:rounded-xl p-2 sm:p-3 transition-all duration-200 ${
                         index === 0 
-                          ? 'bg-gradient-to-r from-secondary/10 to-secondary/5 border border-secondary/30 hover:from-secondary/15 hover:to-secondary/10 hover:border-secondary/40' 
-                          : 'bg-gradient-to-r from-surface/60 to-surface/40 border border-surface/30 hover:from-surface/80 hover:to-surface/60 hover:border-secondary/30'
+                          ? 'bg-gradient-to-r from-secondary/15 to-secondary/10 border-0 hover:from-secondary/20 hover:to-secondary/15' 
+                          : 'bg-gradient-to-br from-surface/60 to-surface/40 border-0 hover:from-surface/70 hover:to-surface/50'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2">
@@ -578,11 +578,11 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                         </div>
                         <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
                           {index === 0 && (
-                            <span className="px-1 sm:px-1.5 py-0.5 bg-secondary/20 text-secondary rounded text-[10px] sm:text-xs font-medium border border-secondary/30">
+                            <span className="px-1 sm:px-1.5 py-0.5 bg-secondary/20 text-secondary rounded text-[10px] sm:text-xs font-medium border-0">
                               Latest
                             </span>
                           )}
-                          <Badge variant="default" className="capitalize bg-secondary/20 text-secondary border-secondary/30 hover:bg-secondary/30 transition-colors text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5">
+                          <Badge variant="default" className="capitalize bg-secondary/20 text-secondary border-0 hover:bg-secondary/30 transition-colors text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5">
                             {checkIn.method || "visit"}
                           </Badge>
                         </div>
@@ -592,7 +592,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-6 sm:py-8 text-center">
-                  <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-secondary/5 border border-secondary/10 mb-2 sm:mb-3">
+                  <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-secondary/5 border-0 mb-2 sm:mb-3">
                     <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-secondary/50" />
                   </div>
                   <p className="text-muted/70 font-medium text-xs sm:text-sm">No check-ins yet</p>
