@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
     ],
+    qualities: [75, 90, 100],
   },
   // Allow cross-origin requests from local network devices (e.g., testing on mobile)
   devIndicators: {
