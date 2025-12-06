@@ -346,6 +346,7 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
         columns={columns}
         data={bookings}
         filterKey="service"
+        filterPlaceholder="Search bookings..."
         toolbarSlot={
           <div className="flex items-center justify-center md:justify-end gap-3 w-full md:w-auto">
             <CalendarViewButton bookings={bookings} timeFormat={timeFormat} />

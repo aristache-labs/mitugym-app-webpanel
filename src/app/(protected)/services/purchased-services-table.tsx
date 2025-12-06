@@ -303,6 +303,7 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
         columns={columns}
         data={purchasedServices}
         filterKey="service"
+        filterPlaceholder="Search purchased services..."
         toolbarSlot={
           <div className="flex items-center justify-center md:justify-end w-full md:w-auto">
             <AnimatedCreateButton onClick={handleNewPurchase} label="New Purchase" shortLabel="New" />

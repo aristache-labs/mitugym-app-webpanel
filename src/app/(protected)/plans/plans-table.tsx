@@ -38,6 +38,7 @@ export function PlansTable({ plans }: { plans: MembershipPlan[] }) {
       columns={planColumns}
       data={plans}
       filterKey="name"
+      filterPlaceholder="Search plans..."
       toolbarSlot={
         <div className="flex items-center justify-center md:justify-end gap-3 w-full md:w-auto">
           <AnimatedCreateButton onClick={handleCreatePlan} label="Create Plan" shortLabel="Create" />

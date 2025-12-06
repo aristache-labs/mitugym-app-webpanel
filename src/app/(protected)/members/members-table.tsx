@@ -33,6 +33,7 @@ export function MembersTable({ members }: { members: Member[] }) {
       columns={memberColumns}
       data={members}
       filterKey="full_name"
+      filterPlaceholder="Search members..."
       toolbarSlot={
         <div className="flex items-center justify-center md:justify-end gap-3 w-full md:w-auto">
           <AnimatedAddButton onClick={handleAddMember} />

@@ -23,6 +23,7 @@ export type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filterKey?: string;
+  filterPlaceholder?: string;
   initialVisibility?: VisibilityState;
   isLoading?: boolean;
   onRowClick?: (row: TData) => void;
@@ -33,6 +34,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   filterKey,
+  filterPlaceholder = "Search...",
   initialVisibility,
   isLoading,
   onRowClick,
@@ -84,14 +86,32 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:items-center md:justify-between">
         {filterKey ? (
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 sm:left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-primary/60" />
-            <Input
-              value={globalFilter}
-              onChange={(event) => setGlobalFilter(event.target.value)}
-              placeholder="Search..."
-              className="pl-9 sm:pl-10 h-11 sm:h-10 bg-surface/60 border-surface/40 focus:border-primary/50 focus:ring-2 focus:ring-primary/20 backdrop-blur-sm"
-            />
+          <div className="relative w-full max-w-sm group">
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <div className="flex items-center gap-2">
+                  <div className="w-px h-4 bg-surface/40 group-focus-within:bg-primary/30 transition-colors duration-200"></div>
+                  <Search className="h-4 w-4 text-primary/60 group-focus-within:text-primary transition-colors duration-200" strokeWidth={2} />
+                </div>
+              </div>
+              <Input
+                value={globalFilter}
+                onChange={(event) => setGlobalFilter(event.target.value)}
+                placeholder={filterPlaceholder}
+                className="h-10 pl-12 pr-10 bg-gradient-to-r from-surface/40 to-surface/30 border border-surface/50 rounded-xl focus:border-primary/40 focus:ring-2 focus:ring-primary/10 focus:bg-surface/60 hover:border-surface/60 transition-all duration-200 placeholder:text-muted/50 text-sm shadow-sm"
+              />
+              {globalFilter && (
+                <button
+                  onClick={() => setGlobalFilter("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-muted/60 hover:text-primary hover:bg-primary/10 transition-all duration-200 group/clear"
+                  aria-label="Clear search"
+                >
+                  <svg className="h-3.5 w-3.5 group-hover/clear:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <div />

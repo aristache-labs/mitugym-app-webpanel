@@ -40,6 +40,7 @@ export function ServicesTableNew({ services }: { services: Service[] }) {
       columns={serviceColumns}
       data={services}
       filterKey="name"
+      filterPlaceholder="Search services..."
       toolbarSlot={
         <div className="flex items-center justify-center md:justify-end gap-3 w-full md:w-auto">
           <AnimatedCreateButton onClick={handleCreateService} label="Create Service" shortLabel="Create" />

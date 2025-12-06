@@ -154,6 +154,7 @@ export function ServicesTable({ services }: ServicesTableProps) {
         columns={columns}
         data={services}
         filterKey="name"
+        filterPlaceholder="Search services..."
       />
 
       <Modal
