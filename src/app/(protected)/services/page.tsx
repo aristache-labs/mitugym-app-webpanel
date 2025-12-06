@@ -53,8 +53,8 @@ export default async function ServicesPage() {
           
           <div className="relative">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-xl bg-green-500/10">
-                <ShoppingBag className="h-5 w-5 text-green-500" />
+              <div className="p-2 rounded-xl bg-primary/10">
+                <ShoppingBag className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-text">Purchased Services</h2>
