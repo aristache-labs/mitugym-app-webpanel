@@ -13,8 +13,9 @@ import { Collapsible } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import type { TimeFormat } from "@/lib/settings";
 import { getRateLimiterStats } from "@/lib/rate-limit";
-import { Settings, Shield, Activity, Globe, FileText, Plug } from "lucide-react";
+import { Settings as SettingsIcon, Shield, Activity, Globe, FileText, Plug } from "lucide-react";
 import type { AuditLogEntry, ApiLog } from "@/types";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface SettingsPageClientProps {
   initialTab?: string;
@@ -63,17 +64,13 @@ export function SettingsPageClient({
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 overflow-x-hidden">
+    <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       {/* Page Header */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-primary/10 border border-primary/20">
-          <Settings className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-text">Settings</h1>
-          <p className="text-xs sm:text-sm text-muted/70">Configure your gym management system</p>
-        </div>
-      </div>
+      <PageHeader
+        icon={SettingsIcon}
+        title="Settings"
+        subtitle="Configure your gym management system"
+      />
 
       {/* Tabbed Interface */}
       <Tabs defaultValue="general" value={activeTab} onValueChange={handleTabChange}>

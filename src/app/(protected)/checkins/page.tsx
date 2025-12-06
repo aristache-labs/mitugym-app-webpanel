@@ -1,6 +1,8 @@
 import { CheckinsWithTabs } from "@/components/checkins/checkins-with-tabs";
 import { fetchCheckIns, fetchOccupancy } from "@/lib/data";
 import { getTimeFormat } from "@/lib/timezone";
+import { Activity } from "lucide-react";
+import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata = {
   title: "Check-ins",
@@ -62,16 +64,11 @@ export default async function CheckinsPage() {
       <div className="relative animate-fade-in-up">
         <div className="relative space-y-3 sm:space-y-4">
           {/* Header Row with Occupancy Badge */}
-          <div className="flex items-start sm:items-center justify-between gap-2 sm:gap-4">
-            <div className="space-y-0.5 sm:space-y-1 flex-1 min-w-0">
-              <h1 className="text-base sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent">
-                Check-ins Management
-              </h1>
-              <p className="text-[10px] sm:text-xs md:text-sm text-muted/80 truncate">
-                Monitor gym activity and manage member check-ins
-              </p>
-            </div>
-
+          <PageHeader
+            icon={Activity}
+            title="Check-ins"
+            subtitle="Monitor gym activity and manage member check-ins"
+          >
             {/* Occupancy Card */}
             <div className="relative flex-shrink-0 animate-scale-in">
               <div
@@ -113,7 +110,7 @@ export default async function CheckinsPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </PageHeader>
 
           {/* Checkins Section */}
           <CheckinsWithTabs data={checkIns} timeFormat={timeFormat} />

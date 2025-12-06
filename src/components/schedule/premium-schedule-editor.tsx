@@ -11,6 +11,7 @@ import type { TimeFormat } from "@/lib/settings";
 import { weekdayLabel, sortScheduleByWeekday } from "@/lib/utils";
 import { Clock, Calendar, CheckCircle2, XCircle } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface PremiumScheduleEditorProps {
   schedule: ScheduleDay[];
@@ -103,15 +104,11 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
   return (
     <div className="space-y-6 sm:space-y-8 overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/20 border border-primary/30">
-          <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-        </div>
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-text">Gym Schedule</h2>
-          <p className="text-xs sm:text-sm text-muted">Set operating hours for each day of the week</p>
-        </div>
-      </div>
+      <PageHeader
+        icon={Calendar}
+        title="Gym Schedule"
+        subtitle="Set operating hours for each day of the week"
+      />
 
       {/* Days Grid */}
       <div className="space-y-3 sm:space-y-4">

@@ -10,8 +10,9 @@ import { deleteNewsAction, toggleNewsActiveAction } from "@/app/(protected)/acti
 import type { NewsItem } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
 import { ConfirmationModal } from "@/components/ui/modal";
-import { Pencil, Trash2, Power } from "lucide-react";
+import { Pencil, Trash2, Power, Megaphone } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { PageHeader } from "@/components/ui/page-header";
 
 interface NewsManagerProps {
   items: NewsItem[];
@@ -244,15 +245,11 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
         <div className="relative bg-card/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl border border-surface/30 overflow-hidden">
           {/* Header Inside Container */}
           <div className="p-4 sm:p-6 border-b border-surface/30 bg-gradient-to-r from-surface/40 to-card/40">
-             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-               <div className="space-y-0.5 sm:space-y-1 flex-1 min-w-0 pr-2 sm:pr-0">
-                 <h1 className="text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-text to-primary bg-clip-text text-transparent">
-                  News & Announcements
-                </h1>
-                 <p className="text-[10px] sm:text-xs md:text-sm text-muted/80 truncate">
-                  Manage announcements that sync to the mobile app and in-gym displays
-                </p>
-              </div>
+             <PageHeader
+              icon={Megaphone}
+              title="News & Announcements"
+              subtitle="Manage announcements that sync to the mobile app and in-gym displays"
+            >
               <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
                 <div className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg sm:rounded-xl border border-primary/30">
                   <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full animate-pulse"></div>
@@ -262,7 +259,7 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
               </div>
                 <AnimatedCreateButton onClick={handleCreateNew} label="Create New" shortLabel="Create" />
               </div>
-            </div>
+            </PageHeader>
           </div>
 
           {/* Table Content */}
