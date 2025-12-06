@@ -21,10 +21,10 @@ import {
   type ActionResult 
 } from "@/app/(protected)/actions";
 import type { Member, MembershipPlan } from "@/types";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form, FormField } from "@/components/ui/form";
 import { FloatingLabelInput } from "@/components/ui/floating-label-input";
-import { CustomSelect } from "@/components/ui/custom-select";
+import { FloatingLabelSelect } from "@/components/ui/floating-label-select";
+import { FloatingLabelDateInput } from "@/components/ui/floating-label-date-input";
 import { useToast } from "@/components/ui/toast";
 import { calculateExpirationDate, calculateMemberStatus } from "@/lib/utils";
 import { AvatarUpload } from "./avatar-upload";
@@ -67,7 +67,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
           gender: null,
           email: "",
           phone: "",
-          status: "active",
+          status: undefined as any,
           plan_id: null,
           starts_at: "",
           expires_at: "",
@@ -291,29 +291,24 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
             </div>
 
             {/* Row 3: Gender | Status */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8">
               <FormField
                 control={form.control}
                 name="gender"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs sm:text-sm">Gender</FormLabel>
-                    <FormControl>
-                      <CustomSelect
-                        value={field.value ?? ""}
-                        onChange={(value) => field.onChange(value || null)}
-                        placeholder="Select gender"
-                        options={[
-                          { value: "", label: "Select gender" },
-                          ...memberGenderEnum.options.map((gender) => ({
-                            value: gender,
-                            label: gender.charAt(0).toUpperCase() + gender.slice(1)
-                          }))
-                        ]}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs">{form.formState.errors.gender?.message}</FormMessage>
-                  </FormItem>
+                  <FloatingLabelSelect
+                    value={field.value ?? ""}
+                    onChange={(value) => field.onChange(value || null)}
+                    label="Gender"
+                    options={[
+                      { value: "", label: "Gender", disabled: true },
+                      ...memberGenderEnum.options.map((gender) => ({
+                        value: gender,
+                        label: gender.charAt(0).toUpperCase() + gender.slice(1)
+                      }))
+                    ]}
+                    error={form.formState.errors.gender?.message}
+                  />
                 )}
               />
               <FormField
@@ -325,109 +320,76 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                   const isAutoCalculated = Boolean(planId && startsAt);
                   
                   return (
-                    <FormItem>
-                      <FormLabel className="text-xs sm:text-sm">
-                        Status
-                        {isAutoCalculated && (
-                          <span className="text-[9px] sm:text-[10px] text-muted-foreground ml-1">(auto)</span>
-                        )}
-                      </FormLabel>
-                      <FormControl>
-                        <CustomSelect
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder="Select status"
-                          disabled={isAutoCalculated}
-                          options={memberStatusEnum.options.map((status) => ({
-                            value: status,
-                            label: status.charAt(0).toUpperCase() + status.slice(1)
-                          }))}
-                          className={isAutoCalculated ? "bg-muted/50 cursor-not-allowed" : ""}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-xs">{form.formState.errors.status?.message}</FormMessage>
-                    </FormItem>
+                    <FloatingLabelSelect
+                      value={field.value}
+                      onChange={field.onChange}
+                      label={isAutoCalculated ? "Status (auto)" : "Status"}
+                      disabled={isAutoCalculated}
+                      options={[
+                        { value: "", label: "Status", disabled: true },
+                        ...memberStatusEnum.options.map((status) => ({
+                          value: status,
+                          label: status.charAt(0).toUpperCase() + status.slice(1)
+                        }))
+                      ]}
+                      className={isAutoCalculated ? "bg-muted/50 cursor-not-allowed" : ""}
+                      error={form.formState.errors.status?.message}
+                    />
                   );
                 }}
               />
             </div>
 
             {/* Row 4: Membership Plan | Start From */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8">
               <FormField
                 control={form.control}
                 name="plan_id"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs sm:text-sm">Membership plan</FormLabel>
-                    <FormControl>
-                      <CustomSelect
-                        value={field.value ?? ""}
-                        onChange={(value) => field.onChange(value || null)}
-                        placeholder="Unassigned"
-                        options={[
-                          { value: "", label: "Unassigned" },
-                          ...plans.map((plan) => ({
-                            value: plan.id,
-                            label: plan.name
-                          }))
-                        ]}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs">{form.formState.errors.plan_id?.message}</FormMessage>
-                  </FormItem>
+                  <FloatingLabelSelect
+                    value={field.value ?? ""}
+                    onChange={(value) => field.onChange(value || null)}
+                    label="Membership plan"
+                    options={[
+                      { value: "", label: "Membership plan", disabled: true },
+                      { value: "unassigned", label: "Unassigned" },
+                      ...plans.map((plan) => ({
+                        value: plan.id,
+                        label: plan.name
+                      }))
+                    ]}
+                    error={form.formState.errors.plan_id?.message}
+                  />
                 )}
               />
               <FormField
                 control={form.control}
                 name="starts_at"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs sm:text-sm">Start from</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input 
-                          type="date" 
-                          {...field} 
-                          value={field.value ?? ""} 
-                          className="h-9 sm:h-10"
-                          placeholder="Select date"
-                        />
-                        {!field.value && (
-                          <div className="absolute inset-0 flex items-center px-3 sm:px-4 pointer-events-none text-muted/60 text-xs sm:text-sm sm:hidden">
-                            Select start date
-                          </div>
-                        )}
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-xs">{form.formState.errors.starts_at?.message}</FormMessage>
-                  </FormItem>
+                  <FloatingLabelDateInput
+                    label="Start from"
+                    {...field}
+                    value={field.value ?? ""}
+                    error={form.formState.errors.starts_at?.message}
+                  />
                 )}
               />
             </div>
 
             {/* Row 5: Expires At | Password */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8">
               <FormField
                 control={form.control}
                 name="expires_at"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs sm:text-sm">
-                      Expires at
-                      <span className="text-[9px] sm:text-[10px] text-muted-foreground ml-1">(auto)</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="date" 
-                        {...field} 
-                        value={field.value ?? ""} 
-                        readOnly
-                        className="bg-muted/50 cursor-not-allowed h-9 sm:h-10"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs">{form.formState.errors.expires_at?.message}</FormMessage>
-                  </FormItem>
+                  <FloatingLabelDateInput
+                    label="Expires at (auto)"
+                    {...field}
+                    value={field.value ?? ""}
+                    readOnly
+                    className="bg-muted/50 cursor-not-allowed"
+                    error={form.formState.errors.expires_at?.message}
+                  />
                 )}
               />
               {!member && (
