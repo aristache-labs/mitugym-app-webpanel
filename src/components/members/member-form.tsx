@@ -263,14 +263,14 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
         <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 lg:gap-12 items-start">
           {/* Avatar Upload - Left Side Container */}
           <div className="flex-shrink-0 w-full sm:w-auto">
-            <AvatarUpload
-              currentAvatarUrl={member?.avatar_url}
-              onAvatarChange={handleAvatarChange}
-              onAvatarDelete={handleAvatarDelete}
-              memberName={member?.full_name || form.watch('first_name') || 'Member'}
-              isEditing={!!member}
-            />
-          </div>
+          <AvatarUpload
+            currentAvatarUrl={member?.avatar_url}
+            onAvatarChange={handleAvatarChange}
+            onAvatarDelete={handleAvatarDelete}
+            memberName={member?.full_name || form.watch('first_name') || 'Member'}
+            isEditing={!!member}
+          />
+        </div>
 
           {/* Basic Information - Right Side Container */}
           <div className="flex-1 w-full max-w-3x2 space-y-4">
@@ -278,38 +278,38 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
             
             {/* Row 1: First Name | Last Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8 sm:mt-8">
-              <FormField
-                control={form.control}
-                name="first_name"
-                render={({ field }) => (
+          <FormField
+            control={form.control}
+            name="first_name"
+            render={({ field }) => (
                   <FloatingLabelInput
                     label="First name"
                     icon={<User className="w-full h-full" />}
                     {...field}
                     error={form.formState.errors.first_name?.message}
                   />
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="last_name"
-                render={({ field }) => (
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="last_name"
+            render={({ field }) => (
                   <FloatingLabelInput
                     label="Last name"
                     icon={<User className="w-full h-full" />}
                     {...field}
                     error={form.formState.errors.last_name?.message}
                   />
-                )}
-              />
+            )}
+          />
             </div>
 
             {/* Row 2: Email | Phone */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8 sm:mt-8">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
                   <FloatingLabelInput
                     type="email"
                     label="Email"
@@ -317,21 +317,21 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                     {...field}
                     error={form.formState.errors.email?.message}
                   />
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
                   <FloatingLabelInput
                     label="Phone"
                     icon={<Phone className="w-full h-full" />}
-                    {...field}
-                    value={field.value ?? ""}
+                    {...field} 
+                    value={field.value ?? ""} 
                     error={form.formState.errors.phone?.message}
                   />
                 )}
-              />
+                  />
             </div>
 
             {/* Row 3: Gender | Status */}
@@ -354,18 +354,18 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                     ]}
                     error={form.formState.errors.gender?.message}
                   />
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => {
-                  const planId = form.watch('plan_id');
-                  const startsAt = form.watch('starts_at');
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => {
+              const planId = form.watch('plan_id');
+              const startsAt = form.watch('starts_at');
                   // Status is auto-calculated if plan (not unassigned) and start date are selected
                   const isAutoCalculated = Boolean(planId && planId !== 'unassigned' && startsAt);
-                  
-                  return (
+              
+              return (
                     <FloatingLabelSelect
                       value={field.value}
                       onChange={field.onChange}
@@ -375,23 +375,23 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                       options={[
                         { value: "", label: "Status", disabled: true },
                         ...memberStatusEnum.options.map((status) => ({
-                          value: status,
-                          label: status.charAt(0).toUpperCase() + status.slice(1)
+                        value: status,
+                        label: status.charAt(0).toUpperCase() + status.slice(1)
                         }))
                       ]}
                       error={form.formState.errors.status?.message}
                     />
-                  );
-                }}
-              />
+              );
+            }}
+          />
             </div>
 
             {/* Row 4: Membership Plan | Start From */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8 sm:mt-8">
-              <FormField
-                control={form.control}
-                name="plan_id"
-                render={({ field }) => (
+          <FormField
+            control={form.control}
+            name="plan_id"
+            render={({ field }) => (
                   <FloatingLabelSelect
                     value={field.value ?? ""}
                     onChange={(value) => field.onChange(value || null)}
@@ -407,12 +407,12 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                     ]}
                     error={form.formState.errors.plan_id?.message}
                   />
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="starts_at"
-                render={({ field }) => (
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="starts_at"
+            render={({ field }) => (
                   <FloatingLabelDateInput
                     label="Start from"
                     icon={<Calendar className="w-full h-full" />}
@@ -426,37 +426,37 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
 
             {/* Row 5: Expires At | Password */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-8 sm:mt-8">
-              <FormField
-                control={form.control}
-                name="expires_at"
-                render={({ field }) => (
+          <FormField
+            control={form.control}
+            name="expires_at"
+            render={({ field }) => (
                   <FloatingLabelDateInput
                     label="Expires at (auto)"
                     icon={<Calendar className="w-full h-full" />}
-                    {...field}
-                    value={field.value ?? ""}
+                    {...field} 
+                    value={field.value ?? ""} 
                     readOnly
                     error={form.formState.errors.expires_at?.message}
                   />
-                )}
-              />
-              {!member && (
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
+            )}
+          />
+        {!member && (
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
                     <FloatingLabelInput
                       type="password"
                       label="Temporary password"
                       icon={<Lock className="w-full h-full" />}
                       {...field}
                       error={!member && form.formState.errors && 'password' in form.formState.errors 
-                        ? form.formState.errors.password?.message 
-                        : undefined}
+                    ? form.formState.errors.password?.message 
+                    : undefined}
                     />
-                  )}
-                />
-              )}
+            )}
+          />
+        )}
             </div>
           </div>
         </div>

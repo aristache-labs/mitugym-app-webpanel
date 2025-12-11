@@ -11,11 +11,21 @@ export interface FloatingLabelInputProps
 }
 
 const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInputProps>(
-  ({ className, label, error, type = "text", icon, ...props }, ref) => {
+  ({ className, label, error, type = "text", icon, value, ...props }, ref) => {
+    const [hasValue, setHasValue] = React.useState(false);
+
+    React.useEffect(() => {
+      setHasValue(!!(value || props.defaultValue));
+    }, [value, props.defaultValue]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setHasValue(!!e.target.value);
+      props.onChange?.(e);
+    };
+
     return (
       <div className="relative flex flex-col pt-3 sm:pt-0">
         <input
-          required
           id={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}
           type={type}
           className={cn(
@@ -23,12 +33,13 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
             "border border-surface/50 shadow-[0_0_0_1px_rgba(77,212,212,0.08)]",
             "focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
             "focus:border-primary focus:ring-2 focus:ring-primary/40",
-            "valid:border-primary valid:ring-2 valid:ring-primary/40",
             error && "border-error focus:border-error focus-visible:border-error focus:ring-error/40",
             className
           )}
           ref={ref}
           placeholder={label}
+          value={value}
+          onChange={handleChange}
           {...props}
         />
         <label
@@ -36,7 +47,7 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
           className={cn(
             "absolute -top-[25px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
             "peer-focus:translate-x-6 peer-focus:opacity-100",
-            "peer-valid:translate-x-6 peer-valid:opacity-100",
+            hasValue && "translate-x-6 opacity-100",
             error && "text-error"
           )}
         >
@@ -47,7 +58,7 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
             className={cn(
               "absolute -top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
               "peer-focus:translate-x-6 peer-focus:opacity-100",
-              "peer-valid:translate-x-6 peer-valid:opacity-100",
+              hasValue && "translate-x-6 opacity-100",
               error ? "text-error" : "text-primary"
             )}
           >
@@ -59,7 +70,7 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
             className={cn(
               "absolute -top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
               "peer-focus:translate-x-6 peer-focus:opacity-100",
-              "peer-valid:translate-x-6 peer-valid:opacity-100",
+              hasValue && "translate-x-6 opacity-100",
               error ? "fill-error" : "fill-primary"
             )}
           >

@@ -33,20 +33,40 @@ export default function RootLayout({
           {`
             if (typeof window !== 'undefined') {
               const originalError = console.error;
+              const originalWarn = console.warn;
+              
               console.error = (...args) => {
                 const errorMessage = args[0];
                 if (
                   typeof errorMessage === 'string' &&
                   (
                     errorMessage.includes('__gchrome_uniqueid') ||
+                    errorMessage.includes('data-cursor-element-id') ||
+                    errorMessage.includes('nextjs-portal') ||
                     errorMessage.includes('Hydration failed') ||
                     errorMessage.includes('did not match') ||
-                    errorMessage.includes('There was an error while hydrating')
+                    errorMessage.includes('There was an error while hydrating') ||
+                    errorMessage.includes('Extra attributes from the server') ||
+                    errorMessage.includes('A tree hydrated but some attributes')
                   )
                 ) {
                   return;
                 }
                 originalError.apply(console, args);
+              };
+              
+              console.warn = (...args) => {
+                const warnMessage = args[0];
+                if (
+                  typeof warnMessage === 'string' &&
+                  (
+                    warnMessage.includes('data-cursor-element-id') ||
+                    warnMessage.includes('nextjs-portal')
+                  )
+                ) {
+                  return;
+                }
+                originalWarn.apply(console, args);
               };
             }
           `}
