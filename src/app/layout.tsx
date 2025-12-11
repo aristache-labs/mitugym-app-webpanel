@@ -28,6 +28,49 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+        />
+        <Script id="ios-viewport-fix" strategy="beforeInteractive">
+          {`
+            (function() {
+              if (typeof window === 'undefined') return;
+
+              const forceViewportReset = () => {
+                const meta = document.querySelector('meta[name="viewport"]');
+                if (!meta) return;
+                const content = "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
+                // Apply twice to nudge Safari after orientation changes
+                meta.setAttribute("content", content);
+                setTimeout(() => meta.setAttribute("content", content), 50);
+              };
+
+              let ticking = false;
+              const onResize = () => {
+                if (ticking) return;
+                ticking = true;
+                requestAnimationFrame(() => {
+                  forceViewportReset();
+                  ticking = false;
+                });
+              };
+
+              window.addEventListener("orientationchange", () => {
+                forceViewportReset();
+                setTimeout(forceViewportReset, 150);
+                setTimeout(forceViewportReset, 400);
+              });
+
+              window.addEventListener("resize", onResize, { passive: true });
+
+              // Initial pass
+              forceViewportReset();
+            })();
+          `}
+        </Script>
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} bg-background text-text antialiased`} suppressHydrationWarning>
         <Script id="suppress-hydration-warnings" strategy="beforeInteractive">
           {`

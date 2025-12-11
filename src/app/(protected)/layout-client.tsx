@@ -25,6 +25,17 @@ export function ProtectedLayoutClient({
   const { isOpen, toggle, close } = useMobileNav();
   const pathname = usePathname();
   const [hasHydrated, setHasHydrated] = useState(false);
+  const viewportContent =
+    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
+
+  const forceViewport = () => {
+    if (typeof document === "undefined") return;
+    const meta = document.querySelector('meta[name="viewport"]');
+    if (!meta) return;
+    meta.setAttribute("content", viewportContent);
+    // Run a second time shortly after to help Safari apply it during transitions
+    setTimeout(() => meta.setAttribute("content", viewportContent), 50);
+  };
 
   // Ensure we start at the top of the page on initial load and route changes (helps iOS Safari).
   useEffect(() => {
@@ -39,6 +50,7 @@ export function ProtectedLayoutClient({
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
+      forceViewport();
     };
 
     // First hydration

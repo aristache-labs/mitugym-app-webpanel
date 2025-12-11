@@ -49,6 +49,12 @@ body {
   overscroll-behavior: contain;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+
 a {
   color: var(--primary);
 }
