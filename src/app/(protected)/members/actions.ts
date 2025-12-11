@@ -105,7 +105,7 @@ export async function createMemberAction(values: unknown): Promise<ActionResult>
     );
     revalidatePath("/members");
 
-    return { success: true, message: "Member created successfully" };
+    return { success: true, message: "Member created successfully", data: { id: authUser.user.id } };
 
   } catch (error) {
     console.error("Unexpected error creating member", error);

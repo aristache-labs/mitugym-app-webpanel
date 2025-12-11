@@ -206,7 +206,7 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
     }
   };
 
-  const handleResult = async (result: ActionResult) => {
+  const handleResult = async (result: ActionResult<{ id: string } | undefined>) => {
     if (!result.success) {
       setServerError(result.error);
       addToast({
@@ -227,6 +227,17 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
     }
     
     if (!member) {
+      // Upload avatar for newly created member if present
+      const newMemberId = (result as ActionResult<{ id: string }>).success
+        ? (result as { data?: { id: string } }).data?.id
+        : undefined;
+      
+      if (avatarFile && newMemberId) {
+        setIsUploadingAvatar(true);
+        await handleAvatarUpload(newMemberId);
+        setIsUploadingAvatar(false);
+      }
+
       // For new member creation, redirect to members page
       addToast({
         type: "success",
