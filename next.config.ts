@@ -6,10 +6,6 @@ const nextConfig: NextConfig = {
     // Allow production builds to complete even with type errors
     ignoreBuildErrors: true,
   },
-  eslint: {
-    // Warning: This allows production builds to complete even with ESLint errors
-    ignoreDuringBuilds: true,
-  },
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb', // Increased to support avatar uploads (max 5MB per file)
