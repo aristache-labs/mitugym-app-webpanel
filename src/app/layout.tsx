@@ -35,6 +35,7 @@ export default function RootLayout({
               const originalError = console.error;
               const originalWarn = console.warn;
               
+              // Suppress console errors
               console.error = (...args) => {
                 const errorMessage = args[0];
                 if (
@@ -55,6 +56,7 @@ export default function RootLayout({
                 originalError.apply(console, args);
               };
               
+              // Suppress console warnings
               console.warn = (...args) => {
                 const warnMessage = args[0];
                 if (
@@ -68,6 +70,36 @@ export default function RootLayout({
                 }
                 originalWarn.apply(console, args);
               };
+              
+              // Suppress React error boundary for hydration errors
+              window.addEventListener('error', (event) => {
+                if (
+                  event.message &&
+                  (
+                    event.message.includes('data-cursor-element-id') ||
+                    event.message.includes('Hydration') ||
+                    event.message.includes('did not match')
+                  )
+                ) {
+                  event.stopImmediatePropagation();
+                  event.preventDefault();
+                }
+              }, true);
+              
+              // Suppress unhandled rejection for hydration errors
+              window.addEventListener('unhandledrejection', (event) => {
+                if (
+                  event.reason &&
+                  event.reason.message &&
+                  (
+                    event.reason.message.includes('data-cursor-element-id') ||
+                    event.reason.message.includes('Hydration')
+                  )
+                ) {
+                  event.stopImmediatePropagation();
+                  event.preventDefault();
+                }
+              }, true);
             }
           `}
         </Script>
