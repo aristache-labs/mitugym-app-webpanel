@@ -7,7 +7,7 @@ import { createMemberSchema, updateMemberSchema } from "@/schemas/members";
 import { ActionResult, appendAuditLog, generateRandomPassword } from "../lib/action-utils";
 import { deleteAvatar, updateAvatar } from "@/lib/storage";
 
-export async function createMemberAction(values: unknown): Promise<ActionResult> {
+export async function createMemberAction(values: unknown): Promise<ActionResult<{ id: string }>> {
   const parsed = createMemberSchema.safeParse(values);
   if (!parsed.success) {
     return { success: false, error: "Invalid data", issues: parsed.error.flatten().fieldErrors };
@@ -337,7 +337,7 @@ export async function deleteMemberAction(memberId: string): Promise<ActionResult
     // First, get the member data for audit logging and auth user deletion
     const { data: member, error: fetchError } = await admin
       .from("profiles")
-      .select("id, first_name, last_name, email")
+      .select("id, first_name, last_name, email, avatar_url")
       .eq("id", memberId)
       .single();
 
@@ -346,6 +346,16 @@ export async function deleteMemberAction(memberId: string): Promise<ActionResult
     }
 
     const full_name = `${member.first_name || ''} ${member.last_name || ''}`.trim() || 'Unknown Member';
+
+    // Delete avatar from storage if present
+    if (member.avatar_url) {
+      try {
+        await deleteAvatar(member.avatar_url);
+      } catch (avatarErr) {
+        console.warn("Failed to delete avatar from storage:", avatarErr);
+        // Continue with member deletion
+      }
+    }
 
     // Delete from profiles table (this will cascade to related tables due to foreign keys)
     const { error: deleteError } = await admin
