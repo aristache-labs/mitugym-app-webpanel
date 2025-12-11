@@ -74,8 +74,8 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
           htmlFor={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}
           className={cn(
             "absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
-            "peer-focus:translate-x-6 peer-focus:opacity-100",
-            hasValue && "translate-x-6 opacity-100",
+            "peer-focus:translate-x-3 peer-focus:opacity-100",
+            hasValue && "translate-x-3 opacity-100",
             error && "text-error"
           )}
         >
@@ -85,8 +85,8 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
           <div
             className={cn(
               "absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
-              "peer-focus:translate-x-6 peer-focus:opacity-100",
-              hasValue && "translate-x-6 opacity-100",
+              "peer-focus:translate-x-3 peer-focus:opacity-100",
+              hasValue && "translate-x-3 opacity-100",
               error ? "text-error" : "text-primary"
             )}
           >
@@ -97,8 +97,8 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
             viewBox="0 0 448 512"
             className={cn(
               "absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
-              "peer-focus:translate-x-6 peer-focus:opacity-100",
-              hasValue && "translate-x-6 opacity-100",
+              "peer-focus:translate-x-3 peer-focus:opacity-100",
+              hasValue && "translate-x-3 opacity-100",
               error ? "fill-error" : "fill-primary"
             )}
           >
