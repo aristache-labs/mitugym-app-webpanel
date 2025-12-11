@@ -1,6 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { useMobileNav } from "@/hooks/use-mobile-nav";
@@ -21,6 +23,38 @@ export function ProtectedLayoutClient({
   children,
 }: ProtectedLayoutClientProps) {
   const { isOpen, toggle, close } = useMobileNav();
+  const pathname = usePathname();
+  const [hasHydrated, setHasHydrated] = useState(false);
+
+  // Ensure we start at the top of the page on initial load and route changes (helps iOS Safari).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Force manual scroll restoration to avoid Safari auto-scrolling offset on first load
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+
+    // First hydration
+    if (!hasHydrated) {
+      setHasHydrated(true);
+      // Run twice to cover iOS Safari rubber-banding on first paint
+      scrollToTop();
+      setTimeout(scrollToTop, 30);
+      return;
+    }
+
+    // Subsequent route changes
+    scrollToTop();
+    // Safety second run
+    setTimeout(scrollToTop, 30);
+  }, [pathname, hasHydrated]);
 
   return (
     <div className="min-h-screen overflow-x-hidden">

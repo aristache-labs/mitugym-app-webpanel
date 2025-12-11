@@ -46,6 +46,7 @@ body {
   color: var(--text);
   font-family: var(--font-sans);
   min-height: 100vh;
+  overscroll-behavior: contain;
 }
 
 a {
