@@ -73,7 +73,7 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
     const hasValue = !!(selectedOption && selectedOption.value);
 
     return (
-      <div ref={ref} className={cn("relative pt-3 sm:pt-0", className)}>
+      <div ref={ref} className={cn("relative pt-1.5 sm:pt-0", className)}>
         <button
           type="button"
           onClick={toggleDropdown}
@@ -107,7 +107,7 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
 
         <label
           className={cn(
-            "absolute -top-[23px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
+            "absolute -top-[18px] sm:-top-[23px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
             (isOpen || hasValue) && "translate-x-6 opacity-100",
             error && "text-error"
           )}
@@ -118,7 +118,7 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
         {icon ? (
           <div
             className={cn(
-              "absolute -top-[21px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
+              "absolute -top-[16px] sm:-top-[21px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
               (isOpen || hasValue) && "translate-x-6 opacity-100",
               error ? "text-error" : "text-primary"
             )}
@@ -129,7 +129,7 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
           <svg
             viewBox="0 0 448 512"
             className={cn(
-              "absolute -top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
+              "absolute -top-[16px] sm:-top-[21px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
               (isOpen || hasValue) && "translate-x-6 opacity-100",
               error ? "fill-error" : "fill-primary"
             )}

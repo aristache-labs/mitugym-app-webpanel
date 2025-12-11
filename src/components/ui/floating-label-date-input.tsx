@@ -28,7 +28,7 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
     };
 
     return (
-      <div className="relative flex flex-col pt-3 sm:pt-0">
+      <div className="relative flex flex-col pt-1.5 sm:pt-0">
         <input
           type="date"
           id={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}
@@ -73,7 +73,7 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
         <label
           htmlFor={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}
           className={cn(
-            "absolute -top-[25px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
+            "absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
             "peer-focus:translate-x-6 peer-focus:opacity-100",
             hasValue && "translate-x-6 opacity-100",
             error && "text-error"
@@ -84,7 +84,7 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
         {icon ? (
           <div
             className={cn(
-              "absolute -top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
+              "absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
               "peer-focus:translate-x-6 peer-focus:opacity-100",
               hasValue && "translate-x-6 opacity-100",
               error ? "text-error" : "text-primary"
@@ -96,7 +96,7 @@ const FloatingLabelDateInput = React.forwardRef<HTMLInputElement, FloatingLabelD
           <svg
             viewBox="0 0 448 512"
             className={cn(
-              "absolute -top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
+              "absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
               "peer-focus:translate-x-6 peer-focus:opacity-100",
               hasValue && "translate-x-6 opacity-100",
               error ? "fill-error" : "fill-primary"

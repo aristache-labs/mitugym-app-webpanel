@@ -290,18 +290,20 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                   />
             )}
           />
-          <FormField
-            control={form.control}
-            name="last_name"
-            render={({ field }) => (
-                  <FloatingLabelInput
-                    label="Last name"
-                    icon={<User className="w-full h-full" />}
-                    {...field}
-                    error={form.formState.errors.last_name?.message}
-                  />
-            )}
-          />
+          <div className="mt-3 sm:mt-0">
+            <FormField
+              control={form.control}
+              name="last_name"
+              render={({ field }) => (
+                    <FloatingLabelInput
+                      label="Last name"
+                      icon={<User className="w-full h-full" />}
+                      {...field}
+                      error={form.formState.errors.last_name?.message}
+                    />
+              )}
+            />
+          </div>
             </div>
 
             {/* Row 2: Email | Phone */}
@@ -319,19 +321,21 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                   />
             )}
           />
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-                  <FloatingLabelInput
-                    label="Phone"
-                    icon={<Phone className="w-full h-full" />}
-                    {...field} 
-                    value={field.value ?? ""} 
-                    error={form.formState.errors.phone?.message}
-                  />
-                )}
-                  />
+          <div className="mt-3 sm:mt-0">
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                    <FloatingLabelInput
+                      label="Phone"
+                      icon={<Phone className="w-full h-full" />}
+                      {...field} 
+                      value={field.value ?? ""} 
+                      error={form.formState.errors.phone?.message}
+                    />
+                  )}
+                    />
+          </div>
             </div>
 
             {/* Row 3: Gender | Status */}
@@ -356,34 +360,36 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                   />
             )}
           />
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => {
-              const planId = form.watch('plan_id');
-              const startsAt = form.watch('starts_at');
-                  // Status is auto-calculated if plan (not unassigned) and start date are selected
-                  const isAutoCalculated = Boolean(planId && planId !== 'unassigned' && startsAt);
-              
-              return (
-                    <FloatingLabelSelect
-                      value={field.value}
-                      onChange={field.onChange}
-                      label={isAutoCalculated ? "Status (auto)" : "Status"}
-                      disabled={isAutoCalculated}
-                      icon={<ShieldCheck className="w-full h-full" />}
-                      options={[
-                        { value: "", label: "Status", disabled: true },
-                        ...memberStatusEnum.options.map((status) => ({
-                        value: status,
-                        label: status.charAt(0).toUpperCase() + status.slice(1)
-                        }))
-                      ]}
-                      error={form.formState.errors.status?.message}
-                    />
-              );
-            }}
-          />
+          <div className="mt-3 sm:mt-0">
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => {
+                const planId = form.watch('plan_id');
+                const startsAt = form.watch('starts_at');
+                    // Status is auto-calculated if plan (not unassigned) and start date are selected
+                    const isAutoCalculated = Boolean(planId && planId !== 'unassigned' && startsAt);
+                
+                return (
+                      <FloatingLabelSelect
+                        value={field.value}
+                        onChange={field.onChange}
+                        label={isAutoCalculated ? "Status (auto)" : "Status"}
+                        disabled={isAutoCalculated}
+                        icon={<ShieldCheck className="w-full h-full" />}
+                        options={[
+                          { value: "", label: "Status", disabled: true },
+                          ...memberStatusEnum.options.map((status) => ({
+                          value: status,
+                          label: status.charAt(0).toUpperCase() + status.slice(1)
+                          }))
+                        ]}
+                        error={form.formState.errors.status?.message}
+                      />
+                );
+              }}
+            />
+          </div>
             </div>
 
             {/* Row 4: Membership Plan | Start From */}
@@ -409,19 +415,21 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
                   />
             )}
           />
-          <FormField
-            control={form.control}
-            name="starts_at"
-            render={({ field }) => (
-                  <FloatingLabelDateInput
-                    label="Start from"
-                    icon={<Calendar className="w-full h-full" />}
-                    {...field}
-                    value={field.value ?? ""}
-                    error={form.formState.errors.starts_at?.message}
-                  />
-                )}
-              />
+          <div className="mt-3 sm:mt-0">
+            <FormField
+              control={form.control}
+              name="starts_at"
+              render={({ field }) => (
+                    <FloatingLabelDateInput
+                      label="Start from"
+                      icon={<Calendar className="w-full h-full" />}
+                      {...field}
+                      value={field.value ?? ""}
+                      error={form.formState.errors.starts_at?.message}
+                    />
+                  )}
+                />
+          </div>
             </div>
 
             {/* Row 5: Expires At | Password */}
@@ -441,21 +449,23 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
             )}
           />
         {!member && (
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-                    <FloatingLabelInput
-                      type="password"
-                      label="Temporary password"
-                      icon={<Lock className="w-full h-full" />}
-                      {...field}
-                      error={!member && form.formState.errors && 'password' in form.formState.errors 
-                    ? form.formState.errors.password?.message 
-                    : undefined}
-                    />
-            )}
-          />
+          <div className="mt-3 sm:mt-0">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                      <FloatingLabelInput
+                        type="password"
+                        label="Temporary password"
+                        icon={<Lock className="w-full h-full" />}
+                        {...field}
+                        error={!member && form.formState.errors && 'password' in form.formState.errors 
+                      ? form.formState.errors.password?.message 
+                      : undefined}
+                      />
+              )}
+            />
+          </div>
         )}
             </div>
           </div>
