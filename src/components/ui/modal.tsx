@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "./button";
+import { Trash2 } from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ interface ModalProps {
   variant?: "default" | "destructive";
   children?: React.ReactNode;
   className?: string;
+  isPending?: boolean;
 }
 
 export function Modal({
@@ -28,6 +30,7 @@ export function Modal({
   variant = "default",
   children,
   className,
+  isPending = false,
 }: ModalProps) {
   // Handle escape key
   useEffect(() => {
@@ -83,33 +86,35 @@ export function Modal({
         {/* Header */}
         <div className="px-6 py-4 border-b border-surface/50 bg-surface sticky top-0 z-10 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-text">{title}</h2>
-          <button
-            onClick={onClose}
-            className="group/closetop relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
-          >
-            {/* Icon with animation */}
-            <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/closetop:scale-125 group-hover/closetop:translate-x-[1.7em]">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/closetop:text-cyan-100 group-hover/closetop:scale-110"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            
-            {/* Text */}
-            <span className="transition-all duration-500 ease-in-out group-hover/closetop:opacity-0">
-              Close
-            </span>
-          </button>
+          {variant !== "destructive" && (
+            <button
+              onClick={onClose}
+              className="group/closetop relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
+            >
+              {/* Icon with animation */}
+              <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/closetop:scale-125 group-hover/closetop:translate-x-[1.7em]">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/closetop:text-cyan-100 group-hover/closetop:scale-110"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              
+              {/* Text */}
+              <span className="transition-all duration-500 ease-in-out group-hover/closetop:opacity-0">
+                Close
+              </span>
+            </button>
+          )}
         </div>
         
         {/* Content */}
@@ -123,21 +128,62 @@ export function Modal({
         {/* Footer */}
         {onConfirm && (
           <div className="px-6 py-4 border-t border-surface/50 flex justify-end gap-3 bg-surface sticky bottom-0">
-            <Button
-              variant="outline"
-              onClick={onClose}
-            >
-              {cancelText}
-            </Button>
-            <Button
-              variant={variant === "destructive" ? "destructive" : "default"}
-              onClick={() => {
-                onConfirm();
-                onClose();
-              }}
-            >
-              {confirmText}
-            </Button>
+            {variant === "destructive" ? (
+              <>
+                <button
+                  onClick={onClose}
+                  className="flex-1 h-10 text-sm px-6 bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border-0 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    onConfirm();
+                    onClose();
+                  }}
+                  disabled={isPending}
+                  className="group/delete flex-1 h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {!isPending && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/delete:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                  )}
+                  
+                  {isPending ? (
+                    <>
+                      <div className="animate-spin rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 border-2 border-white border-t-transparent" />
+                      <span>Deleting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/delete:scale-125 group-hover/delete:translate-x-[1.7em]">
+                        <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-red-200/70 group-hover/delete:text-red-50 group-hover/delete:scale-110" />
+                      </div>
+                      <span className="transition-all duration-500 ease-in-out group-hover/delete:opacity-0">
+                        Delete
+                      </span>
+                    </>
+                  )}
+                </button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={onClose}
+                >
+                  {cancelText}
+                </Button>
+                <Button
+                  variant="default"
+                  onClick={() => {
+                    onConfirm();
+                    onClose();
+                  }}
+                >
+                  {confirmText}
+                </Button>
+              </>
+            )}
           </div>
         )}
       </div>
