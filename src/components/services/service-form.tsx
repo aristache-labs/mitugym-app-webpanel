@@ -79,6 +79,9 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
   });
 
   const onSubmit = async (data: CreateServiceFormData | UpdateServiceFormData) => {
+    console.log("Form submitted with data:", data);
+    console.log("Form errors:", form.formState.errors);
+    
     startTransition(async () => {
       setError(null);
       
@@ -91,10 +94,14 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
         }
       });
 
+      console.log("FormData prepared:", Array.from(formData.entries()));
+
       try {
         const result = isEdit 
           ? await updateServiceAction(formData)
           : await createServiceAction(formData);
+
+        console.log("Server result:", result);
 
         if (result.success) {
           addToast({
@@ -113,7 +120,8 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
             description: result.error || "An unexpected error occurred. Please try again.",
           });
         }
-      } catch {
+      } catch (error) {
+        console.error("Form submission error:", error);
         setError("An unexpected error occurred");
         addToast({
           type: "error",
@@ -126,12 +134,32 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
 
   const watchRequiresAdvanceBooking = form.watch("requires_advance_booking");
 
+  const onError = (errors: any) => {
+    console.log("Form validation errors:", errors);
+    addToast({
+      type: "error",
+      title: "Validation Error",
+      description: "Please fill in all required fields correctly.",
+    });
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-6">
           {error && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
               <p className="text-sm text-destructive">{error}</p>
+            </div>
+          )}
+          
+          {Object.keys(form.formState.errors).length > 0 && (
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
+              <p className="text-sm text-destructive font-semibold mb-2">Please fix the following errors:</p>
+              <ul className="list-disc list-inside text-sm text-destructive space-y-1">
+                {Object.entries(form.formState.errors).map(([field, error]: [string, any]) => (
+                  <li key={field}>{field}: {error?.message || "Invalid value"}</li>
+                ))}
+              </ul>
             </div>
           )}
 
@@ -349,7 +377,13 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
               <ToggleSwitch
                 id="requires_advance_booking"
                 checked={watchRequiresAdvanceBooking ?? false}
-                onChange={(checked) => form.setValue("requires_advance_booking", checked)}
+                onChange={(checked) => {
+                  form.setValue("requires_advance_booking", checked);
+                  // Set advance_booking_hours to 0 when toggle is turned off
+                  if (!checked) {
+                    form.setValue("advance_booking_hours", 0);
+                  }
+                }}
                 label="Requires advance booking"
               />
 

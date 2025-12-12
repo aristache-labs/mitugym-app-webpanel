@@ -11,10 +11,10 @@ export const serviceBaseSchema = z.object({
   price: z.number().min(0, "Price cannot be negative"),
   description: z.string().optional(),
   requires_advance_booking: z.boolean().default(false),
-  advance_booking_hours: z.number().min(0, "Advance booking hours cannot be negative").default(0),
-  max_sessions: z.number().min(1, "Max sessions must be at least 1").optional(),
+  advance_booking_hours: z.coerce.number().min(0, "Advance booking hours cannot be negative").default(0).optional(),
+  max_sessions: z.coerce.number().min(1, "Max sessions must be at least 1").optional(),
   is_active: z.boolean().default(true),
-  display_order: z.number().min(0, "Display order cannot be negative").default(0),
+  display_order: z.coerce.number().min(0, "Display order cannot be negative").default(0).optional(),
 });
 
 export const createServiceSchema = serviceBaseSchema;
