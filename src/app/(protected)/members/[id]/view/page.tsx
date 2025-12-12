@@ -88,9 +88,8 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                   size="large"
                 />
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text truncate">{member.full_name}</h1>
-                  <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Member since {formatDate(member.created_at)}</p>
-                  <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-3 flex-wrap">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text truncate">{member.full_name}</h1>
                     {isPending ? (
                       <Badge variant="secondary" className="bg-yellow-500/30 text-white border-0 text-xs sm:text-sm rounded-full">
                         <AlertCircle className="h-3 w-3 mr-1" />
@@ -107,6 +106,7 @@ export default async function ViewMemberPage({ params }: ViewMemberPageProps) {
                       </Badge>
                     )}
                   </div>
+                  <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Member since {formatDate(member.created_at)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
