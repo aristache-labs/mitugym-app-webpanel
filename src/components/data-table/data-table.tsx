@@ -199,27 +199,58 @@ export function DataTable<TData, TValue>({
       </div>
       
       <div className="flex flex-col items-center justify-between gap-3 sm:gap-4 md:flex-row">
-        <div className="flex items-center gap-2 w-full md:w-auto justify-center">
-          <Button
-            variant="outline"
-            size="sm"
+        <div className="flex items-center gap-4 w-full md:w-auto justify-center">
+          <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="bg-surface/60 border-surface/40 hover:bg-primary/10 hover:border-primary/30 hover:text-primary transition-all duration-200 text-xs sm:text-sm h-9 sm:h-10 px-3 sm:px-4"
+            className="group relative flex items-center justify-center gap-2.5 h-11 px-6 rounded-[14px] bg-gradient-to-br from-card/95 via-surface/90 to-surface/80 border border-primary/25 text-primary font-semibold text-sm tracking-wide transition-all duration-500 hover:from-primary/15 hover:via-primary/10 hover:to-primary/8 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/12 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-25 disabled:cursor-not-allowed disabled:border-surface/20 disabled:text-muted/30 disabled:hover:from-card/95 disabled:hover:via-surface/90 disabled:hover:to-surface/80 disabled:hover:border-primary/25 disabled:hover:shadow-none disabled:hover:translate-y-0 overflow-hidden backdrop-blur-md"
           >
-            <span className="hidden sm:inline">← Previous</span>
-            <span className="sm:hidden">←</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm" 
+            {/* Ambient glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-60"></div>
+            
+            {/* Shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
+            
+            {/* Border glow on hover */}
+            <div className="absolute inset-0 rounded-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{boxShadow: 'inset 0 0 20px rgba(77, 212, 212, 0.1)'}}></div>
+            
+            <svg 
+              className="w-[18px] h-[18px] transition-all duration-500 group-hover:-translate-x-1.5 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(77,212,212,0.6)] relative z-10" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              strokeWidth={2.5}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="hidden sm:inline relative z-10 group-hover:tracking-wider transition-all duration-500">Previous</span>
+          </button>
+          
+          <button
             onClick={() => table.nextPage()} 
             disabled={!table.getCanNextPage()}
-            className="bg-surface/60 border-surface/40 hover:bg-primary/10 hover:border-primary/30 hover:text-primary transition-all duration-200 text-xs sm:text-sm h-9 sm:h-10 px-3 sm:px-4"
+            className="group relative flex items-center justify-center gap-2.5 h-11 px-6 rounded-[14px] bg-gradient-to-br from-card/95 via-surface/90 to-surface/80 border border-primary/25 text-primary font-semibold text-sm tracking-wide transition-all duration-500 hover:from-primary/15 hover:via-primary/10 hover:to-primary/8 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/12 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-25 disabled:cursor-not-allowed disabled:border-surface/20 disabled:text-muted/30 disabled:hover:from-card/95 disabled:hover:via-surface/90 disabled:hover:to-surface/80 disabled:hover:border-primary/25 disabled:hover:shadow-none disabled:hover:translate-y-0 overflow-hidden backdrop-blur-md"
           >
-            <span className="hidden sm:inline">Next →</span>
-            <span className="sm:hidden">→</span>
-          </Button>
+            {/* Ambient glow */}
+            <div className="absolute inset-0 bg-gradient-to-bl from-primary/5 via-transparent to-transparent opacity-60"></div>
+            
+            {/* Shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
+            
+            {/* Border glow on hover */}
+            <div className="absolute inset-0 rounded-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{boxShadow: 'inset 0 0 20px rgba(77, 212, 212, 0.1)'}}></div>
+            
+            <span className="hidden sm:inline relative z-10 group-hover:tracking-wider transition-all duration-500">Next</span>
+            <svg 
+              className="w-[18px] h-[18px] transition-all duration-500 group-hover:translate-x-1.5 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(77,212,212,0.6)] relative z-10" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              strokeWidth={2.5}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs sm:text-sm">
           <span className="text-muted/80 text-center">
