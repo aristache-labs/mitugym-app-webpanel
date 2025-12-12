@@ -179,3 +179,19 @@ a:hover {
 .animate-stagger-3 {
   animation-delay: 0.3s;
 }
+
+/* Mobile page transition - horizontal slide */
+@keyframes mobileSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-mobileSlideIn {
+  animation: mobileSlideIn 0.3s ease-out;
+}

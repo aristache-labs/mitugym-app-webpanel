@@ -3,6 +3,7 @@ import { ArrowLeft, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { PurchaseForm } from "./purchase-form";
 import { fetchServices, fetchMembers } from "@/lib/data";
+import { MobilePageTransition } from "@/components/ui/mobile-page-transition";
 
 export const metadata = {
   title: "New Purchase",
@@ -18,7 +19,8 @@ export default async function NewPurchasePage() {
   const activeServices = services.filter((service) => service.is_active);
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <MobilePageTransition>
+      <div className="space-y-4 sm:space-y-6">
       {/* Premium Form Container */}
       <div className="relative">
         {/* Background Glow */}
@@ -95,6 +97,7 @@ export default async function NewPurchasePage() {
             </CardContent>
           </Card>
         </div>
-    </div>
+      </div>
+    </MobilePageTransition>
   );
 }
