@@ -203,19 +203,25 @@ export function DataTable<TData, TValue>({
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="group relative flex items-center justify-center gap-2.5 h-11 px-6 rounded-[14px] bg-gradient-to-br from-card/95 via-surface/90 to-surface/80 border border-primary/25 text-primary font-semibold text-sm tracking-wide transition-all duration-500 hover:from-primary/15 hover:via-primary/10 hover:to-primary/8 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/12 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-25 disabled:cursor-not-allowed disabled:border-surface/20 disabled:text-muted/30 disabled:hover:from-card/95 disabled:hover:via-surface/90 disabled:hover:to-surface/80 disabled:hover:border-primary/25 disabled:hover:shadow-none disabled:hover:translate-y-0 overflow-hidden backdrop-blur-md"
+            className="group relative flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg bg-gradient-to-br from-card/98 via-surface/95 to-surface/85 border border-primary/35 text-primary font-semibold text-xs tracking-wide transition-all duration-500 hover:from-primary/18 hover:via-primary/12 hover:to-primary/8 hover:border-primary/60 hover:shadow-[0_8px_32px_rgba(77,212,212,0.25)] hover:-translate-y-1 hover:scale-[1.03] active:translate-y-0 active:scale-[1.01] disabled:opacity-20 disabled:cursor-not-allowed disabled:border-surface/20 disabled:text-muted/25 disabled:hover:from-card/98 disabled:hover:via-surface/95 disabled:hover:to-surface/85 disabled:hover:border-primary/35 disabled:hover:shadow-none disabled:hover:translate-y-0 disabled:hover:scale-100 overflow-hidden backdrop-blur-xl shadow-lg shadow-black/20"
           >
-            {/* Ambient glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-60"></div>
+            {/* Ambient background glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-transparent opacity-70"></div>
             
-            {/* Shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
+            {/* Metallic shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1200 ease-out"></div>
             
-            {/* Border glow on hover */}
-            <div className="absolute inset-0 rounded-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{boxShadow: 'inset 0 0 20px rgba(77, 212, 212, 0.1)'}}></div>
+            {/* Secondary shine */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent translate-x-full group-hover:-translate-x-full transition-transform duration-1000 ease-out delay-100"></div>
+            
+            {/* Inner border glow */}
+            <div className="absolute inset-[2px] rounded-[14px] bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            {/* Hover glow effect */}
+            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" style={{boxShadow: 'inset 0 0 30px rgba(77, 212, 212, 0.15)'}}></div>
             
             <svg 
-              className="w-[18px] h-[18px] transition-all duration-500 group-hover:-translate-x-1.5 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(77,212,212,0.6)] relative z-10" 
+              className="w-3.5 h-3.5 transition-all duration-500 group-hover:-translate-x-1 group-hover:scale-[1.15] group-hover:drop-shadow-[0_0_10px_rgba(77,212,212,0.8)] group-hover:brightness-125 relative z-10" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -223,26 +229,32 @@ export function DataTable<TData, TValue>({
             >
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
-            <span className="hidden sm:inline relative z-10 group-hover:tracking-wider transition-all duration-500">Previous</span>
+            <span className="hidden sm:inline relative z-10 group-hover:tracking-[0.15em] transition-all duration-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">Previous</span>
           </button>
           
           <button
             onClick={() => table.nextPage()} 
             disabled={!table.getCanNextPage()}
-            className="group relative flex items-center justify-center gap-2.5 h-11 px-6 rounded-[14px] bg-gradient-to-br from-card/95 via-surface/90 to-surface/80 border border-primary/25 text-primary font-semibold text-sm tracking-wide transition-all duration-500 hover:from-primary/15 hover:via-primary/10 hover:to-primary/8 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/12 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-25 disabled:cursor-not-allowed disabled:border-surface/20 disabled:text-muted/30 disabled:hover:from-card/95 disabled:hover:via-surface/90 disabled:hover:to-surface/80 disabled:hover:border-primary/25 disabled:hover:shadow-none disabled:hover:translate-y-0 overflow-hidden backdrop-blur-md"
+            className="group relative flex items-center justify-center gap-1.5 h-9 px-4 rounded-lg bg-gradient-to-br from-card/98 via-surface/95 to-surface/85 border border-primary/35 text-primary font-semibold text-xs tracking-wide transition-all duration-500 hover:from-primary/18 hover:via-primary/12 hover:to-primary/8 hover:border-primary/60 hover:shadow-[0_8px_32px_rgba(77,212,212,0.25)] hover:-translate-y-1 hover:scale-[1.03] active:translate-y-0 active:scale-[1.01] disabled:opacity-20 disabled:cursor-not-allowed disabled:border-surface/20 disabled:text-muted/25 disabled:hover:from-card/98 disabled:hover:via-surface/95 disabled:hover:to-surface/85 disabled:hover:border-primary/35 disabled:hover:shadow-none disabled:hover:translate-y-0 disabled:hover:scale-100 overflow-hidden backdrop-blur-xl shadow-lg shadow-black/20"
           >
-            {/* Ambient glow */}
-            <div className="absolute inset-0 bg-gradient-to-bl from-primary/5 via-transparent to-transparent opacity-60"></div>
+            {/* Ambient background glow */}
+            <div className="absolute inset-0 bg-gradient-to-bl from-primary/8 via-transparent to-transparent opacity-70"></div>
             
-            {/* Shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
+            {/* Metallic shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1200 ease-out"></div>
             
-            {/* Border glow on hover */}
-            <div className="absolute inset-0 rounded-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{boxShadow: 'inset 0 0 20px rgba(77, 212, 212, 0.1)'}}></div>
+            {/* Secondary shine */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/20 to-transparent translate-x-full group-hover:-translate-x-full transition-transform duration-1000 ease-out delay-100"></div>
             
-            <span className="hidden sm:inline relative z-10 group-hover:tracking-wider transition-all duration-500">Next</span>
+            {/* Inner border glow */}
+            <div className="absolute inset-[2px] rounded-[14px] bg-gradient-to-bl from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            
+            {/* Hover glow effect */}
+            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" style={{boxShadow: 'inset 0 0 30px rgba(77, 212, 212, 0.15)'}}></div>
+            
+            <span className="hidden sm:inline relative z-10 group-hover:tracking-[0.15em] transition-all duration-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">Next</span>
             <svg 
-              className="w-[18px] h-[18px] transition-all duration-500 group-hover:translate-x-1.5 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(77,212,212,0.6)] relative z-10" 
+              className="w-3.5 h-3.5 transition-all duration-500 group-hover:translate-x-1 group-hover:scale-[1.15] group-hover:drop-shadow-[0_0_10px_rgba(77,212,212,0.8)] group-hover:brightness-125 relative z-10" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
