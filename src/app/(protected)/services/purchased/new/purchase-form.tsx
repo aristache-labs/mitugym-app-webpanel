@@ -200,48 +200,48 @@ export function PurchaseForm({ services, members }: PurchaseFormProps) {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
-              <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-0">
-                <div className="flex items-center gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4">
+              <div className="p-2 sm:p-4 rounded-lg sm:rounded-2xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-0">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1.5 sm:gap-3 text-center sm:text-left">
                   <div className="p-1.5 sm:p-2 rounded-lg bg-blue-500/20 border-0">
                     <Hash className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
                   </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-medium text-muted/70">Sessions</p>
-                    <p className="text-xl sm:text-2xl font-bold text-text">{sessionsTotal}</p>
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-sm font-medium text-muted/70 leading-tight">Sessions</p>
+                    <p className="text-lg sm:text-2xl font-bold text-text leading-tight mt-0.5">{sessionsTotal}</p>
                   </div>
                 </div>
               </div>
-              <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-500/5 to-green-500/10 border-0">
-                <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-2 sm:p-4 rounded-lg sm:rounded-2xl bg-gradient-to-br from-green-500/5 to-green-500/10 border-0">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1.5 sm:gap-3 text-center sm:text-left">
                   <div className="p-1.5 sm:p-2 rounded-lg bg-green-500/20 border-0">
                     <Package className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
                   </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-medium text-muted/70">Duration</p>
-                    <p className="text-xl sm:text-2xl font-bold text-text">{selectedService.duration_minutes}m</p>
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-sm font-medium text-muted/70 leading-tight">Duration</p>
+                    <p className="text-lg sm:text-2xl font-bold text-text leading-tight mt-0.5">{selectedService.duration_minutes}m</p>
                   </div>
                 </div>
               </div>
-              <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-500/10 border-0">
-                <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-2 sm:p-4 rounded-lg sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-500/10 border-0">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1.5 sm:gap-3 text-center sm:text-left">
                   <div className="p-1.5 sm:p-2 rounded-lg bg-orange-500/20 border-0">
                     <Hash className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
                   </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-medium text-muted/70">Per Session</p>
-                    <p className="text-xl sm:text-2xl font-bold text-text">{(selectedService.price / (selectedService.max_sessions || 1)).toFixed(0)}</p>
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-sm font-medium text-muted/70 leading-tight">Per Session</p>
+                    <p className="text-lg sm:text-2xl font-bold text-text leading-tight mt-0.5">{(selectedService.price / (selectedService.max_sessions || 1)).toFixed(0)}</p>
                   </div>
                 </div>
               </div>
-              <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border-0">
-                <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-2 sm:p-4 rounded-lg sm:rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border-0">
+                <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1.5 sm:gap-3 text-center sm:text-left">
                   <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20 border-0">
                     <Package className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                   </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-medium text-muted/70">Total Cost</p>
-                    <p className="text-xl sm:text-2xl font-bold text-text">{selectedService.price.toFixed(0)} RON</p>
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-sm font-medium text-muted/70 leading-tight whitespace-nowrap">Total Cost</p>
+                    <p className="text-lg sm:text-2xl font-bold text-text leading-tight mt-0.5">{selectedService.price.toFixed(0)} RON</p>
                   </div>
                 </div>
               </div>
@@ -343,7 +343,7 @@ export function PurchaseForm({ services, members }: PurchaseFormProps) {
         <AnimatedButton
           type="submit" 
           disabled={isPending || !selectedServiceId || !selectedMemberId || !sessionsTotal}
-          className="w-full sm:w-auto h-10 sm:h-10 px-6 sm:px-6 text-sm sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white border-0 !ring-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium relative z-10"
+          className="w-auto h-9 sm:h-10 px-6 sm:px-6 text-sm sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white border-0 !ring-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium relative z-10"
         >
           {isPending ? "Creating..." : "Create Purchase"}
         </AnimatedButton>
