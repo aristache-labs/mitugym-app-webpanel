@@ -106,7 +106,7 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
       {/* Organized Containers Grid Layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {/* Application Timezone Container */}
-        <div className="relative group">
+        <div className="relative group z-20">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div className="relative bg-surface/60 backdrop-blur-sm rounded-xl border border-surface/50 p-3 sm:p-4 transition-all duration-300 hover:border-primary/30">
             <div className="flex items-center gap-2 mb-3">
@@ -131,7 +131,7 @@ export function TimezoneSettings({ currentTimezone, currentTimeFormat }: Timezon
         </div>
 
         {/* Time Format Container */}
-        <div className="relative group">
+        <div className="relative group z-10">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div className="relative bg-surface/60 backdrop-blur-sm rounded-xl border border-surface/50 p-3 sm:p-4 transition-all duration-300 hover:border-primary/30">
             <div className="flex items-center gap-2 mb-3">

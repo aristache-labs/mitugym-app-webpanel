@@ -94,7 +94,7 @@ export const CustomSelect = React.forwardRef<HTMLDivElement, CustomSelectProps>(
         </button>
 
         {isOpen && (
-          <div className="absolute z-[100] mt-2 w-full rounded-[12px] border border-surface/50 bg-surface/95 backdrop-blur-xl shadow-2xl shadow-black/30 overflow-hidden">
+          <div className="absolute z-[100] mt-2 w-full rounded-[12px] border border-surface/50 bg-surface backdrop-blur-xl shadow-2xl shadow-black/30 overflow-hidden">
             <div className="max-h-60 overflow-auto">
               {options.map((option) => (
                 <button
@@ -102,7 +102,7 @@ export const CustomSelect = React.forwardRef<HTMLDivElement, CustomSelectProps>(
                   type="button"
                   onClick={() => handleOptionClick(option)}
                   className={cn(
-                    "w-full px-4 py-3 text-left text-sm transition-colors",
+                    "w-full px-4 py-3 text-left text-sm transition-colors bg-surface",
                     "hover:bg-primary/10 hover:text-primary",
                     "focus:bg-primary/10 focus:text-primary focus:outline-none",
                     selectedOption?.value === option.value && "bg-primary/20 text-primary font-medium"
