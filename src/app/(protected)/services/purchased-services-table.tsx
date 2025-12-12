@@ -344,162 +344,284 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
           setError(null);
         }}
         title="Delete Service Purchase"
-        className="max-w-2xl"
+        className="max-w-[98vw] sm:max-w-6xl"
       >
-        <div className="space-y-6">
-          {error && (
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
-              <div className="relative p-4 rounded-2xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-xl bg-red-500/10">
-                    <XCircle className="h-5 w-5 text-red-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-red-800 mb-1">Error</p>
-                    <p className="text-xs text-red-700">{error}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Header Section */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
-            <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 rounded-2xl bg-red-500/10">
-                  <Trash2 className="h-6 w-6 text-red-500" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-text">Delete Service Purchase</h3>
-                  <p className="text-sm text-muted/70">Permanently remove this cancelled service purchase</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Service Details */}
+        <div className="space-y-4 sm:space-y-6">
           {selectedService && (
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 rounded-2xl blur-xl"></div>
-              <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 rounded-xl bg-primary/10">
-                    <Package className="h-5 w-5 text-primary" />
+            <>
+              {error && (
+                <div className="relative p-3 sm:p-4 rounded-xl bg-red-500/5 border border-red-500/20 backdrop-blur-sm">
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <div className="p-1.5 sm:p-2 rounded-lg bg-red-500/10">
+                      <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
+                    </div>
+                    <div>
+                      <p className="text-xs sm:text-sm font-semibold text-red-400 mb-0.5 sm:mb-1">Error</p>
+                      <p className="text-xs text-red-300/80">{error}</p>
+                    </div>
                   </div>
-                  <h4 className="font-semibold text-text">Purchase Details</h4>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service</p>
-                        <p className="text-sm font-semibold text-text">{selectedService.service?.name}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Purchase Date</p>
-                        <p className="text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
-                      </div>
+              )}
+
+              {/* Header with Title and Badge */}
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-2xl sm:rounded-3xl blur-2xl"></div>
+                <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
+                  {/* Card Hover Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
+                  
+                  {/* Enhanced Border Effect */}
+                  <div className="absolute inset-0 rounded-2xl sm:rounded-3xl">
+                    <div className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-transparent via-primary/30 to-transparent" 
+                         style={{ 
+                           mask: 'linear-gradient(white, white) content-box, linear-gradient(white, white)',
+                           WebkitMask: 'linear-gradient(white, white) content-box, linear-gradient(white, white)',
+                           WebkitMaskComposite: 'xor',
+                           maskComposite: 'exclude',
+                           padding: '1px'
+                         }}>
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <User className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Member</p>
-                        <p className="text-sm font-semibold text-text">{selectedService.member?.full_name}</p>
+                  
+                  <div className="relative p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+                      <div className="flex items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                        <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-primary/10 flex-shrink-0">
+                          <Package className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-text truncate">{selectedService.service?.name || "Unknown Service"}</h3>
+                            {getStatusBadge(selectedService.status)}
+                          </div>
+                          <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Permanently delete this cancelled service purchase</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <XCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Status</p>
-                        <div className="mt-1">
-                          <Badge variant="outline" className="bg-red-500/20 text-red-600 border-red-500/30">
-                            Cancelled
-                          </Badge>
+                    
+                    {/* Quick Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                      <div className="p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                          <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-primary/20 border-0 flex-shrink-0">
+                            <Package className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-primary" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[10px] sm:text-xs md:text-sm font-medium text-muted/70 whitespace-nowrap">Remaining</p>
+                            <p className="text-lg sm:text-xl md:text-2xl font-bold text-text">{selectedService.sessions_remaining}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                          <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-blue-500/20 border-0 flex-shrink-0">
+                            <Hash className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-blue-500" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[10px] sm:text-xs md:text-sm font-medium text-muted/70 whitespace-nowrap">Total</p>
+                            <p className="text-lg sm:text-xl md:text-2xl font-bold text-text">{selectedService.sessions_total}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-500/5 to-green-500/10 border-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                          <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-green-500/20 border-0 flex-shrink-0">
+                            <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-green-500" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[10px] sm:text-xs md:text-sm font-medium text-muted/70 whitespace-nowrap">Duration</p>
+                            <p className="text-lg sm:text-xl md:text-2xl font-bold text-text whitespace-nowrap">{selectedService.service?.duration_minutes}m</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-500/10 border-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                          <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-orange-500/20 border-0 flex-shrink-0">
+                            <Banknote className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-orange-500" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[10px] sm:text-xs md:text-sm font-medium text-muted/70 whitespace-nowrap">Price</p>
+                            <p className="text-lg sm:text-xl md:text-2xl font-bold text-text whitespace-nowrap">{selectedService.service?.price?.toFixed(0) || "0"} <span className="text-base sm:text-lg md:text-xl">RON</span></p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+
+              {/* Service, Member & Purchase Information */}
+              <div className="relative group bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
+                
+                <div className="relative p-4 sm:p-5 pb-2">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                      <Briefcase className="h-4 w-4 sm:h-5 sm:w-5 text-primary/60 group-hover:text-primary transition-colors" />
+                    </div>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">Service Information</h3>
+                      <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Detailed service, member and purchase information</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="relative p-4 sm:p-5 pt-2">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 sm:gap-3">
+                    
+                    {/* Service & Member Combined */}
+                    <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
+                      <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
+                        <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                          <Briefcase className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Service & Member</h3>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                          <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                            <Package className="h-3.5 w-3.5 text-primary" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Service</p>
+                            <p className="text-xs text-text font-semibold truncate">{selectedService.service?.name}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                          <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                            <User className="h-3.5 w-3.5 text-primary" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Member</p>
+                            <p className="text-xs text-text font-semibold truncate">{selectedService.member?.full_name}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Purchase Details */}
+                    <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
+                      <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
+                        <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                          <Calendar className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Purchase Details</h3>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                          <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                            <Calendar className="h-3.5 w-3.5 text-primary" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Purchase Date</p>
+                            <p className="text-xs text-text font-semibold truncate">
+                              {timeFormat === '12h'
+                                ? format(new Date(selectedService.purchase_date), "PPp")
+                                : format(new Date(selectedService.purchase_date), "PPp").replace(/\d{1,2}:\d{2}\s?[AP]M/i, format(new Date(selectedService.purchase_date), "HH:mm"))
+                              }
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                          <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                            <Hash className="h-3.5 w-3.5 text-primary" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Sessions</p>
+                            <p className="text-xs text-text font-semibold">{selectedService.sessions_total} total</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+
+              {/* Warning Notices */}
+              <div className="space-y-3">
+                {/* Permanent Deletion Warning */}
+                <div className="relative p-3 sm:p-4 rounded-xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20 backdrop-blur-sm">
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <div className="p-1.5 sm:p-2 rounded-lg bg-red-500/10">
+                      <Trash2 className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-semibold text-red-400 mb-1">⚠️ Permanent Deletion</p>
+                      <p className="text-xs text-red-300/80 leading-relaxed">
+                        This action will permanently delete this cancelled service purchase from the system. This cannot be undone and all associated data will be lost.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Confirmation Required */}
+                <div className="relative p-3 sm:p-4 rounded-xl bg-gradient-to-br from-yellow-500/5 to-amber-500/5 border border-yellow-500/20 backdrop-blur-sm">
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <div className="p-1.5 sm:p-2 rounded-lg bg-yellow-500/10">
+                      <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-semibold text-yellow-400 mb-1">📋 Confirmation Required</p>
+                      <p className="text-xs text-yellow-300/80 leading-relaxed">
+                        Are you sure you want to permanently delete this cancelled purchased service? This action is irreversible.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
 
-          {/* Warning Notice */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
-            <div className="relative p-4 rounded-2xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20">
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-xl bg-red-500/10">
-                  <Trash2 className="h-5 w-5 text-red-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-red-800 mb-1">⚠️ Permanent Deletion</p>
-                  <p className="text-xs text-red-700 leading-relaxed">
-                    This action will permanently delete this cancelled service purchase from the system. This cannot be undone and all associated data will be lost.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Confirmation Notice */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-yellow-500/10 rounded-2xl blur-xl"></div>
-            <div className="relative p-4 rounded-2xl bg-gradient-to-br from-yellow-500/5 to-yellow-500/10 border border-yellow-500/20">
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-xl bg-yellow-500/10">
-                  <StickyNote className="h-5 w-5 text-yellow-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-yellow-800 mb-1">📋 Confirmation Required</p>
-                  <p className="text-xs text-yellow-700 leading-relaxed">
-                    Are you sure you want to permanently delete this cancelled purchased service? This action is irreversible.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 pt-4">
-            <Button
-              variant="ghost"
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2 sm:pt-4">
+            <button
               onClick={() => {
                 setDeleteModalOpen(false);
                 setSelectedService(null);
                 setError(null);
               }}
               disabled={isPending}
-              className="px-6 hover:bg-surface/50 transition-all duration-200 rounded-xl"
+              className="group/cancel relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Cancel
-            </Button>
-            <Button
+              <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/cancel:scale-125 group-hover/cancel:translate-x-[2em]">
+                <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/cancel:text-cyan-100 group-hover/cancel:scale-110" />
+              </div>
+              <span className="transition-all duration-500 ease-in-out group-hover/cancel:opacity-0">
+                Cancel
+              </span>
+            </button>
+            
+            <button
               onClick={handleDeleteConfirm}
               disabled={isPending}
-              className="gap-2 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl px-8"
+              className="group/delete relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
+              {!isPending && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/delete:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+              )}
+              
               {isPending ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                  Deleting...
+                  <div className="animate-spin rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 border-2 border-white border-t-transparent" />
+                  <span>Deleting...</span>
                 </>
               ) : (
                 <>
-                  <Trash2 className="h-4 w-4" />
-                  Delete Service
+                  <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/delete:scale-125 group-hover/delete:translate-x-[3em] sm:group-hover/delete:translate-x-[4em]">
+                    <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-red-200/70 group-hover/delete:text-red-50 group-hover/delete:scale-110" />
+                  </div>
+                  <span className="transition-all duration-500 ease-in-out group-hover/delete:opacity-0">
+                    <span className="hidden sm:inline">Delete Service</span>
+                    <span className="sm:hidden">Delete</span>
+                  </span>
                 </>
               )}
-            </Button>
+            </button>
           </div>
         </div>
       </Modal>
