@@ -277,33 +277,13 @@ export function SessionBookingForm({ members, services }: SessionBookingFormProp
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-4 pt-4 sm:pt-6">
-        <AnimatedButton
-          type="button"
-          variant="outline"
-          onClick={() => router.push("/bookings")}
-          disabled={isPending}
-          className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm rounded-xl"
-        >
-          Cancel
-        </AnimatedButton>
+      <div className="flex items-center justify-between gap-3 pt-6 sm:pt-6 mt-4 sm:mt-0">
         <AnimatedButton
           type="submit"
-          variant="default"
           disabled={isPending}
-          className="w-full sm:w-auto min-w-[140px] px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm rounded-xl"
+          className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white border-0 !ring-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium"
         >
-          {isPending ? (
-            <div className="flex items-center justify-center gap-2">
-              <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-              <span>Creating...</span>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center gap-2">
-              <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              <span>Create Booking</span>
-            </div>
-          )}
+          {isPending ? "Creating..." : "Create Booking"}
         </AnimatedButton>
       </div>
     </form>
