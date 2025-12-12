@@ -31,7 +31,9 @@ import {
   Hash,
   Timer,
   Banknote,
-  X
+  X,
+  AlertCircle,
+  Briefcase
 } from "lucide-react";
 
 interface SessionBookingViewProps {
@@ -199,27 +201,6 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     </Link>
                   )}
                   
-                  {/* Confirm Button */}
-                  {booking.status === "pending" && (
-                    <button
-                      onClick={() => setConfirmModalOpen(true)}
-                      className="group/confirm relative h-8 sm:h-9 md:h-10 px-3 sm:px-4 md:px-6 flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-green-700/75 via-green-900/45 to-green-700/75 hover:from-green-600/85 hover:via-green-800/55 hover:to-green-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-green-900/30 hover:shadow-lg hover:shadow-green-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
-                    >
-                      {/* Shine Effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/confirm:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-                      
-                      {/* Icon with animation */}
-                      <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/confirm:scale-125 group-hover/confirm:translate-x-[2.5em]">
-                        <CheckCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 transition-all duration-500 ease-in-out text-green-200/70 group-hover/confirm:text-green-50 group-hover/confirm:scale-110" />
-                      </div>
-                      
-                      {/* Text */}
-                      <span className="transition-all duration-500 ease-in-out group-hover/confirm:opacity-0">
-                        Confirm
-                      </span>
-                    </button>
-                  )}
-                  
                   {/* Mark Complete Button */}
                   {(booking.status === "confirmed" || booking.status === "upcoming") && (
                     <button
@@ -240,27 +221,6 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                       </span>
                       <span className="sm:hidden transition-all duration-500 ease-in-out group-hover/complete:opacity-0">
                         Complete
-                      </span>
-                    </button>
-                  )}
-                  
-                  {/* Cancel Button */}
-                  {(booking.status === "pending" || booking.status === "confirmed" || booking.status === "upcoming") && (
-                    <button
-                      onClick={() => setCancelModalOpen(true)}
-                      className="group/cancel relative h-8 sm:h-9 md:h-10 px-3 sm:px-4 md:px-6 flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
-                    >
-                      {/* Shine Effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/cancel:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-                      
-                      {/* Icon with animation */}
-                      <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/cancel:scale-125 group-hover/cancel:translate-x-[2.3em]">
-                        <XCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 transition-all duration-500 ease-in-out text-red-200/70 group-hover/cancel:text-red-50 group-hover/cancel:scale-110" />
-                      </div>
-                      
-                      {/* Text */}
-                      <span className="transition-all duration-500 ease-in-out group-hover/cancel:opacity-0">
-                        Cancel
                       </span>
                     </button>
                   )}
@@ -331,181 +291,370 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
           </div>
         </div>
 
-        {/* Main Content - Premium 3-Column Grid */}
+        {/* Booking Information Card */}
         <Card className="group relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
           {/* Card Hover Overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
           
-          <CardContent className="relative p-4 sm:p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+          <CardHeader className="relative p-4 sm:p-5 pb-2">
+            <div className="flex items-center justify-between gap-3 sm:gap-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary/60 group-hover:text-primary transition-colors" />
+                </div>
+                <div>
+                  <CardTitle className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">
+                    Booking Information
+                  </CardTitle>
+                  <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Complete booking details and information</p>
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
+                {/* Confirm Button */}
+                {booking.status === "pending" && (
+                  <button
+                    onClick={() => setConfirmModalOpen(true)}
+                    className="group/confirm relative h-8 sm:h-9 px-3 sm:px-4 flex items-center justify-center gap-1.5 bg-gradient-to-br from-green-700/75 via-green-900/45 to-green-700/75 hover:from-green-600/85 hover:via-green-800/55 hover:to-green-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-green-900/30 hover:shadow-lg hover:shadow-green-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
+                  >
+                    {/* Shine Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/confirm:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                    
+                    {/* Icon with animation */}
+                    <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/confirm:scale-125 group-hover/confirm:translate-x-[2.5em]">
+                      <CheckCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5 transition-all duration-500 ease-in-out text-green-200/70 group-hover/confirm:text-green-50 group-hover/confirm:scale-110" />
+                    </div>
+                    
+                    {/* Text */}
+                    <span className="transition-all duration-500 ease-in-out group-hover/confirm:opacity-0">
+                      Confirm
+                    </span>
+                  </button>
+                )}
+                
+                {/* Cancel Button */}
+                {(booking.status === "pending" || booking.status === "confirmed" || booking.status === "upcoming") && (
+                  <button
+                    onClick={() => setCancelModalOpen(true)}
+                    className="group/cancel relative h-8 sm:h-9 px-3 sm:px-4 flex items-center justify-center gap-1.5 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
+                  >
+                    {/* Shine Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/cancel:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                    
+                    {/* Icon with animation */}
+                    <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/cancel:scale-125 group-hover/cancel:translate-x-[2.3em]">
+                      <XCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5 transition-all duration-500 ease-in-out text-red-200/70 group-hover/cancel:text-red-50 group-hover/cancel:scale-110" />
+                    </div>
+                    
+                    {/* Text */}
+                    <span className="transition-all duration-500 ease-in-out group-hover/cancel:opacity-0">
+                      Cancel
+                    </span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </CardHeader>
+          
+          <CardContent className="relative p-4 sm:p-5 pt-2">
+            <div className="grid lg:grid-cols-3 gap-2.5 sm:gap-3">
               
               {/* Column 1: Booking Details */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 mb-3">
+              <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
+                {/* Header */}
+                <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
                   <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
-                    <Calendar className="h-4 w-4 text-primary" />
+                    <Calendar className="h-3.5 w-3.5 text-primary" />
                   </div>
-                  <h3 className="text-sm font-bold text-text uppercase tracking-wider">Booking Details</h3>
+                  <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Booking Details</h3>
                 </div>
                 
+                {/* Cards */}
                 <div className="space-y-2">
                   {/* Date */}
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                    <p className="text-[10px] text-primary/70 mb-0.5 uppercase tracking-wide">Date</p>
-                    <p className="text-xs font-semibold text-text">{format(new Date(booking.booking_date), "MMMM dd, yyyy")}</p>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                    <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                      <Calendar className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Booking Date</p>
+                      <p className="text-xs text-text font-semibold truncate">{format(new Date(booking.booking_date), "MMMM dd, yyyy")}</p>
+                    </div>
                   </div>
                   
                   {/* Time */}
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                    <p className="text-[10px] text-primary/70 mb-0.5 uppercase tracking-wide">Time</p>
-                    <p className="text-xs font-semibold text-text">
-                      {timeFormat === '12h' ? format(new Date(booking.booking_date), "h:mm a") : format(new Date(booking.booking_date), "HH:mm")}
-                    </p>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                    <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                      <Clock className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Time</p>
+                      <p className="text-xs text-text font-semibold truncate">
+                        {timeFormat === '12h' ? format(new Date(booking.booking_date), "h:mm a") : format(new Date(booking.booking_date), "HH:mm")}
+                      </p>
+                    </div>
                   </div>
                   
                   {/* Status */}
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                    <p className="text-[10px] text-primary/70 mb-1 uppercase tracking-wide">Status</p>
-                    <Badge 
-                      variant={booking.status === "completed" ? "default" : booking.status === "cancelled" ? "destructive" : "secondary"}
-                      className={`w-fit text-[10px] px-2 py-0.5 border-0 capitalize ${
-                        booking.status === "completed" ? 'bg-green-500/30 text-white' : booking.status === "cancelled" ? 'bg-red-500/30 text-white' : 'bg-orange-500/30 text-white'
-                      }`}
-                    >
-                      {booking.status}
-                    </Badge>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                    <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                      {booking.status === "pending" ? (
+                        <AlertCircle className="h-3.5 w-3.5 text-primary" />
+                      ) : booking.status === "cancelled" ? (
+                        <XCircle className="h-3.5 w-3.5 text-primary" />
+                      ) : (
+                        <CheckCircle className="h-3.5 w-3.5 text-primary" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Status</p>
+                      <Badge 
+                        variant={booking.status === "pending" ? 'secondary' : booking.status === "cancelled" ? 'destructive' : 'default'} 
+                        className={`w-fit text-[10px] px-2 py-0.5 border-0 ${
+                          booking.status === "pending" 
+                            ? 'bg-orange-500/30 text-white' 
+                            : booking.status === "cancelled" 
+                              ? 'bg-red-500/30 text-white' 
+                              : 'bg-green-500/30 text-white'
+                        }`}
+                      >
+                        {booking.status}
+                      </Badge>
+                    </div>
                   </div>
                   
                   {/* Created */}
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                    <p className="text-[10px] text-primary/70 mb-0.5 uppercase tracking-wide">Created</p>
-                    <p className="text-xs font-semibold text-text">{format(new Date(booking.created_at), "MMM dd, yyyy")}</p>
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                    <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                      <Clock className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Created</p>
+                      <p className="text-xs text-text font-semibold truncate">{format(new Date(booking.created_at), "MMM dd, yyyy")}</p>
+                    </div>
                   </div>
 
-                  {/* Completed/Cancelled */}
+                  {/* Completed */}
                   {booking.completed_date && (
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-green-500/10 to-green-500/5 backdrop-blur-sm border-0">
-                      <p className="text-[10px] text-green-600 mb-0.5 uppercase tracking-wide">Completed</p>
-                      <p className="text-xs font-semibold text-text">{format(new Date(booking.completed_date), "MMM dd, yyyy")}</p>
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <CheckCircle className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Completed</p>
+                        <p className="text-xs text-text font-semibold truncate">{format(new Date(booking.completed_date), "MMM dd, yyyy")}</p>
+                      </div>
                     </div>
                   )}
                   
+                  {/* Cancelled */}
                   {booking.cancelled_date && (
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-red-500/10 to-red-500/5 backdrop-blur-sm border-0">
-                      <p className="text-[10px] text-red-600 mb-0.5 uppercase tracking-wide">Cancelled</p>
-                      <p className="text-xs font-semibold text-text">{format(new Date(booking.cancelled_date), "MMM dd, yyyy")}</p>
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <XCircle className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Cancelled</p>
+                        <p className="text-xs text-text font-semibold truncate">{format(new Date(booking.cancelled_date), "MMM dd, yyyy")}</p>
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Column 2: Member Information */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="p-1.5 rounded-lg bg-cyan-500/10 backdrop-blur-sm">
-                    <User className="h-4 w-4 text-cyan-500" />
+              <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
+                {/* Header */}
+                <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
+                  <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                    <User className="h-3.5 w-3.5 text-primary" />
                   </div>
-                  <h3 className="text-sm font-bold text-text uppercase tracking-wider">Member Info</h3>
+                  <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Member Information</h3>
                 </div>
                 
+                {/* Cards */}
                 <div className="space-y-2">
-                  {/* Name */}
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                    <p className="text-[10px] text-primary/70 mb-0.5 uppercase tracking-wide">Full Name</p>
-                    <p className="text-xs font-semibold text-text">{booking.member?.full_name || "Unknown"}</p>
+                  {/* Full Name */}
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                    <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                      <User className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Full Name</p>
+                      <p className="text-xs text-text font-semibold truncate">{booking.member?.full_name || "Unknown"}</p>
+                    </div>
                   </div>
                   
                   {/* Email */}
                   {booking.member?.email && (
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                      <p className="text-[10px] text-primary/70 mb-0.5 uppercase tracking-wide">Email</p>
-                      <a href={`mailto:${booking.member.email}`} className="text-xs font-semibold text-cyan-500 hover:underline truncate block">
-                        {booking.member.email}
-                      </a>
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <Mail className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Email</p>
+                        <a href={`mailto:${booking.member.email}`} className="text-xs text-primary font-semibold hover:underline truncate block">
+                          {booking.member.email}
+                        </a>
+                      </div>
                     </div>
                   )}
                   
                   {/* Phone */}
                   {booking.member?.phone && (
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                      <p className="text-[10px] text-primary/70 mb-0.5 uppercase tracking-wide">Phone</p>
-                      <a href={`tel:${booking.member.phone}`} className="text-xs font-semibold text-cyan-500 hover:underline">
-                        {booking.member.phone}
-                      </a>
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <Phone className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Phone</p>
+                        <a href={`tel:${booking.member.phone}`} className="text-xs text-primary font-semibold hover:underline truncate block">
+                          {booking.member.phone}
+                        </a>
+                      </div>
                     </div>
                   )}
                   
-                  {/* Member Status */}
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                    <p className="text-[10px] text-primary/70 mb-1 uppercase tracking-wide">Member Status</p>
-                    <Badge className={`w-fit text-[10px] px-2 py-0.5 border-0 ${
-                      booking.member?.status === "active" ? 'bg-green-500/30 text-white' : 'bg-red-500/30 text-white'
-                    }`}>
-                      {booking.member?.status || "Unknown"}
-                    </Badge>
+                  {/* Membership Status */}
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                    <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                      <CheckCircle className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Membership Status</p>
+                      <Badge 
+                        variant={booking.member?.status === "active" ? "default" : "secondary"}
+                        className={`w-fit text-[10px] px-2 py-0.5 border-0 ${
+                          booking.member?.status === "active" 
+                            ? "bg-green-500/30 text-white" 
+                            : "bg-red-500/30 text-white"
+                        }`}
+                      >
+                        {booking.member?.status || "Unknown"}
+                      </Badge>
+                    </div>
                   </div>
                   
-                  {/* Plan */}
+                  {/* Plan Name */}
                   {booking.member?.plan_name && (
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                      <p className="text-[10px] text-primary/70 mb-0.5 uppercase tracking-wide">Plan</p>
-                      <p className="text-xs font-semibold text-text">{booking.member.plan_name}</p>
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <Package className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Plan</p>
+                        <p className="text-xs text-text font-semibold truncate">{booking.member.plan_name}</p>
+                      </div>
                     </div>
                   )}
                   
-                  {/* View Profile Link */}
-                  <Link href={`/members/${booking.member_id}/view`} className="mt-3 block">
-                    <button className="group/btn relative overflow-hidden h-9 px-4 sm:px-6 w-auto mx-auto flex items-center justify-center gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out border-0 !ring-0 !outline-none active:scale-95 before:content-[''] before:absolute before:top-[7%] before:left-0 before:w-0 before:h-[86%] before:opacity-0 before:bg-accent before:shadow-[0_0_50px_30px_rgb(68,228,228)] before:transform before:skew-x-[-20deg] before:transition-all before:duration-500 hover:before:animate-shine">
-                      <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/btn:scale-125 group-hover/btn:translate-x-[3.5em]">
-                        <User className="h-3.5 w-3.5 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/btn:text-cyan-100 group-hover/btn:scale-110" />
-                      </div>
-                      <span className="transition-all duration-500 ease-in-out group-hover/btn:opacity-0">View Profile</span>
-                    </button>
-                  </Link>
+                  {/* View Profile Button */}
+                  <div className="pt-2">
+                    <Link href={`/members/${booking.member_id}/view`}>
+                      <button className="group/btn relative overflow-hidden h-9 px-4 sm:px-6 w-auto mx-auto flex items-center justify-center gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out border-0 !ring-0 !outline-none active:scale-95 before:content-[''] before:absolute before:top-[7%] before:left-0 before:w-0 before:h-[86%] before:opacity-0 before:bg-accent before:shadow-[0_0_50px_30px_rgb(68,228,228)] before:transform before:skew-x-[-20deg] before:transition-all before:duration-500 hover:before:animate-shine">
+                        <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/btn:scale-125 group-hover/btn:translate-x-[3.5em]">
+                          <User className="h-3.5 w-3.5 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/btn:text-cyan-100 group-hover/btn:scale-110" />
+                        </div>
+                        <span className="transition-all duration-500 ease-in-out group-hover/btn:opacity-0">View Profile</span>
+                      </button>
+                    </Link>
+                  </div>
                 </div>
               </div>
 
-              {/* Column 3: Service Info */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="p-1.5 rounded-lg bg-green-500/10 backdrop-blur-sm">
-                    <Package className="h-4 w-4 text-green-500" />
+              {/* Column 3: Service Information & Quick Actions */}
+              <div className="space-y-2.5 sm:space-y-3">
+                {/* Service Information */}
+                <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
+                  {/* Header */}
+                  <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
+                    <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                      <Briefcase className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Service Information</h3>
                   </div>
-                  <h3 className="text-sm font-bold text-text uppercase tracking-wider">Service Info</h3>
-                </div>
-                
-                <div className="space-y-2">
-                  {/* Duration & Price */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                      <p className="text-[10px] text-primary/70 mb-0.5 uppercase tracking-wide">Duration</p>
-                      <p className="text-xs font-semibold text-text">{booking.service?.duration_minutes || 60}m</p>
+                  
+                  {/* Cards */}
+                  <div className="space-y-2">
+                    {/* Service Name */}
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <Package className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Service Name</p>
+                        <p className="text-xs text-text font-semibold truncate">{booking.service?.name || "Unknown Service"}</p>
+                      </div>
                     </div>
                     
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                      <p className="text-[10px] text-primary/70 mb-0.5 uppercase tracking-wide">Price</p>
-                      <p className="text-xs font-semibold text-text">{booking.service?.price?.toFixed(0) || "0"} RON</p>
+                    {/* Duration & Price */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Timer className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Duration</p>
+                          <p className="text-xs text-text font-semibold truncate">{booking.service?.duration_minutes || 60} min</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Banknote className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Price</p>
+                          <p className="text-xs text-text font-semibold truncate">{booking.service?.price?.toFixed(2) || "0.00"} RON</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Description */}
+                    {booking.service?.description && (
+                      <div className="flex items-start gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm mt-0.5">
+                          <FileText className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Description</p>
+                          <p className="text-xs text-text font-semibold leading-relaxed">{booking.service.description}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Booking Notes */}
+                {booking.notes && (
+                  <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
+                    {/* Header */}
+                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
+                      <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                        <FileText className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Booking Notes</h3>
+                    </div>
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
+                      <p className="text-xs text-text whitespace-pre-wrap leading-relaxed">
+                        {booking.notes}
+                      </p>
                     </div>
                   </div>
-                  
-                  {/* Description */}
-                  {booking.service?.description && (
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0">
-                      <p className="text-[10px] text-primary/70 mb-1.5 uppercase tracking-wide">Description</p>
-                      <p className="text-xs text-text/80 leading-relaxed">{booking.service.description}</p>
+                )}
+                
+                {/* Quick Actions */}
+                <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
+                  {/* Header */}
+                  <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
+                    <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                      <Hash className="h-3.5 w-3.5 text-primary" />
                     </div>
-                  )}
+                    <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Quick Actions</h3>
+                  </div>
                   
-                  {/* Notes */}
-                  {booking.notes && (
-                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 backdrop-blur-sm border-0">
-                      <p className="text-[10px] text-purple-600 mb-1.5 uppercase tracking-wide">Booking Notes</p>
-                      <p className="text-xs text-text/80 leading-relaxed">{booking.notes}</p>
-                    </div>
-                  )}
-                  
-                  {/* Quick Actions */}
-                  <div className="pt-2 flex flex-col gap-3">
+                  {/* Action Buttons */}
+                  <div className="flex flex-col gap-3">
                     <Link href="/bookings">
                       <button className="group/btn relative overflow-hidden h-9 px-4 sm:px-6 w-auto mx-auto flex items-center justify-center gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out border-0 !ring-0 !outline-none active:scale-95 before:content-[''] before:absolute before:top-[7%] before:left-0 before:w-0 before:h-[86%] before:opacity-0 before:bg-accent before:shadow-[0_0_50px_30px_rgb(68,228,228)] before:transform before:skew-x-[-20deg] before:transition-all before:duration-500 hover:before:animate-shine">
                         <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/btn:scale-125 group-hover/btn:translate-x-[3.5em]">
