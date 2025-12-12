@@ -36,18 +36,14 @@ export default function SupabaseProvider({
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN") {
-        router.refresh();
-      }
-
+      // Only handle sign out - redirect to login
       if (event === "SIGNED_OUT") {
         router.push("/login");
-        router.refresh();
       }
-
-      if (event === "TOKEN_REFRESHED") {
-        router.refresh();
-      }
+      
+      // Don't refresh on SIGNED_IN or TOKEN_REFRESHED
+      // This prevents reload loops and unnecessary page refreshes
+      // Server components will automatically get fresh data on navigation
     });
 
     return () => subscription.unsubscribe();
