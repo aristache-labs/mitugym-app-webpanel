@@ -209,7 +209,7 @@ export function SessionBookingForm({ members, services }: SessionBookingFormProp
         </div>
 
         {/* Booking Date */}
-        <div className="mb-3 sm:mb-0 mt-6">
+        <div className="mb-3 sm:mb-0 mt-4 sm:mt-6">
           <FloatingLabelInput
             id="booking_date"
             label="Booking Date & Time"
@@ -223,7 +223,7 @@ export function SessionBookingForm({ members, services }: SessionBookingFormProp
         </div>
 
         {/* Status */}
-        <div className="mb-3 sm:mb-0 mt-6">
+        <div className="mb-3 sm:mb-0 mt-4 sm:mt-6">
           <FloatingLabelSelect
             label="Status"
             icon={<Clock className="h-4 w-4" />}
