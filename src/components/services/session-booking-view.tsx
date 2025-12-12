@@ -283,27 +283,27 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                 </div>
               </div>
 
-              {/* Quick Stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border-0">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20 border-0">
-                      <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+              {/* Quick Stats - Compact 3 Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border-0">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-primary/20 border-0">
+                      <Calendar className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs sm:text-sm font-medium text-muted/70">Booking Date</p>
-                      <p className="text-xl sm:text-2xl font-bold text-text">{format(new Date(booking.booking_date), "MMM dd, yyyy")}</p>
+                      <p className="text-[10px] sm:text-xs font-medium text-muted/70">Booking Date</p>
+                      <p className="text-base sm:text-lg font-bold text-text">{format(new Date(booking.booking_date), "MMM dd, yyyy")}</p>
                     </div>
                   </div>
                 </div>
-                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-0">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="p-1.5 sm:p-2 rounded-lg bg-blue-500/20 border-0">
-                      <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
+                <div className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-0">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-blue-500/20 border-0">
+                      <Clock className="h-4 w-4 text-blue-500" />
                     </div>
                     <div>
-                      <p className="text-xs sm:text-sm font-medium text-muted/70">Time</p>
-                      <p className="text-xl sm:text-2xl font-bold text-text">
+                      <p className="text-[10px] sm:text-xs font-medium text-muted/70">Time</p>
+                      <p className="text-base sm:text-lg font-bold text-text">
                         {timeFormat === '12h' 
                           ? format(new Date(booking.booking_date), "h:mm a")
                           : format(new Date(booking.booking_date), "HH:mm")
@@ -312,51 +312,14 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     </div>
                   </div>
                 </div>
-                <div className={`p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br border-0 ${
-                  booking.status === "completed"
-                    ? 'from-green-500/10 to-green-500/15'
-                    : booking.status === "cancelled"
-                    ? 'from-red-500/10 to-red-500/15'
-                    : 'from-orange-500/10 to-orange-500/15'
-                }`}>
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className={`p-1.5 sm:p-2 rounded-lg border-0 ${
-                      booking.status === "completed"
-                        ? 'bg-green-500/20'
-                        : booking.status === "cancelled"
-                        ? 'bg-red-500/20'
-                        : 'bg-orange-500/20'
-                    }`}>
-                      {booking.status === "completed" ? (
-                        <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
-                      ) : booking.status === "cancelled" ? (
-                        <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
-                      ) : (
-                        <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
-                      )}
+                <div className="p-2.5 sm:p-3 rounded-xl bg-gradient-to-br from-cyan-500/5 to-cyan-500/10 border-0">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 rounded-lg bg-cyan-500/20 border-0">
+                      <Package className="h-4 w-4 text-cyan-500" />
                     </div>
                     <div>
-                      <p className="text-xs sm:text-sm font-medium text-muted/70">Status</p>
-                      <p className={`text-base sm:text-lg font-bold capitalize ${
-                        booking.status === "completed"
-                          ? 'text-green-600'
-                          : booking.status === "cancelled"
-                          ? 'text-red-600'
-                          : 'text-orange-600'
-                      }`}>
-                        {booking.status}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-cyan-500/5 to-cyan-500/10 border-0">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="p-1.5 sm:p-2 rounded-lg bg-cyan-500/20 border-0">
-                      <Package className="h-4 w-4 sm:h-5 sm:w-5 text-cyan-500" />
-                    </div>
-                    <div>
-                      <p className="text-xs sm:text-sm font-medium text-muted/70">Remaining</p>
-                      <p className="text-xl sm:text-2xl font-bold text-text">
+                      <p className="text-[10px] sm:text-xs font-medium text-muted/70">Sessions Left</p>
+                      <p className="text-base sm:text-lg font-bold text-text">
                         {booking.sessions_remaining !== undefined ? booking.sessions_remaining : "N/A"}
                       </p>
                     </div>
@@ -367,11 +330,11 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
           </div>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          {/* Left Column - Main Booking Info */}
-          <div className="lg:col-span-2 space-y-4 sm:space-y-6 md:space-y-8">
-            {/* Booking Information Card */}
+        {/* Main Content - Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          {/* Left Column */}
+          <div className="space-y-4 sm:space-y-6">
+            {/* Booking Information Card - Compact */}
             <Card className="group relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
               {/* Card Hover Overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
@@ -385,228 +348,190 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     <CardTitle className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">
                       Booking Information
                     </CardTitle>
-                    <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Date, time and status details</p>
+                    <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Core booking details</p>
                   </div>
                 </div>
               </CardHeader>
                 
               <CardContent className="relative p-4 sm:p-5 pt-2">
-                <div className="grid lg:grid-cols-3 gap-2.5 sm:gap-3">
-                  
-                  {/* Basic Details Container */}
-                  <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
-                    {/* Header */}
-                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
-                      <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
-                        <Calendar className="h-3.5 w-3.5 text-primary" />
-                      </div>
-                      <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Basic Details</h3>
+                {/* Compact Grid - 5 Items */}
+                <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
+                  {/* Booking Date */}
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                    <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                      <Calendar className="h-3.5 w-3.5 text-primary" />
                     </div>
-                    
-                    {/* Cards */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
-                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
-                          <Calendar className="h-3.5 w-3.5 text-primary" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Booking Date</p>
-                          <p className="text-xs text-text font-semibold truncate">
-                            {format(new Date(booking.booking_date), "MMMM dd, yyyy")}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
-                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
-                          <Clock className="h-3.5 w-3.5 text-primary" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Time</p>
-                          <p className="text-xs text-text font-semibold truncate">
-                            {timeFormat === '12h' 
-                              ? format(new Date(booking.booking_date), "h:mm a")
-                              : format(new Date(booking.booking_date), "HH:mm")
-                            }
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
-                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
-                          {booking.status === "completed" ? (
-                            <CheckCircle className="h-3.5 w-3.5 text-primary" />
-                          ) : booking.status === "cancelled" ? (
-                            <XCircle className="h-3.5 w-3.5 text-primary" />
-                          ) : (
-                            <Clock className="h-3.5 w-3.5 text-primary" />
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Status</p>
-                          <div className="mt-0.5">
-                            <Badge 
-                              variant={booking.status === "completed" ? "default" : booking.status === "cancelled" ? "destructive" : "secondary"}
-                              className={`w-fit text-[10px] px-2 py-0.5 border-0 capitalize ${
-                                booking.status === "completed"
-                                  ? 'bg-green-500/30 text-white' 
-                                  : booking.status === "cancelled"
-                                  ? 'bg-red-500/30 text-white'
-                                  : 'bg-orange-500/30 text-white'
-                              }`}
-                            >
-                              {booking.status}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Date</p>
+                      <p className="text-xs text-text font-semibold truncate">
+                        {format(new Date(booking.booking_date), "MMM dd, yyyy")}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Time */}
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                    <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                      <Clock className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Time</p>
+                      <p className="text-xs text-text font-semibold truncate">
+                        {timeFormat === '12h' 
+                          ? format(new Date(booking.booking_date), "h:mm a")
+                          : format(new Date(booking.booking_date), "HH:mm")
+                        }
+                      </p>
                     </div>
                   </div>
 
-                  {/* Timestamps Container */}
-                  <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
-                    {/* Header */}
-                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
-                      <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                  {/* Status */}
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                    <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                      {booking.status === "completed" ? (
+                        <CheckCircle className="h-3.5 w-3.5 text-primary" />
+                      ) : booking.status === "cancelled" ? (
+                        <XCircle className="h-3.5 w-3.5 text-primary" />
+                      ) : (
                         <Clock className="h-3.5 w-3.5 text-primary" />
-                      </div>
-                      <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Timestamps</h3>
+                      )}
                     </div>
-                    
-                    {/* Cards */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
-                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
-                          <Calendar className="h-3.5 w-3.5 text-primary" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Created</p>
-                          <p className="text-xs text-text font-semibold truncate">
-                            {format(new Date(booking.created_at), "MMM dd, yyyy")}
-                          </p>
-                        </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Status</p>
+                      <div className="mt-0.5">
+                        <Badge 
+                          variant={booking.status === "completed" ? "default" : booking.status === "cancelled" ? "destructive" : "secondary"}
+                          className={`w-fit text-[10px] px-2 py-0.5 border-0 capitalize ${
+                            booking.status === "completed"
+                              ? 'bg-green-500/30 text-white' 
+                              : booking.status === "cancelled"
+                              ? 'bg-red-500/30 text-white'
+                              : 'bg-orange-500/30 text-white'
+                          }`}
+                        >
+                          {booking.status}
+                        </Badge>
                       </div>
-                      
-                      {booking.completed_date && (
-                        <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
-                          <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
-                            <CheckCircle className="h-3.5 w-3.5 text-primary" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Completed</p>
-                            <p className="text-xs text-text font-semibold truncate">
-                              {format(new Date(booking.completed_date), "MMM dd, yyyy")}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                      
-                      {booking.cancelled_date && (
-                        <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
-                          <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
-                            <XCircle className="h-3.5 w-3.5 text-primary" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Cancelled</p>
-                            <p className="text-xs text-text font-semibold truncate">
-                              {format(new Date(booking.cancelled_date), "MMM dd, yyyy")}
-                            </p>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
 
-                  {/* Sessions Container */}
-                  <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
-                    {/* Header */}
-                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
-                      <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
-                        <Hash className="h-3.5 w-3.5 text-primary" />
-                      </div>
-                      <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Session Info</h3>
+                  {/* Created */}
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                    <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                      <Calendar className="h-3.5 w-3.5 text-primary" />
                     </div>
-
-                    {/* Cards */}
-                    <div className="space-y-2">
-                      {booking.sessions_remaining !== undefined && (
-                        <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
-                          <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
-                            <Package className="h-3.5 w-3.5 text-primary" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Remaining</p>
-                            <p className="text-xs text-text font-semibold truncate">{booking.sessions_remaining}</p>
-                          </div>
-                        </div>
-                      )}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Created</p>
+                      <p className="text-xs text-text font-semibold truncate">
+                        {format(new Date(booking.created_at), "MMM dd, yyyy")}
+                      </p>
                     </div>
                   </div>
+
+                  {/* Remaining Sessions */}
+                  {booking.sessions_remaining !== undefined && (
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm col-span-2">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <Package className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Sessions Remaining</p>
+                        <p className="text-xs text-text font-semibold truncate">{booking.sessions_remaining}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Completed Date - Conditional */}
+                  {booking.completed_date && (
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-green-500/10 to-green-500/5 backdrop-blur-sm border-0 shadow-sm col-span-2">
+                      <div className="p-1.5 rounded-md bg-green-500/20 backdrop-blur-sm">
+                        <CheckCircle className="h-3.5 w-3.5 text-green-600" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-green-600 uppercase tracking-wide">Completed On</p>
+                        <p className="text-xs text-text font-semibold truncate">
+                          {format(new Date(booking.completed_date), "MMM dd, yyyy 'at' h:mm a")}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   
+                  {/* Cancelled Date - Conditional */}
+                  {booking.cancelled_date && (
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-red-500/10 to-red-500/5 backdrop-blur-sm border-0 shadow-sm col-span-2">
+                      <div className="p-1.5 rounded-md bg-red-500/20 backdrop-blur-sm">
+                        <XCircle className="h-3.5 w-3.5 text-red-600" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-red-600 uppercase tracking-wide">Cancelled On</p>
+                        <p className="text-xs text-text font-semibold truncate">
+                          {format(new Date(booking.cancelled_date), "MMM dd, yyyy 'at' h:mm a")}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Service Details Card */}
+            {/* Service Details Card - Compact */}
             <Card className="group relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-green-500/40 overflow-hidden rounded-2xl sm:rounded-3xl">
               {/* Card Hover Overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/2 via-green-500/1 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
               
-              <CardHeader className="relative p-4 sm:p-5 pb-2 sm:pb-3">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="p-1.5 rounded-lg bg-green-500/10 group-hover:bg-green-500/20 transition-colors">
-                      <Package className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 group-hover:text-green-500 transition-colors" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-base sm:text-lg font-semibold text-text group-hover:text-green-600 transition-colors">
-                        Service Details
-                      </CardTitle>
-                      <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Service information and pricing</p>
-                    </div>
+              <CardHeader className="relative p-4 sm:p-5 pb-2">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="p-1.5 rounded-lg bg-green-500/10 group-hover:bg-green-500/20 transition-colors">
+                    <Package className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 group-hover:text-green-500 transition-colors" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-base sm:text-lg font-semibold text-text group-hover:text-green-600 transition-colors">
+                      Service Details
+                    </CardTitle>
+                    <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Service information</p>
                   </div>
                 </div>
               </CardHeader>
                 
-              <CardContent className="relative p-4 sm:p-5 pt-0">
+              <CardContent className="relative p-4 sm:p-5 pt-2">
                 {/* Service Name Banner */}
-                <div className="p-3 sm:p-4 mb-3 rounded-xl bg-gradient-to-br from-green-500/10 to-green-500/5 backdrop-blur-sm border-0 shadow-sm">
+                <div className="p-3 mb-2.5 rounded-xl bg-gradient-to-br from-green-500/10 to-green-500/5 backdrop-blur-sm border-0 shadow-sm">
                   <p className="text-[10px] font-medium text-green-600 uppercase tracking-wide mb-1">Service Name</p>
-                  <p className="text-base sm:text-lg font-bold text-text">{booking.service?.name || "Unknown Service"}</p>
+                  <p className="text-sm sm:text-base font-bold text-text">{booking.service?.name || "Unknown Service"}</p>
                 </div>
 
-                {/* Service Info Grid */}
-                <div className="grid sm:grid-cols-3 gap-2 sm:gap-3 mb-3">
-                  <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 backdrop-blur-sm border-0 shadow-sm">
+                {/* Service Info Grid - 2 Columns */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 shadow-sm">
                     <div className="p-1.5 rounded-md bg-blue-500/20 backdrop-blur-sm">
                       <Timer className="h-3.5 w-3.5 text-blue-600" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[10px] font-medium text-blue-600 uppercase tracking-wide">Duration</p>
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Duration</p>
                       <p className="text-xs text-text font-semibold truncate">
                         {booking.service?.duration_minutes || 60} min
                       </p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-green-500/10 to-green-500/5 backdrop-blur-sm border-0 shadow-sm">
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 shadow-sm">
                     <div className="p-1.5 rounded-md bg-green-500/20 backdrop-blur-sm">
                       <Banknote className="h-3.5 w-3.5 text-green-600" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[10px] font-medium text-green-600 uppercase tracking-wide">Price</p>
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Price</p>
                       <p className="text-xs text-text font-semibold truncate">
                         {booking.service?.price?.toFixed(2) || "0.00"} RON
                       </p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-orange-500/10 to-orange-500/5 backdrop-blur-sm border-0 shadow-sm">
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 shadow-sm col-span-2">
                     <div className="p-1.5 rounded-md bg-orange-500/20 backdrop-blur-sm">
                       <Package className="h-3.5 w-3.5 text-orange-600" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[10px] font-medium text-orange-600 uppercase tracking-wide">Type</p>
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Service Type</p>
                       <p className="text-xs text-text font-semibold truncate capitalize">
                         {booking.service?.service_type?.replace('_', ' ') || "N/A"}
                       </p>
@@ -616,53 +541,23 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
 
                 {/* Description */}
                 {booking.service?.description && (
-                  <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 backdrop-blur-sm border-0 shadow-sm">
-                    <div className="flex items-center gap-2 mb-2">
-                      <FileText className="h-3.5 w-3.5 text-purple-600" />
-                      <p className="text-[10px] font-medium text-purple-600 uppercase tracking-wide">Description</p>
+                  <div className="p-3 mt-2.5 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <FileText className="h-3.5 w-3.5 text-primary" />
+                      <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Description</p>
                     </div>
-                    <p className="text-xs sm:text-sm text-text/90 leading-relaxed">
+                    <p className="text-xs text-text/90 leading-relaxed">
                       {booking.service.description}
                     </p>
                   </div>
                 )}
               </CardContent>
             </Card>
-
-            {/* Notes */}
-            {booking.notes && (
-              <Card className="group relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
-                {/* Card Hover Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
-                
-                <CardHeader className="relative p-4 sm:p-5 pb-2">
-                  <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                      <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary/60 group-hover:text-primary transition-colors" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">
-                        Booking Notes
-                      </CardTitle>
-                      <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Additional booking information</p>
-                    </div>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="relative p-4 sm:p-5 pt-2">
-                  <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
-                    <p className="text-xs sm:text-sm text-text whitespace-pre-wrap leading-relaxed">
-                      {booking.notes}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </div>
 
-          {/* Right Column - Member Info */}
-          <div className="space-y-4 sm:space-y-6 md:space-y-8">
-            {/* Member Information */}
+          {/* Right Column - Member Info & Quick Actions */}
+          <div className="space-y-4 sm:space-y-6">
+            {/* Member Information - Compact */}
             <Card className="group relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
               {/* Card Hover Overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
@@ -676,15 +571,16 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     <CardTitle className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">
                       Member Information
                     </CardTitle>
-                    <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Contact and membership details</p>
+                    <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Contact details</p>
                   </div>
                 </div>
               </CardHeader>
               
               <CardContent className="relative p-4 sm:p-5 pt-2">
-                <div className="space-y-2.5 sm:space-y-3">
-                  {/* Full Name */}
-                  <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
+                {/* Compact Grid */}
+                <div className="grid grid-cols-2 gap-2">
+                  {/* Full Name - Full Width */}
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 shadow-sm col-span-2">
                     <div className="p-1.5 rounded-md bg-primary/15 backdrop-blur-sm">
                       <User className="h-3.5 w-3.5 text-primary" />
                     </div>
@@ -694,9 +590,9 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     </div>
                   </div>
 
-                  {/* Contact Information */}
+                  {/* Email - Full Width */}
                   {booking.member?.email && (
-                    <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 shadow-sm col-span-2">
                       <div className="p-1.5 rounded-md bg-primary/15 backdrop-blur-sm">
                         <Mail className="h-3.5 w-3.5 text-primary" />
                       </div>
@@ -712,8 +608,9 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     </div>
                   )}
 
+                  {/* Phone - Full Width */}
                   {booking.member?.phone && (
-                    <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 shadow-sm col-span-2">
                       <div className="p-1.5 rounded-md bg-primary/15 backdrop-blur-sm">
                         <Phone className="h-3.5 w-3.5 text-primary" />
                       </div>
@@ -729,20 +626,8 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     </div>
                   )}
 
-                  {/* Member Details */}
-                  {booking.member?.gender && (
-                    <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
-                      <div className="p-1.5 rounded-md bg-primary/15 backdrop-blur-sm">
-                        <User className="h-3.5 w-3.5 text-primary" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Gender</p>
-                        <p className="text-xs text-text font-semibold truncate capitalize">{booking.member.gender}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
+                  {/* Status & Plan - Two Columns */}
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 shadow-sm">
                     <div className="p-1.5 rounded-md bg-primary/15 backdrop-blur-sm">
                       <CheckCircle className="h-3.5 w-3.5 text-primary" />
                     </div>
@@ -762,7 +647,7 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                   </div>
 
                   {booking.member?.plan_name && (
-                    <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 shadow-sm">
                       <div className="p-1.5 rounded-md bg-primary/15 backdrop-blur-sm">
                         <Package className="h-3.5 w-3.5 text-primary" />
                       </div>
@@ -772,28 +657,28 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                       </div>
                     </div>
                   )}
+                </div>
 
-                  {/* View Profile Button */}
-                  <div className="pt-2">
-                    <Link href={`/members/${booking.member_id}/view`}>
-                      <button className="group/view relative h-9 sm:h-10 px-4 sm:px-6 w-full flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95">
-                        {/* Icon */}
-                        <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/view:scale-125 group-hover/view:translate-x-[5.8em]">
-                          <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/view:text-cyan-100 group-hover/view:scale-110" />
-                        </div>
-                        
-                        {/* Text */}
-                        <span className="transition-all duration-500 ease-in-out group-hover/view:opacity-0">
-                          View Member Profile
-                        </span>
-                      </button>
-                    </Link>
-                  </div>
+                {/* View Profile Button */}
+                <div className="mt-3">
+                  <Link href={`/members/${booking.member_id}/view`}>
+                    <button className="group/view relative h-9 px-4 w-full flex items-center justify-center gap-1.5 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95">
+                      {/* Icon */}
+                      <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/view:scale-125 group-hover/view:translate-x-[5.8em]">
+                        <User className="h-3.5 w-3.5 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/view:text-cyan-100 group-hover/view:scale-110" />
+                      </div>
+                      
+                      {/* Text */}
+                      <span className="transition-all duration-500 ease-in-out group-hover/view:opacity-0">
+                        View Member Profile
+                      </span>
+                    </button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Quick Actions */}
+            {/* Quick Actions - Compact */}
             <Card className="group relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
               {/* Card Hover Overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
@@ -807,19 +692,19 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     <CardTitle className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">
                       Quick Actions
                     </CardTitle>
-                    <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Navigate to related pages</p>
+                    <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Navigate</p>
                   </div>
                 </div>
               </CardHeader>
               
               <CardContent className="relative p-4 sm:p-5 pt-2">
-                <div className="space-y-3">
-                  {/* Action Buttons */}
+                <div className="space-y-2">
+                  {/* Action Buttons - Compact */}
                   <Link href="/bookings">
-                    <button className="group/action relative h-9 sm:h-10 px-4 sm:px-6 w-full flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95">
+                    <button className="group/action relative h-9 px-4 w-full flex items-center justify-center gap-1.5 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95">
                       {/* Icon */}
                       <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/action:scale-125 group-hover/action:translate-x-[3.8em]">
-                        <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/action:text-cyan-100 group-hover/action:scale-110" />
+                        <Calendar className="h-3.5 w-3.5 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/action:text-cyan-100 group-hover/action:scale-110" />
                       </div>
                       
                       {/* Text */}
@@ -829,10 +714,10 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     </button>
                   </Link>
                   <Link href="/services">
-                    <button className="group/action relative h-9 sm:h-10 px-4 sm:px-6 w-full flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95">
+                    <button className="group/action relative h-9 px-4 w-full flex items-center justify-center gap-1.5 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95">
                       {/* Icon */}
                       <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/action:scale-125 group-hover/action:translate-x-[3.5em]">
-                        <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/action:text-cyan-100 group-hover/action:scale-110" />
+                        <Clock className="h-3.5 w-3.5 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/action:text-cyan-100 group-hover/action:scale-110" />
                       </div>
                       
                       {/* Text */}
@@ -844,6 +729,36 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                 </div>
               </CardContent>
             </Card>
+
+            {/* Notes - If exists */}
+            {booking.notes && (
+              <Card className="group relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
+                {/* Card Hover Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
+                
+                <CardHeader className="relative p-4 sm:p-5 pb-2">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                      <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-primary/60 group-hover:text-primary transition-colors" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">
+                        Booking Notes
+                      </CardTitle>
+                      <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Additional info</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="relative p-4 sm:p-5 pt-2">
+                  <div className="p-3 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
+                    <p className="text-xs text-text whitespace-pre-wrap leading-relaxed">
+                      {booking.notes}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
