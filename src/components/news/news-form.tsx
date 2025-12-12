@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { createNewsAction, updateNewsAction, type ActionResult } from "@/app/(protected)/actions";
 import { newsSchema, type NewsInput } from "@/schemas/news";
 import type { NewsItem } from "@/types";
-import { Button } from "@/components/ui/button";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -164,9 +164,15 @@ export function NewsForm({ item, onCompleted }: NewsFormProps) {
           )}
         />
         {serverError ? <p className="text-sm text-error">{serverError}</p> : null}
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {item ? "Update announcement" : "Publish announcement"}
-        </Button>
+        <div className="flex items-center justify-between gap-3 pt-6 sm:pt-6 mt-4 sm:mt-0">
+          <AnimatedButton
+            type="submit"
+            disabled={isPending}
+            className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white border-0 !ring-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium"
+          >
+            {isPending ? (item ? "Updating..." : "Publishing...") : (item ? "Update Announcement" : "Publish Announcement")}
+          </AnimatedButton>
+        </div>
       </form>
     </Form>
   );
