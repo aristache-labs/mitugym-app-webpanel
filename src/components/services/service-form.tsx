@@ -9,7 +9,7 @@ import { AnimatedButton } from "@/components/ui/animated-button";
 import { FloatingLabelInput } from "@/components/ui/floating-label-input";
 import { FloatingLabelSelect } from "@/components/ui/floating-label-select";
 import { Form, FormField, FormItem, FormControl, FormMessage } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
+import { ToggleSwitch } from "@/components/ui/toggle-switch";
 import { useToast } from "@/components/ui/toast";
 import { Service, ServiceType } from "@/types";
 import { useRouter } from "next/navigation";
@@ -342,40 +342,16 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
             }}
           />
 
-          {/* Row 5: Checkboxes and Inputs */}
+          {/* Row 5: Toggle Switches and Inputs */}
           <div className="flex flex-col lg:flex-row lg:items-start gap-4 lg:gap-8">
             {/* Requires Advance Booking Section */}
             <div className="flex-1 space-y-4 lg:space-y-6">
-              <div className="flex items-center space-x-3 py-2">
-                <div className="relative">
-                  <input
-                    id="requires_advance_booking"
-                    type="checkbox"
-                    checked={watchRequiresAdvanceBooking}
-                    onChange={(e) => form.setValue("requires_advance_booking", e.target.checked)}
-                    className="peer sr-only"
-                  />
-                  <div 
-                    className="w-5 h-5 border-2 border-surface/50 rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200 flex items-center justify-center cursor-pointer"
-                    onClick={() => form.setValue("requires_advance_booking", !watchRequiresAdvanceBooking)}
-                  >
-                    <svg 
-                      className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" 
-                      fill="currentColor" 
-                      viewBox="0 0 20 20"
-                    >
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-                <Label 
-                  htmlFor="requires_advance_booking" 
-                  className="cursor-pointer text-sm whitespace-nowrap"
-                  onClick={() => form.setValue("requires_advance_booking", !watchRequiresAdvanceBooking)}
-                >
-                  Requires advance booking
-                </Label>
-              </div>
+              <ToggleSwitch
+                id="requires_advance_booking"
+                checked={watchRequiresAdvanceBooking ?? false}
+                onChange={(checked) => form.setValue("requires_advance_booking", checked)}
+                label="Requires advance booking"
+              />
 
               {/* Advance Booking Hours (conditionally shown) */}
               {watchRequiresAdvanceBooking && (
@@ -411,36 +387,12 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
 
             {/* Service is Active Section */}
             <div className="flex-1">
-              <div className="flex items-center space-x-3 py-2">
-                <div className="relative">
-                  <input
-                    id="is_active"
-                    type="checkbox"
-                    checked={form.watch("is_active")}
-                    onChange={(e) => form.setValue("is_active", e.target.checked)}
-                    className="peer sr-only"
-                  />
-                  <div 
-                    className="w-5 h-5 border-2 border-surface/50 rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200 flex items-center justify-center cursor-pointer"
-                    onClick={() => form.setValue("is_active", !form.watch("is_active"))}
-                  >
-                    <svg 
-                      className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" 
-                      fill="currentColor" 
-                      viewBox="0 0 20 20"
-                    >
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                </div>
-                <Label 
-                  htmlFor="is_active" 
-                  className="cursor-pointer text-sm whitespace-nowrap"
-                  onClick={() => form.setValue("is_active", !form.watch("is_active"))}
-                >
-                  Service is active
-                </Label>
-              </div>
+              <ToggleSwitch
+                id="is_active"
+                checked={form.watch("is_active") ?? true}
+                onChange={(checked) => form.setValue("is_active", checked)}
+                label="Service is active"
+              />
             </div>
           </div>
 
