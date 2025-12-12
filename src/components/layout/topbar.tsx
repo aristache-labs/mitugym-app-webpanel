@@ -43,7 +43,13 @@ export function Topbar({ staff, timezone, timeFormat, onMenuClick }: TopbarProps
   }).formatToParts(currentTime).find(part => part.type === 'timeZoneName')?.value || timezone.split('/')[1];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-xl border-b border-surface/40 shadow-lg shadow-black/10">
+    <header 
+      className="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-xl border-b border-surface/40 shadow-lg shadow-black/10"
+      style={{
+        paddingTop: 'env(safe-area-inset-top)',
+        top: 0,
+      }}
+    >
       {/* Subtle gradient overlay for visual depth */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
       <div className="relative mx-auto flex max-w-[1600px] items-center justify-between px-4 py-3 lg:px-10 lg:py-4">

@@ -31,8 +31,11 @@ export default function RootLayout({
       <head>
         <meta
           name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, minimal-ui"
         />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <Script id="ios-viewport-fix" strategy="beforeInteractive">
           {`
             (function() {
@@ -47,6 +50,24 @@ export default function RootLayout({
                 setTimeout(() => meta.setAttribute("content", content), 50);
               };
 
+              const logDebug = (msg) => {
+                console.log('[ROOT LAYOUT]', msg);
+              };
+
+              const forceScrollToTop = () => {
+                const beforeY = window.scrollY;
+                const beforeDocTop = document.documentElement.scrollTop;
+                const beforeBodyTop = document.body.scrollTop;
+                
+                window.scrollTo(0, 0);
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+                
+                const afterY = window.scrollY;
+                logDebug('Scroll: ' + beforeY + '->' + afterY + ' DocTop:' + beforeDocTop + ' BodyTop:' + beforeBodyTop);
+              };
+
+
               let ticking = false;
               const onResize = () => {
                 if (ticking) return;
@@ -58,6 +79,7 @@ export default function RootLayout({
               };
 
               window.addEventListener("orientationchange", () => {
+                logDebug('orientationchange');
                 forceViewportReset();
                 setTimeout(forceViewportReset, 150);
                 setTimeout(forceViewportReset, 400);
@@ -65,8 +87,72 @@ export default function RootLayout({
 
               window.addEventListener("resize", onResize, { passive: true });
 
-              // Initial pass
+              // Log initial state
+              logDebug('INIT readyState:' + document.readyState + ' UA:' + navigator.userAgent.substring(0, 50));
+              logDebug('viewport: ' + window.innerWidth + 'x' + window.innerHeight);
+
+              // Aggressive initial scroll to top for iOS
+              forceScrollToTop();
               forceViewportReset();
+              
+              // Multiple attempts to ensure we're at top on load
+              if (document.readyState === 'loading') {
+                logDebug('Waiting for DOMContentLoaded');
+                document.addEventListener('DOMContentLoaded', () => {
+                  logDebug('DOMContentLoaded fired');
+                  forceScrollToTop();
+                  setTimeout(() => { logDebug('t+10ms'); forceScrollToTop(); }, 10);
+                  setTimeout(() => { logDebug('t+50ms'); forceScrollToTop(); }, 50);
+                  setTimeout(() => {
+                    logDebug('t+100ms');
+                    forceScrollToTop();
+                  }, 100);
+                  setTimeout(() => {
+                    logDebug('t+300ms');
+                    forceScrollToTop();
+                  }, 300);
+                  setTimeout(() => {
+                    logDebug('t+500ms FINAL scrollY=' + window.scrollY);
+                  }, 500);
+                });
+              } else {
+                logDebug('Already loaded, immediate timers');
+                setTimeout(() => { logDebug('t+10ms'); forceScrollToTop(); }, 10);
+                setTimeout(() => { logDebug('t+50ms'); forceScrollToTop(); }, 50);
+                setTimeout(() => {
+                  logDebug('t+100ms');
+                  forceScrollToTop();
+                }, 100);
+                setTimeout(() => {
+                  logDebug('t+300ms');
+                  forceScrollToTop();
+                }, 300);
+                setTimeout(() => {
+                  logDebug('t+500ms FINAL scrollY=' + window.scrollY);
+                }, 500);
+              }
+              
+              window.addEventListener('load', () => {
+                logDebug('window.load fired');
+                forceScrollToTop();
+                setTimeout(() => { logDebug('load+10ms'); forceScrollToTop(); }, 10);
+                setTimeout(() => {
+                  logDebug('load+100ms');
+                  forceScrollToTop();
+                }, 100);
+                setTimeout(() => {
+                  logDebug('load+300ms');
+                  forceScrollToTop();
+                }, 300);
+                setTimeout(() => {
+                  logDebug('load+1000ms FINAL scrollY=' + window.scrollY);
+                  // Auto-remove debug after 5 seconds
+                  setTimeout(() => {
+                    const debugEl = document.getElementById('scroll-debug');
+                    if (debugEl) debugEl.style.display = 'none';
+                  }, 5000);
+                }, 1000);
+              });
             })();
           `}
         </Script>
