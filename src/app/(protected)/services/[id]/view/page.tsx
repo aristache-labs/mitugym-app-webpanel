@@ -251,9 +251,9 @@ export default async function ServiceViewPage({ params }: ServiceViewPageProps) 
               </div>
             </div>
 
-            {/* Description Section - Shows second on mobile, second on desktop */}
+            {/* Description Section - Shows second on mobile, hidden on desktop (shown below) */}
             {service.description && (
-              <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300 lg:order-3">
+              <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300 lg:hidden">
                 <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
                   <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
                     <FileText className="h-3.5 w-3.5 text-primary" />
@@ -266,8 +266,8 @@ export default async function ServiceViewPage({ params }: ServiceViewPageProps) 
               </div>
             )}
 
-            {/* Pricing & Duration Container - Shows third on mobile, second on desktop */}
-            <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300 lg:order-2">
+            {/* Pricing & Duration Container */}
+            <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
               {/* Header */}
               <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
                 <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
@@ -310,8 +310,8 @@ export default async function ServiceViewPage({ params }: ServiceViewPageProps) 
               </div>
             </div>
 
-            {/* Settings & Configuration Container - Always last */}
-            <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300 lg:order-4">
+            {/* Settings & Configuration Container */}
+            <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
               {/* Header */}
               <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
                 <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
@@ -371,6 +371,21 @@ export default async function ServiceViewPage({ params }: ServiceViewPageProps) 
               </div>
             </div>
           </div>
+
+          {/* Description Section - Full Width on Desktop (below the 3-column grid) */}
+          {service.description && (
+            <div className="hidden lg:block mt-3 sm:mt-4 relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
+              <div className="flex items-start gap-2">
+                <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm flex-shrink-0">
+                  <FileText className="h-3.5 w-3.5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide mb-1">Description</p>
+                  <p className="text-xs text-text font-medium leading-relaxed">{service.description}</p>
+                </div>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
