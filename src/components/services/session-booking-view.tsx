@@ -201,30 +201,6 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     </Link>
                   )}
                   
-                  {/* Mark Complete Button */}
-                  {(booking.status === "confirmed" || booking.status === "upcoming") && (
-                    <button
-                      onClick={() => setCompleteModalOpen(true)}
-                      className="group/complete relative h-8 sm:h-9 md:h-10 px-3 sm:px-4 md:px-6 flex-1 sm:flex-none flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-green-700/75 via-green-900/45 to-green-700/75 hover:from-green-600/85 hover:via-green-800/55 hover:to-green-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-green-900/30 hover:shadow-lg hover:shadow-green-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
-                    >
-                      {/* Shine Effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/complete:translate-x-full transition-transform duration-1000 ease-in-out"></div>
-                      
-                      {/* Icon with animation */}
-                      <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/complete:scale-125 group-hover/complete:translate-x-[4.3em]">
-                        <CheckCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 transition-all duration-500 ease-in-out text-green-200/70 group-hover/complete:text-green-50 group-hover/complete:scale-110" />
-                      </div>
-                      
-                      {/* Text */}
-                      <span className="hidden sm:inline transition-all duration-500 ease-in-out group-hover/complete:opacity-0">
-                        Mark Complete
-                      </span>
-                      <span className="sm:hidden transition-all duration-500 ease-in-out group-hover/complete:opacity-0">
-                        Complete
-                      </span>
-                    </button>
-                  )}
-                  
                   {/* Back Button */}
                   <Link 
                     href="/bookings"
@@ -329,6 +305,27 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
                     {/* Text */}
                     <span className="transition-all duration-500 ease-in-out group-hover/confirm:opacity-0">
                       Confirm
+                    </span>
+                  </button>
+                )}
+                
+                {/* Mark Complete Button */}
+                {(booking.status === "confirmed" || booking.status === "upcoming") && (
+                  <button
+                    onClick={() => setCompleteModalOpen(true)}
+                    className="group/complete relative h-8 sm:h-9 px-3 sm:px-4 flex items-center justify-center gap-1.5 bg-gradient-to-br from-green-700/75 via-green-900/45 to-green-700/75 hover:from-green-600/85 hover:via-green-800/55 hover:to-green-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-green-900/30 hover:shadow-lg hover:shadow-green-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
+                  >
+                    {/* Shine Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/complete:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                    
+                    {/* Icon with animation */}
+                    <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/complete:scale-125 group-hover/complete:translate-x-[3.5em]">
+                      <CheckCircle className="h-3 w-3 sm:h-3.5 sm:w-3.5 transition-all duration-500 ease-in-out text-green-200/70 group-hover/complete:text-green-50 group-hover/complete:scale-110" />
+                    </div>
+                    
+                    {/* Text */}
+                    <span className="transition-all duration-500 ease-in-out group-hover/complete:opacity-0">
+                      Complete
                     </span>
                   </button>
                 )}

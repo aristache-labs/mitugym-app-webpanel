@@ -562,37 +562,32 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-4 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setCompleteModalOpen(false);
-                  setSelectedBooking(null);
-                  setError(null);
-                }}
-                disabled={isPending}
-                className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
-              >
-                <X className="h-4 w-4" />
-                Cancel
-              </Button>
-              <Button
+            <div className="flex justify-center pt-4">
+              <button
                 onClick={handleComplete}
                 disabled={isPending}
-                className="gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/40 transition-all duration-200 rounded-xl min-w-[140px]"
+                className="group/complete relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-green-700/75 via-green-900/45 to-green-700/75 hover:from-green-600/85 hover:via-green-800/55 hover:to-green-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-green-900/30 hover:shadow-lg hover:shadow-green-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
+                {!isPending && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/complete:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                )}
+                
                 {isPending ? (
                   <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Completing...
+                    <div className="animate-spin rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 border-2 border-white border-t-transparent" />
+                    <span>Completing...</span>
                   </>
                 ) : (
                   <>
-                    <CheckCircle className="h-4 w-4" />
-                    Mark Complete
+                    <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/complete:scale-125 group-hover/complete:translate-x-[4.2em]">
+                      <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-green-200/70 group-hover/complete:text-green-50 group-hover/complete:scale-110" />
+                    </div>
+                    <span className="transition-all duration-500 ease-in-out group-hover/complete:opacity-0">
+                      Mark Complete
+                    </span>
                   </>
                 )}
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -694,37 +689,32 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-4 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setCancelModalOpen(false);
-                  setSelectedBooking(null);
-                  setError(null);
-                }}
-                disabled={isPending}
-                className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
-              >
-                <X className="h-4 w-4" />
-                Keep Booking
-              </Button>
-              <Button
+            <div className="flex justify-center pt-4">
+              <button
                 onClick={handleCancel}
                 disabled={isPending}
-                className="gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl min-w-[140px]"
+                className="group/cancel relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
+                {!isPending && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/cancel:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                )}
+                
                 {isPending ? (
                   <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Cancelling...
+                    <div className="animate-spin rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 border-2 border-white border-t-transparent" />
+                    <span>Cancelling...</span>
                   </>
                 ) : (
                   <>
-                    <XCircle className="h-4 w-4" />
-                    Cancel Booking
+                    <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/cancel:scale-125 group-hover/cancel:translate-x-[4.2em]">
+                      <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-red-200/70 group-hover/cancel:text-red-50 group-hover/cancel:scale-110" />
+                    </div>
+                    <span className="transition-all duration-500 ease-in-out group-hover/cancel:opacity-0">
+                      Cancel Booking
+                    </span>
                   </>
                 )}
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -826,37 +816,32 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-4 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setDeleteModalOpen(false);
-                  setSelectedBooking(null);
-                  setError(null);
-                }}
-                disabled={isPending}
-                className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
-              >
-                <X className="h-4 w-4" />
-                Keep Booking
-              </Button>
-              <Button
+            <div className="flex justify-center pt-4">
+              <button
                 onClick={handleDelete}
                 disabled={isPending}
-                className="gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl min-w-[140px]"
+                className="group/delete relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
+                {!isPending && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/delete:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                )}
+                
                 {isPending ? (
                   <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Deleting...
+                    <div className="animate-spin rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 border-2 border-white border-t-transparent" />
+                    <span>Deleting...</span>
                   </>
                 ) : (
                   <>
-                    <Trash2 className="h-4 w-4" />
-                    Delete Booking
+                    <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/delete:scale-125 group-hover/delete:translate-x-[4.1em]">
+                      <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-red-200/70 group-hover/delete:text-red-50 group-hover/delete:scale-110" />
+                    </div>
+                    <span className="transition-all duration-500 ease-in-out group-hover/delete:opacity-0">
+                      Delete Booking
+                    </span>
                   </>
                 )}
-              </Button>
+              </button>
             </div>
           </div>
         </div>
