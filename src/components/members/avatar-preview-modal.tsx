@@ -23,7 +23,7 @@ export function AvatarPreviewModal({
   const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Handle ESC key press
+  // Handle ESC key press and prevent body scroll
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -33,13 +33,21 @@ export function AvatarPreviewModal({
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
+      
       // Prevent body scroll when modal is open
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+      
+      return () => {
+        document.removeEventListener('keydown', handleEscape);
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+      };
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
 
@@ -119,21 +127,39 @@ export function AvatarPreviewModal({
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+      className="animate-fade-in"
+      style={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem',
+        background: 'linear-gradient(to bottom right, rgba(0,0,0,0.95), rgba(0,0,0,0.9), rgba(6,182,212,0.2))',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)'
+      }}
       onClick={onClose}
     >
-      {/* Gradient Background Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/90 to-primary/20 backdrop-blur-xl" />
-      
       {/* Animated Background Glow */}
-      <div className="absolute inset-0 opacity-30">
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', opacity: 0.3, overflow: 'hidden' }}>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/30 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
 
-      {/* Modal Container */}
+      {/* Modal Container - Centered in viewport */}
       <div
-        className={`relative w-full animate-scale-in ${getModalMaxWidth()}`}
+        className={`animate-scale-in ${getModalMaxWidth()}`}
+        style={{ 
+          position: 'relative',
+          zIndex: 1,
+          maxHeight: isLandscape && isSmallScreen ? '85vh' : '90vh',
+          width: '100%'
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Glass Card with Enhanced Border */}
@@ -179,7 +205,7 @@ export function AvatarPreviewModal({
               className="relative w-full max-w-full rounded-2xl overflow-hidden group"
               style={{
                 aspectRatio: imageAspectRatio || 1,
-                maxHeight: isLandscape && isSmallScreen ? '50vh' : '70vh',
+                maxHeight: isLandscape && isSmallScreen ? '45vh' : '65vh',
               }}
             >
               {/* Image Container with Glow Effect */}
