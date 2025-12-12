@@ -139,16 +139,36 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
     });
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, compact: boolean = false) => {
+    const sizeClasses = compact 
+      ? "text-[10px] px-2 py-0.5" 
+      : "text-xs sm:text-sm";
+    const iconSize = compact ? "h-2.5 w-2.5" : "h-3 w-3";
+    
     switch (status) {
       case "approved":
-        return <Badge className="bg-green-500 text-white">Approved</Badge>;
+        return (
+          <Badge className={`bg-green-500/30 text-white border-0 rounded-full ${sizeClasses}`}>
+            <CheckCircle className={`${iconSize} mr-1`} />
+            Approved
+          </Badge>
+        );
       case "pending":
-        return <Badge className="bg-yellow-500 text-white">Pending</Badge>;
+        return (
+          <Badge className={`bg-yellow-500/30 text-white border-0 rounded-full ${sizeClasses}`}>
+            <Clock className={`${iconSize} mr-1`} />
+            Pending
+          </Badge>
+        );
       case "cancelled":
-        return <Badge variant="destructive">Cancelled</Badge>;
+        return (
+          <Badge className={`bg-red-500/30 text-white border-0 rounded-full ${sizeClasses}`}>
+            <XCircle className={`${iconSize} mr-1`} />
+            Cancelled
+          </Badge>
+        );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline" className={`rounded-full ${sizeClasses}`}>{status}</Badge>;
     }
   };
 
@@ -876,12 +896,12 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
                           <Package className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-text truncate">{selectedService.service?.name || "Unknown Service"}</h3>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-text truncate">{selectedService.service?.name || "Unknown Service"}</h3>
+                            {getStatusBadge(selectedService.status)}
+                          </div>
                           <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Service Purchase Details</p>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {getStatusBadge(selectedService.status)}
                       </div>
                     </div>
                     
@@ -1107,7 +1127,7 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Status</p>
-                            <div className="mt-0.5">{getStatusBadge(selectedService.status)}</div>
+                            <div className="mt-0.5">{getStatusBadge(selectedService.status, true)}</div>
                           </div>
                         </div>
                         
