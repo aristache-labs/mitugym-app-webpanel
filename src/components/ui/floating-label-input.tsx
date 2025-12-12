@@ -15,11 +15,14 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
     const [hasValue, setHasValue] = React.useState(false);
 
     React.useEffect(() => {
-      setHasValue(!!(value || props.defaultValue));
+      // Check for value or defaultValue, treating 0 as a valid value
+      setHasValue(value !== undefined && value !== null && value !== '' || 
+                  props.defaultValue !== undefined && props.defaultValue !== null && props.defaultValue !== '');
     }, [value, props.defaultValue]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setHasValue(!!e.target.value);
+      // Treat 0 as a valid value
+      setHasValue(e.target.value !== '');
       props.onChange?.(e);
     };
 

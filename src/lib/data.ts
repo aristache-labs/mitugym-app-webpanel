@@ -258,7 +258,7 @@ export async function fetchPlans(): Promise<MembershipPlan[]> {
 
   const { data, error } = await admin
     .from("membership_plans")
-    .select("id, name, plan_type, price, duration_months, features, is_active")
+    .select("id, name, plan_type, price, duration_months, features, is_active, created_at, updated_at")
     .order("price");
 
   if (error) {
@@ -274,6 +274,8 @@ export async function fetchPlans(): Promise<MembershipPlan[]> {
     duration_months?: number;
     features?: string[];
     is_active: boolean;
+    created_at?: string;
+    updated_at?: string;
   }) => ({
     id: plan.id,
     name: plan.name,
@@ -281,7 +283,9 @@ export async function fetchPlans(): Promise<MembershipPlan[]> {
     price: plan.price,
     duration_months: plan.duration_months ?? 1, // Use nullish coalescing to preserve 0
     features: plan.features || [],
-    is_active: plan.is_active
+    is_active: plan.is_active,
+    created_at: plan.created_at,
+    updated_at: plan.updated_at
   })) : samplePlans;
 }
 
