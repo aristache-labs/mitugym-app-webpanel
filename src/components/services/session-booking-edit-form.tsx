@@ -7,11 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CustomSelect } from "@/components/ui/custom-select";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { useToast } from "@/components/ui/toast";
 import { updateSessionBookingAction } from "@/app/(protected)/actions";
 import { ServiceBooking } from "@/types";
@@ -79,7 +79,7 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
           addToast({
             type: "success",
             title: "Booking Updated",
-            message: "Session booking has been updated successfully.",
+            description: "Session booking has been updated successfully.",
           });
           router.push("/bookings");
         } else {
@@ -87,7 +87,7 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
           addToast({
             type: "error",
             title: "Update Failed",
-            message: result.error || "Failed to update session booking.",
+            description: result.error || "Failed to update session booking.",
           });
         }
       } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -96,7 +96,7 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
         addToast({
           type: "error",
           title: "Update Failed",
-          message: errorMessage,
+          description: errorMessage,
         });
       }
     });
@@ -197,31 +197,15 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
             </p>
           </div>
 
-          {/* Form Actions */}
-          <div className="flex justify-end gap-4 pt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/bookings")}
+          {/* Action Buttons */}
+          <div className="flex items-center justify-between gap-3 pt-6 sm:pt-6 mt-4 sm:mt-0">
+            <AnimatedButton
+              type="submit"
               disabled={isPending}
-              className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
+              className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white border-0 !ring-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium"
             >
-              Cancel
-            </Button>
-            <Button 
-              type="submit" 
-              disabled={isPending}
-              className="gap-2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 transition-all duration-200 rounded-xl min-w-[140px]"
-            >
-              {isPending ? (
-                <>
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                  Updating...
-                </>
-              ) : (
-                "Update Booking"
-              )}
-            </Button>
+              {isPending ? "Updating..." : "Update Booking"}
+            </AnimatedButton>
           </div>
     </form>
   );
