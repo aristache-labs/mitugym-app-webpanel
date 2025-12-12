@@ -96,7 +96,7 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
     return { 
       status: 'open', 
       label: `${formatTimeDisplay(openTime)} - ${formatTimeDisplay(closeTime)}`, 
-      color: 'bg-success/20 text-success border-success/30',
+      color: 'bg-primary/20 text-primary border-primary/30',
       icon: CheckCircle2 
     };
   };
@@ -133,30 +133,67 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
                       </Badge>
                     )}
                   </div>
-                  <button
-                    onClick={() => toggleDayStatus(day.weekday)}
-                    className="group/toggle relative flex items-center gap-2"
+                  <label
+                    className="switch"
                     title={day.is_closed ? "Mark as open" : "Mark as closed"}
                   >
-                    <div className={`relative w-10 h-5 rounded-full transition-all duration-500 ease-out ${
-                      day.is_closed 
-                        ? 'bg-gradient-to-r from-error/30 via-error/20 to-error/30 border border-error/40' 
-                        : 'bg-gradient-to-r from-success/30 via-success/20 to-success/30 border border-success/40'
-                    } shadow-inner`}>
-                      {/* Sliding toggle */}
-                      <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all duration-500 ease-out transform ${
-                        day.is_closed 
-                          ? 'translate-x-0.5 bg-gradient-to-br from-error/90 to-error shadow-md shadow-error/40' 
-                          : 'translate-x-5 bg-gradient-to-br from-success/90 to-success shadow-md shadow-success/40'
-                      } group-hover/toggle:scale-110`}>
-                        {/* Inner glow */}
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
-                      </div>
-                      
-                      {/* Shine effect on hover */}
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/toggle:translate-x-full transition-transform duration-1000 ease-out"></div>
-                    </div>
-                  </button>
+                    <input
+                      type="checkbox"
+                      checked={!day.is_closed}
+                      onChange={() => toggleDayStatus(day.weekday)}
+                    />
+                    <span className="slider"></span>
+                    
+                    <style jsx>{`
+                      /* The switch - the box around the slider */
+                      .switch {
+                        font-size: 17px;
+                        position: relative;
+                        display: inline-block;
+                        width: 3.5em;
+                        height: 2em;
+                      }
+
+                      /* Hide default HTML checkbox */
+                      .switch input {
+                        opacity: 0;
+                        width: 0;
+                        height: 0;
+                      }
+
+                      /* The slider */
+                      .slider {
+                        position: absolute;
+                        cursor: pointer;
+                        inset: 0;
+                        border: 2px solid rgba(255, 107, 107, 0.9);
+                        border-radius: 50px;
+                        box-shadow: 0 0 20px rgba(255, 107, 107, 0.8);
+                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                      }
+
+                      .slider:before {
+                        position: absolute;
+                        content: "";
+                        height: 1.4em;
+                        width: 1.4em;
+                        left: 0.2em;
+                        bottom: 0.2em;
+                        background-color: white;
+                        border-radius: inherit;
+                        transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+                      }
+
+                      .switch input:checked + .slider {
+                        box-shadow: 0 0 20px rgba(77, 212, 212, 0.8);
+                        border: 2px solid #4dd4d4;
+                      }
+
+                      .switch input:checked + .slider:before {
+                        transform: translateX(1.5em);
+                      }
+                    `}</style>
+                  </label>
                 </div>
 
                 {/* Status Badge */}
@@ -229,30 +266,67 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
                       </Badge>
                     )}
                   </div>
-                  <button
-                    onClick={() => toggleDayStatus(day.weekday)}
-                    className="group/toggle relative flex items-center gap-2"
+                  <label
+                    className="switch"
                     title={day.is_closed ? "Mark as open" : "Mark as closed"}
                   >
-                    <div className={`relative w-10 h-5 rounded-full transition-all duration-500 ease-out ${
-                      day.is_closed 
-                        ? 'bg-gradient-to-r from-error/30 via-error/20 to-error/30 border border-error/40' 
-                        : 'bg-gradient-to-r from-success/30 via-success/20 to-success/30 border border-success/40'
-                    } shadow-inner`}>
-                      {/* Sliding toggle */}
-                      <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all duration-500 ease-out transform ${
-                        day.is_closed 
-                          ? 'translate-x-0.5 bg-gradient-to-br from-error/90 to-error shadow-md shadow-error/40' 
-                          : 'translate-x-5 bg-gradient-to-br from-success/90 to-success shadow-md shadow-success/40'
-                      } group-hover/toggle:scale-110`}>
-                        {/* Inner glow */}
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
-                      </div>
-                      
-                      {/* Shine effect on hover */}
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/toggle:translate-x-full transition-transform duration-1000 ease-out"></div>
-                    </div>
-                  </button>
+                    <input
+                      type="checkbox"
+                      checked={!day.is_closed}
+                      onChange={() => toggleDayStatus(day.weekday)}
+                    />
+                    <span className="slider"></span>
+                    
+                    <style jsx>{`
+                      /* The switch - the box around the slider */
+                      .switch {
+                        font-size: 17px;
+                        position: relative;
+                        display: inline-block;
+                        width: 3.5em;
+                        height: 2em;
+                      }
+
+                      /* Hide default HTML checkbox */
+                      .switch input {
+                        opacity: 0;
+                        width: 0;
+                        height: 0;
+                      }
+
+                      /* The slider */
+                      .slider {
+                        position: absolute;
+                        cursor: pointer;
+                        inset: 0;
+                        border: 2px solid rgba(255, 107, 107, 0.9);
+                        border-radius: 50px;
+                        box-shadow: 0 0 20px rgba(255, 107, 107, 0.8);
+                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                      }
+
+                      .slider:before {
+                        position: absolute;
+                        content: "";
+                        height: 1.4em;
+                        width: 1.4em;
+                        left: 0.2em;
+                        bottom: 0.2em;
+                        background-color: white;
+                        border-radius: inherit;
+                        transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+                      }
+
+                      .switch input:checked + .slider {
+                        box-shadow: 0 0 20px rgba(77, 212, 212, 0.8);
+                        border: 2px solid #4dd4d4;
+                      }
+
+                      .switch input:checked + .slider:before {
+                        transform: translateX(1.5em);
+                      }
+                    `}</style>
+                  </label>
                 </div>
 
                 {/* Status Badge */}

@@ -316,9 +316,10 @@ export function TimePicker({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="px-4 py-2 text-xs bg-gradient-to-br from-slate-700/60 via-slate-800/50 to-slate-700/60 hover:from-slate-600/70 hover:via-slate-700/60 hover:to-slate-600/70 text-slate-300 hover:text-slate-100 !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/15 hover:shadow-lg hover:shadow-black/25 backdrop-blur-sm font-medium rounded-lg"
+                className="group/cancel relative px-4 py-2 text-xs bg-gradient-to-br from-slate-700/75 via-slate-800/45 to-slate-700/75 hover:from-slate-600/85 hover:via-slate-700/55 hover:to-slate-600/85 text-white font-medium rounded-lg backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-slate-950/25 transition-all duration-300 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
               >
-                Cancel
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/cancel:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                <span className="relative z-10">Cancel</span>
               </button>
               <button
                 type="button"
@@ -326,9 +327,10 @@ export function TimePicker({
                   updateTime(hours, minutes);
                   setIsOpen(false);
                 }}
-                className="px-4 py-2 text-xs bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white !border-none hover:!border-none focus:!border-none focus-visible:!border-none !ring-0 hover:!ring-0 focus:!ring-0 focus-visible:!ring-0 !ring-offset-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium rounded-lg"
+                className="group/done relative px-4 py-2 text-xs bg-gradient-to-br from-primary/75 via-primary/45 to-primary/75 hover:from-primary/85 hover:via-primary/55 hover:to-primary/85 text-background font-semibold rounded-lg backdrop-blur-sm shadow-md shadow-primary/30 hover:shadow-lg hover:shadow-primary/40 transition-all duration-300 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
               >
-                Done
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/done:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                <span className="relative z-10">Done</span>
               </button>
             </div>
           </div>
