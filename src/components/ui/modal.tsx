@@ -85,15 +85,13 @@ export function Modal({
           <h2 className="text-lg font-semibold text-text">{title}</h2>
           <button
             onClick={onClose}
-            className="group/close relative overflow-hidden rounded-lg px-4 py-2 bg-gradient-to-br from-cyan-500/10 via-teal-500/10 to-cyan-600/10 hover:from-cyan-500/20 hover:via-teal-500/20 hover:to-cyan-600/20 border border-cyan-500/20 hover:border-cyan-400/30 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-950/25"
+            className="group/closetop relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
           >
-            {/* Shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-200%] group-hover/close:translate-x-[200%] transition-transform duration-700" />
-            
-            <span className="relative flex items-center gap-2 text-sm font-medium text-cyan-300/60 group-hover/close:text-cyan-100 transition-colors">
+            {/* Icon with animation */}
+            <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/closetop:scale-125 group-hover/closetop:translate-x-[1.7em]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 transition-transform duration-300 group-hover/close:rotate-90"
+                className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/closetop:text-cyan-100 group-hover/closetop:scale-110"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -102,10 +100,14 @@ export function Modal({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span className="hidden sm:inline">Close</span>
+            </div>
+            
+            {/* Text */}
+            <span className="transition-all duration-500 ease-in-out group-hover/closetop:opacity-0">
+              Close
             </span>
           </button>
         </div>
