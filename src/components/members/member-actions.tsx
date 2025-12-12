@@ -89,47 +89,43 @@ export function MemberActions({ memberId }: MemberActionsProps) {
               width: 32px;
               height: 32px;
               border-radius: 8px;
-              background-color: rgb(139, 92, 246);
-              border: none;
+              background-color: rgba(77, 212, 212, 0.12);
+              border: 1px solid rgba(77, 212, 212, 0.25);
               font-weight: 600;
               display: flex;
               align-items: center;
               justify-content: center;
               cursor: pointer;
-              transition-duration: 0.3s;
+              transition: all 0.3s ease;
               overflow: hidden;
               position: relative;
             }
 
             .view-svgIcon {
-              width: 16px;
-              transition-duration: 0.3s;
+              width: 15px;
+              transition: all 0.3s ease;
             }
 
             .view-svgIcon path {
-              fill: white;
+              fill: rgba(77, 212, 212, 0.9);
             }
 
             .view-button:hover {
-              background-color: rgb(124, 58, 237);
-              transition-duration: 0.3s;
+              background-color: rgba(77, 212, 212, 0.18);
+              border-color: rgba(77, 212, 212, 0.4);
+              box-shadow: 0 0 12px rgba(77, 212, 212, 0.2);
             }
 
             .view-button:hover .view-svgIcon {
-              animation: blink 0.6s ease-in-out;
+              transform: scale(1.1);
+            }
+
+            .view-button:hover .view-svgIcon path {
+              fill: rgb(77, 212, 212);
             }
 
             .view-button:active {
-              transform: scale(0.9);
-            }
-
-            @keyframes blink {
-              0%, 100% {
-                transform: scaleY(1);
-              }
-              50% {
-                transform: scaleY(0.1);
-              }
+              transform: scale(0.95);
             }
           `}</style>
         </button>
@@ -156,39 +152,43 @@ export function MemberActions({ memberId }: MemberActionsProps) {
               width: 32px;
               height: 32px;
               border-radius: 8px;
-              background-color: rgb(59, 130, 246);
-              border: none;
+              background-color: rgba(77, 212, 212, 0.12);
+              border: 1px solid rgba(77, 212, 212, 0.25);
               font-weight: 600;
               display: flex;
               align-items: center;
               justify-content: center;
               cursor: pointer;
-              transition-duration: 0.3s;
+              transition: all 0.3s ease;
               overflow: hidden;
               position: relative;
             }
 
             .edit-svgIcon {
-              width: 14px;
-              transition-duration: 0.3s;
+              width: 13px;
+              transition: all 0.3s ease;
             }
 
             .edit-svgIcon path {
-              fill: white;
+              fill: rgba(77, 212, 212, 0.9);
             }
 
             .edit-button:hover {
-              background-color: rgb(37, 99, 235);
-              transition-duration: 0.3s;
+              background-color: rgba(77, 212, 212, 0.18);
+              border-color: rgba(77, 212, 212, 0.4);
+              box-shadow: 0 0 12px rgba(77, 212, 212, 0.2);
             }
 
             .edit-button:hover .edit-svgIcon {
-              transform: rotate(-35deg);
-              transition-duration: 0.3s;
+              transform: rotate(-12deg) scale(1.05);
+            }
+
+            .edit-button:hover .edit-svgIcon path {
+              fill: rgb(77, 212, 212);
             }
 
             .edit-button:active {
-              transform: scale(0.9);
+              transform: scale(0.95);
             }
           `}</style>
         </button>
@@ -206,13 +206,12 @@ export function MemberActions({ memberId }: MemberActionsProps) {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <line y1="5" x2="39" y2="5" stroke="white" strokeWidth="4"></line>
+          <line y1="5" x2="39" y2="5" strokeWidth="4"></line>
           <line
             x1="12"
             y1="1.5"
             x2="26.0357"
             y2="1.5"
-            stroke="white"
             strokeWidth="3"
           ></line>
         </svg>
@@ -222,18 +221,18 @@ export function MemberActions({ memberId }: MemberActionsProps) {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <mask id="path-1-inside-1_8_19" fill="white">
+          <mask id="path-1-inside-1_8_19" fill="rgba(255, 107, 107, 0.9)">
             <path
               d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z"
             ></path>
           </mask>
           <path
             d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z"
-            fill="white"
+            fill="rgba(255, 107, 107, 0.9)"
             mask="url(#path-1-inside-1_8_19)"
           ></path>
-          <path d="M12 6L12 29" stroke="white" strokeWidth="4"></path>
-          <path d="M21 6V29" stroke="white" strokeWidth="4"></path>
+          <path d="M12 6L12 29" strokeWidth="4"></path>
+          <path d="M21 6V29" strokeWidth="4"></path>
         </svg>
         
         <style jsx>{`
@@ -245,10 +244,10 @@ export function MemberActions({ memberId }: MemberActionsProps) {
             width: 32px;
             height: 32px;
             border-radius: 8px;
-            background-color: rgb(255, 95, 95);
+            background-color: rgba(255, 107, 107, 0.12);
+            border: 1px solid rgba(255, 107, 107, 0.25);
             cursor: pointer;
-            border: none;
-            transition-duration: 0.3s;
+            transition: all 0.3s ease;
           }
           .bin-button:disabled {
             opacity: 0.5;
@@ -256,20 +255,37 @@ export function MemberActions({ memberId }: MemberActionsProps) {
           }
           .bin-bottom {
             width: 12px;
+            transition: all 0.3s ease;
           }
           .bin-top {
             width: 14px;
             transform-origin: right;
-            transition-duration: 0.3s;
+            transition: all 0.3s ease;
           }
-          .bin-button:hover .bin-top {
-            transform: rotate(45deg);
+          .bin-bottom path {
+            stroke: rgba(255, 107, 107, 0.9);
+            fill: rgba(255, 107, 107, 0.9);
+          }
+          .bin-top line {
+            stroke: rgba(255, 107, 107, 0.9);
           }
           .bin-button:hover {
-            background-color: rgb(255, 0, 0);
+            background-color: rgba(255, 107, 107, 0.18);
+            border-color: rgba(255, 107, 107, 0.4);
+            box-shadow: 0 0 12px rgba(255, 107, 107, 0.2);
+          }
+          .bin-button:hover .bin-top {
+            transform: rotate(15deg);
+          }
+          .bin-button:hover .bin-bottom path {
+            stroke: rgb(255, 107, 107);
+            fill: rgb(255, 107, 107);
+          }
+          .bin-button:hover .bin-top line {
+            stroke: rgb(255, 107, 107);
           }
           .bin-button:active {
-            transform: scale(0.9);
+            transform: scale(0.95);
           }
         `}</style>
       </button>
