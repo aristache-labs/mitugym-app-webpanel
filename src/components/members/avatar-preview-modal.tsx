@@ -18,6 +18,11 @@ export function AvatarPreviewModal({
   avatarUrl,
   memberName,
 }: AvatarPreviewModalProps) {
+  const [isLandscape, setIsLandscape] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [imageAspectRatio, setImageAspectRatio] = useState<number | null>(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   // Handle ESC key press
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -38,6 +43,44 @@ export function AvatarPreviewModal({
     };
   }, [isOpen, onClose]);
 
+  // Track device orientation
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const updateOrientation = () => {
+      const mql = window.matchMedia("(orientation: landscape)");
+      setIsLandscape(mql.matches);
+      setIsSmallScreen(window.innerWidth < 1024);
+    };
+    updateOrientation();
+    window.addEventListener("orientationchange", updateOrientation);
+    window.addEventListener("resize", updateOrientation);
+    return () => {
+      window.removeEventListener("orientationchange", updateOrientation);
+      window.removeEventListener("resize", updateOrientation);
+    };
+  }, []);
+
+  // Load image to detect its aspect ratio
+  useEffect(() => {
+    if (!avatarUrl || !isOpen) {
+      setImageAspectRatio(null);
+      setImageLoaded(false);
+      return;
+    }
+
+    const img = new window.Image();
+    img.onload = () => {
+      const ratio = img.width / img.height;
+      setImageAspectRatio(ratio);
+      setImageLoaded(true);
+    };
+    img.onerror = () => {
+      setImageAspectRatio(1); // fallback to square
+      setImageLoaded(true);
+    };
+    img.src = avatarUrl;
+  }, [avatarUrl, isOpen]);
+
   if (!isOpen) return null;
 
   const getInitials = () => {
@@ -47,6 +90,31 @@ export function AvatarPreviewModal({
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  // Determine if image is portrait or landscape
+  const isImagePortrait = imageAspectRatio !== null && imageAspectRatio < 0.95;
+  const isImageLandscape = imageAspectRatio !== null && imageAspectRatio > 1.05;
+
+  // Calculate dynamic modal width based on image aspect ratio and device orientation
+  const getModalMaxWidth = () => {
+    // No avatar (placeholder) - use square/compact sizes
+    if (!imageLoaded || !avatarUrl) {
+      if (isLandscape && isSmallScreen) return "max-w-[45vw]"; // compact for mobile landscape
+      return "max-w-[min(80vw,560px)] md:max-w-2xl lg:max-w-3xl";
+    }
+
+    // Mobile landscape device
+    if (isLandscape && isSmallScreen) {
+      if (isImagePortrait) return "max-w-[35vw]"; // very narrow for portrait images
+      if (isImageLandscape) return "max-w-[38vw]"; // tighter fit for landscape images
+      return "max-w-[50vw]"; // medium for square
+    }
+
+    // Mobile portrait or desktop
+    if (isImagePortrait) return "max-w-[min(80vw,640px)] md:max-w-xl lg:max-w-2xl";
+    if (isImageLandscape) return "max-w-[min(90vw,640px)] md:max-w-3xl lg:max-w-4xl";
+    return "max-w-[min(80vw,560px)] md:max-w-2xl lg:max-w-3xl";
   };
 
   const modalContent = (
@@ -65,7 +133,7 @@ export function AvatarPreviewModal({
 
       {/* Modal Container */}
       <div
-        className="relative max-w-5xl w-full animate-scale-in"
+        className={`relative w-full animate-scale-in ${getModalMaxWidth()}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Glass Card with Enhanced Border */}
@@ -74,17 +142,25 @@ export function AvatarPreviewModal({
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
           
           {/* Header */}
-          <div className="relative px-8 py-6 border-b border-surface/20">
+          <div className={`relative border-b border-surface/20 ${
+            isLandscape && isSmallScreen ? "px-4 py-3" : "px-8 py-6"
+          }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
+                <div className={`p-2 rounded-xl bg-primary/10 border border-primary/20 ${
+                  isLandscape && isSmallScreen ? "hidden" : ""
+                }`}>
                   <User className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-text via-primary to-text bg-clip-text text-transparent">
+                  <h3 className={`font-bold bg-gradient-to-r from-text via-primary to-text bg-clip-text text-transparent ${
+                    isLandscape && isSmallScreen ? "text-lg" : "text-2xl"
+                  }`}>
                     {memberName}
                   </h3>
-                  <p className="text-sm text-muted/60 mt-0.5">Member Avatar</p>
+                  <p className={`text-muted/60 mt-0.5 ${
+                    isLandscape && isSmallScreen ? "text-xs" : "text-sm"
+                  }`}>Member Avatar</p>
                 </div>
               </div>
               <button
@@ -98,8 +174,14 @@ export function AvatarPreviewModal({
           </div>
 
           {/* Image Content */}
-          <div className="p-8">
-            <div className="relative w-full aspect-square max-h-[65vh] rounded-2xl overflow-hidden group">
+          <div className={isLandscape && isSmallScreen ? "p-3" : "p-6 sm:p-8"}>
+            <div
+              className="relative w-full max-w-full rounded-2xl overflow-hidden group"
+              style={{
+                aspectRatio: imageAspectRatio || 1,
+                maxHeight: isLandscape && isSmallScreen ? '50vh' : '70vh',
+              }}
+            >
               {/* Image Container with Glow Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-surface/10 to-secondary/5 border-2 border-primary/20 rounded-2xl">
                 {avatarUrl ? (
@@ -117,16 +199,22 @@ export function AvatarPreviewModal({
                   </>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
-                    <div className="text-center space-y-6">
+                    <div className={`text-center ${isLandscape && isSmallScreen ? "space-y-3" : "space-y-6"}`}>
                       <div className="relative">
                         <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl" />
-                        <User className="relative h-32 w-32 text-primary/40 mx-auto" />
+                        <User className={`relative text-primary/40 mx-auto ${
+                          isLandscape && isSmallScreen ? "h-16 w-16" : "h-32 w-32"
+                        }`} />
                       </div>
                       <div>
-                        <span className="text-7xl font-bold bg-gradient-to-br from-primary to-secondary bg-clip-text text-transparent">
+                        <span className={`font-bold bg-gradient-to-br from-primary to-secondary bg-clip-text text-transparent ${
+                          isLandscape && isSmallScreen ? "text-4xl" : "text-7xl"
+                        }`}>
                           {getInitials()}
                         </span>
-                        <p className="text-muted/60 mt-4 text-lg">No avatar uploaded</p>
+                        <p className={`text-muted/60 ${
+                          isLandscape && isSmallScreen ? "mt-2 text-sm" : "mt-4 text-lg"
+                        }`}>No avatar uploaded</p>
                       </div>
                     </div>
                   </div>
@@ -141,8 +229,8 @@ export function AvatarPreviewModal({
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="relative px-8 pb-6 border-t border-surface/20">
+          {/* Footer - Desktop only */}
+          <div className="hidden lg:block relative border-t border-surface/20 px-8 pb-6">
             <div className="flex items-center justify-center gap-2 py-4">
               <div className="flex items-center gap-2 text-sm text-muted/60">
                 <kbd className="px-2 py-1 bg-surface/40 border border-surface/60 rounded text-xs font-mono">ESC</kbd>
