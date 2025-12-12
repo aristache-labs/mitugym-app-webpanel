@@ -80,7 +80,7 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
                 key={booking.id}
                 className="group/item relative rounded-xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 p-3"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-start gap-3">
                   {/* Avatar */}
                   <AvatarWithPreview
                     avatarUrl={booking.member?.avatar_url}
@@ -98,7 +98,7 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
                       </h4>
                     </Link>
 
-                    {/* Service, Sessions, Time & Status */}
+                    {/* Row 1: Service & Sessions */}
                     <div className="flex items-center flex-wrap gap-x-2 gap-y-1">
                       <span className="text-xs text-muted/80">
                         {booking.service?.name || "Unknown Service"}
@@ -118,8 +118,33 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
                         </>
                       )}
                       
-                      {/* Time */}
-                      <span className="text-muted/40">•</span>
+                      {/* Time & Status - Desktop Only */}
+                      <span className="hidden sm:inline text-muted/40">•</span>
+                      <div className="hidden sm:flex items-center gap-1.5">
+                        <Clock className="h-3 w-3 text-muted/60" />
+                        <span className="text-xs text-muted/70">Time:</span>
+                        <span className="text-xs font-bold text-primary">
+                          {timeFormat === '12h' 
+                            ? format(new Date(booking.booking_date), "h:mm a")
+                            : format(new Date(booking.booking_date), "HH:mm")
+                          }
+                        </span>
+                      </div>
+
+                      <span className="hidden sm:inline text-muted/40">•</span>
+                      <div className="hidden sm:flex items-center gap-1.5">
+                        <span className="text-xs text-muted/70">Status:</span>
+                        <Badge 
+                          variant={booking.status === "confirmed" ? "success" : booking.status === "pending" ? "warning" : "default"}
+                          className="text-xs capitalize"
+                        >
+                          {booking.status}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* Row 2: Time & Status - Mobile Only */}
+                    <div className="flex sm:hidden items-center flex-wrap gap-x-2 gap-y-1">
                       <div className="flex items-center gap-1.5">
                         <Clock className="h-3 w-3 text-muted/60" />
                         <span className="text-xs text-muted/70">Time:</span>
@@ -131,8 +156,8 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
                         </span>
                       </div>
 
-                      {/* Status */}
                       <span className="text-muted/40">•</span>
+                      
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs text-muted/70">Status:</span>
                         <Badge 
