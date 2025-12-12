@@ -48,38 +48,34 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
         <label
           htmlFor={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}
           className={cn(
-            "absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
+            "absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none flex items-center gap-1.5",
             "peer-focus:translate-x-3 peer-focus:opacity-100",
             hasValue && "translate-x-3 opacity-100",
             error && "text-error"
           )}
         >
-          {label}
+          {icon ? (
+            <div
+              className={cn(
+                "w-3.5 h-3.5 flex items-center justify-center",
+                error ? "text-error" : "text-primary"
+              )}
+            >
+              {icon}
+            </div>
+          ) : (
+            <svg
+              viewBox="0 0 448 512"
+              className={cn(
+                "w-3.5 h-3.5",
+                error ? "fill-error" : "fill-primary"
+              )}
+            >
+              <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"></path>
+            </svg>
+          )}
+          <span>{label}</span>
         </label>
-        {icon ? (
-          <div
-            className={cn(
-              "absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
-              "peer-focus:translate-x-3 peer-focus:opacity-100",
-              hasValue && "translate-x-3 opacity-100",
-              error ? "text-error" : "text-primary"
-            )}
-          >
-            {icon}
-          </div>
-        ) : (
-          <svg
-            viewBox="0 0 448 512"
-            className={cn(
-              "absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
-              "peer-focus:translate-x-3 peer-focus:opacity-100",
-              hasValue && "translate-x-3 opacity-100",
-              error ? "fill-error" : "fill-primary"
-            )}
-          >
-            <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"></path>
-          </svg>
-        )}
         {error && (
           <p className="text-xs text-error mt-1 ml-1">{error}</p>
         )}

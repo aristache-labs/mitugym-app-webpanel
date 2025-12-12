@@ -7,15 +7,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { CustomSelect } from "@/components/ui/custom-select";
+import { FloatingLabelInput } from "@/components/ui/floating-label-input";
+import { FloatingLabelSelect } from "@/components/ui/floating-label-select";
+import { FloatingLabelDateInput } from "@/components/ui/floating-label-date-input";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { useToast } from "@/components/ui/toast";
 import { createSessionBookingAction } from "@/app/(protected)/actions";
 import { Member, Service, PurchasedService } from "@/types";
 import { Calendar, User, Package, Clock, FileText } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Form schema for creating session bookings
 const createSessionBookingFormSchema = z.object({
@@ -34,6 +34,7 @@ interface SessionBookingFormProps {
 }
 
 const STATUS_OPTIONS = [
+  { value: "", label: "Status", disabled: true },
   { value: "pending", label: "Pending" },
   { value: "confirmed", label: "Confirmed" },
 ];
@@ -52,15 +53,18 @@ export function SessionBookingForm({ members, services }: SessionBookingFormProp
       purchased_service_id: "",
       member_id: "",
       booking_date: "",
-      status: "pending",
+      status: "" as "pending" | "confirmed",
       notes: "",
     },
   });
 
-  const memberOptions = members.map(member => ({
-    value: member.id,
-    label: `${member.full_name} (${member.email})`,
-  }));
+  const memberOptions = [
+    { value: "", label: "Member", disabled: true },
+    ...members.map(member => ({
+      value: member.id,
+      label: `${member.full_name} (${member.email})`,
+    }))
+  ];
 
   // Fetch purchased services for the selected member
   const fetchPurchasedServices = async (memberId: string) => {
@@ -103,15 +107,18 @@ export function SessionBookingForm({ members, services }: SessionBookingFormProp
   }, [selectedMemberId, form]);
 
   // Create service options from purchased services
-  const serviceOptions = purchasedServices.map(purchasedService => {
-    const service = purchasedService.service;
-    if (!service) return null;
-    
-    return {
-      value: purchasedService.id, // Use purchased service ID, not service ID
-      label: `${service.name} - ${service.duration_minutes}min - ${service.price} RON (${purchasedService.sessions_remaining} sessions left)`,
-    };
-  }).filter(Boolean) as { value: string; label: string }[];
+  const serviceOptions = [
+    { value: "", label: "Service", disabled: true },
+    ...purchasedServices.map(purchasedService => {
+      const service = purchasedService.service;
+      if (!service) return null;
+      
+      return {
+        value: purchasedService.id, // Use purchased service ID, not service ID
+        label: `${service.name} - ${service.duration_minutes}min - ${service.price} RON (${purchasedService.sessions_remaining} sessions left)`,
+      };
+    }).filter(Boolean) as { value: string; label: string }[]
+  ];
 
 
   const onSubmit = (data: CreateSessionBookingFormData) => {
@@ -162,148 +169,142 @@ export function SessionBookingForm({ members, services }: SessionBookingFormProp
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
       {error && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 text-sm">
+        <div className="p-3 sm:p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 text-xs sm:text-sm">
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* Member Selection */}
-        <div className="space-y-2">
-          <Label htmlFor="member_id" className="flex items-center gap-2 text-sm font-medium text-text">
-            <User className="h-4 w-4 text-primary" />
-            Member
-          </Label>
-          <CustomSelect
+        <div className="mb-3 sm:mb-0">
+          <FloatingLabelSelect
+            label="Member"
+            icon={<User className="h-4 w-4" />}
             value={form.watch("member_id")}
             onChange={(value) => form.setValue("member_id", value)}
             options={memberOptions}
-            placeholder="Select a member..."
-            className="w-full"
+            error={form.formState.errors.member_id?.message}
           />
-          {form.formState.errors.member_id && (
-            <p className="text-sm text-red-600">{form.formState.errors.member_id.message}</p>
-          )}
         </div>
 
         {/* Service Selection */}
-        <div className="space-y-2">
-          <Label htmlFor="service_id" className="flex items-center gap-2 text-sm font-medium text-text">
-            <Package className="h-4 w-4 text-primary" />
-            Service
-          </Label>
-          <CustomSelect
+        <div className="space-y-1 mb-3 sm:mb-0">
+          <FloatingLabelSelect
+            label="Service"
+            icon={<Package className="h-4 w-4" />}
             value={form.watch("purchased_service_id")}
             onChange={(value) => form.setValue("purchased_service_id", value)}
             options={serviceOptions}
-            placeholder={
-              !selectedMemberId 
-                ? "Select a member first..." 
-                : loadingServices 
-                  ? "Loading services..." 
-                  : serviceOptions.length === 0 
-                    ? "No available services" 
-                    : "Select a service..."
-            }
             disabled={!selectedMemberId || loadingServices || serviceOptions.length === 0}
-            className="w-full"
+            error={form.formState.errors.purchased_service_id?.message}
           />
           {!selectedMemberId && (
-            <p className="text-sm text-muted-foreground">Please select a member to see their available services</p>
+            <p className="text-xs text-muted/70 mt-1">Please select a member to see their available services</p>
           )}
           {selectedMemberId && !loadingServices && serviceOptions.length === 0 && (
-            <p className="text-sm text-orange-600">This member has no approved services with remaining sessions</p>
-          )}
-          {form.formState.errors.service_id && (
-            <p className="text-sm text-red-600">{form.formState.errors.service_id.message}</p>
+            <p className="text-xs text-orange-600 mt-1">This member has no approved services with remaining sessions</p>
           )}
         </div>
 
         {/* Booking Date */}
-        <div className="space-y-2">
-          <Label htmlFor="booking_date" className="flex items-center gap-2 text-sm font-medium text-text">
-            <Calendar className="h-4 w-4 text-primary" />
-            Booking Date & Time
-          </Label>
-          <Input
+        <div className="mb-3 sm:mb-0 mt-6">
+          <FloatingLabelInput
             id="booking_date"
+            label="Booking Date & Time"
+            icon={<Calendar className="h-4 w-4" />}
             type="datetime-local"
-            {...form.register("booking_date")}
-            className="w-full rounded-xl border-surface/40 bg-card/50 backdrop-blur-sm focus:border-primary/50 focus:ring-primary/20"
+            value={form.watch("booking_date")}
+            onChange={(e) => form.setValue("booking_date", e.target.value)}
             min={format(new Date(), "yyyy-MM-dd'T'HH:mm")}
+            error={form.formState.errors.booking_date?.message}
           />
-          {form.formState.errors.booking_date && (
-            <p className="text-sm text-red-600">{form.formState.errors.booking_date.message}</p>
-          )}
         </div>
 
         {/* Status */}
-        <div className="space-y-2">
-          <Label htmlFor="status" className="flex items-center gap-2 text-sm font-medium text-text">
-            <Clock className="h-4 w-4 text-primary" />
-            Status
-          </Label>
-          <CustomSelect
+        <div className="mb-3 sm:mb-0 mt-6">
+          <FloatingLabelSelect
+            label="Status"
+            icon={<Clock className="h-4 w-4" />}
             value={form.watch("status")}
             onChange={(value) => form.setValue("status", value as "pending" | "confirmed")}
             options={STATUS_OPTIONS}
-            placeholder="Select status..."
-            className="w-full"
+            error={form.formState.errors.status?.message}
           />
-          {form.formState.errors.status && (
-            <p className="text-sm text-red-600">{form.formState.errors.status.message}</p>
-          )}
         </div>
       </div>
 
       {/* Notes */}
-      <div className="space-y-2">
-        <Label htmlFor="notes" className="flex items-center gap-2 text-sm font-medium text-text">
-          <FileText className="h-4 w-4 text-primary" />
-          Notes (Optional)
-        </Label>
-        <Textarea
+      <div className="relative flex flex-col pt-1.5 sm:pt-0 mb-3 sm:mb-0 mt-6">
+        <textarea
           id="notes"
-          {...form.register("notes")}
-          placeholder="Add any additional notes about this booking..."
-          className="w-full rounded-xl border-surface/40 bg-card/50 backdrop-blur-sm focus:border-primary/50 focus:ring-primary/20 min-h-[100px]"
+          value={form.watch("notes") || ""}
+          onChange={(e) => form.setValue("notes", e.target.value)}
+          placeholder="Notes (Optional)"
+          className={cn(
+            "peer w-full min-h-[80px] sm:min-h-[100px] px-4 py-3 text-sm font-medium outline-none rounded-[16px] bg-surface text-text caret-primary transition resize-none",
+            "border border-surface/50 shadow-[0_0_0_1px_rgba(77,212,212,0.08)]",
+            "focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+            "focus:border-primary focus:ring-2 focus:ring-primary/40",
+            form.formState.errors.notes && "border-error focus:border-error focus-visible:border-error focus:ring-error/40"
+          )}
           maxLength={1000}
+          rows={4}
         />
+        <label
+          htmlFor="notes"
+          className={cn(
+            "absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none flex items-center gap-1.5",
+            "peer-focus:translate-x-3 peer-focus:opacity-100",
+            form.watch("notes") && "translate-x-3 opacity-100",
+            form.formState.errors.notes && "text-error"
+          )}
+        >
+          <div
+            className={cn(
+              "w-3.5 h-3.5 flex items-center justify-center",
+              form.formState.errors.notes ? "text-error" : "text-primary"
+            )}
+          >
+            <FileText className="h-3.5 w-3.5" />
+          </div>
+          <span>Notes (Optional)</span>
+        </label>
         {form.formState.errors.notes && (
-          <p className="text-sm text-red-600">{form.formState.errors.notes.message}</p>
+          <p className="text-xs text-error mt-1 ml-1">{form.formState.errors.notes.message}</p>
         )}
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-end gap-4 pt-6">
-        <Button
+      <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2 sm:gap-4 pt-4 sm:pt-6">
+        <AnimatedButton
           type="button"
           variant="outline"
           onClick={() => router.push("/bookings")}
-          className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
           disabled={isPending}
+          className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm rounded-xl"
         >
           Cancel
-        </Button>
-        <Button
+        </AnimatedButton>
+        <AnimatedButton
           type="submit"
+          variant="default"
           disabled={isPending}
-          className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl min-w-[140px]"
+          className="w-full sm:w-auto min-w-[140px] px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm rounded-xl"
         >
           {isPending ? (
-            <>
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-              Creating...
-            </>
+            <div className="flex items-center justify-center gap-2">
+              <div className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              <span>Creating...</span>
+            </div>
           ) : (
-            <>
-              <Calendar className="h-4 w-4" />
-              Create Booking
-            </>
+            <div className="flex items-center justify-center gap-2">
+              <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span>Create Booking</span>
+            </div>
           )}
-        </Button>
+        </AnimatedButton>
       </div>
     </form>
   );
