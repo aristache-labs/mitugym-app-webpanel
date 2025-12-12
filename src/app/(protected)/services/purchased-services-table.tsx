@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { AnimatedCreateButton } from "@/components/ui/animated-create-button";
 import { PurchasedService, Service } from "@/types";
 import type { TimeFormat } from "@/lib/settings";
-import { Calendar, User, Package, Trash2, CheckCircle, XCircle, Eye, Briefcase, Banknote, StickyNote, Hash } from "lucide-react";
+import { Calendar, User, Package, Trash2, CheckCircle, XCircle, Eye, Briefcase, Banknote, StickyNote, Hash, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { approvePurchasedServiceAction, cancelPurchasedServiceAction, deletePurchasedServiceAction } from "@/app/(protected)/actions";
 import { useRouter } from "next/navigation";
@@ -818,45 +818,91 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
         title="Purchased Service Details"
         className="max-w-6xl"
       >
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {selectedService && (
             <>
               {/* Header with Status */}
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-2xl blur-xl"></div>
-                <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-xl bg-primary/10">
-                        <Package className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg text-text">{selectedService.service?.name || "Unknown Service"}</h3>
-                        <p className="text-sm text-muted/70">Service Purchase Details</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {getStatusBadge(selectedService.status)}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-2xl sm:rounded-3xl blur-2xl"></div>
+                <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
+                  {/* Card Hover Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
+                  
+                  {/* Enhanced Border Effect */}
+                  <div className="absolute inset-0 rounded-2xl sm:rounded-3xl">
+                    <div className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-transparent via-primary/30 to-transparent" 
+                         style={{ 
+                           mask: 'linear-gradient(white, white) content-box, linear-gradient(white, white)',
+                           WebkitMask: 'linear-gradient(white, white) content-box, linear-gradient(white, white)',
+                           WebkitMaskComposite: 'xor',
+                           maskComposite: 'exclude',
+                           padding: '1px'
+                         }}>
                     </div>
                   </div>
                   
-                  {/* Quick Stats */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="text-center p-3 rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
-                      <div className="text-lg font-bold text-primary">{selectedService.sessions_remaining}</div>
-                      <div className="text-xs text-muted/70">Remaining</div>
+                  <div className="relative p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+                      <div className="flex items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                        <div className="p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-primary/10 flex-shrink-0">
+                          <Package className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-text truncate">{selectedService.service?.name || "Unknown Service"}</h3>
+                          <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Service Purchase Details</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {getStatusBadge(selectedService.status)}
+                      </div>
                     </div>
-                    <div className="text-center p-3 rounded-xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border border-blue-500/20">
-                      <div className="text-lg font-bold text-blue-600">{selectedService.sessions_total}</div>
-                      <div className="text-xs text-muted/70">Total</div>
-                    </div>
-                    <div className="text-center p-3 rounded-xl bg-gradient-to-br from-green-500/5 to-green-500/10 border border-green-500/20">
-                      <div className="text-lg font-bold text-green-600">{selectedService.service?.duration_minutes || 60}m</div>
-                      <div className="text-xs text-muted/70">Duration</div>
-                    </div>
-                    <div className="text-center p-3 rounded-xl bg-gradient-to-br from-orange-500/5 to-orange-500/10 border border-orange-500/20">
-                      <div className="text-lg font-bold text-orange-600">{selectedService.service?.price?.toFixed(0) || "0"} RON</div>
-                      <div className="text-xs text-muted/70">Price</div>
+                    
+                    {/* Quick Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                      <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border-0">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20 border-0">
+                            <Package className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-xs sm:text-sm font-medium text-muted/70">Remaining</p>
+                            <p className="text-xl sm:text-2xl font-bold text-text">{selectedService.sessions_remaining}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-0">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="p-1.5 sm:p-2 rounded-lg bg-blue-500/20 border-0">
+                            <Hash className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
+                          </div>
+                          <div>
+                            <p className="text-xs sm:text-sm font-medium text-muted/70">Total</p>
+                            <p className="text-xl sm:text-2xl font-bold text-text">{selectedService.sessions_total}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-500/5 to-green-500/10 border-0">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="p-1.5 sm:p-2 rounded-lg bg-green-500/20 border-0">
+                            <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+                          </div>
+                          <div>
+                            <p className="text-xs sm:text-sm font-medium text-muted/70">Duration</p>
+                            <p className="text-xl sm:text-2xl font-bold text-text">{selectedService.service?.duration_minutes || 60}m</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-500/10 border-0">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="p-1.5 sm:p-2 rounded-lg bg-orange-500/20 border-0">
+                            <Banknote className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
+                          </div>
+                          <div>
+                            <p className="text-xs sm:text-sm font-medium text-muted/70">Price</p>
+                            <p className="text-xl sm:text-2xl font-bold text-text">{selectedService.service?.price?.toFixed(0) || "0"} RON</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -864,44 +910,59 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
 
               {/* Service Information */}
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-500/10 rounded-2xl blur-xl"></div>
-                <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-xl bg-blue-500/10">
-                      <Briefcase className="h-5 w-5 text-blue-500" />
-                    </div>
-                    <h3 className="font-semibold text-lg text-text">Service Information</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service Name</p>
-                          <p className="text-sm font-semibold text-text">{selectedService.service?.name || "Unknown Service"}</p>
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-2xl sm:rounded-3xl blur-2xl"></div>
+                <div className="relative group bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
+                  {/* Card Hover Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
+                  
+                  <div className="relative p-4 sm:p-5 pb-2">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                        <Briefcase className="h-4 w-4 sm:h-5 sm:w-5 text-primary/60 group-hover:text-primary transition-colors" />
                       </div>
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Duration</p>
-                          <p className="text-sm font-semibold text-text">{selectedService.service?.duration_minutes || 60} minutes</p>
-                  </div>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">Service Information</h3>
+                        <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Details about the service package</p>
                       </div>
                     </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service Type</p>
-                          <p className="text-sm font-semibold text-text">{selectedService.service?.session_type || "Standard"}</p>
                   </div>
+                  
+                  <div className="relative p-4 sm:p-5 pt-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Package className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Service Name</p>
+                          <p className="text-xs text-text font-semibold truncate">{selectedService.service?.name || "Unknown Service"}</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <Banknote className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Price</p>
-                          <p className="text-sm font-semibold text-text">{selectedService.service?.price?.toFixed(2) || "0.00"} RON</p>
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Clock className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Duration</p>
+                          <p className="text-xs text-text font-semibold truncate">{selectedService.service?.duration_minutes || 60} minutes</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Briefcase className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Service Type</p>
+                          <p className="text-xs text-text font-semibold truncate capitalize">{selectedService.service?.session_type || "Standard"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Banknote className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Price</p>
+                          <p className="text-xs text-text font-semibold truncate">{selectedService.service?.price?.toFixed(2) || "0.00"} RON</p>
                         </div>
                       </div>
                     </div>
@@ -911,44 +972,59 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
 
               {/* Member Information */}
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/10 rounded-2xl blur-xl"></div>
-                <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-xl bg-green-500/10">
-                      <User className="h-5 w-5 text-green-500" />
-                    </div>
-                    <h3 className="font-semibold text-lg text-text">Member Information</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <User className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Full Name</p>
-                          <p className="text-sm font-semibold text-text">{selectedService.member?.full_name || "Unknown Member"}</p>
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-2xl sm:rounded-3xl blur-2xl"></div>
+                <div className="relative group bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
+                  {/* Card Hover Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
+                  
+                  <div className="relative p-4 sm:p-5 pb-2">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                        <User className="h-4 w-4 sm:h-5 sm:w-5 text-primary/60 group-hover:text-primary transition-colors" />
                       </div>
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <User className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Phone</p>
-                          <p className="text-sm font-semibold text-text">{selectedService.member?.phone || "-"}</p>
-                  </div>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">Member Information</h3>
+                        <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Member who purchased this service</p>
                       </div>
                     </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <User className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Email</p>
-                          <p className="text-sm font-semibold text-text">{selectedService.member?.email || "-"}</p>
                   </div>
+                  
+                  <div className="relative p-4 sm:p-5 pt-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <User className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Full Name</p>
+                          <p className="text-xs text-text font-semibold truncate">{selectedService.member?.full_name || "Unknown Member"}</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Status</p>
-                          <p className="text-sm font-semibold text-text capitalize">{selectedService.member?.status || "-"}</p>
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <User className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Phone</p>
+                          <p className="text-xs text-text font-semibold truncate">{selectedService.member?.phone || "-"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <User className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Email</p>
+                          <p className="text-xs text-text font-semibold truncate">{selectedService.member?.email || "-"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <CheckCircle className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Status</p>
+                          <p className="text-xs text-text font-semibold truncate capitalize">{selectedService.member?.status || "-"}</p>
                         </div>
                       </div>
                     </div>
@@ -958,173 +1034,255 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
 
               {/* Purchase Details */}
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-orange-500/10 rounded-2xl blur-xl"></div>
-                <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-xl bg-orange-500/10">
-                      <Calendar className="h-5 w-5 text-orange-500" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-2xl sm:rounded-3xl blur-2xl"></div>
+                <div className="relative group bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
+                  {/* Card Hover Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
+                  
+                  <div className="relative p-4 sm:p-5 pb-2">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                        <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary/60 group-hover:text-primary transition-colors" />
+                      </div>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">Purchase Details</h3>
+                        <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Purchase and session information</p>
+                      </div>
                     </div>
-                    <h3 className="font-semibold text-lg text-text">Purchase Details</h3>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Purchase Date</p>
-                          <p className="text-sm font-semibold text-text">
+                  
+                  <div className="relative p-4 sm:p-5 pt-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Calendar className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Purchase Date</p>
+                          <p className="text-xs text-text font-semibold truncate">
                             {timeFormat === '12h'
                               ? format(new Date(selectedService.purchase_date), "PPp")
                               : format(new Date(selectedService.purchase_date), "PPp").replace(/\d{1,2}:\d{2}\s?[AP]M/i, format(new Date(selectedService.purchase_date), "HH:mm"))
                             }
                           </p>
-                  </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Total Sessions</p>
-                          <p className="text-sm font-semibold text-text">{selectedService.sessions_total}</p>
-                  </div>
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Hash className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Total Sessions</p>
+                          <p className="text-xs text-text font-semibold truncate">{selectedService.sessions_total}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Status</p>
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <CheckCircle className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Status</p>
                           <div className="mt-1">{getStatusBadge(selectedService.status)}</div>
-                  </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                        <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                          <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Remaining Sessions</p>
-                          <p className="text-sm font-semibold text-text">{selectedService.sessions_remaining}</p>
-                  </div>
+                      <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Package className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Remaining Sessions</p>
+                          <p className="text-xs text-text font-semibold truncate">{selectedService.sessions_remaining}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  {(selectedService.approved_date || selectedService.cancelled_date) && (
-                    <div className="mt-4 pt-4 border-t border-surface/30">
-                      <div className="space-y-3">
-                  {selectedService.approved_date && (
-                          <div className="flex items-center gap-3 p-3 rounded-xl bg-green-500/5 border border-green-500/20">
-                            <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                      <div>
-                              <p className="text-xs font-medium text-green-600 uppercase tracking-wider">Approved Date</p>
-                              <p className="text-sm font-semibold text-text">
-                                {timeFormat === '12h'
-                                  ? format(new Date(selectedService.approved_date), "PPp")
-                                  : format(new Date(selectedService.approved_date), "PPp").replace(/\d{1,2}:\d{2}\s?[AP]M/i, format(new Date(selectedService.approved_date), "HH:mm"))
-                                }
-                              </p>
-                      </div>
-                          </div>
-                        )}
-                        {selectedService.cancelled_date && (
-                          <div className="flex items-center gap-3 p-3 rounded-xl bg-red-500/5 border border-red-500/20">
-                            <XCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
-                            <div>
-                              <p className="text-xs font-medium text-red-600 uppercase tracking-wider">Cancelled Date</p>
-                              <p className="text-sm font-semibold text-text">
-                                {timeFormat === '12h'
-                                  ? format(new Date(selectedService.cancelled_date), "PPp")
-                                  : format(new Date(selectedService.cancelled_date), "PPp").replace(/\d{1,2}:\d{2}\s?[AP]M/i, format(new Date(selectedService.cancelled_date), "HH:mm"))
-                                }
-                              </p>
+                    
+                    {(selectedService.approved_date || selectedService.cancelled_date) && (
+                      <div className="mt-4 pt-4 border-t border-surface/30">
+                        <div className="space-y-2.5 sm:space-y-3">
+                          {selectedService.approved_date && (
+                            <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-green-500/10 to-green-500/5 backdrop-blur-sm border-0 shadow-sm">
+                              <div className="p-1.5 rounded-md bg-green-500/20 backdrop-blur-sm">
+                                <CheckCircle className="h-3.5 w-3.5 text-green-600" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-[10px] font-medium text-green-600 uppercase tracking-wide">Approved Date</p>
+                                <p className="text-xs text-text font-semibold truncate">
+                                  {timeFormat === '12h'
+                                    ? format(new Date(selectedService.approved_date), "PPp")
+                                    : format(new Date(selectedService.approved_date), "PPp").replace(/\d{1,2}:\d{2}\s?[AP]M/i, format(new Date(selectedService.approved_date), "HH:mm"))
+                                  }
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
+                          {selectedService.cancelled_date && (
+                            <div className="flex items-center gap-2 p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-br from-red-500/10 to-red-500/5 backdrop-blur-sm border-0 shadow-sm">
+                              <div className="p-1.5 rounded-md bg-red-500/20 backdrop-blur-sm">
+                                <XCircle className="h-3.5 w-3.5 text-red-600" />
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-[10px] font-medium text-red-600 uppercase tracking-wide">Cancelled Date</p>
+                                <p className="text-xs text-text font-semibold truncate">
+                                  {timeFormat === '12h'
+                                    ? format(new Date(selectedService.cancelled_date), "PPp")
+                                    : format(new Date(selectedService.cancelled_date), "PPp").replace(/\d{1,2}:\d{2}\s?[AP]M/i, format(new Date(selectedService.cancelled_date), "HH:mm"))
+                                  }
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Notes */}
               {selectedService.notes && (
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-purple-500/10 rounded-2xl blur-xl"></div>
-                  <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 rounded-xl bg-purple-500/10">
-                        <Package className="h-5 w-5 text-purple-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-2xl sm:rounded-3xl blur-2xl"></div>
+                  <div className="relative group bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
+                    {/* Card Hover Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
+                    
+                    <div className="relative p-4 sm:p-5 pb-2">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                          <StickyNote className="h-4 w-4 sm:h-5 sm:w-5 text-primary/60 group-hover:text-primary transition-colors" />
+                        </div>
+                        <div>
+                          <h3 className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">Notes</h3>
+                          <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Additional purchase information</p>
+                        </div>
                       </div>
-                      <h3 className="font-semibold text-lg text-text">Notes</h3>
                     </div>
-                    <div className="p-4 rounded-xl bg-surface/20 border border-surface/30">
-                      <p className="text-sm text-text whitespace-pre-wrap leading-relaxed">
-                    {selectedService.notes}
-                  </p>
+                    
+                    <div className="relative p-4 sm:p-5 pt-2">
+                      <div className="p-3 sm:p-4 rounded-lg sm:rounded-xl bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 shadow-sm">
+                        <p className="text-xs sm:text-sm text-text whitespace-pre-wrap leading-relaxed">
+                          {selectedService.notes}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
 
               {/* Action Buttons based on status */}
-              <div className="flex justify-end gap-3 pt-4">
-                <Button
-                  variant="ghost"
+              <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-4">
+                {/* Close Button - Like Back Button */}
+                <button
                   onClick={() => {
                     setViewModalOpen(false);
                     setSelectedService(null);
                     setError(null);
                   }}
-                  className="px-6 hover:bg-surface/50 transition-all duration-200 rounded-xl"
+                  className="group/close relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
                 >
-                  Close
-                </Button>
+                  {/* Icon with animation */}
+                  <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/close:scale-125 group-hover/close:translate-x-[1.7em]">
+                    <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/close:text-cyan-100 group-hover/close:scale-110" />
+                  </div>
+                  
+                  {/* Text */}
+                  <span className="transition-all duration-500 ease-in-out group-hover/close:opacity-0">
+                    Close
+                  </span>
+                </button>
                 
                 {selectedService.status === "pending" && (
                   <>
-                    <Button
+                    {/* Approve Button - Green with Icon Animation */}
+                    <button
                       onClick={() => {
                         setViewModalOpen(false);
                         handleApproveClick(selectedService);
                       }}
-                      className="gap-2 bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/40 transition-all duration-200 rounded-xl"
+                      className="group/approve relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-green-700/75 via-green-900/45 to-green-700/75 hover:from-green-600/85 hover:via-green-800/55 hover:to-green-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-green-900/30 hover:shadow-lg hover:shadow-green-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
                     >
-                      <CheckCircle className="h-4 w-4" />
-                      Approve
-                    </Button>
-                    <Button
+                      {/* Shine Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/approve:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                      
+                      {/* Icon with animation */}
+                      <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/approve:scale-125 group-hover/approve:translate-x-[2.5em]">
+                        <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-green-200/70 group-hover/approve:text-green-50 group-hover/approve:scale-110" />
+                      </div>
+                      
+                      {/* Text */}
+                      <span className="transition-all duration-500 ease-in-out group-hover/approve:opacity-0">
+                        Approve
+                      </span>
+                    </button>
+                    
+                    {/* Cancel Button - Red Style (Like Delete Member) */}
+                    <button
                       onClick={() => {
                         setViewModalOpen(false);
                         handleCancelClick(selectedService);
                       }}
-                      className="gap-2 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl"
+                      className="group/cancel relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
                     >
-                      <XCircle className="h-4 w-4" />
-                      Cancel
-                    </Button>
+                      {/* Shine Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/cancel:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                      
+                      {/* Icon with animation */}
+                      <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/cancel:scale-125 group-hover/cancel:translate-x-[2.2em]">
+                        <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-red-200/70 group-hover/cancel:text-red-50 group-hover/cancel:scale-110" />
+                      </div>
+                      
+                      {/* Text */}
+                      <span className="transition-all duration-500 ease-in-out group-hover/cancel:opacity-0">
+                        Cancel
+                      </span>
+                    </button>
                   </>
                 )}
                 
                 {selectedService.status === "approved" && (
-                  <Button
+                  <button
                     onClick={() => {
                       setViewModalOpen(false);
                       handleCancelClick(selectedService);
                     }}
-                    className="gap-2 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl"
+                    className="group/cancel relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
                   >
-                    <XCircle className="h-4 w-4" />
-                    Cancel Service
-                  </Button>
+                    {/* Shine Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/cancel:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                    
+                    {/* Icon with animation */}
+                    <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/cancel:scale-125 group-hover/cancel:translate-x-[3.5em]">
+                      <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-red-200/70 group-hover/cancel:text-red-50 group-hover/cancel:scale-110" />
+                    </div>
+                    
+                    {/* Text */}
+                    <span className="transition-all duration-500 ease-in-out group-hover/cancel:opacity-0">
+                      Cancel Service
+                    </span>
+                  </button>
                 )}
                 
                 {selectedService.status === "cancelled" && (
-                  <Button
+                  <button
                     onClick={() => {
                       setViewModalOpen(false);
                       handleDeleteClick(selectedService);
                     }}
-                    className="gap-2 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl"
+                    className="group/delete relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
                   >
-                    <Trash2 className="h-4 w-4" />
-                    Delete
-                  </Button>
+                    {/* Shine Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/delete:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                    
+                    {/* Icon with animation */}
+                    <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/delete:scale-125 group-hover/delete:translate-x-[2.5em]">
+                      <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-red-200/70 group-hover/delete:text-red-50 group-hover/delete:scale-110" />
+                    </div>
+                    
+                    {/* Text */}
+                    <span className="transition-all duration-500 ease-in-out group-hover/delete:opacity-0">
+                      Delete
+                    </span>
+                  </button>
                 )}
               </div>
             </>

@@ -78,7 +78,7 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} bg-background text-text antialiased`} suppressHydrationWarning>
         <Suspense fallback={null}>
-          <MobileScrollToTop />
+        <MobileScrollToTop />
         </Suspense>
         <Script id="suppress-hydration-warnings" strategy="beforeInteractive">
           {`
