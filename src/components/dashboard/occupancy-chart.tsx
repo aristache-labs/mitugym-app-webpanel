@@ -175,11 +175,11 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
 
   
   return (
-    <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">
+    <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden w-full">
       {/* Full card hover overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[20px]" />
       
-      <CardHeader className="relative pb-4">
+      <CardHeader className="relative pb-4 px-4 sm:px-6">
         {/* Gradient border */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
         <div className="flex items-center justify-between">
@@ -205,13 +205,13 @@ export function OccupancyChart({ checkIns, schedule, timeFormat = '24h', timezon
         </div>
       </CardHeader>
       
-      <CardContent className="relative p-4 md:p-6">
+      <CardContent className="relative p-2 sm:p-4 md:p-6">
         <div className={isMobile ? "h-[280px] w-full" : "h-[250px] w-full"}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart 
               data={data} 
               margin={isMobile 
-                ? { top: 15, right: 10, left: 5, bottom: 50 } 
+                ? { top: 15, right: 5, left: -5, bottom: 50 } 
                 : { top: 25, right: 25, left: 15, bottom: 25 }
               }>
               <defs>

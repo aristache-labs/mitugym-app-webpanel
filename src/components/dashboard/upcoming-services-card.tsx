@@ -25,11 +25,11 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
   };
 
   return (
-    <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden">
+    <Card className="group relative bg-card/95 backdrop-blur-sm border-surface/30 shadow-lg shadow-black/10 transition-all duration-300 hover:shadow-xl hover:shadow-primary/15 hover:border-primary/50 overflow-hidden w-full">
       {/* Full card hover overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[20px]" />
       
-      <CardHeader className="relative pb-4">
+      <CardHeader className="relative pb-4 px-4 sm:px-6">
         {/* Gradient border */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
         <div className="flex items-center justify-between">
@@ -62,9 +62,9 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
           </div>
         </div>
       </CardHeader>
-      <CardContent className="relative p-6">
+      <CardContent className="relative p-3 sm:p-4 md:p-6">
         {bookings.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-8 sm:py-12">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
               <Briefcase className="h-8 w-8 text-primary/60" />
             </div>
@@ -74,15 +74,16 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {bookings.slice(0, 5).map((booking) => (
               <div
                 key={booking.id}
-                className="group/item flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
+                className="group/item relative p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
               >
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-xl border border-primary/20 group-hover/item:bg-primary/20 transition-colors">
-                    <Clock className="h-4 w-4 text-primary" />
+                {/* Top Row: Time and Status */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20 group-hover/item:bg-primary/20 transition-colors">
+                    <Clock className="h-3.5 w-3.5 text-primary" />
                     <span className="text-sm font-bold text-primary">
                       {timeFormat === '12h' 
                         ? format(new Date(booking.booking_date), "h:mm a")
@@ -91,42 +92,42 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
                     </span>
                   </div>
                   
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <AvatarWithPreview
-                        avatarUrl={booking.member?.avatar_url}
-                        memberName={booking.member?.full_name || "Unknown Member"}
-                        size="small"
-                        className="border-primary/20"
-                      />
-                      <div className="flex-1">
-                        <Link href="/bookings" className="group/member">
-                          <span className="font-semibold text-base text-text group-hover/item:text-primary group-hover/member:text-primary transition-colors block cursor-pointer hover:underline">
-                            {booking.member?.full_name || "Unknown Member"}
-                          </span>
-                        </Link>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-sm text-muted/90">
-                            {booking.service?.name || "Unknown Service"}
-                          </span>
-                          {booking.service?.service_type && getServiceTypeBadge(booking.service.service_type)}
-                        </div>
-                      </div>
-                    </div>
+                  <Badge 
+                    variant={booking.status === "confirmed" ? "success" : booking.status === "pending" ? "warning" : "default"}
+                    className="text-xs capitalize"
+                  >
+                    {booking.status}
+                  </Badge>
+                </div>
+
+                {/* Middle Row: Member Info */}
+                <div className="flex items-center gap-3 mb-2">
+                  <AvatarWithPreview
+                    avatarUrl={booking.member?.avatar_url}
+                    memberName={booking.member?.full_name || "Unknown Member"}
+                    size="small"
+                    className="border-primary/20 flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <Link href="/bookings" className="group/member">
+                      <h4 className="font-semibold text-base text-text group-hover/item:text-primary group-hover/member:text-primary transition-colors cursor-pointer hover:underline truncate">
+                        {booking.member?.full_name || "Unknown Member"}
+                      </h4>
+                    </Link>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-2">
-                  <div className="flex items-center gap-2">
-                    <Badge 
-                      variant={booking.status === "confirmed" ? "success" : booking.status === "pending" ? "warning" : "default"}
-                      className="text-xs capitalize"
-                    >
-                      {booking.status}
-                    </Badge>
+                {/* Bottom Row: Service Info */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-sm text-muted/90 truncate">
+                      {booking.service?.name || "Unknown Service"}
+                    </span>
+                    {booking.service?.service_type && getServiceTypeBadge(booking.service.service_type)}
                   </div>
+                  
                   {booking.sessions_remaining && booking.sessions_remaining > 0 && (
-                    <div className="bg-secondary/20 text-secondary px-2 py-1 rounded-lg text-xs font-medium border border-secondary/30">
+                    <div className="bg-secondary/20 text-secondary px-2.5 py-1 rounded-lg text-xs font-medium border border-secondary/30 flex-shrink-0">
                       {booking.sessions_remaining} left
                     </div>
                   )}

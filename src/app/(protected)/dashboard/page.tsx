@@ -26,9 +26,9 @@ export default async function DashboardPage() {
   const spotlightNews = news.slice(0, 3);
 
   return (
-    <div className="space-y-6 sm:space-y-8 overflow-hidden">
+    <div className="space-y-6 sm:space-y-8 w-full overflow-hidden">
       {/* Premium Metrics Section - Responsive Grid */}
-      <section className="grid gap-3 grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 animate-fade-in-up">
+      <section className="grid gap-3 grid-cols-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 animate-fade-in-up w-full">
         <MetricCard 
           title="In Gym Now" 
           value={metrics.occupancy} 
@@ -71,8 +71,8 @@ export default async function DashboardPage() {
       </section>
 
       {/* Main Content Grid - Stacks on mobile */}
-      <section className="grid gap-6 sm:gap-8 lg:grid-cols-[2fr_1fr] animate-fade-in-up">
-        <div className="space-y-6 sm:space-y-8">
+      <section className="grid gap-6 sm:gap-8 lg:grid-cols-[2fr_1fr] animate-fade-in-up w-full">
+        <div className="space-y-6 sm:space-y-8 min-w-0 w-full">
           <div className="animate-scale-in">
           <OccupancyChart checkIns={checkIns} schedule={schedule} timeFormat={timeFormat} timezone={appTimezone} />
           </div>
