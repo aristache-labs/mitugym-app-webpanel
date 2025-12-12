@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { createPlanAction, updatePlanAction, type ActionResult } from "@/app/(protected)/actions";
-import { planSchema, type PlanInput, planTypeEnum } from "@/schemas/plans";
+import { planSchema, type PlanInput } from "@/schemas/plans";
 import type { MembershipPlan } from "@/types";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { FloatingLabelInput } from "@/components/ui/floating-label-input";
+import { FloatingLabelSelect } from "@/components/ui/floating-label-select";
+import { AnimatedButton } from "@/components/ui/animated-button";
 import { useToast } from "@/components/ui/toast";
+import { Package, DollarSign, Calendar, ListChecks, ToggleLeft } from "lucide-react";
 
 interface PlanFormProps {
   plan?: MembershipPlan | null;
@@ -157,138 +158,180 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
 
   return (
     <Form {...form}>
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={onSubmit} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Unlimited" {...field} />
+                <FloatingLabelInput
+                  label="Name"
+                  placeholder="Unlimited"
+                  icon={<Package className="w-full h-full" />}
+                  error={form.formState.errors.name?.message}
+                  {...field}
+                />
               </FormControl>
-              <FormMessage>{form.formState.errors.name?.message}</FormMessage>
+              <FormMessage />
             </FormItem>
           )}
         />
+        
         <FormField
           control={form.control}
           name="plan_type"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Plan Type</FormLabel>
               <FormControl>
-                <select
-                  value={field.value}
-                  onChange={(event) => field.onChange(event.target.value)}
-                  className="rounded-[16px] border border-surface/50 bg-surface px-4 py-2 text-sm w-full"
-                >
-                  {planTypeEnum.options.map((type) => {
-                    const labels = {
-                      'day_entry': 'Day Entry',
-                      'full': 'Full Membership',
-                      'student': 'Student Discount'
-                    };
-                    return (
-                      <option key={type} value={type} className="bg-surface text-text">
-                        {labels[type as keyof typeof labels]}
-                      </option>
-                    );
-                  })}
-                </select>
+                <FloatingLabelSelect
+                  label="Plan Type"
+                  icon={<Package className="w-full h-full" />}
+                  error={form.formState.errors.plan_type?.message}
+                  options={[
+                    { value: 'day_entry', label: 'Day Entry' },
+                    { value: 'full', label: 'Full Membership' },
+                    { value: 'student', label: 'Student Discount' }
+                  ]}
+                  {...field}
+                />
               </FormControl>
-              <FormMessage>{form.formState.errors.plan_type?.message}</FormMessage>
+              <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Price</FormLabel>
               <FormControl>
-                <Input type="number" min={0} step="0.01" {...field} />
-              </FormControl>
-              <FormMessage>{form.formState.errors.price?.message}</FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="duration_months"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Duration (0 = 1 day, 1+ = months)</FormLabel>
-              <FormControl>
-                <Input type="number" min={0} step="1" {...field} />
-              </FormControl>
-              <FormMessage>{form.formState.errors.duration_months?.message}</FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="features"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Features</FormLabel>
-              <FormControl>
-                <Textarea 
-                  rows={5} 
-                  placeholder="Enter features, one per line&#10;• Access to gym equipment&#10;• Personal training sessions&#10;• Group fitness classes" 
-                  value={field.value?.join('\n') || ''}
-                  onChange={(e) => {
-                    // Split by newlines but don't filter empty lines during typing
-                    const lines = e.target.value.split('\n');
-                    field.onChange(lines);
-                  }}
-                  onBlur={() => {
-                    // Only filter out empty lines when user finishes editing
-                    if (field.value) {
-                      const filteredLines = field.value.filter((line: string) => line.trim() !== '');
-                      field.onChange(filteredLines);
-                    }
-                  }}
+                <FloatingLabelInput
+                  label="Price"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  placeholder="0"
+                  icon={<DollarSign className="w-full h-full" />}
+                  error={form.formState.errors.price?.message}
+                  {...field}
                 />
               </FormControl>
-              <FormMessage>{form.formState.errors.features?.message}</FormMessage>
+              <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="is_active"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <FormControl>
-                <select
-                  value={field.value ? "active" : "inactive"}
-                  onChange={(event) => field.onChange(event.target.value === "active")}
-                  className="rounded-[16px] border border-surface/50 bg-surface px-4 py-2 text-sm"
-                >
-                  <option value="active" className="bg-surface text-text">
-                    Active
-                  </option>
-                  <option value="inactive" className="bg-surface text-text">
-                    Inactive
-                  </option>
-                </select>
-              </FormControl>
-              <FormMessage>{form.formState.errors.is_active?.message}</FormMessage>
-            </FormItem>
-          )}
-        />
-        {serverError ? <p className="text-sm text-error">{serverError}</p> : null}
-        <div className="flex justify-end">
-          <Button 
+
+        <div className="mt-3 sm:mt-0">
+          <FormField
+            control={form.control}
+            name="duration_months"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <FloatingLabelInput
+                    label="Duration (0 = 1 DAY, 1+ = MONTHS)"
+                    type="number"
+                    min={0}
+                    step="1"
+                    placeholder="0"
+                    icon={<Calendar className="w-full h-full" />}
+                    error={form.formState.errors.duration_months?.message}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="mt-3 sm:mt-0">
+          <FormField
+            control={form.control}
+            name="features"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <div className="relative pt-1.5">
+                    <label 
+                      htmlFor="features-textarea"
+                      className={`absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal text-text/80 transition-all duration-200 translate-x-3 opacity-100 ${
+                        form.formState.errors.features ? 'text-error' : ''
+                      }`}
+                    >
+                      Features
+                    </label>
+                    <div 
+                      className={`absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 opacity-100 ${
+                        form.formState.errors.features ? 'text-error' : 'text-primary'
+                      }`}
+                    >
+                      <ListChecks className="w-full h-full" />
+                    </div>
+                    <textarea
+                      id="features-textarea"
+                      rows={5}
+                      placeholder="Enter features, one per line • Access to gym equipment • Personal training sessions • Group fitness classes"
+                      className={`w-full rounded-2xl border-2 ${
+                        form.formState.errors.features ? 'border-error' : 'border-surface/50 focus:border-primary'
+                      } bg-surface/30 px-4 py-3 text-sm text-text placeholder:text-muted/40 outline-none transition-all duration-200 focus:bg-surface/50 resize-none`}
+                      value={field.value?.join('\n') || ''}
+                      onChange={(e) => {
+                        const lines = e.target.value.split('\n');
+                        field.onChange(lines);
+                      }}
+                      onBlur={() => {
+                        if (field.value) {
+                          const filteredLines = field.value.filter((line: string) => line.trim() !== '');
+                          field.onChange(filteredLines);
+                        }
+                      }}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <div className="mt-3 sm:mt-0">
+          <FormField
+            control={form.control}
+            name="is_active"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <FloatingLabelSelect
+                    label="Status"
+                    icon={<ToggleLeft className="w-full h-full" />}
+                    error={form.formState.errors.is_active?.message}
+                    options={[
+                      { value: 'active', label: 'Active' },
+                      { value: 'inactive', label: 'Inactive' }
+                    ]}
+                    value={field.value ? "active" : "inactive"}
+                    onChange={(value) => field.onChange(value === "active")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {serverError ? <p className="text-xs sm:text-sm text-error">{serverError}</p> : null}
+        
+        <div className="flex justify-end pt-2 sm:pt-0">
+          <AnimatedButton
             type="submit" 
             disabled={isPending}
-            className="h-10 text-sm px-8 bg-gradient-to-br from-slate-800 via-slate-800/95 to-slate-900 hover:from-slate-700 hover:via-slate-700/95 hover:to-slate-800 text-slate-100 hover:text-white border border-slate-600/40 hover:border-slate-500/60 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-black/30 backdrop-blur-sm font-medium disabled:opacity-70 disabled:cursor-not-allowed"
+            className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white border-0 !ring-0 !outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium"
           >
-            {plan ? "Update Plan" : "Create Plan"}
-          </Button>
+            {isPending ? "Saving..." : plan ? "Update Plan" : "Create Plan"}
+          </AnimatedButton>
         </div>
       </form>
     </Form>

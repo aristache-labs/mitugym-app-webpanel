@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { PlanForm } from "@/components/plans/plan-form";
 import { fetchPlans } from "@/lib/data";
 import Link from "next/link";
@@ -12,20 +11,20 @@ export const metadata = {
 export default async function NewPlanPage() {
   const existingPlans = await fetchPlans();
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Premium Form Container */}
       <div className="relative">
         {/* Background Glow */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-3xl blur-2xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 rounded-2xl sm:rounded-3xl blur-2xl"></div>
         
         {/* Form Card */}
-        <Card className="relative group bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-3xl">
+        <Card className="relative group bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl sm:rounded-3xl">
           {/* Card Hover Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
           
           {/* Gradient Border */}
-          <div className="absolute inset-0 rounded-3xl">
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-primary/30 to-transparent" 
+          <div className="absolute inset-0 rounded-2xl sm:rounded-3xl">
+            <div className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-transparent via-primary/30 to-transparent" 
                  style={{ 
                    mask: 'linear-gradient(white, white) content-box, linear-gradient(white, white)',
                    maskComposite: 'exclude',
@@ -36,29 +35,55 @@ export default async function NewPlanPage() {
             </div>
           </div>
           
-          <CardHeader className="relative p-8 pb-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="p-2 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                  <Package className="h-6 w-6 text-primary/60 group-hover:text-primary transition-colors" />
+          <CardHeader className="relative p-3 sm:p-6 md:p-8 pb-2 sm:pb-4 md:pb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+              <div className="flex items-start gap-2 sm:gap-4 w-full sm:w-auto">
+                <div className="p-1 sm:p-2 rounded-lg sm:rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors flex-shrink-0">
+                  <Package className="h-4 w-4 sm:h-6 sm:w-6 text-primary/60 group-hover:text-primary transition-colors" />
                 </div>
-                <div>
-                  <CardTitle className="text-xl font-semibold text-text group-hover:text-primary transition-colors">
-                    Create New Plan
-                  </CardTitle>
-                  <p className="text-sm text-muted/70 mt-1">Add a new membership plan to your gym</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <CardTitle className="text-base sm:text-xl font-semibold text-text group-hover:text-primary transition-colors">
+                      Create New Plan
+                    </CardTitle>
+                    {/* Back button on mobile - right side */}
+                    <Link 
+                      href="/plans"
+                      className="sm:hidden group/link relative h-7 px-3 flex items-center justify-center gap-1.5 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 !no-underline flex-shrink-0"
+                    >
+                      {/* Arrow Icon */}
+                      <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/link:scale-125 group-hover/link:translate-x-[1em]">
+                        <ArrowLeft className="h-3 w-3 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/link:text-cyan-100 group-hover/link:scale-110" />
+                      </div>
+                      
+                      {/* Text */}
+                      <span className="transition-all duration-500 ease-in-out group-hover/link:opacity-0">
+                        Back
+                      </span>
+                    </Link>
+                  </div>
+                  <p className="text-[10px] sm:text-sm text-muted/70 mt-0.5 sm:mt-1 pr-1">Add a new membership plan to your gym</p>
                 </div>
               </div>
-              <Link href="/plans">
-                <Button className="gap-2 h-9 text-sm px-4 bg-gradient-to-br from-slate-800/50 via-slate-800/40 to-slate-900/50 hover:from-slate-800/70 hover:via-slate-800/60 hover:to-slate-900/70 text-slate-300 hover:text-slate-100 border border-slate-700/50 hover:border-slate-600/70 transition-all duration-300 shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 backdrop-blur-sm font-medium">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Plans
-                </Button>
+              {/* Back button on desktop - separate */}
+              <Link 
+                href="/plans"
+                className="hidden sm:flex group/link relative h-8 sm:h-9 w-full sm:w-auto px-3 sm:px-4 md:px-6 items-center justify-center gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 !no-underline"
+              >
+                {/* Arrow Icon */}
+                <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/link:scale-125 group-hover/link:translate-x-[1.3em]">
+                  <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/link:text-cyan-100 group-hover/link:scale-110" />
+                </div>
+                
+                {/* Text */}
+                <span className="transition-all duration-500 ease-in-out group-hover/link:opacity-0">
+                  Back
+                </span>
               </Link>
             </div>
           </CardHeader>
-          
-          <CardContent className="relative p-8 pt-0">
+            
+          <CardContent className="relative p-4 sm:p-6 md:p-8 pt-0">
             <PlanForm existingPlans={existingPlans} />
           </CardContent>
         </Card>
