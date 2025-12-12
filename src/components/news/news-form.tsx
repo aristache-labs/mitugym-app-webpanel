@@ -124,7 +124,7 @@ export function NewsForm({ item, onCompleted }: NewsFormProps) {
       </div>
 
       {/* Priority */}
-      <div className="mb-3 sm:mb-0 mt-4 sm:mt-6">
+      <div className="mb-3 sm:mb-0 mt-6 sm:mt-8">
         <FloatingLabelSelect
           label="Priority"
           icon={<AlertCircle className="h-4 w-4" />}
@@ -136,7 +136,7 @@ export function NewsForm({ item, onCompleted }: NewsFormProps) {
       </div>
 
       {/* Expires On */}
-      <div className="mb-3 sm:mb-0 mt-4 sm:mt-6">
+      <div className="mb-3 sm:mb-0 mt-6 sm:mt-8">
         <FloatingLabelInput
           id="expires_at"
           label="Expires On"
