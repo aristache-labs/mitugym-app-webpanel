@@ -43,25 +43,143 @@ export function MemberActions({ memberId }: MemberActionsProps) {
   // Simple confirmation for delete
   if (showDeleteConfirm) {
     return (
-      <div className="flex items-center gap-1">
-        <Button 
-          variant="ghost" 
-          size="sm" 
+      <div className="flex items-center gap-2">
+        <button
           onClick={handleDelete}
           disabled={isPending}
-          className="h-8 px-2 text-xs bg-red-500 hover:bg-red-600 text-white"
+          className="confirm-button"
+          title="Confirm Delete"
         >
-          {isPending ? "..." : "Confirm"}
-        </Button>
-        <Button 
-          variant="ghost" 
-          size="sm" 
+          <svg
+            className="confirm-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 13l4 4L19 7"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="confirm-text">{isPending ? "..." : "Yes"}</span>
+          
+          <style jsx>{`
+            .confirm-button {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 6px;
+              height: 32px;
+              padding: 0 14px;
+              border-radius: 8px;
+              background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(239, 68, 68, 0.12) 100%);
+              border: 1px solid rgba(255, 107, 107, 0.35);
+              color: rgb(255, 107, 107);
+              font-weight: 600;
+              font-size: 13px;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              position: relative;
+              overflow: hidden;
+            }
+            .confirm-button:disabled {
+              opacity: 0.5;
+              cursor: not-allowed;
+            }
+            .confirm-icon {
+              width: 14px;
+              height: 14px;
+              transition: all 0.3s ease;
+            }
+            .confirm-text {
+              transition: all 0.3s ease;
+            }
+            .confirm-button:hover:not(:disabled) {
+              background: linear-gradient(135deg, rgba(255, 107, 107, 0.25) 0%, rgba(239, 68, 68, 0.2) 100%);
+              border-color: rgba(255, 107, 107, 0.5);
+              box-shadow: 0 0 15px rgba(255, 107, 107, 0.25);
+              transform: translateY(-1px);
+            }
+            .confirm-button:hover:not(:disabled) .confirm-icon {
+              transform: scale(1.15);
+            }
+            .confirm-button:active:not(:disabled) {
+              transform: translateY(0);
+            }
+          `}</style>
+        </button>
+        
+        <button
           onClick={() => setShowDeleteConfirm(false)}
           disabled={isPending}
-          className="h-8 px-2 text-xs hover:bg-surface/50"
+          className="cancel-button"
+          title="Cancel"
         >
-          Cancel
-        </Button>
+          <svg
+            className="cancel-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6 18L18 6M6 6l12 12"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="cancel-text">No</span>
+          
+          <style jsx>{`
+            .cancel-button {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 6px;
+              height: 32px;
+              padding: 0 14px;
+              border-radius: 8px;
+              background: linear-gradient(135deg, rgba(107, 114, 128, 0.12) 0%, rgba(75, 85, 99, 0.1) 100%);
+              border: 1px solid rgba(107, 114, 128, 0.3);
+              color: rgba(156, 163, 175, 0.9);
+              font-weight: 600;
+              font-size: 13px;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              position: relative;
+              overflow: hidden;
+            }
+            .cancel-button:disabled {
+              opacity: 0.5;
+              cursor: not-allowed;
+            }
+            .cancel-icon {
+              width: 14px;
+              height: 14px;
+              transition: all 0.3s ease;
+            }
+            .cancel-text {
+              transition: all 0.3s ease;
+            }
+            .cancel-button:hover:not(:disabled) {
+              background: linear-gradient(135deg, rgba(107, 114, 128, 0.2) 0%, rgba(75, 85, 99, 0.18) 100%);
+              border-color: rgba(107, 114, 128, 0.45);
+              color: rgb(156, 163, 175);
+              box-shadow: 0 0 12px rgba(107, 114, 128, 0.15);
+              transform: translateY(-1px);
+            }
+            .cancel-button:hover:not(:disabled) .cancel-icon {
+              transform: rotate(90deg) scale(1.1);
+            }
+            .cancel-button:active:not(:disabled) {
+              transform: translateY(0);
+            }
+          `}</style>
+        </button>
       </div>
     );
   }
