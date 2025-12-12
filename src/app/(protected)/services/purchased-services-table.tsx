@@ -494,20 +494,20 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
           setError(null);
         }}
         title="Approve Service Purchase"
-        className="max-w-2xl"
+        className="max-w-[98vw] sm:max-w-3xl"
       >
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {error && (
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
-              <div className="relative p-4 rounded-2xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-xl bg-red-500/10">
-                    <XCircle className="h-5 w-5 text-red-500" />
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-transparent to-red-500/5 rounded-xl blur-xl"></div>
+              <div className="relative p-3 sm:p-4 rounded-xl bg-red-500/5 border border-red-500/20 backdrop-blur-sm">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-red-500/10">
+                    <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-red-800 mb-1">Error</p>
-                    <p className="text-xs text-red-700">{error}</p>
+                    <p className="text-xs sm:text-sm font-semibold text-red-400 mb-0.5 sm:mb-1">Error</p>
+                    <p className="text-xs text-red-300/80">{error}</p>
                   </div>
                 </div>
               </div>
@@ -515,16 +515,17 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
           )}
 
           {/* Header Section */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/10 rounded-2xl blur-xl"></div>
-            <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 rounded-2xl bg-green-500/10">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
+          <div className="relative group/header">
+            <div className="absolute -inset-1 bg-gradient-to-r from-green-500/20 via-emerald-500/20 to-green-500/20 rounded-xl blur-xl opacity-75 group-hover/header:opacity-100 transition-opacity"></div>
+            <div className="relative bg-gradient-to-br from-card/95 via-card/90 to-surface/95 backdrop-blur-xl border border-green-500/20 rounded-xl p-4 sm:p-6 shadow-lg overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(34,197,94,0.1),transparent_70%)]"></div>
+              <div className="relative flex items-start gap-3 sm:gap-4">
+                <div className="p-2 sm:p-3 rounded-xl bg-green-500/10 ring-1 ring-green-500/20">
+                  <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-400" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-text">Approve Service Purchase</h3>
-                  <p className="text-sm text-muted/70">Allow the member to book sessions for this service</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base sm:text-lg font-semibold text-text mb-1">Approve Service Purchase</h3>
+                  <p className="text-xs sm:text-sm text-muted/70">Allow the member to book sessions for this service</p>
                 </div>
               </div>
             </div>
@@ -532,45 +533,45 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
 
           {/* Service Details */}
           {selectedService && (
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 rounded-2xl blur-xl"></div>
-              <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 rounded-xl bg-primary/10">
-                    <Package className="h-5 w-5 text-primary" />
+            <div className="relative group/details">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 via-cyan-500/10 to-primary/10 rounded-xl blur-xl opacity-75 group-hover/details:opacity-100 transition-opacity"></div>
+              <div className="relative bg-gradient-to-br from-card/95 via-card/90 to-surface/95 backdrop-blur-xl border border-surface/40 rounded-xl p-4 sm:p-6 shadow-lg">
+                <div className="flex items-center gap-2 sm:gap-3 mb-4">
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 ring-1 ring-primary/20">
+                    <Package className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                   </div>
-                  <h4 className="font-semibold text-text">Purchase Details</h4>
+                  <h4 className="text-sm sm:text-base font-semibold text-text">Purchase Details</h4>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service</p>
-                        <p className="text-sm font-semibold text-text">{selectedService.service?.name}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-surface/30 border border-surface/40 backdrop-blur-sm hover:bg-surface/40 transition-colors">
+                      <Package className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] sm:text-xs font-medium text-muted/70 uppercase tracking-wider mb-0.5">Service</p>
+                        <p className="text-xs sm:text-sm font-semibold text-text truncate">{selectedService.service?.name}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <Hash className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Sessions</p>
-                        <p className="text-sm font-semibold text-text">{selectedService.sessions_total} total</p>
+                    <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-surface/30 border border-surface/40 backdrop-blur-sm hover:bg-surface/40 transition-colors">
+                      <Hash className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] sm:text-xs font-medium text-muted/70 uppercase tracking-wider mb-0.5">Sessions</p>
+                        <p className="text-xs sm:text-sm font-semibold text-text">{selectedService.sessions_total} total</p>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <User className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Member</p>
-                        <p className="text-sm font-semibold text-text">{selectedService.member?.full_name}</p>
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-surface/30 border border-surface/40 backdrop-blur-sm hover:bg-surface/40 transition-colors">
+                      <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] sm:text-xs font-medium text-muted/70 uppercase tracking-wider mb-0.5">Member</p>
+                        <p className="text-xs sm:text-sm font-semibold text-text truncate">{selectedService.member?.full_name}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Purchase Date</p>
-                        <p className="text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
+                    <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-surface/30 border border-surface/40 backdrop-blur-sm hover:bg-surface/40 transition-colors">
+                      <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] sm:text-xs font-medium text-muted/70 uppercase tracking-wider mb-0.5">Purchase Date</p>
+                        <p className="text-xs sm:text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
                       </div>
                     </div>
                   </div>
@@ -580,30 +581,29 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
           )}
 
           {/* Notes Section */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-500/10 rounded-2xl blur-xl"></div>
-            <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-xl bg-blue-500/10">
-                  <StickyNote className="h-5 w-5 text-blue-500" />
+          <div className="relative group/notes">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-blue-500/10 rounded-xl blur-xl opacity-75 group-hover/notes:opacity-100 transition-opacity"></div>
+            <div className="relative bg-gradient-to-br from-card/95 via-card/90 to-surface/95 backdrop-blur-xl border border-surface/40 rounded-xl p-4 sm:p-6 shadow-lg">
+              <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-blue-500/10 ring-1 ring-blue-500/20">
+                  <StickyNote className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400" />
                 </div>
-                <Label htmlFor="approve-notes" className="font-semibold text-text">Approval Notes (Optional)</Label>
+                <Label htmlFor="approve-notes" className="text-xs sm:text-sm font-semibold text-text">Approval Notes (Optional)</Label>
               </div>
-            <Textarea
-              id="approve-notes"
-              placeholder="Add any notes about the approval..."
-              value={approveNotes}
-              onChange={(e) => setApproveNotes(e.target.value)}
-              rows={3}
-                className="w-full rounded-2xl border border-surface/50 bg-surface/20 px-4 py-3 text-sm placeholder:text-muted/50 focus:border-primary/50 focus:bg-surface/30 transition-all duration-200"
-            />
+              <Textarea
+                id="approve-notes"
+                placeholder="Add any notes about the approval..."
+                value={approveNotes}
+                onChange={(e) => setApproveNotes(e.target.value)}
+                rows={3}
+                className="w-full rounded-xl border border-surface/50 bg-surface/30 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-text placeholder:text-muted/50 focus:border-primary/50 focus:bg-surface/40 focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              />
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 pt-4">
-            <Button
-              variant="ghost"
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2 sm:pt-4">
+            <button
               onClick={() => {
                 setApproveModalOpen(false);
                 setSelectedService(null);
@@ -611,27 +611,41 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
                 setError(null);
               }}
               disabled={isPending}
-              className="px-6 hover:bg-surface/50 transition-all duration-200 rounded-xl"
+              className="group/cancel relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Cancel
-            </Button>
-            <Button
+              <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/cancel:scale-125 group-hover/cancel:translate-x-[2em]">
+                <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/cancel:text-cyan-100 group-hover/cancel:scale-110" />
+              </div>
+              <span className="transition-all duration-500 ease-in-out group-hover/cancel:opacity-0">
+                Cancel
+              </span>
+            </button>
+            
+            <button
               onClick={handleApproveConfirm}
               disabled={isPending}
-              className="gap-2 bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/40 transition-all duration-200 rounded-xl px-8"
+              className="group/approve relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-green-700/75 via-green-900/45 to-green-700/75 hover:from-green-600/85 hover:via-green-800/55 hover:to-green-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-green-900/30 hover:shadow-lg hover:shadow-green-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
+              {!isPending && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/approve:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+              )}
+              
               {isPending ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                  Approving...
+                  <div className="animate-spin rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 border-2 border-white border-t-transparent" />
+                  <span>Approving...</span>
                 </>
               ) : (
                 <>
-                  <CheckCircle className="h-4 w-4" />
-                  Approve Service
+                  <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/approve:scale-125 group-hover/approve:translate-x-[4.5em]">
+                    <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-green-200/70 group-hover/approve:text-green-50 group-hover/approve:scale-110" />
+                  </div>
+                  <span className="transition-all duration-500 ease-in-out group-hover/approve:opacity-0">
+                    Approve Service
+                  </span>
                 </>
               )}
-            </Button>
+            </button>
           </div>
         </div>
       </Modal>
@@ -646,20 +660,20 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
           setError(null);
         }}
         title="Cancel Service Purchase"
-        className="max-w-2xl"
+        className="max-w-[98vw] sm:max-w-3xl"
       >
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {error && (
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
-              <div className="relative p-4 rounded-2xl bg-gradient-to-br from-red-500/5 to-red-500/10 border border-red-500/20">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-xl bg-red-500/10">
-                    <XCircle className="h-5 w-5 text-red-500" />
+              <div className="absolute -inset-1 bg-gradient-to-br from-red-500/10 via-transparent to-red-500/5 rounded-xl blur-xl"></div>
+              <div className="relative p-3 sm:p-4 rounded-xl bg-red-500/5 border border-red-500/20 backdrop-blur-sm">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-red-500/10">
+                    <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-red-800 mb-1">Error</p>
-                    <p className="text-xs text-red-700">{error}</p>
+                    <p className="text-xs sm:text-sm font-semibold text-red-400 mb-0.5 sm:mb-1">Error</p>
+                    <p className="text-xs text-red-300/80">{error}</p>
                   </div>
                 </div>
               </div>
@@ -667,16 +681,17 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
           )}
 
           {/* Header Section */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/10 rounded-2xl blur-xl"></div>
-            <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 rounded-2xl bg-red-500/10">
-                  <XCircle className="h-6 w-6 text-red-500" />
+          <div className="relative group/header">
+            <div className="absolute -inset-1 bg-gradient-to-r from-red-500/20 via-rose-500/20 to-red-500/20 rounded-xl blur-xl opacity-75 group-hover/header:opacity-100 transition-opacity"></div>
+            <div className="relative bg-gradient-to-br from-card/95 via-card/90 to-surface/95 backdrop-blur-xl border border-red-500/20 rounded-xl p-4 sm:p-6 shadow-lg overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(239,68,68,0.1),transparent_70%)]"></div>
+              <div className="relative flex items-start gap-3 sm:gap-4">
+                <div className="p-2 sm:p-3 rounded-xl bg-red-500/10 ring-1 ring-red-500/20">
+                  <XCircle className="h-5 w-5 sm:h-6 sm:w-6 text-red-400" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-text">Cancel Service Purchase</h3>
-                  <p className="text-sm text-muted/70">This will prevent the member from booking sessions for this service</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base sm:text-lg font-semibold text-text mb-1">Cancel Service Purchase</h3>
+                  <p className="text-xs sm:text-sm text-muted/70">This will prevent the member from booking sessions for this service</p>
                 </div>
               </div>
             </div>
@@ -684,45 +699,45 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
 
           {/* Service Details */}
           {selectedService && (
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 rounded-2xl blur-xl"></div>
-              <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 rounded-xl bg-primary/10">
-                    <Package className="h-5 w-5 text-primary" />
+            <div className="relative group/details">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary/10 via-cyan-500/10 to-primary/10 rounded-xl blur-xl opacity-75 group-hover/details:opacity-100 transition-opacity"></div>
+              <div className="relative bg-gradient-to-br from-card/95 via-card/90 to-surface/95 backdrop-blur-xl border border-surface/40 rounded-xl p-4 sm:p-6 shadow-lg">
+                <div className="flex items-center gap-2 sm:gap-3 mb-4">
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 ring-1 ring-primary/20">
+                    <Package className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                   </div>
-                  <h4 className="font-semibold text-text">Purchase Details</h4>
+                  <h4 className="text-sm sm:text-base font-semibold text-text">Purchase Details</h4>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <Package className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Service</p>
-                        <p className="text-sm font-semibold text-text">{selectedService.service?.name}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-surface/30 border border-surface/40 backdrop-blur-sm hover:bg-surface/40 transition-colors">
+                      <Package className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] sm:text-xs font-medium text-muted/70 uppercase tracking-wider mb-0.5">Service</p>
+                        <p className="text-xs sm:text-sm font-semibold text-text truncate">{selectedService.service?.name}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <Hash className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Sessions</p>
-                        <p className="text-sm font-semibold text-text">{selectedService.sessions_remaining}/{selectedService.sessions_total} remaining</p>
+                    <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-surface/30 border border-surface/40 backdrop-blur-sm hover:bg-surface/40 transition-colors">
+                      <Hash className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] sm:text-xs font-medium text-muted/70 uppercase tracking-wider mb-0.5">Sessions</p>
+                        <p className="text-xs sm:text-sm font-semibold text-text">{selectedService.sessions_remaining}/{selectedService.sessions_total} remaining</p>
                       </div>
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <User className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Member</p>
-                        <p className="text-sm font-semibold text-text">{selectedService.member?.full_name}</p>
+                  <div className="space-y-2 sm:space-y-3">
+                    <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-surface/30 border border-surface/40 backdrop-blur-sm hover:bg-surface/40 transition-colors">
+                      <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] sm:text-xs font-medium text-muted/70 uppercase tracking-wider mb-0.5">Member</p>
+                        <p className="text-xs sm:text-sm font-semibold text-text truncate">{selectedService.member?.full_name}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-surface/20 border border-surface/30">
-                      <Calendar className="h-4 w-4 text-primary flex-shrink-0" />
-                      <div>
-                        <p className="text-xs font-medium text-muted/70 uppercase tracking-wider">Purchase Date</p>
-                        <p className="text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
+                    <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-lg bg-surface/30 border border-surface/40 backdrop-blur-sm hover:bg-surface/40 transition-colors">
+                      <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] sm:text-xs font-medium text-muted/70 uppercase tracking-wider mb-0.5">Purchase Date</p>
+                        <p className="text-xs sm:text-sm font-semibold text-text">{format(new Date(selectedService.purchase_date), "PPp")}</p>
                       </div>
                     </div>
                   </div>
@@ -732,16 +747,16 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
           )}
 
           {/* Warning Notice */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-yellow-500/10 rounded-2xl blur-xl"></div>
-            <div className="relative p-4 rounded-2xl bg-gradient-to-br from-yellow-500/5 to-yellow-500/10 border border-yellow-500/20">
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-xl bg-yellow-500/10">
-                  <StickyNote className="h-5 w-5 text-yellow-600" />
+          <div className="relative group/warning">
+            <div className="absolute -inset-1 bg-gradient-to-r from-yellow-500/10 via-amber-500/10 to-yellow-500/10 rounded-xl blur-xl opacity-75 group-hover/warning:opacity-100 transition-opacity"></div>
+            <div className="relative p-3 sm:p-4 rounded-xl bg-gradient-to-br from-yellow-500/5 to-amber-500/5 border border-yellow-500/20 backdrop-blur-sm">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-yellow-500/10">
+                  <StickyNote className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-500" />
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-yellow-800 mb-1">⚠️ Important Notice</p>
-                  <p className="text-xs text-yellow-700 leading-relaxed">
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs sm:text-sm font-semibold text-yellow-400 mb-1">⚠️ Important Notice</p>
+                  <p className="text-xs text-yellow-300/80 leading-relaxed">
                     Cancelling this service will prevent the member from booking any remaining sessions. This action cannot be undone.
                   </p>
                 </div>
@@ -750,31 +765,30 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
           </div>
 
           {/* Reason Section */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-orange-500/10 rounded-2xl blur-xl"></div>
-            <div className="relative bg-card/95 backdrop-blur-xl border border-surface/40 shadow-lg rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-xl bg-orange-500/10">
-                  <StickyNote className="h-5 w-5 text-orange-500" />
+          <div className="relative group/reason">
+            <div className="absolute -inset-1 bg-gradient-to-r from-orange-500/10 via-red-500/10 to-orange-500/10 rounded-xl blur-xl opacity-75 group-hover/reason:opacity-100 transition-opacity"></div>
+            <div className="relative bg-gradient-to-br from-card/95 via-card/90 to-surface/95 backdrop-blur-xl border border-surface/40 rounded-xl p-4 sm:p-6 shadow-lg">
+              <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-orange-500/10 ring-1 ring-orange-500/20">
+                  <StickyNote className="h-4 w-4 sm:h-5 sm:w-5 text-orange-400" />
                 </div>
-                <Label htmlFor="cancel-reason" className="font-semibold text-text">Cancellation Reason *</Label>
+                <Label htmlFor="cancel-reason" className="text-xs sm:text-sm font-semibold text-text">Cancellation Reason *</Label>
               </div>
-            <Textarea
-              id="cancel-reason"
-              placeholder="Please provide a reason for cancelling this service..."
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              rows={3}
-              required
-                className="w-full rounded-2xl border border-surface/50 bg-surface/20 px-4 py-3 text-sm placeholder:text-muted/50 focus:border-primary/50 focus:bg-surface/30 transition-all duration-200"
-            />
+              <Textarea
+                id="cancel-reason"
+                placeholder="Please provide a reason for cancelling this service..."
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                rows={3}
+                required
+                className="w-full rounded-xl border border-surface/50 bg-surface/30 px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-text placeholder:text-muted/50 focus:border-primary/50 focus:bg-surface/40 focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              />
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 pt-4">
-            <Button
-              variant="ghost"
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-2 sm:pt-4">
+            <button
               onClick={() => {
                 setCancelModalOpen(false);
                 setSelectedService(null);
@@ -782,27 +796,41 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
                 setError(null);
               }}
               disabled={isPending}
-              className="px-6 hover:bg-surface/50 transition-all duration-200 rounded-xl"
+              className="group/keep relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Keep Service
-            </Button>
-            <Button
+              <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/keep:scale-125 group-hover/keep:translate-x-[3.5em]">
+                <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/keep:text-cyan-100 group-hover/keep:scale-110" />
+              </div>
+              <span className="transition-all duration-500 ease-in-out group-hover/keep:opacity-0">
+                Keep Service
+              </span>
+            </button>
+            
+            <button
               onClick={handleCancelConfirm}
               disabled={isPending || !cancelReason.trim()}
-              className="gap-2 bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/40 transition-all duration-200 rounded-xl px-8"
+              className="group/cancelservice relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-red-700/75 via-red-900/45 to-red-700/75 hover:from-red-600/85 hover:via-red-800/55 hover:to-red-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-red-900/30 hover:shadow-lg hover:shadow-red-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
+              {!isPending && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/cancelservice:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+              )}
+              
               {isPending ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                  Cancelling...
+                  <div className="animate-spin rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 border-2 border-white border-t-transparent" />
+                  <span>Cancelling...</span>
                 </>
               ) : (
                 <>
-                  <XCircle className="h-4 w-4" />
-                  Cancel Service
+                  <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/cancelservice:scale-125 group-hover/cancelservice:translate-x-[4em]">
+                    <XCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-red-200/70 group-hover/cancelservice:text-red-50 group-hover/cancelservice:scale-110" />
+                  </div>
+                  <span className="transition-all duration-500 ease-in-out group-hover/cancelservice:opacity-0">
+                    Cancel Service
+                  </span>
                 </>
               )}
-            </Button>
+            </button>
           </div>
         </div>
       </Modal>
