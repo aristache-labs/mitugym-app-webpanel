@@ -13,7 +13,7 @@ import { AnimatedButton } from "@/components/ui/animated-button";
 import { useToast } from "@/components/ui/toast";
 import { updateSessionBookingAction } from "@/app/(protected)/actions";
 import { ServiceBooking } from "@/types";
-import { Calendar, Clock, FileText } from "lucide-react";
+import { Calendar, Clock, FileText, Briefcase, User, Mail, Timer, Banknote } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Form schema for updating session bookings
@@ -113,36 +113,121 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
           {/* Hidden ID field */}
           <input type="hidden" {...form.register("id")} value={booking.id} />
 
-          {/* Booking Details Display */}
-          <div className="bg-muted/50 border border-border rounded-lg p-4">
-            <h4 className="font-medium text-sm mb-3">Booking Details</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-muted-foreground">Service:</span>
-                <span className="ml-2 font-medium">{booking.service?.name || "Unknown Service"}</span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Member:</span>
-                <span className="ml-2 font-medium">{booking.member?.full_name || "Unknown Member"}</span>
-              </div>
-              {booking.member?.email && (
-                <div className="md:col-span-2">
-                  <span className="text-muted-foreground">Email:</span>
-                  <span className="ml-2">{booking.member.email}</span>
+          {/* Booking Details Card */}
+          <div className="relative group bg-card/95 backdrop-blur-xl border border-surface/40 shadow-md transition-all duration-300 hover:shadow-lg hover:border-primary/40 overflow-hidden rounded-2xl">
+            {/* Card Hover Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+            
+            {/* Header */}
+            <div className="relative p-4 sm:p-5 pb-2">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary/60 group-hover:text-primary transition-colors" />
                 </div>
-              )}
-              {booking.service?.duration_minutes && (
                 <div>
-                  <span className="text-muted-foreground">Duration:</span>
-                  <span className="ml-2">{booking.service.duration_minutes} minutes</span>
+                  <h4 className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">
+                    Booking Details
+                  </h4>
+                  <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Current booking information</p>
                 </div>
-              )}
-              {booking.service?.price && (
-                <div>
-                  <span className="text-muted-foreground">Price:</span>
-                  <span className="ml-2">{booking.service.price.toFixed(2)} RON</span>
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="relative p-4 sm:p-5 pt-2">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5 sm:gap-3">
+                
+                {/* Service Details Group */}
+                <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
+                  {/* Header */}
+                  <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
+                    <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                      <Briefcase className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Service Details</h3>
+                  </div>
+                  
+                  {/* Service Info Cards */}
+                  <div className="space-y-2">
+                    {/* Service Name */}
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <Briefcase className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Service Name</p>
+                        <p className="text-xs text-text font-semibold truncate">{booking.service?.name || "Unknown Service"}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Duration & Price Row */}
+                    <div className="grid grid-cols-2 gap-2">
+                      {booking.service?.duration_minutes && (
+                        <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                          <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                            <Timer className="h-3.5 w-3.5 text-primary" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Duration</p>
+                            <p className="text-xs text-text font-semibold">{booking.service.duration_minutes} min</p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {booking.service?.price && (
+                        <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                          <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                            <Banknote className="h-3.5 w-3.5 text-primary" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Price</p>
+                            <p className="text-xs text-text font-semibold">{booking.service.price.toFixed(2)} RON</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              )}
+
+                {/* Member Details Group */}
+                <div className="relative backdrop-blur-xl bg-gradient-to-br from-primary/5 via-primary/3 to-transparent rounded-xl border-0 p-2.5 shadow-md hover:shadow-lg transition-all duration-300">
+                  {/* Header */}
+                  <div className="flex items-center gap-2 mb-2 pb-2 border-b border-primary/10">
+                    <div className="p-1.5 rounded-lg bg-primary/10 backdrop-blur-sm">
+                      <User className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <h3 className="text-[11px] font-bold text-text uppercase tracking-wider">Member Details</h3>
+                  </div>
+                  
+                  {/* Member Info Cards */}
+                  <div className="space-y-2">
+                    {/* Member Name */}
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                      <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                        <User className="h-3.5 w-3.5 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Member Name</p>
+                        <p className="text-xs text-text font-semibold truncate">{booking.member?.full_name || "Unknown Member"}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Email */}
+                    {booking.member?.email && (
+                      <div className="flex items-center gap-2 p-2 rounded-lg bg-gradient-to-br from-surface/60 to-surface/40 backdrop-blur-sm border-0 hover:from-surface/70 hover:to-surface/50 transition-all duration-200 group/card shadow-sm">
+                        <div className="p-1.5 rounded-md bg-primary/15 group-hover/card:bg-primary/25 transition-colors backdrop-blur-sm">
+                          <Mail className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-medium text-primary/80 uppercase tracking-wide">Email Address</p>
+                          <p className="text-xs text-text font-semibold truncate">{booking.member.email}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
 
