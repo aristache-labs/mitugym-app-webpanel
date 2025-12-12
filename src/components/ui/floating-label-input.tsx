@@ -28,6 +28,12 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
 
     return (
       <div className="relative flex flex-col pt-1.5 sm:pt-0">
+        {/* Placeholder overlay for datetime inputs */}
+        {type === "datetime-local" && !hasValue && (
+          <div className="absolute inset-0 flex items-center px-4 pointer-events-none z-10">
+            <span className="text-sm font-medium text-muted/50">{label}</span>
+          </div>
+        )}
         <input
           id={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}
           type={type}
@@ -37,12 +43,22 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
             "focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
             "focus:border-primary focus:ring-2 focus:ring-primary/40",
             error && "border-error focus:border-error focus-visible:border-error focus:ring-error/40",
+            // Hide native datetime placeholder when showing custom overlay
+            type === "datetime-local" && "[&::-webkit-datetime-edit-fields-wrapper]:opacity-0 [&::-webkit-datetime-edit-text]:opacity-0 [&::-webkit-datetime-edit]:opacity-0",
+            type === "datetime-local" && hasValue && "[&::-webkit-datetime-edit-fields-wrapper]:opacity-100 [&::-webkit-datetime-edit-text]:opacity-100 [&::-webkit-datetime-edit]:opacity-100",
             className
           )}
           ref={ref}
           placeholder={label}
           value={value}
           onChange={handleChange}
+          onFocus={(e) => {
+            // Show the native datetime picker on focus
+            if (type === "datetime-local") {
+              e.currentTarget.showPicker?.();
+            }
+            props.onFocus?.(e);
+          }}
           {...props}
         />
         <label
