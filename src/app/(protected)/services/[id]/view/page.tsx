@@ -59,12 +59,12 @@ export default async function ServiceViewPage({ params }: ServiceViewPageProps) 
                   <Briefcase className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text truncate">{service.name}</h1>
-                  <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Service Details</p>
-                  <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-3 flex-wrap">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-text truncate">{service.name}</h1>
                     {service.is_active ? (
                       <Badge variant="default" className="bg-green-500/30 text-white border-0 text-xs sm:text-sm rounded-full">
-                        ✓ Active
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        Active
                       </Badge>
                     ) : (
                       <Badge variant="secondary" className="bg-red-500/30 text-white border-0 text-xs sm:text-sm rounded-full">
@@ -73,6 +73,7 @@ export default async function ServiceViewPage({ params }: ServiceViewPageProps) 
                       </Badge>
                     )}
                   </div>
+                  <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Service Details</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
