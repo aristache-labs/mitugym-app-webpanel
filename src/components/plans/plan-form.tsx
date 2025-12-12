@@ -31,10 +31,10 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
     defaultValues: plan ?? {
       name: "",
       plan_type: "" as "day_entry" | "full" | "student",
-      price: 0,
-      duration_months: 0,
+      price: "" as unknown as number,
+      duration_months: "" as unknown as number,
       features: [],
-      is_active: true,
+      is_active: null as unknown as boolean,
     },
   });
 
@@ -53,10 +53,10 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
       form.reset({
         name: "",
         plan_type: "" as "day_entry" | "full" | "student",
-        price: 0,
-        duration_months: 0,
+        price: "" as unknown as number,
+        duration_months: "" as unknown as number,
         features: [],
-        is_active: true,
+        is_active: null as unknown as boolean,
       });
     }
   }, [plan, form]);
@@ -214,10 +214,16 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
                   type="number"
                   min={0}
                   step="0.01"
-                  placeholder="0"
+                  placeholder="Price"
                   icon={<DollarSign className="w-full h-full" />}
                   error={form.formState.errors.price?.message}
-                  {...field}
+                  value={!field.value && field.value !== 0 ? "" : field.value}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    field.onChange(value === "" ? "" : parseFloat(value));
+                  }}
+                  onBlur={field.onBlur}
+                  name={field.name}
                 />
               </FormControl>
               <FormMessage />
@@ -237,10 +243,16 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
                     type="number"
                     min={0}
                     step="1"
-                    placeholder="0"
+                    placeholder="Duration"
                     icon={<Calendar className="w-full h-full" />}
                     error={form.formState.errors.duration_months?.message}
-                    {...field}
+                    value={!field.value && field.value !== 0 ? "" : field.value}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value === "" ? "" : parseInt(value, 10));
+                    }}
+                    onBlur={field.onBlur}
+                    name={field.name}
                   />
                 </FormControl>
                 <FormMessage />
@@ -261,14 +273,14 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
                     <div className="relative pt-1.5">
                       <label 
                         htmlFor="features-textarea"
-                        className={`absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal transition-all duration-200 translate-x-3 ${
+                        className={`absolute -top-[18px] sm:-top-[20px] left-[5px] text-sm font-normal transition-all duration-200 translate-x-3 ${
                           hasContent ? 'opacity-100 text-text/80' : 'opacity-0'
                         } ${form.formState.errors.features ? 'text-error' : ''}`}
                       >
                         Features
                       </label>
                       <div 
-                        className={`absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 ${
+                        className={`absolute -top-[16px] sm:-top-[17px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 ${
                           hasContent ? 'opacity-100' : 'opacity-0'
                         } ${form.formState.errors.features ? 'text-error' : 'text-primary'}`}
                       >
@@ -322,6 +334,7 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
                     onChange={(value) => {
                       if (value === "active") field.onChange(true);
                       else if (value === "inactive") field.onChange(false);
+                      else field.onChange(null);
                     }}
                   />
                 </FormControl>
