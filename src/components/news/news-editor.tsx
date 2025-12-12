@@ -9,25 +9,34 @@ import { Button } from "@/components/ui/button";
 interface NewsEditorProps {
   value: string;
   onChange: (value: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
-export function NewsEditor({ value, onChange }: NewsEditorProps) {
+export function NewsEditor({ value, onChange, onFocus, onBlur }: NewsEditorProps) {
   const editor = useEditor({
     extensions: [StarterKit, Link.configure({ openOnClick: true })],
     content: value,
     editorProps: {
       attributes: {
         class:
-          "min-h-[200px] rounded-[16px] border border-surface/50 bg-surface p-4 text-sm text-text focus:outline-none",
+          "peer min-h-[200px] rounded-[16px] border border-surface/50 bg-surface p-4 text-sm text-text focus:outline-none focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/40 shadow-[0_0_0_1px_rgba(77,212,212,0.08)] transition resize-none",
+        "data-placeholder": "Description",
       },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getText()); // Use getText() instead of getHTML() for plain text
+      onChange(editor.getHTML());
+    },
+    onFocus: () => {
+      onFocus?.();
+    },
+    onBlur: () => {
+      onBlur?.();
     },
   });
 
   useEffect(() => {
-    if (editor && value !== editor.getText()) {
+    if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value, false);
     }
   }, [editor, value]);

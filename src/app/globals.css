@@ -179,3 +179,12 @@ a:hover {
 .animate-stagger-3 {
   animation-delay: 0.3s;
 }
+
+/* TipTap Editor Placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: rgba(179, 217, 217, 0.5);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

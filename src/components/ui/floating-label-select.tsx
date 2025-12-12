@@ -70,7 +70,8 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
       };
     }, [isOpen, ref]);
 
-    const hasValue = !!(selectedOption && selectedOption.value);
+    // Check if there's a real value (not empty string or disabled option)
+    const hasValue = !!(selectedOption && selectedOption.value && !selectedOption.disabled);
 
     return (
       <div ref={ref} className={cn("relative pt-1.5 sm:pt-0", className)}>
@@ -93,8 +94,10 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
             disabled ? "text-text/40" : "text-text"
           )}
         >
-          <span className={cn(selectedOption ? (disabled ? "text-text/40" : "text-text") : (disabled ? "text-text/40" : "text-text"))}>
-            {selectedOption ? selectedOption.label : (!isOpen && !hasValue ? label : "")}
+          <span className={cn(
+            hasValue ? (disabled ? "text-text/40" : "text-text") : (disabled ? "text-muted/40" : "text-muted/50")
+          )}>
+            {hasValue ? selectedOption?.label : label}
           </span>
           <ChevronDown
             className={cn(
