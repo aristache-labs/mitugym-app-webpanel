@@ -312,14 +312,14 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
                     <div className="relative pt-1.5">
                       <label 
                         htmlFor="description-textarea"
-                        className={`absolute -top-[18px] sm:-top-[15px] left-[5px] text-sm font-normal transition-all duration-200 translate-x-3 ${
+                        className={`absolute -top-[18px] sm:-top-[18px] left-[5px] text-sm font-normal transition-all duration-200 translate-x-3 ${
                           hasContent ? 'opacity-100 text-text/80' : 'opacity-0'
                         } ${form.formState.errors.description ? 'text-error' : ''}`}
                       >
                         Description
                       </label>
                       <div 
-                        className={`absolute -top-[16px] sm:-top-[12px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 ${
+                        className={`absolute -top-[16px] sm:-top-[16px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 ${
                           hasContent ? 'opacity-100' : 'opacity-0'
                         } ${form.formState.errors.description ? 'text-error' : 'text-primary'}`}
                       >
