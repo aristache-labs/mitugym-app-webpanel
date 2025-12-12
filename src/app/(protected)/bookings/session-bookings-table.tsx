@@ -435,37 +435,32 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
             )}
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-4 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setConfirmModalOpen(false);
-                  setSelectedBooking(null);
-                  setError(null);
-                }}
-                disabled={isPending}
-                className="gap-2 hover:bg-secondary/10 hover:text-secondary hover:border-secondary/50 transition-all duration-200 rounded-xl"
-              >
-                <X className="h-4 w-4" />
-                Cancel
-              </Button>
-              <Button
+            <div className="flex justify-center pt-4">
+              <button
                 onClick={handleConfirm}
                 disabled={isPending}
-                className="gap-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/40 transition-all duration-200 rounded-xl min-w-[140px]"
+                className="group/confirm relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-green-700/75 via-green-900/45 to-green-700/75 hover:from-green-600/85 hover:via-green-800/55 hover:to-green-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-green-900/30 hover:shadow-lg hover:shadow-green-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
+                {!isPending && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/confirm:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                )}
+                
                 {isPending ? (
                   <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Confirming...
+                    <div className="animate-spin rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 border-2 border-white border-t-transparent" />
+                    <span>Confirming...</span>
                   </>
                 ) : (
                   <>
-                    <CheckCircle className="h-4 w-4" />
-                    Confirm Booking
+                    <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/confirm:scale-125 group-hover/confirm:translate-x-[4.5em]">
+                      <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-green-200/70 group-hover/confirm:text-green-50 group-hover/confirm:scale-110" />
+                    </div>
+                    <span className="transition-all duration-500 ease-in-out group-hover/confirm:opacity-0">
+                      Confirm Booking
+                    </span>
                   </>
                 )}
-              </Button>
+              </button>
             </div>
           </div>
         </div>

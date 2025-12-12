@@ -757,49 +757,27 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-4">
-              {/* Close Button */}
-              <button
-                onClick={() => {
-                  setConfirmModalOpen(false);
-                  setError(null);
-                }}
-                disabled={isPending}
-                className="group/close relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {/* Icon with animation */}
-                <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/close:scale-125 group-hover/close:translate-x-[1.7em]">
-                  <X className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/close:text-cyan-100 group-hover/close:scale-110" />
-                </div>
-                
-                {/* Text */}
-                <span className="transition-all duration-500 ease-in-out group-hover/close:opacity-0">
-                  Close
-                </span>
-              </button>
-              
+            <div className="flex justify-center pt-4">
               {/* Confirm Button */}
               <button
                 onClick={handleConfirm}
                 disabled={isPending}
-                className="group/confirm relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-green-700/75 via-green-900/45 to-green-700/75 hover:from-green-600/85 hover:via-green-800/55 hover:to-green-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-green-900/30 hover:shadow-lg hover:shadow-green-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 min-w-[140px] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group/confirm relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-green-700/75 via-green-900/45 to-green-700/75 hover:from-green-600/85 hover:via-green-800/55 hover:to-green-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-green-900/30 hover:shadow-lg hover:shadow-green-950/40 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {/* Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/confirm:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                {!isPending && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/confirm:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                )}
                 
                 {isPending ? (
                   <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    <div className="animate-spin rounded-full h-3.5 w-3.5 sm:h-4 sm:w-4 border-2 border-white border-t-transparent" />
                     <span>Confirming...</span>
                   </>
                 ) : (
                   <>
-                    {/* Icon with animation */}
                     <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/confirm:scale-125 group-hover/confirm:translate-x-[4.5em]">
                       <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-green-200/70 group-hover/confirm:text-green-50 group-hover/confirm:scale-110" />
                     </div>
-                    
-                    {/* Text */}
                     <span className="transition-all duration-500 ease-in-out group-hover/confirm:opacity-0">
                       Confirm Booking
                     </span>
