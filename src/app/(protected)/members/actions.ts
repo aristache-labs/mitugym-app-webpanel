@@ -63,7 +63,7 @@ export async function createMemberAction(values: unknown): Promise<ActionResult<
       email: parsed.data.email,
       phone: parsed.data.phone,
       status: parsed.data.status, // Send original status, let trigger calculate
-      plan_id: parsed.data.plan_id,
+      plan_id: parsed.data.plan_id === "unassigned" || !parsed.data.plan_id ? null : parsed.data.plan_id,
       starts_at: parsed.data.starts_at,
       expires_at: parsed.data.expires_at,
     };

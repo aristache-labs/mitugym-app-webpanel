@@ -248,13 +248,14 @@ export function MemberForm({ plans, member, deleteButton }: MemberFormProps) {
       form.reset();
       router.push("/members");
     } else {
-      // For member updates, show success message and refresh
+      // For member updates, show success message and redirect to members page
       addToast({
         type: "success",
         title: "Changes Saved",
         description: "Member information has been successfully updated.",
         duration: 4000,
       });
+      router.push("/members");
       router.refresh();
     }
   };

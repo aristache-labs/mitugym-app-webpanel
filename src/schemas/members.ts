@@ -20,7 +20,7 @@ export const memberBaseSchema = z.object({
     .string()
     .optional()
     .nullable()
-    .transform((value) => (value ? value : null)),
+    .transform((value) => (value && value !== "unassigned" ? value : null)),
   starts_at: z
     .string()
     .optional()

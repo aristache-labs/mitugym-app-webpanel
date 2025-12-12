@@ -84,13 +84,8 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
     });
     
     // Navigate back to plans page after successful creation/update
-    if (plan) {
-      // If editing, stay on the same page but refresh
-      router.refresh();
-    } else {
-      // If creating, navigate back to plans page
-      router.push("/plans");
-    }
+    router.push("/plans");
+    router.refresh();
     onCompleted?.();
   };
 
