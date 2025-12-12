@@ -256,83 +256,416 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
       cell: ({ row }: { row: { original: ServiceBooking } }) => {
         const booking = row.original;
         return (
-          <div className="flex items-center justify-center gap-2 min-w-[140px] px-2">
+          <div className="flex items-center justify-center gap-1 min-w-[140px] px-2">
+            {/* View Button */}
             <Link href={`/bookings/${booking.id}`}>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary transition-all duration-200 rounded-lg"
+              <button
+                className="booking-view-button"
                 title="View booking"
               >
-                <Eye className="h-4 w-4" />
-              </Button>
+                <svg
+                  className="booking-view-icon"
+                  viewBox="0 0 576 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"
+                  />
+                </svg>
+                <style jsx>{`
+                  .booking-view-button {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 8px;
+                    background-color: rgba(77, 212, 212, 0.12);
+                    border: 1px solid rgba(77, 212, 212, 0.25);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    overflow: hidden;
+                    position: relative;
+                  }
+                  .booking-view-icon {
+                    width: 15px;
+                    transition: all 0.3s ease;
+                    fill: rgba(77, 212, 212, 0.9);
+                  }
+                  .booking-view-button:hover {
+                    background-color: rgba(77, 212, 212, 0.18);
+                    border-color: rgba(77, 212, 212, 0.4);
+                    box-shadow: 0 0 12px rgba(77, 212, 212, 0.2);
+                  }
+                  .booking-view-button:hover .booking-view-icon {
+                    transform: scale(1.1);
+                    fill: rgb(77, 212, 212);
+                  }
+                  .booking-view-button:active {
+                    transform: scale(0.95);
+                  }
+                `}</style>
+              </button>
             </Link>
+
+            {/* Edit Button */}
             {(booking.status === "pending" || booking.status === "confirmed" || booking.status === "upcoming") && (
               <Link href={`/bookings/${booking.id}/edit`}>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-8 w-8 p-0 hover:bg-blue-500/10 hover:text-blue-600 transition-all duration-200 rounded-lg"
+                <button 
+                  className="booking-edit-button"
                   title="Edit booking"
                 >
-                  <Edit className="h-4 w-4" />
-                </Button>
+                  <svg
+                    className="booking-edit-icon"
+                    viewBox="0 0 512 512"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"
+                    />
+                  </svg>
+                  <style jsx>{`
+                    .booking-edit-button {
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      background-color: rgba(77, 212, 212, 0.12);
+                      border: 1px solid rgba(77, 212, 212, 0.25);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      cursor: pointer;
+                      transition: all 0.3s ease;
+                      overflow: hidden;
+                      position: relative;
+                    }
+                    .booking-edit-icon {
+                      width: 13px;
+                      transition: all 0.3s ease;
+                      fill: rgba(77, 212, 212, 0.9);
+                    }
+                    .booking-edit-button:hover {
+                      background-color: rgba(77, 212, 212, 0.18);
+                      border-color: rgba(77, 212, 212, 0.4);
+                      box-shadow: 0 0 12px rgba(77, 212, 212, 0.2);
+                    }
+                    .booking-edit-button:hover .booking-edit-icon {
+                      transform: rotate(-12deg) scale(1.05);
+                      fill: rgb(77, 212, 212);
+                    }
+                    .booking-edit-button:active {
+                      transform: scale(0.95);
+                    }
+                  `}</style>
+                </button>
               </Link>
             )}
+
+            {/* Confirm/Complete Button (Green) */}
             {booking.status === "pending" && (
               <>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-8 w-8 p-0 hover:bg-green-500/10 hover:text-green-600 transition-all duration-200 rounded-lg"
+                <button
                   onClick={() => handleConfirmClick(booking)}
+                  className="booking-confirm-button"
                   title="Confirm booking"
                 >
-                  <CheckCircle className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 rounded-lg"
+                  <svg
+                    className="booking-confirm-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <style jsx>{`
+                    .booking-confirm-button {
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      background-color: rgba(34, 197, 94, 0.12);
+                      border: 1px solid rgba(34, 197, 94, 0.25);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      cursor: pointer;
+                      transition: all 0.3s ease;
+                      color: rgba(34, 197, 94, 0.9);
+                    }
+                    .booking-confirm-icon {
+                      width: 16px;
+                      height: 16px;
+                      transition: all 0.3s ease;
+                    }
+                    .booking-confirm-button:hover {
+                      background-color: rgba(34, 197, 94, 0.18);
+                      border-color: rgba(34, 197, 94, 0.4);
+                      box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+                      color: rgb(34, 197, 94);
+                    }
+                    .booking-confirm-button:hover .booking-confirm-icon {
+                      transform: scale(1.15) rotate(5deg);
+                    }
+                    .booking-confirm-button:active {
+                      transform: scale(0.95);
+                    }
+                  `}</style>
+                </button>
+
+                <button
                   onClick={() => handleCancelClick(booking)}
+                  className="booking-cancel-button-pending"
                   title="Cancel booking"
                 >
-                  <XCircle className="h-4 w-4" />
-                </Button>
+                  <svg
+                    className="booking-cancel-icon-pending"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <style jsx>{`
+                    .booking-cancel-button-pending {
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      background-color: rgba(234, 179, 8, 0.12);
+                      border: 1px solid rgba(234, 179, 8, 0.25);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      cursor: pointer;
+                      transition: all 0.3s ease;
+                      color: rgba(234, 179, 8, 0.9);
+                    }
+                    .booking-cancel-icon-pending {
+                      width: 16px;
+                      height: 16px;
+                      transition: all 0.3s ease;
+                    }
+                    .booking-cancel-button-pending:hover {
+                      background-color: rgba(234, 179, 8, 0.18);
+                      border-color: rgba(234, 179, 8, 0.4);
+                      box-shadow: 0 0 12px rgba(234, 179, 8, 0.2);
+                      color: rgb(234, 179, 8);
+                    }
+                    .booking-cancel-button-pending:hover .booking-cancel-icon-pending {
+                      transform: scale(1.15) rotate(90deg);
+                    }
+                    .booking-cancel-button-pending:active {
+                      transform: scale(0.95);
+                    }
+                  `}</style>
+                </button>
               </>
             )}
+
+            {/* Complete and Cancel for confirmed/upcoming */}
             {(booking.status === "confirmed" || booking.status === "upcoming") && (
               <>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-8 w-8 p-0 hover:bg-green-500/10 hover:text-green-600 transition-all duration-200 rounded-lg"
+                <button
                   onClick={() => handleCompleteClick(booking)}
+                  className="booking-complete-button"
                   title="Complete booking"
                 >
-                  <CheckCircle className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 rounded-lg"
+                  <svg
+                    className="booking-complete-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <style jsx>{`
+                    .booking-complete-button {
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      background-color: rgba(34, 197, 94, 0.12);
+                      border: 1px solid rgba(34, 197, 94, 0.25);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      cursor: pointer;
+                      transition: all 0.3s ease;
+                      color: rgba(34, 197, 94, 0.9);
+                    }
+                    .booking-complete-icon {
+                      width: 16px;
+                      height: 16px;
+                      transition: all 0.3s ease;
+                    }
+                    .booking-complete-button:hover {
+                      background-color: rgba(34, 197, 94, 0.18);
+                      border-color: rgba(34, 197, 94, 0.4);
+                      box-shadow: 0 0 12px rgba(34, 197, 94, 0.2);
+                      color: rgb(34, 197, 94);
+                    }
+                    .booking-complete-button:hover .booking-complete-icon {
+                      transform: scale(1.15) rotate(5deg);
+                    }
+                    .booking-complete-button:active {
+                      transform: scale(0.95);
+                    }
+                  `}</style>
+                </button>
+
+                <button
                   onClick={() => handleCancelClick(booking)}
+                  className="booking-cancel-button-confirmed"
                   title="Cancel booking"
                 >
-                  <XCircle className="h-4 w-4" />
-                </Button>
+                  <svg
+                    className="booking-cancel-icon-confirmed"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <style jsx>{`
+                    .booking-cancel-button-confirmed {
+                      width: 32px;
+                      height: 32px;
+                      border-radius: 8px;
+                      background-color: rgba(234, 179, 8, 0.12);
+                      border: 1px solid rgba(234, 179, 8, 0.25);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      cursor: pointer;
+                      transition: all 0.3s ease;
+                      color: rgba(234, 179, 8, 0.9);
+                    }
+                    .booking-cancel-icon-confirmed {
+                      width: 16px;
+                      height: 16px;
+                      transition: all 0.3s ease;
+                    }
+                    .booking-cancel-button-confirmed:hover {
+                      background-color: rgba(234, 179, 8, 0.18);
+                      border-color: rgba(234, 179, 8, 0.4);
+                      box-shadow: 0 0 12px rgba(234, 179, 8, 0.2);
+                      color: rgb(234, 179, 8);
+                    }
+                    .booking-cancel-button-confirmed:hover .booking-cancel-icon-confirmed {
+                      transform: scale(1.15) rotate(90deg);
+                    }
+                    .booking-cancel-button-confirmed:active {
+                      transform: scale(0.95);
+                    }
+                  `}</style>
+                </button>
               </>
             )}
+
+            {/* Delete Button for cancelled bookings */}
             {booking.status === "cancelled" && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 hover:bg-red-500/10 hover:text-red-600 transition-all duration-200 rounded-lg"
+              <button
                 onClick={() => handleDeleteClick(booking)}
+                className="booking-delete-button"
                 title="Delete cancelled booking"
               >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+                <svg
+                  className="booking-bin-top"
+                  viewBox="0 0 39 7"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <line y1="5" x2="39" y2="5" strokeWidth="4"></line>
+                  <line x1="12" y1="1.5" x2="26.0357" y2="1.5" strokeWidth="3"></line>
+                </svg>
+                <svg
+                  className="booking-bin-bottom"
+                  viewBox="0 0 33 39"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask id="path-1-booking-bin" fill="rgba(255, 107, 107, 0.9)">
+                    <path d="M0 0H33V35C33 37.2091 31.2091 39 29 39H4C1.79086 39 0 37.2091 0 35V0Z"></path>
+                  </mask>
+                  <path
+                    d="M0 0H33H0ZM37 35C37 39.4183 33.4183 43 29 43H4C-0.418278 43 -4 39.4183 -4 35H4H29H37ZM4 43C-0.418278 43 -4 39.4183 -4 35V0H4V35V43ZM37 0V35C37 39.4183 33.4183 43 29 43V35V0H37Z"
+                    fill="rgba(255, 107, 107, 0.9)"
+                    mask="url(#path-1-booking-bin)"
+                  ></path>
+                  <path d="M12 6L12 29" strokeWidth="4"></path>
+                  <path d="M21 6V29" strokeWidth="4"></path>
+                </svg>
+                <style jsx>{`
+                  .booking-delete-button {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 8px;
+                    background-color: rgba(255, 107, 107, 0.12);
+                    border: 1px solid rgba(255, 107, 107, 0.25);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                  }
+                  .booking-bin-bottom {
+                    width: 12px;
+                    transition: all 0.3s ease;
+                  }
+                  .booking-bin-top {
+                    width: 14px;
+                    transform-origin: right;
+                    transition: all 0.3s ease;
+                  }
+                  .booking-bin-bottom path {
+                    stroke: rgba(255, 107, 107, 0.9);
+                    fill: rgba(255, 107, 107, 0.9);
+                  }
+                  .booking-bin-top line {
+                    stroke: rgba(255, 107, 107, 0.9);
+                  }
+                  .booking-delete-button:hover {
+                    background-color: rgba(255, 107, 107, 0.18);
+                    border-color: rgba(255, 107, 107, 0.4);
+                    box-shadow: 0 0 12px rgba(255, 107, 107, 0.2);
+                  }
+                  .booking-delete-button:hover .booking-bin-top {
+                    transform: rotate(15deg);
+                  }
+                  .booking-delete-button:hover .booking-bin-bottom path {
+                    stroke: rgb(255, 107, 107);
+                    fill: rgb(255, 107, 107);
+                  }
+                  .booking-delete-button:hover .booking-bin-top line {
+                    stroke: rgb(255, 107, 107);
+                  }
+                  .booking-delete-button:active {
+                    transform: scale(0.95);
+                  }
+                `}</style>
+              </button>
             )}
           </div>
         );
