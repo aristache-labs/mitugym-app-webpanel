@@ -7,14 +7,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { CustomSelect } from "@/components/ui/custom-select";
+import { FloatingLabelInput } from "@/components/ui/floating-label-input";
+import { FloatingLabelSelect } from "@/components/ui/floating-label-select";
 import { AnimatedButton } from "@/components/ui/animated-button";
 import { useToast } from "@/components/ui/toast";
 import { updateSessionBookingAction } from "@/app/(protected)/actions";
 import { ServiceBooking } from "@/types";
+import { Calendar, Clock, FileText } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Form schema for updating session bookings
 const updateSessionBookingFormSchema = z.object({
@@ -147,54 +147,69 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
           </div>
 
           {/* Booking Date & Time */}
-          <div className="space-y-2">
-            <Label htmlFor="booking_date">Booking Date & Time *</Label>
-            <Input
+          <div className="mb-3 sm:mb-0 mt-8 sm:mt-10">
+            <FloatingLabelInput
               id="booking_date"
+              label="Booking Date & Time"
+              icon={<Calendar className="h-4 w-4" />}
               type="datetime-local"
-              {...form.register("booking_date", { 
-                required: "Booking date and time is required" 
-              })}
-              className={form.formState.errors.booking_date ? "border-destructive" : ""}
+              value={form.watch("booking_date")}
+              onChange={(e) => form.setValue("booking_date", e.target.value)}
+              error={form.formState.errors.booking_date?.message}
             />
-            {form.formState.errors.booking_date && (
-              <p className="text-sm text-destructive">{form.formState.errors.booking_date.message}</p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              Select the date and time for the booking
-            </p>
           </div>
 
           {/* Status */}
-          <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <CustomSelect
+          <div className="mb-3 sm:mb-0 mt-8 sm:mt-10">
+            <FloatingLabelSelect
+              label="Status"
+              icon={<Clock className="h-4 w-4" />}
               value={form.watch("status") || ""}
-              onChange={(value: string) => form.setValue("status", value as "pending" | "confirmed" | "completed" | "cancelled")}
+              onChange={(value) => form.setValue("status", value as "pending" | "confirmed" | "completed" | "cancelled")}
               options={STATUS_OPTIONS}
-              placeholder="Select status"
+              error={form.formState.errors.status?.message}
             />
-            {form.formState.errors.status && (
-              <p className="text-sm text-destructive">{form.formState.errors.status.message}</p>
-            )}
           </div>
 
           {/* Notes */}
-          <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea
+          <div className="relative flex flex-col pt-1.5 sm:pt-0 mb-3 sm:mb-0 mt-8">
+            <textarea
               id="notes"
-              {...form.register("notes")}
-              className={form.formState.errors.notes ? "border-destructive" : ""}
-              placeholder="Add any notes about this booking..."
-              rows={3}
+              value={form.watch("notes") || ""}
+              onChange={(e) => form.setValue("notes", e.target.value)}
+              placeholder="Notes (Optional)"
+              className={cn(
+                "peer w-full min-h-[80px] sm:min-h-[100px] px-4 py-3 text-sm font-medium outline-none rounded-[16px] bg-surface text-text caret-primary transition resize-none",
+                "border border-surface/50 shadow-[0_0_0_1px_rgba(77,212,212,0.08)]",
+                "focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                "focus:border-primary focus:ring-2 focus:ring-primary/40",
+                form.formState.errors.notes && "border-error focus:border-error focus-visible:border-error focus:ring-error/40"
+              )}
+              maxLength={1000}
+              rows={4}
             />
+            <label
+              htmlFor="notes"
+              className={cn(
+                "absolute -top-[18px] sm:-top-[25px] left-[10px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none flex items-center gap-1.5",
+                "peer-focus:translate-x-0 peer-focus:opacity-100",
+                form.watch("notes") && "translate-x-0 opacity-100",
+                form.formState.errors.notes && "text-error"
+              )}
+            >
+              <div
+                className={cn(
+                  "w-3.5 h-3.5 flex items-center justify-center",
+                  form.formState.errors.notes ? "text-error" : "text-primary"
+                )}
+              >
+                <FileText className="h-3.5 w-3.5" />
+              </div>
+              <span>Notes (Optional)</span>
+            </label>
             {form.formState.errors.notes && (
-              <p className="text-sm text-destructive">{form.formState.errors.notes.message}</p>
+              <p className="text-xs text-error mt-1 ml-1">{form.formState.errors.notes.message}</p>
             )}
-            <p className="text-xs text-muted-foreground">
-              Optional notes about the booking
-            </p>
           </div>
 
           {/* Action Buttons */}
