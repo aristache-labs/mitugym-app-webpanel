@@ -345,7 +345,7 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
           {/* Row 5: Toggle Switches and Inputs */}
           <div className="flex flex-col lg:flex-row lg:items-start gap-4 lg:gap-8">
             {/* Requires Advance Booking Section */}
-            <div className="flex-1 space-y-4 lg:space-y-6">
+            <div className="flex-1 space-y-6 lg:space-y-8">
               <ToggleSwitch
                 id="requires_advance_booking"
                 checked={watchRequiresAdvanceBooking ?? false}
@@ -355,33 +355,35 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
 
               {/* Advance Booking Hours (conditionally shown) */}
               {watchRequiresAdvanceBooking && (
-                <FormField
-                  control={form.control}
-                  name="advance_booking_hours"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <FloatingLabelInput
-                          label="Advance booking hours"
-                          type="number"
-                          min={0}
-                          step="1"
-                          placeholder="Advance booking hours"
-                          icon={<Clock className="w-full h-full" />}
-                          error={form.formState.errors.advance_booking_hours?.message}
-                          value={!field.value && field.value !== 0 ? "" : field.value}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            field.onChange(value === "" ? "" : parseInt(value, 10));
-                          }}
-                          onBlur={field.onBlur}
-                          name={field.name}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="pt-2">
+                  <FormField
+                    control={form.control}
+                    name="advance_booking_hours"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <FloatingLabelInput
+                            label="Advance booking hours"
+                            type="number"
+                            min={0}
+                            step="1"
+                            placeholder="Advance booking hours"
+                            icon={<Clock className="w-full h-full" />}
+                            error={form.formState.errors.advance_booking_hours?.message}
+                            value={!field.value && field.value !== 0 ? "" : field.value}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(value === "" ? "" : parseInt(value, 10));
+                            }}
+                            onBlur={field.onBlur}
+                            name={field.name}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               )}
             </div>
 
