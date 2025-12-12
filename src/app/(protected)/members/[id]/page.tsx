@@ -45,51 +45,55 @@ export default async function MemberDetailPage({ params }: MemberDetailPageProps
             </div>
           </div>
           
-          <CardHeader className="relative p-4 sm:p-6 md:p-8 pb-3 sm:pb-4 md:pb-6">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-2 sm:gap-4 flex-1 min-w-0">
-                <div className="p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors flex-shrink-0">
-                  <User className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-primary/60 group-hover:text-primary transition-colors" />
+          <CardHeader className="relative p-3 sm:p-6 md:p-8 pb-2 sm:pb-4 md:pb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+              <div className="flex items-start gap-2 sm:gap-4 w-full sm:w-auto">
+                <div className="p-1 sm:p-2 rounded-lg sm:rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors flex-shrink-0">
+                  <User className="h-4 w-4 sm:h-6 sm:w-6 text-primary/60 group-hover:text-primary transition-colors" />
                 </div>
-                <div className="min-w-0 flex-1">
+                <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="text-base sm:text-lg md:text-xl font-semibold text-text group-hover:text-primary transition-colors">
+                    <CardTitle className="text-base sm:text-xl font-semibold text-text group-hover:text-primary transition-colors">
                       Edit Profile
                     </CardTitle>
                     {/* Back button on mobile - right side */}
                     <Link 
                       href="/members"
-                      className="sm:hidden group/link relative h-7 px-3 flex items-center justify-center gap-1.5 bg-gradient-to-br from-slate-800/60 via-slate-800/50 to-slate-900/60 hover:from-slate-700/70 hover:via-slate-700/60 hover:to-slate-800/70 text-slate-300 hover:text-slate-100 font-medium text-xs rounded-xl backdrop-blur-sm shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 !no-underline flex-shrink-0"
+                      className="sm:hidden group/link relative h-7 px-3 flex items-center justify-center gap-1.5 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 !no-underline flex-shrink-0"
                     >
+                      {/* Arrow Icon */}
                       <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/link:scale-125 group-hover/link:translate-x-[1em]">
-                        <ArrowLeft className="h-3 w-3 transition-all duration-500 ease-in-out text-slate-400/70 group-hover/link:text-slate-200 group-hover/link:scale-110" />
+                        <ArrowLeft className="h-3 w-3 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/link:text-cyan-100 group-hover/link:scale-110" />
                       </div>
+                      
+                      {/* Text */}
                       <span className="transition-all duration-500 ease-in-out group-hover/link:opacity-0">
                         Back
                       </span>
                     </Link>
                   </div>
-                  <p className="text-xs sm:text-sm text-muted/70 mt-0.5 sm:mt-1">Update member information and membership details</p>
+                  <p className="text-[10px] sm:text-sm text-muted/70 mt-0.5 sm:mt-1 pr-1">Update member information and membership details</p>
                 </div>
               </div>
-              {/* Back button on desktop - top right */}
-              <div className="hidden sm:flex items-start gap-2 flex-shrink-0">
-                <Link 
-                  href="/members"
-                  className="group/link relative h-8 sm:h-9 px-3 sm:px-4 md:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-800/60 via-slate-800/50 to-slate-900/60 hover:from-slate-700/70 hover:via-slate-700/60 hover:to-slate-800/70 text-slate-300 hover:text-slate-100 font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 !no-underline"
-                >
-                  <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/link:scale-125 group-hover/link:translate-x-[1.3em]">
-                    <ArrowLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 transition-all duration-500 ease-in-out text-slate-400/70 group-hover/link:text-slate-200 group-hover/link:scale-110" />
-                  </div>
-                  <span className="transition-all duration-500 ease-in-out group-hover/link:opacity-0">
-                    Back to Members
-                  </span>
-                </Link>
-              </div>
+              {/* Back button on desktop - separate */}
+              <Link 
+                href="/members"
+                className="hidden sm:flex group/link relative h-8 sm:h-9 w-full sm:w-auto px-3 sm:px-4 md:px-6 items-center justify-center gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 !no-underline"
+              >
+                {/* Arrow Icon */}
+                <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/link:scale-125 group-hover/link:translate-x-[1.3em]">
+                  <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/link:text-cyan-100 group-hover/link:scale-110" />
+                </div>
+                
+                {/* Text */}
+                <span className="transition-all duration-500 ease-in-out group-hover/link:opacity-0">
+                  Back
+                </span>
+              </Link>
             </div>
           </CardHeader>
             
-          <CardContent className="relative p-4 sm:p-6 md:p-8 pt-0">
+          <CardContent className="relative p-4 sm:p-6 md:p-8 pt-2 sm:pt-0">
             <MemberForm 
               member={member} 
               plans={plans}

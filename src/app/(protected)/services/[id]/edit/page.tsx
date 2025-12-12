@@ -73,7 +73,7 @@ export default async function EditServicePage({ params }: EditServicePageProps) 
                       </span>
                     </Link>
                   </div>
-                  <p className="text-[10px] sm:text-sm text-muted/70 mt-0.5 sm:mt-1 pr-1">Modify service details and settings</p>
+                  <p className="text-[10px] sm:text-sm text-muted/70 mt-0.5 sm:mt-1 pr-1 mb-3 sm:mb-0">Modify service details and settings</p>
                 </div>
               </div>
               {/* Back button on desktop - separate */}
@@ -94,7 +94,7 @@ export default async function EditServicePage({ params }: EditServicePageProps) 
             </div>
           </CardHeader>
             
-            <CardContent className="relative p-4 sm:p-6 md:p-8 pt-0">
+            <CardContent className="relative p-4 sm:p-6 md:p-8 pt-2 sm:pt-0">
               <ServiceForm service={service} mode="edit" />
             </CardContent>
           </Card>
