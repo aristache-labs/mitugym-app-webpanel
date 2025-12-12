@@ -135,148 +135,110 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
             </div>
           )}
 
-          {/* Service Name */}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <FloatingLabelInput
-                    label="Service name"
-                    placeholder="Service name"
-                    icon={<Briefcase className="w-full h-full" />}
-                    error={form.formState.errors.name?.message}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Service Type */}
-          <FormField
-            control={form.control}
-            name="service_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <FloatingLabelSelect
-                    value={field.value ?? ""}
-                    onChange={(value) => field.onChange(value || "")}
-                    label="Service type"
-                    icon={<Package className="w-full h-full" />}
-                    error={form.formState.errors.service_type?.message}
-                    options={[
-                      { value: "", label: "Service type", disabled: true },
-                      ...SERVICE_TYPE_OPTIONS
-                    ]}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Session Type */}
-          <FormField
-            control={form.control}
-            name="session_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <FloatingLabelSelect
-                    value={field.value ?? ""}
-                    onChange={(value) => field.onChange(value || "")}
-                    label="Session type (optional)"
-                    icon={<Clock className="w-full h-full" />}
-                    options={[
-                      { value: "", label: "Session type (optional)", disabled: true },
-                      ...SESSION_TYPE_OPTIONS
-                    ]}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Price */}
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <FloatingLabelInput
-                    label="Price (RON)"
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    placeholder="Price (RON)"
-                    icon={<DollarSign className="w-full h-full" />}
-                    error={form.formState.errors.price?.message}
-                    value={!field.value && field.value !== 0 ? "" : field.value}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value === "" ? "" : parseFloat(value));
-                    }}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Duration (hidden, always 60 minutes) */}
-          <input type="hidden" {...form.register("duration_minutes")} value={60} />
-
-          {/* Description */}
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => {
-              const hasContent = field.value && field.value.length > 0;
-              return (
+          {/* Row 1: Service Name | Service Type */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+            {/* Service Name */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className="relative pt-1.5">
-                      <label 
-                        htmlFor="description-textarea"
-                        className={`absolute -top-[18px] sm:-top-[15px] left-[5px] text-sm font-normal transition-all duration-200 translate-x-3 ${
-                          hasContent ? 'opacity-100 text-text/80' : 'opacity-0'
-                        } ${form.formState.errors.description ? 'text-error' : ''}`}
-                      >
-                        Description
-                      </label>
-                      <div 
-                        className={`absolute -top-[16px] sm:-top-[12px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 ${
-                          hasContent ? 'opacity-100' : 'opacity-0'
-                        } ${form.formState.errors.description ? 'text-error' : 'text-primary'}`}
-                      >
-                        <FileText className="w-full h-full" />
-                      </div>
-                      <textarea
-                        id="description-textarea"
-                        rows={3}
-                        placeholder="Description"
-                        className={`w-full rounded-2xl border-2 ${
-                          form.formState.errors.description ? 'border-error' : 'border-surface/50 focus:border-primary'
-                        } bg-surface/30 px-4 py-3 text-sm text-text placeholder:text-muted/40 outline-none transition-all duration-200 focus:bg-surface/50 resize-none`}
-                        {...field}
-                      />
-                    </div>
+                    <FloatingLabelInput
+                      label="Service name"
+                      placeholder="Service name"
+                      icon={<Briefcase className="w-full h-full" />}
+                      error={form.formState.errors.name?.message}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-              );
-            }}
-          />
+              )}
+            />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Service Type */}
+            <FormField
+              control={form.control}
+              name="service_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <FloatingLabelSelect
+                      value={field.value ?? ""}
+                      onChange={(value) => field.onChange(value || "")}
+                      label="Service type"
+                      icon={<Package className="w-full h-full" />}
+                      error={form.formState.errors.service_type?.message}
+                      options={[
+                        { value: "", label: "Service type", disabled: true },
+                        ...SERVICE_TYPE_OPTIONS
+                      ]}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Row 2: Session Type | Price */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+            {/* Session Type */}
+            <FormField
+              control={form.control}
+              name="session_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <FloatingLabelSelect
+                      value={field.value ?? ""}
+                      onChange={(value) => field.onChange(value || "")}
+                      label="Session type (optional)"
+                      icon={<Clock className="w-full h-full" />}
+                      options={[
+                        { value: "", label: "Session type (optional)", disabled: true },
+                        ...SESSION_TYPE_OPTIONS
+                      ]}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Price */}
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <FloatingLabelInput
+                      label="Price (RON)"
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      placeholder="Price (RON)"
+                      icon={<DollarSign className="w-full h-full" />}
+                      error={form.formState.errors.price?.message}
+                      value={!field.value && field.value !== 0 ? "" : field.value}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        field.onChange(value === "" ? "" : parseFloat(value));
+                      }}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Row 3: Max Sessions | Display Order */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
             {/* Max Sessions */}
             <FormField
               control={form.control}
@@ -335,8 +297,54 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
             />
           </div>
 
-          {/* Advance Booking */}
-          <div className={watchRequiresAdvanceBooking ? "space-y-6" : ""}>
+          {/* Duration (hidden, always 60 minutes) */}
+          <input type="hidden" {...form.register("duration_minutes")} value={60} />
+
+          {/* Row 4: Description (full width) */}
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => {
+              const hasContent = field.value && field.value.length > 0;
+              return (
+                <FormItem>
+                  <FormControl>
+                    <div className="relative pt-1.5">
+                      <label 
+                        htmlFor="description-textarea"
+                        className={`absolute -top-[18px] sm:-top-[15px] left-[5px] text-sm font-normal transition-all duration-200 translate-x-3 ${
+                          hasContent ? 'opacity-100 text-text/80' : 'opacity-0'
+                        } ${form.formState.errors.description ? 'text-error' : ''}`}
+                      >
+                        Description
+                      </label>
+                      <div 
+                        className={`absolute -top-[16px] sm:-top-[12px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 ${
+                          hasContent ? 'opacity-100' : 'opacity-0'
+                        } ${form.formState.errors.description ? 'text-error' : 'text-primary'}`}
+                      >
+                        <FileText className="w-full h-full" />
+                      </div>
+                      <textarea
+                        id="description-textarea"
+                        rows={3}
+                        placeholder="Description"
+                        className={`w-full rounded-2xl border-2 ${
+                          form.formState.errors.description ? 'border-error' : 'border-surface/50 focus:border-primary'
+                        } bg-surface/30 px-4 py-3 text-sm text-text placeholder:text-muted/40 outline-none transition-all duration-200 focus:bg-surface/50 resize-none`}
+                        {...field}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+
+          {/* Row 5: Checkboxes Row */}
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
+            {/* Requires Advance Booking */}
             <div className="flex items-center space-x-3 py-2">
               <div className="relative">
                 <input
@@ -361,75 +369,76 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
               </div>
               <Label 
                 htmlFor="requires_advance_booking" 
-                className="cursor-pointer text-sm"
+                className="cursor-pointer text-sm whitespace-nowrap"
                 onClick={() => form.setValue("requires_advance_booking", !watchRequiresAdvanceBooking)}
               >
                 Requires advance booking
               </Label>
             </div>
 
-            {watchRequiresAdvanceBooking && (
-              <FormField
-                control={form.control}
-                name="advance_booking_hours"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <FloatingLabelInput
-                        label="Advance booking hours"
-                        type="number"
-                        min={0}
-                        step="1"
-                        placeholder="Advance booking hours"
-                        icon={<Clock className="w-full h-full" />}
-                        error={form.formState.errors.advance_booking_hours?.message}
-                        value={!field.value && field.value !== 0 ? "" : field.value}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          field.onChange(value === "" ? "" : parseInt(value, 10));
-                        }}
-                        onBlur={field.onBlur}
-                        name={field.name}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-          </div>
-
-          {/* Active Status */}
-          <div className="flex items-center space-x-3 py-2">
-            <div className="relative">
-              <input
-                id="is_active"
-                type="checkbox"
-                checked={form.watch("is_active")}
-                onChange={(e) => form.setValue("is_active", e.target.checked)}
-                className="peer sr-only"
-              />
-              <div 
-                className="w-5 h-5 border-2 border-surface/50 rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200 flex items-center justify-center cursor-pointer"
+            {/* Service is Active */}
+            <div className="flex items-center space-x-3 py-2">
+              <div className="relative">
+                <input
+                  id="is_active"
+                  type="checkbox"
+                  checked={form.watch("is_active")}
+                  onChange={(e) => form.setValue("is_active", e.target.checked)}
+                  className="peer sr-only"
+                />
+                <div 
+                  className="w-5 h-5 border-2 border-surface/50 rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200 flex items-center justify-center cursor-pointer"
+                  onClick={() => form.setValue("is_active", !form.watch("is_active"))}
+                >
+                  <svg 
+                    className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
+              <Label 
+                htmlFor="is_active" 
+                className="cursor-pointer text-sm whitespace-nowrap"
                 onClick={() => form.setValue("is_active", !form.watch("is_active"))}
               >
-                <svg 
-                  className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" 
-                  fill="currentColor" 
-                  viewBox="0 0 20 20"
-                >
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
+                Service is active
+              </Label>
             </div>
-            <Label 
-              htmlFor="is_active" 
-              className="cursor-pointer text-sm"
-              onClick={() => form.setValue("is_active", !form.watch("is_active"))}
-            >
-              Service is active
-            </Label>
           </div>
+
+          {/* Advance Booking Hours (conditionally shown) */}
+          {watchRequiresAdvanceBooking && (
+            <FormField
+              control={form.control}
+              name="advance_booking_hours"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <FloatingLabelInput
+                      label="Advance booking hours"
+                      type="number"
+                      min={0}
+                      step="1"
+                      placeholder="Advance booking hours"
+                      icon={<Clock className="w-full h-full" />}
+                      error={form.formState.errors.advance_booking_hours?.message}
+                      value={!field.value && field.value !== 0 ? "" : field.value}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        field.onChange(value === "" ? "" : parseInt(value, 10));
+                      }}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           {error ? <p className="text-xs sm:text-sm text-error">{error}</p> : null}
           
