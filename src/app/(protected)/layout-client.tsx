@@ -42,7 +42,7 @@ export function ProtectedLayoutClient({
   }, [pathname]);
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden w-full max-w-[100vw]">
       {/* Fixed Header */}
       <Topbar
         staff={staff}
@@ -52,10 +52,10 @@ export function ProtectedLayoutClient({
       />
 
       {/* Main Content with top padding to account for fixed header + safe area */}
-      <div className="safe-area-content">
-        <div className="mx-auto flex max-w-[1600px] gap-0 lg:gap-6 px-0 lg:px-4 py-4 lg:py-6 xl:px-10">
+      <div className="safe-area-content w-full">
+        <div className="mx-auto flex max-w-[1600px] gap-0 lg:gap-6 px-0 lg:px-4 py-4 lg:py-6 xl:px-10 w-full">
           <Sidebar isOpen={isOpen} onClose={close} />
-          <main className="flex-1 space-y-6 px-4 lg:px-0 min-w-0">
+          <main className="flex-1 space-y-6 px-4 lg:px-0 min-w-0 w-full max-w-full">
             {children}
           </main>
         </div>
