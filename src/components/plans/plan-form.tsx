@@ -30,7 +30,7 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
     resolver: zodResolver(planSchema),
     defaultValues: plan ?? {
       name: "",
-      plan_type: "full",
+      plan_type: "" as "day_entry" | "full" | "student",
       price: 0,
       duration_months: 0,
       features: [],
@@ -52,7 +52,7 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
     } else {
       form.reset({
         name: "",
-        plan_type: "full",
+        plan_type: "" as "day_entry" | "full" | "student",
         price: 0,
         duration_months: 0,
         features: [],
@@ -166,8 +166,8 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
             <FormItem>
               <FormControl>
                 <FloatingLabelInput
-                  label="Name"
-                  placeholder="Unlimited"
+                  label="Plan Name"
+                  placeholder="Plan Name"
                   icon={<Package className="w-full h-full" />}
                   error={form.formState.errors.name?.message}
                   {...field}
@@ -185,15 +185,17 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
             <FormItem>
               <FormControl>
                 <FloatingLabelSelect
+                  value={field.value ?? ""}
+                  onChange={(value) => field.onChange(value || "")}
                   label="Plan Type"
                   icon={<Package className="w-full h-full" />}
                   error={form.formState.errors.plan_type?.message}
                   options={[
+                    { value: "", label: "Plan Type", disabled: true },
                     { value: 'day_entry', label: 'Day Entry' },
                     { value: 'full', label: 'Full Membership' },
                     { value: 'student', label: 'Student Discount' }
                   ]}
-                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -251,49 +253,52 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
           <FormField
             control={form.control}
             name="features"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <div className="relative pt-1.5">
-                    <label 
-                      htmlFor="features-textarea"
-                      className={`absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal text-text/80 transition-all duration-200 translate-x-3 opacity-100 ${
-                        form.formState.errors.features ? 'text-error' : ''
-                      }`}
-                    >
-                      Features
-                    </label>
-                    <div 
-                      className={`absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 opacity-100 ${
-                        form.formState.errors.features ? 'text-error' : 'text-primary'
-                      }`}
-                    >
-                      <ListChecks className="w-full h-full" />
+            render={({ field }) => {
+              const hasContent = field.value && field.value.length > 0 && field.value.some((line: string) => line.trim() !== '');
+              return (
+                <FormItem>
+                  <FormControl>
+                    <div className="relative pt-1.5">
+                      <label 
+                        htmlFor="features-textarea"
+                        className={`absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal transition-all duration-200 translate-x-3 ${
+                          hasContent ? 'opacity-100 text-text/80' : 'opacity-0'
+                        } ${form.formState.errors.features ? 'text-error' : ''}`}
+                      >
+                        Features
+                      </label>
+                      <div 
+                        className={`absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 ${
+                          hasContent ? 'opacity-100' : 'opacity-0'
+                        } ${form.formState.errors.features ? 'text-error' : 'text-primary'}`}
+                      >
+                        <ListChecks className="w-full h-full" />
+                      </div>
+                      <textarea
+                        id="features-textarea"
+                        rows={5}
+                        placeholder="Features"
+                        className={`w-full rounded-2xl border-2 ${
+                          form.formState.errors.features ? 'border-error' : 'border-surface/50 focus:border-primary'
+                        } bg-surface/30 px-4 py-3 text-sm text-text placeholder:text-muted/40 outline-none transition-all duration-200 focus:bg-surface/50 resize-none`}
+                        value={field.value?.join('\n') || ''}
+                        onChange={(e) => {
+                          const lines = e.target.value.split('\n');
+                          field.onChange(lines);
+                        }}
+                        onBlur={() => {
+                          if (field.value) {
+                            const filteredLines = field.value.filter((line: string) => line.trim() !== '');
+                            field.onChange(filteredLines);
+                          }
+                        }}
+                      />
                     </div>
-                    <textarea
-                      id="features-textarea"
-                      rows={5}
-                      placeholder="Enter features, one per line • Access to gym equipment • Personal training sessions • Group fitness classes"
-                      className={`w-full rounded-2xl border-2 ${
-                        form.formState.errors.features ? 'border-error' : 'border-surface/50 focus:border-primary'
-                      } bg-surface/30 px-4 py-3 text-sm text-text placeholder:text-muted/40 outline-none transition-all duration-200 focus:bg-surface/50 resize-none`}
-                      value={field.value?.join('\n') || ''}
-                      onChange={(e) => {
-                        const lines = e.target.value.split('\n');
-                        field.onChange(lines);
-                      }}
-                      onBlur={() => {
-                        if (field.value) {
-                          const filteredLines = field.value.filter((line: string) => line.trim() !== '');
-                          field.onChange(filteredLines);
-                        }
-                      }}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
         </div>
 
@@ -309,11 +314,15 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
                     icon={<ToggleLeft className="w-full h-full" />}
                     error={form.formState.errors.is_active?.message}
                     options={[
+                      { value: '', label: 'Status', disabled: true },
                       { value: 'active', label: 'Active' },
                       { value: 'inactive', label: 'Inactive' }
                     ]}
-                    value={field.value ? "active" : "inactive"}
-                    onChange={(value) => field.onChange(value === "active")}
+                    value={field.value === true ? "active" : field.value === false ? "inactive" : ""}
+                    onChange={(value) => {
+                      if (value === "active") field.onChange(true);
+                      else if (value === "inactive") field.onChange(false);
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
