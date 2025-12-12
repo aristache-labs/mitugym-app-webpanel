@@ -5,6 +5,7 @@ import { AppProviders } from "@/components/providers/app-providers";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Script from "next/script";
+import MobileScrollToTop from "@/components/layout/mobile-scroll-to-top";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,13 +51,6 @@ export default function RootLayout({
                 setTimeout(() => meta.setAttribute("content", content), 50);
               };
 
-              const forceScrollToTop = () => {
-                window.scrollTo(0, 0);
-                document.documentElement.scrollTop = 0;
-                document.body.scrollTop = 0;
-              };
-
-
               let ticking = false;
               const onResize = () => {
                 if (ticking) return;
@@ -75,40 +69,14 @@ export default function RootLayout({
 
               window.addEventListener("resize", onResize, { passive: true });
 
-              // Aggressive initial scroll to top for iOS
-              forceScrollToTop();
+              // Initial viewport setup
               forceViewportReset();
-              
-              // Multiple attempts to ensure we're at top on load
-              if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                  forceScrollToTop();
-                  setTimeout(() => { forceScrollToTop(); }, 10);
-                  setTimeout(() => { forceScrollToTop(); }, 50);
-                  setTimeout(() => { forceScrollToTop(); }, 100);
-                  setTimeout(() => { forceScrollToTop(); }, 300);
-                  setTimeout(() => { forceScrollToTop(); }, 500);
-                });
-              } else {
-                setTimeout(() => { forceScrollToTop(); }, 10);
-                setTimeout(() => { forceScrollToTop(); }, 50);
-                setTimeout(() => { forceScrollToTop(); }, 100);
-                setTimeout(() => { forceScrollToTop(); }, 300);
-                setTimeout(() => { forceScrollToTop(); }, 500);
-              }
-              
-              window.addEventListener('load', () => {
-                forceScrollToTop();
-                setTimeout(() => { forceScrollToTop(); }, 10);
-                setTimeout(() => { forceScrollToTop(); }, 100);
-                setTimeout(() => { forceScrollToTop(); }, 300);
-                setTimeout(() => { forceScrollToTop(); }, 1000);
-              });
             })();
           `}
         </Script>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} bg-background text-text antialiased`} suppressHydrationWarning>
+        <MobileScrollToTop />
         <Script id="suppress-hydration-warnings" strategy="beforeInteractive">
           {`
             if (typeof window !== 'undefined') {

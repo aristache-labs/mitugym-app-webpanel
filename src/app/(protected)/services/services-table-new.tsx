@@ -8,6 +8,7 @@ import { formatCurrency } from "@/lib/utils";
 import type { Service } from "@/types";
 import { serviceColumns } from "./columns";
 import { useRouter } from "next/navigation";
+import { smartNavigate } from "@/lib/ios-chrome-navigation";
 
 const csvColumns = [
   { header: "Name", accessor: (service: Service) => service.name },
@@ -27,7 +28,10 @@ export function ServicesTableNew({ services }: { services: Service[] }) {
   const router = useRouter();
 
   const handleCreateService = () => {
-    router.push("/services/new");
+    // Use hard navigation for iOS Chrome portrait to fix scroll restoration bug
+    if (!smartNavigate("/services/new")) {
+      router.push("/services/new");
+    }
   };
 
   const handleExport = () => {

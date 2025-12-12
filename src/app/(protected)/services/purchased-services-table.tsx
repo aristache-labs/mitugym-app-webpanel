@@ -14,6 +14,7 @@ import { Calendar, User, Package, Trash2, CheckCircle, XCircle, Eye, Briefcase, 
 import { format } from "date-fns";
 import { approvePurchasedServiceAction, cancelPurchasedServiceAction, deletePurchasedServiceAction } from "@/app/(protected)/actions";
 import { useRouter } from "next/navigation";
+import { smartNavigate } from "@/lib/ios-chrome-navigation";
 
 interface PurchasedServicesTableProps {
   purchasedServices: PurchasedService[];
@@ -34,7 +35,10 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
   const [isPending, startTransition] = useTransition();
 
   const handleNewPurchase = () => {
-    router.push("/services/purchased/new");
+    // Use hard navigation for iOS Chrome portrait to fix scroll restoration bug
+    if (!smartNavigate("/services/purchased/new")) {
+      router.push("/services/purchased/new");
+    }
   };
 
   const handleDeleteClick = (service: PurchasedService) => {
