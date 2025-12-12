@@ -236,7 +236,7 @@ export function SessionBookingForm({ members, services }: SessionBookingFormProp
       </div>
 
       {/* Notes */}
-      <div className="relative flex flex-col pt-1.5 sm:pt-0 mb-3 sm:mb-0 mt-6">
+      <div className="relative flex flex-col pt-1.5 sm:pt-0 mb-3 sm:mb-0 mt-8">
         <textarea
           id="notes"
           value={form.watch("notes") || ""}
@@ -255,9 +255,9 @@ export function SessionBookingForm({ members, services }: SessionBookingFormProp
         <label
           htmlFor="notes"
           className={cn(
-            "absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none flex items-center gap-1.5",
-            "peer-focus:translate-x-3 peer-focus:opacity-100",
-            form.watch("notes") && "translate-x-3 opacity-100",
+            "absolute -top-[18px] sm:-top-[25px] left-[10px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none flex items-center gap-1.5",
+            "peer-focus:translate-x-0 peer-focus:opacity-100",
+            form.watch("notes") && "translate-x-0 opacity-100",
             form.formState.errors.notes && "text-error"
           )}
         >

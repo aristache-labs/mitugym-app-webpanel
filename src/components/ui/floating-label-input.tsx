@@ -48,9 +48,9 @@ const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInput
         <label
           htmlFor={`input-${label.replace(/\s+/g, '-').toLowerCase()}`}
           className={cn(
-            "absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none flex items-center gap-1.5",
-            "peer-focus:translate-x-3 peer-focus:opacity-100",
-            hasValue && "translate-x-3 opacity-100",
+            "absolute -top-[18px] sm:-top-[25px] left-[10px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none flex items-center gap-1.5",
+            "peer-focus:translate-x-0 peer-focus:opacity-100",
+            hasValue && "translate-x-0 opacity-100",
             error && "text-error"
           )}
         >
