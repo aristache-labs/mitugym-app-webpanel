@@ -74,63 +74,62 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
             </div>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {bookings.slice(0, 5).map((booking) => (
               <div
                 key={booking.id}
-                className="group/item relative p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
+                className="group/item relative p-3 rounded-xl bg-gradient-to-r from-surface/80 to-surface/60 border border-surface/40 transition-all duration-200 hover:from-surface/90 hover:to-surface/80 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
               >
-                {/* Top Row: Time and Status */}
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-lg border border-primary/20 group-hover/item:bg-primary/20 transition-colors">
+                {/* Single Row Layout - Compact */}
+                <div className="flex items-center gap-3">
+                  {/* Time Badge */}
+                  <div className="flex items-center gap-1.5 bg-primary/10 px-2.5 py-1.5 rounded-lg border border-primary/20 group-hover/item:bg-primary/20 transition-colors flex-shrink-0">
                     <Clock className="h-3.5 w-3.5 text-primary" />
-                    <span className="text-sm font-bold text-primary">
+                    <span className="text-xs font-bold text-primary">
                       {timeFormat === '12h' 
                         ? format(new Date(booking.booking_date), "h:mm a")
                         : format(new Date(booking.booking_date), "HH:mm")
                       }
                     </span>
                   </div>
-                  
-                  <Badge 
-                    variant={booking.status === "confirmed" ? "success" : booking.status === "pending" ? "warning" : "default"}
-                    className="text-xs capitalize"
-                  >
-                    {booking.status}
-                  </Badge>
-                </div>
 
-                {/* Middle Row: Member Info */}
-                <div className="flex items-center gap-3 mb-2">
+                  {/* Avatar */}
                   <AvatarWithPreview
                     avatarUrl={booking.member?.avatar_url}
                     memberName={booking.member?.full_name || "Unknown Member"}
                     size="small"
                     className="border-primary/20 flex-shrink-0"
                   />
+
+                  {/* Member Name & Service Info */}
                   <div className="flex-1 min-w-0">
                     <Link href="/bookings" className="group/member">
-                      <h4 className="font-semibold text-base text-text group-hover/item:text-primary group-hover/member:text-primary transition-colors cursor-pointer hover:underline truncate">
+                      <h4 className="font-semibold text-sm text-text group-hover/item:text-primary group-hover/member:text-primary transition-colors cursor-pointer hover:underline truncate leading-tight">
                         {booking.member?.full_name || "Unknown Member"}
                       </h4>
                     </Link>
-                  </div>
-                </div>
-
-                {/* Bottom Row: Service Info */}
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="text-sm text-muted/90 truncate">
-                      {booking.service?.name || "Unknown Service"}
-                    </span>
-                    {booking.service?.service_type && getServiceTypeBadge(booking.service.service_type)}
-                  </div>
-                  
-                  {booking.sessions_remaining && booking.sessions_remaining > 0 && (
-                    <div className="bg-secondary/20 text-secondary px-2.5 py-1 rounded-lg text-xs font-medium border border-secondary/30 flex-shrink-0">
-                      {booking.sessions_remaining} left
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="text-xs text-muted/80 truncate">
+                        {booking.service?.name || "Unknown Service"}
+                      </span>
+                      {booking.service?.service_type && getServiceTypeBadge(booking.service.service_type)}
                     </div>
-                  )}
+                  </div>
+
+                  {/* Status & Sessions Right Side */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {booking.sessions_remaining && booking.sessions_remaining > 0 && (
+                      <div className="bg-secondary/20 text-secondary px-2 py-1 rounded-md text-xs font-medium border border-secondary/30">
+                        {booking.sessions_remaining} left
+                      </div>
+                    )}
+                    <Badge 
+                      variant={booking.status === "confirmed" ? "success" : booking.status === "pending" ? "warning" : "default"}
+                      className="text-xs capitalize"
+                    >
+                      {booking.status}
+                    </Badge>
+                  </div>
                 </div>
               </div>
             ))}
