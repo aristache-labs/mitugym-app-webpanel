@@ -84,37 +84,8 @@ export function Modal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-surface/50 bg-surface sticky top-0 z-10 flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-surface/50 bg-surface sticky top-0 z-10">
           <h2 className="text-lg font-semibold text-text">{title}</h2>
-          {variant !== "destructive" && (
-            <button
-              onClick={onClose}
-              className="group/closetop relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
-            >
-              {/* Icon with animation */}
-              <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/closetop:scale-125 group-hover/closetop:translate-x-[1.7em]">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/closetop:text-cyan-100 group-hover/closetop:scale-110"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              
-              {/* Text */}
-              <span className="transition-all duration-500 ease-in-out group-hover/closetop:opacity-0">
-                Close
-              </span>
-            </button>
-          )}
         </div>
         
         {/* Content */}
@@ -167,21 +138,44 @@ export function Modal({
               </>
             ) : (
               <>
-                <Button
-                  variant="outline"
+                <button
                   onClick={onClose}
+                  className="group/modalclose relative h-9 sm:h-10 px-4 sm:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95"
                 >
-                  {cancelText}
-                </Button>
-                <Button
-                  variant="default"
+                  {/* Icon with animation */}
+                  <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/modalclose:scale-125 group-hover/modalclose:translate-x-[1.7em]">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/modalclose:text-cyan-100 group-hover/modalclose:scale-110"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  
+                  {/* Text */}
+                  <span className="transition-all duration-500 ease-in-out group-hover/modalclose:opacity-0">
+                    Close
+                  </span>
+                </button>
+
+                <button
                   onClick={() => {
                     onConfirm();
                     onClose();
                   }}
+                  disabled={isPending}
+                  className="h-9 sm:h-10 px-4 sm:px-6 text-xs sm:text-sm bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-slate-200 hover:text-white border-0 ring-0 outline-none transition-all duration-500 ease-out shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 backdrop-blur-sm font-medium rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {confirmText}
-                </Button>
+                  {isPending ? "Processing..." : confirmText}
+                </button>
               </>
             )}
           </div>

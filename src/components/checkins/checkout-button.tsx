@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatedButton } from "@/components/ui/animated-button";
 import { ConfirmationModal } from "@/components/ui/modal";
 import { manualCheckoutAction } from "@/app/(protected)/actions";
 
@@ -45,29 +44,106 @@ export function CheckoutButton({ checkinId, memberName, isCheckedOut }: Checkout
 
   return (
     <>
-      <div className="relative group">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <AnimatedButton
-          size="sm"
-          variant="default"
-          onClick={() => setShowConfirmModal(true)}
-          disabled={isLoading}
-          className="relative h-7 sm:h-8 px-2.5 sm:px-4 text-[10px] sm:text-xs font-semibold bg-gradient-to-r from-primary/20 to-accent/20 border-primary/30 hover:from-primary/30 hover:to-accent/30 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-xl whitespace-nowrap"
-        >
-          {isLoading ? (
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-              <span className="hidden sm:inline">Processing...</span>
-              <span className="sm:hidden">...</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full animate-pulse"></div>
-              <span>Check Out</span>
-            </div>
-          )}
-        </AnimatedButton>
-      </div>
+      <button
+        onClick={() => setShowConfirmModal(true)}
+        disabled={isLoading}
+        className="checkout-button"
+        title="Check Out Member"
+      >
+        {isLoading ? (
+          <div className="checkout-loading">
+            <div className="checkout-spinner"></div>
+          </div>
+        ) : (
+          <>
+            <svg
+              className="checkout-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9 11l3 3L22 4"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="checkout-text">Check Out</span>
+          </>
+        )}
+        
+        <style jsx>{`
+          .checkout-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            height: 32px;
+            padding: 0 14px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(77, 212, 212, 0.15) 0%, rgba(45, 212, 191, 0.12) 100%);
+            border: 1px solid rgba(77, 212, 212, 0.35);
+            color: rgb(77, 212, 212);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+          }
+          .checkout-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+          .checkout-icon {
+            width: 14px;
+            height: 14px;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+          }
+          .checkout-text {
+            transition: all 0.3s ease;
+          }
+          .checkout-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .checkout-spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(77, 212, 212, 0.3);
+            border-top-color: rgb(77, 212, 212);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+          }
+          .checkout-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(77, 212, 212, 0.25) 0%, rgba(45, 212, 191, 0.2) 100%);
+            border-color: rgba(77, 212, 212, 0.5);
+            box-shadow: 0 0 15px rgba(77, 212, 212, 0.25);
+            transform: translateY(-1px);
+          }
+          .checkout-button:hover:not(:disabled) .checkout-icon {
+            transform: scale(1.15);
+          }
+          .checkout-button:active:not(:disabled) {
+            transform: translateY(0);
+          }
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
+      </button>
 
       <ConfirmationModal
         isOpen={showConfirmModal}
