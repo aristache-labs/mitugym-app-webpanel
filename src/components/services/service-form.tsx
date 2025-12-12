@@ -342,103 +342,107 @@ export function ServiceForm({ service, mode }: ServiceFormProps) {
             }}
           />
 
-          {/* Row 5: Checkboxes Row */}
-          <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-8">
-            {/* Requires Advance Booking */}
-            <div className="flex items-center space-x-3 py-2">
-              <div className="relative">
-                <input
-                  id="requires_advance_booking"
-                  type="checkbox"
-                  checked={watchRequiresAdvanceBooking}
-                  onChange={(e) => form.setValue("requires_advance_booking", e.target.checked)}
-                  className="peer sr-only"
-                />
-                <div 
-                  className="w-5 h-5 border-2 border-surface/50 rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200 flex items-center justify-center cursor-pointer"
+          {/* Row 5: Checkboxes and Inputs */}
+          <div className="flex flex-col lg:flex-row lg:items-start gap-4 lg:gap-8">
+            {/* Requires Advance Booking Section */}
+            <div className="flex-1 space-y-4 lg:space-y-6">
+              <div className="flex items-center space-x-3 py-2">
+                <div className="relative">
+                  <input
+                    id="requires_advance_booking"
+                    type="checkbox"
+                    checked={watchRequiresAdvanceBooking}
+                    onChange={(e) => form.setValue("requires_advance_booking", e.target.checked)}
+                    className="peer sr-only"
+                  />
+                  <div 
+                    className="w-5 h-5 border-2 border-surface/50 rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200 flex items-center justify-center cursor-pointer"
+                    onClick={() => form.setValue("requires_advance_booking", !watchRequiresAdvanceBooking)}
+                  >
+                    <svg 
+                      className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" 
+                      fill="currentColor" 
+                      viewBox="0 0 20 20"
+                    >
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                <Label 
+                  htmlFor="requires_advance_booking" 
+                  className="cursor-pointer text-sm whitespace-nowrap"
                   onClick={() => form.setValue("requires_advance_booking", !watchRequiresAdvanceBooking)}
                 >
-                  <svg 
-                    className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" 
-                    fill="currentColor" 
-                    viewBox="0 0 20 20"
-                  >
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
+                  Requires advance booking
+                </Label>
               </div>
-              <Label 
-                htmlFor="requires_advance_booking" 
-                className="cursor-pointer text-sm whitespace-nowrap"
-                onClick={() => form.setValue("requires_advance_booking", !watchRequiresAdvanceBooking)}
-              >
-                Requires advance booking
-              </Label>
+
+              {/* Advance Booking Hours (conditionally shown) */}
+              {watchRequiresAdvanceBooking && (
+                <FormField
+                  control={form.control}
+                  name="advance_booking_hours"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <FloatingLabelInput
+                          label="Advance booking hours"
+                          type="number"
+                          min={0}
+                          step="1"
+                          placeholder="Advance booking hours"
+                          icon={<Clock className="w-full h-full" />}
+                          error={form.formState.errors.advance_booking_hours?.message}
+                          value={!field.value && field.value !== 0 ? "" : field.value}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(value === "" ? "" : parseInt(value, 10));
+                          }}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
 
-            {/* Service is Active */}
-            <div className="flex items-center space-x-3 py-2">
-              <div className="relative">
-                <input
-                  id="is_active"
-                  type="checkbox"
-                  checked={form.watch("is_active")}
-                  onChange={(e) => form.setValue("is_active", e.target.checked)}
-                  className="peer sr-only"
-                />
-                <div 
-                  className="w-5 h-5 border-2 border-surface/50 rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200 flex items-center justify-center cursor-pointer"
+            {/* Service is Active Section */}
+            <div className="flex-1">
+              <div className="flex items-center space-x-3 py-2">
+                <div className="relative">
+                  <input
+                    id="is_active"
+                    type="checkbox"
+                    checked={form.watch("is_active")}
+                    onChange={(e) => form.setValue("is_active", e.target.checked)}
+                    className="peer sr-only"
+                  />
+                  <div 
+                    className="w-5 h-5 border-2 border-surface/50 rounded-md peer-checked:bg-primary peer-checked:border-primary transition-all duration-200 flex items-center justify-center cursor-pointer"
+                    onClick={() => form.setValue("is_active", !form.watch("is_active"))}
+                  >
+                    <svg 
+                      className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" 
+                      fill="currentColor" 
+                      viewBox="0 0 20 20"
+                    >
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </div>
+                <Label 
+                  htmlFor="is_active" 
+                  className="cursor-pointer text-sm whitespace-nowrap"
                   onClick={() => form.setValue("is_active", !form.watch("is_active"))}
                 >
-                  <svg 
-                    className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200" 
-                    fill="currentColor" 
-                    viewBox="0 0 20 20"
-                  >
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
+                  Service is active
+                </Label>
               </div>
-              <Label 
-                htmlFor="is_active" 
-                className="cursor-pointer text-sm whitespace-nowrap"
-                onClick={() => form.setValue("is_active", !form.watch("is_active"))}
-              >
-                Service is active
-              </Label>
             </div>
           </div>
-
-          {/* Advance Booking Hours (conditionally shown) */}
-          {watchRequiresAdvanceBooking && (
-            <FormField
-              control={form.control}
-              name="advance_booking_hours"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <FloatingLabelInput
-                      label="Advance booking hours"
-                      type="number"
-                      min={0}
-                      step="1"
-                      placeholder="Advance booking hours"
-                      icon={<Clock className="w-full h-full" />}
-                      error={form.formState.errors.advance_booking_hours?.message}
-                      value={!field.value && field.value !== 0 ? "" : field.value}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(value === "" ? "" : parseInt(value, 10));
-                      }}
-                      onBlur={field.onBlur}
-                      name={field.name}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
 
           {error ? <p className="text-xs sm:text-sm text-error">{error}</p> : null}
           
