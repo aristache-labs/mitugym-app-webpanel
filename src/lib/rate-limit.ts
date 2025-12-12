@@ -174,8 +174,6 @@ export async function updateRateLimitersFromDB() {
     if (config.rate_limit_member_max) {
       memberRateLimiter.configure(windowMs, config.rate_limit_member_max);
     }
-
-    console.log('Rate limiters updated from database:', config);
   } catch (error) {
     console.error('Failed to update rate limiters from database:', error);
   }
