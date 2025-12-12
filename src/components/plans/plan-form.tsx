@@ -273,14 +273,14 @@ export function PlanForm({ plan, existingPlans = [], onCompleted }: PlanFormProp
                     <div className="relative pt-1.5">
                       <label 
                         htmlFor="features-textarea"
-                        className={`absolute -top-[18px] sm:-top-[20px] left-[5px] text-sm font-normal transition-all duration-200 translate-x-3 ${
+                        className={`absolute -top-[18px] sm:-top-[15px] left-[5px] text-sm font-normal transition-all duration-200 translate-x-3 ${
                           hasContent ? 'opacity-100 text-text/80' : 'opacity-0'
                         } ${form.formState.errors.features ? 'text-error' : ''}`}
                       >
                         Features
                       </label>
                       <div 
-                        className={`absolute -top-[16px] sm:-top-[17px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 ${
+                        className={`absolute -top-[16px] sm:-top-[12px] -left-[12px] w-3.5 h-3.5 transition-all duration-200 translate-x-3 ${
                           hasContent ? 'opacity-100' : 'opacity-0'
                         } ${form.formState.errors.features ? 'text-error' : 'text-primary'}`}
                       >

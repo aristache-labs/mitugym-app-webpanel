@@ -107,7 +107,7 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
 
         <label
           className={cn(
-            "absolute -top-[18px] sm:-top-[23px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
+            "absolute -top-[18px] sm:-top-[25px] left-[5px] text-sm font-normal text-text/80 opacity-0 overflow-hidden transition-all duration-200 pointer-events-none",
             (isOpen || hasValue) && "translate-x-3 opacity-100",
             error && "text-error"
           )}
@@ -118,7 +118,7 @@ export const FloatingLabelSelect = React.forwardRef<HTMLDivElement, FloatingLabe
         {icon ? (
           <div
             className={cn(
-              "absolute -top-[16px] sm:-top-[21px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
+              "absolute -top-[16px] sm:-top-[22px] -left-[12px] w-3.5 h-3.5 opacity-0 transition-all duration-200 pointer-events-none",
               (isOpen || hasValue) && "translate-x-3 opacity-100",
               error ? "text-error" : "text-primary"
             )}
