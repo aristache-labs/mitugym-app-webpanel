@@ -816,7 +816,7 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
           setError(null);
         }}
         title="Purchased Service Details"
-        className="max-w-6xl"
+        className="max-w-[98vw] sm:max-w-6xl"
       >
         <div className="space-y-4 sm:space-y-6">
           {selectedService && (
@@ -858,48 +858,48 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
                     </div>
                     
                     {/* Quick Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                      <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border-0">
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="p-1.5 sm:p-2 rounded-lg bg-primary/20 border-0">
-                            <Package className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+                      <div className="p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                          <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-primary/20 border-0 flex-shrink-0">
+                            <Package className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-primary" />
                           </div>
-                          <div>
-                            <p className="text-xs sm:text-sm font-medium text-muted/70">Remaining</p>
-                            <p className="text-xl sm:text-2xl font-bold text-text">{selectedService.sessions_remaining}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-0">
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="p-1.5 sm:p-2 rounded-lg bg-blue-500/20 border-0">
-                            <Hash className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
-                          </div>
-                          <div>
-                            <p className="text-xs sm:text-sm font-medium text-muted/70">Total</p>
-                            <p className="text-xl sm:text-2xl font-bold text-text">{selectedService.sessions_total}</p>
+                          <div className="min-w-0">
+                            <p className="text-[10px] sm:text-xs md:text-sm font-medium text-muted/70 whitespace-nowrap">Remaining</p>
+                            <p className="text-lg sm:text-xl md:text-2xl font-bold text-text">{selectedService.sessions_remaining}</p>
                           </div>
                         </div>
                       </div>
-                      <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-500/5 to-green-500/10 border-0">
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="p-1.5 sm:p-2 rounded-lg bg-green-500/20 border-0">
-                            <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+                      <div className="p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500/5 to-blue-500/10 border-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                          <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-blue-500/20 border-0 flex-shrink-0">
+                            <Hash className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-blue-500" />
                           </div>
-                          <div>
-                            <p className="text-xs sm:text-sm font-medium text-muted/70">Duration</p>
-                            <p className="text-xl sm:text-2xl font-bold text-text">{selectedService.service?.duration_minutes || 60}m</p>
+                          <div className="min-w-0">
+                            <p className="text-[10px] sm:text-xs md:text-sm font-medium text-muted/70 whitespace-nowrap">Total</p>
+                            <p className="text-lg sm:text-xl md:text-2xl font-bold text-text">{selectedService.sessions_total}</p>
                           </div>
                         </div>
                       </div>
-                      <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-500/10 border-0">
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="p-1.5 sm:p-2 rounded-lg bg-orange-500/20 border-0">
-                            <Banknote className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
+                      <div className="p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-green-500/5 to-green-500/10 border-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                          <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-green-500/20 border-0 flex-shrink-0">
+                            <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-green-500" />
                           </div>
-                          <div>
-                            <p className="text-xs sm:text-sm font-medium text-muted/70">Price</p>
-                            <p className="text-xl sm:text-2xl font-bold text-text">{selectedService.service?.price?.toFixed(0) || "0"} RON</p>
+                          <div className="min-w-0">
+                            <p className="text-[10px] sm:text-xs md:text-sm font-medium text-muted/70 whitespace-nowrap">Duration</p>
+                            <p className="text-lg sm:text-xl md:text-2xl font-bold text-text whitespace-nowrap">{selectedService.service?.duration_minutes || 60}m</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-2.5 sm:p-3 md:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-br from-orange-500/5 to-orange-500/10 border-0">
+                        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                          <div className="p-1 sm:p-1.5 md:p-2 rounded-lg bg-orange-500/20 border-0 flex-shrink-0">
+                            <Banknote className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 text-orange-500" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[10px] sm:text-xs md:text-sm font-medium text-muted/70 whitespace-nowrap">Price</p>
+                            <p className="text-lg sm:text-xl md:text-2xl font-bold text-text whitespace-nowrap">{selectedService.service?.price?.toFixed(0) || "0"} <span className="text-base sm:text-lg md:text-xl">RON</span></p>
                           </div>
                         </div>
                       </div>
