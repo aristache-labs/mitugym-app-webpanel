@@ -96,14 +96,14 @@ export default async function PlanViewPage({ params }: PlanViewPageProps) {
                     </span>
                   </button>
                 </Link>
-                {/* Back Button - Secondary Style */}
+                {/* Back Button */}
                 <Link 
                   href="/plans"
-                  className="group/link relative h-8 sm:h-9 w-full sm:w-auto px-3 sm:px-4 md:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-800/60 via-slate-800/50 to-slate-900/60 hover:from-slate-700/70 hover:via-slate-700/60 hover:to-slate-800/70 text-slate-300 hover:text-slate-100 font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/10 hover:shadow-lg hover:shadow-black/20 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 !no-underline flex-1 sm:flex-none"
+                  className="group/link relative h-8 sm:h-9 w-full sm:w-auto px-3 sm:px-4 md:px-6 flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-br from-slate-700/75 via-cyan-900/45 to-slate-700/75 hover:from-slate-600/85 hover:via-cyan-800/55 hover:to-slate-600/85 text-white font-medium text-xs sm:text-sm rounded-2xl backdrop-blur-sm shadow-md shadow-black/20 hover:shadow-lg hover:shadow-cyan-950/25 transition-all duration-500 ease-out overflow-hidden border-0 !ring-0 !outline-none active:scale-95 !no-underline flex-1 sm:flex-none"
                 >
                   {/* Arrow Icon */}
                   <div className="relative z-10 flex items-center justify-center transition-all duration-500 ease-in-out group-hover/link:scale-125 group-hover/link:translate-x-[1.3em]">
-                    <ArrowLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 transition-all duration-500 ease-in-out text-slate-400/70 group-hover/link:text-slate-200 group-hover/link:scale-110" />
+                    <ArrowLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 transition-all duration-500 ease-in-out text-cyan-300/60 group-hover/link:text-cyan-100 group-hover/link:scale-110" />
                   </div>
                   
                   {/* Text */}
