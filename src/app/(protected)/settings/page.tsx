@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { SettingsPageClient } from "@/components/settings/settings-page-client";
 import { fetchAuditLogs, fetchApiLogs } from "@/lib/data";
 import { getSetting } from "@/lib/settings";
@@ -35,14 +36,16 @@ export default async function SettingsPage({
   const stats = getRateLimiterStats();
 
   return (
-    <SettingsPageClient
-      initialTab={params.tab}
-      currentTimezone={currentTimezone}
-      currentTimeFormat={currentTimeFormat}
-      rateLimitSettings={rateLimitSettings}
-      stats={stats}
-      logs={logs}
-      apiLogs={apiLogs}
-    />
+    <Suspense fallback={<div className="p-8">Loading settings...</div>}>
+      <SettingsPageClient
+        initialTab={params.tab}
+        currentTimezone={currentTimezone}
+        currentTimeFormat={currentTimeFormat}
+        rateLimitSettings={rateLimitSettings}
+        stats={stats}
+        logs={logs}
+        apiLogs={apiLogs}
+      />
+    </Suspense>
   );
 }

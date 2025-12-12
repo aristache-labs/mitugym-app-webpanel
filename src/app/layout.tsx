@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/components/providers/app-providers";
@@ -76,7 +77,9 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} bg-background text-text antialiased`} suppressHydrationWarning>
-        <MobileScrollToTop />
+        <Suspense fallback={null}>
+          <MobileScrollToTop />
+        </Suspense>
         <Script id="suppress-hydration-warnings" strategy="beforeInteractive">
           {`
             if (typeof window !== 'undefined') {
