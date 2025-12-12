@@ -135,10 +135,27 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
                   </div>
                   <button
                     onClick={() => toggleDayStatus(day.weekday)}
-                    className="p-1.5 sm:p-2 rounded-full hover:bg-surface/60 transition-colors"
+                    className="group/toggle relative flex items-center gap-2"
                     title={day.is_closed ? "Mark as open" : "Mark as closed"}
                   >
-                    <StatusIcon className="w-4 h-4 sm:w-5 sm:h-5 text-muted hover:text-text transition-colors" />
+                    <div className={`relative w-10 h-5 rounded-full transition-all duration-500 ease-out ${
+                      day.is_closed 
+                        ? 'bg-gradient-to-r from-error/30 via-error/20 to-error/30 border border-error/40' 
+                        : 'bg-gradient-to-r from-success/30 via-success/20 to-success/30 border border-success/40'
+                    } shadow-inner`}>
+                      {/* Sliding toggle */}
+                      <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all duration-500 ease-out transform ${
+                        day.is_closed 
+                          ? 'translate-x-0.5 bg-gradient-to-br from-error/90 to-error shadow-md shadow-error/40' 
+                          : 'translate-x-5 bg-gradient-to-br from-success/90 to-success shadow-md shadow-success/40'
+                      } group-hover/toggle:scale-110`}>
+                        {/* Inner glow */}
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
+                      </div>
+                      
+                      {/* Shine effect on hover */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/toggle:translate-x-full transition-transform duration-1000 ease-out"></div>
+                    </div>
                   </button>
                 </div>
 
@@ -214,10 +231,27 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
                   </div>
                   <button
                     onClick={() => toggleDayStatus(day.weekday)}
-                    className="p-1.5 sm:p-2 rounded-full hover:bg-surface/60 transition-colors"
+                    className="group/toggle relative flex items-center gap-2"
                     title={day.is_closed ? "Mark as open" : "Mark as closed"}
                   >
-                    <StatusIcon className="w-4 h-4 sm:w-5 sm:h-5 text-muted hover:text-text transition-colors" />
+                    <div className={`relative w-10 h-5 rounded-full transition-all duration-500 ease-out ${
+                      day.is_closed 
+                        ? 'bg-gradient-to-r from-error/30 via-error/20 to-error/30 border border-error/40' 
+                        : 'bg-gradient-to-r from-success/30 via-success/20 to-success/30 border border-success/40'
+                    } shadow-inner`}>
+                      {/* Sliding toggle */}
+                      <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all duration-500 ease-out transform ${
+                        day.is_closed 
+                          ? 'translate-x-0.5 bg-gradient-to-br from-error/90 to-error shadow-md shadow-error/40' 
+                          : 'translate-x-5 bg-gradient-to-br from-success/90 to-success shadow-md shadow-success/40'
+                      } group-hover/toggle:scale-110`}>
+                        {/* Inner glow */}
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
+                      </div>
+                      
+                      {/* Shine effect on hover */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/toggle:translate-x-full transition-transform duration-1000 ease-out"></div>
+                    </div>
                   </button>
                 </div>
 
