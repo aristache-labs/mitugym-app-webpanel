@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 const updateSessionBookingFormSchema = z.object({
   id: z.string().uuid(),
   booking_date: z.string().min(1, "Booking date is required"),
-  status: z.enum(["pending", "confirmed", "completed", "cancelled"]).optional(),
+  status: z.enum(["pending", "confirmed", "upcoming", "completed", "cancelled"]).optional(),
   notes: z.string().max(1000, "Notes too long").optional(),
 });
 
@@ -33,6 +33,7 @@ interface SessionBookingEditFormProps {
 const STATUS_OPTIONS = [
   { value: "pending", label: "Pending" },
   { value: "confirmed", label: "Confirmed" },
+  { value: "upcoming", label: "Upcoming" },
   { value: "completed", label: "Completed" },
   { value: "cancelled", label: "Cancelled" },
 ];
@@ -48,7 +49,7 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
     defaultValues: {
       id: booking.id,
       booking_date: booking.booking_date ? format(new Date(booking.booking_date), "yyyy-MM-dd'T'HH:mm") : "",
-      status: booking.status === "upcoming" ? "confirmed" : booking.status,
+      status: booking.status,
       notes: booking.notes || "",
     },
   });
@@ -250,7 +251,7 @@ export function SessionBookingEditForm({ booking }: SessionBookingEditFormProps)
               label="Status"
               icon={<Clock className="h-4 w-4" />}
               value={form.watch("status") || ""}
-              onChange={(value) => form.setValue("status", value as "pending" | "confirmed" | "completed" | "cancelled")}
+              onChange={(value) => form.setValue("status", value as "pending" | "confirmed" | "upcoming" | "completed" | "cancelled")}
               options={STATUS_OPTIONS}
               error={form.formState.errors.status?.message}
             />
