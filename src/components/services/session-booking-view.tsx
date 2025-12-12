@@ -297,21 +297,21 @@ export function SessionBookingView({ booking, timeFormat = '24h' }: SessionBooki
           <div className="absolute inset-0 bg-gradient-to-br from-primary/2 via-primary/1 to-secondary/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl sm:rounded-3xl"></div>
           
           <CardHeader className="relative p-4 sm:p-5 pb-2">
-            <div className="flex items-center justify-between gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                <div className="p-1.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors flex-shrink-0">
                   <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-primary/60 group-hover:text-primary transition-colors" />
                 </div>
-                <div>
-                  <CardTitle className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors">
+                <div className="min-w-0">
+                  <CardTitle className="text-base sm:text-lg font-semibold text-text group-hover:text-primary transition-colors truncate">
                     Booking Information
                   </CardTitle>
-                  <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5">Complete booking details and information</p>
+                  <p className="text-[10px] sm:text-xs text-muted/70 mt-0.5 truncate">Complete booking details and information</p>
                 </div>
               </div>
               
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2">
+              {/* Action Buttons - Desktop: right side, Mobile: centered below */}
+              <div className="flex items-center justify-center sm:justify-end gap-2">
                 {/* Confirm Button */}
                 {booking.status === "pending" && (
                   <button
