@@ -11,6 +11,7 @@ import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Mail, KeyRound } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -165,25 +166,12 @@ export function LoginForm() {
                         <span>
                           <input 
                             type="email" 
-                            placeholder="staff@mitugym.dev" 
+                            placeholder="contact@mitugym.ro" 
                             {...field}
                             className="ds_textinput"
                           />
                           <div className="ds-input-icon">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="38px"
-                              height="38px"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <rect x="2" y="4" width="20" height="16" rx="2"/>
-                              <path d="m2 7 10 7 10-7"/>
-                            </svg>
+                            <Mail className="w-full h-full text-white" />
                           </div>
                         </span>
                         <i></i>
@@ -207,20 +195,7 @@ export function LoginForm() {
                             className="ds_textinput"
                           />
                           <div className="ds-input-icon">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="38px"
-                              height="38px"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                            </svg>
+                            <KeyRound className="w-full h-full text-white" />
                           </div>
                           <button
                             type="button"
@@ -355,7 +330,7 @@ export function LoginForm() {
               </form>
             </Form>
             <p className="mt-2 text-center text-[8px] text-muted sm:mt-6 sm:text-xs">
-              Need access? Contact <Link href="mailto:ops@mitugym.dev" className="underline text-primary hover:text-primary/80 transition-colors duration-300 relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-primary after:transition-all after:duration-300 hover:after:w-full">ops@mitugym.dev</Link>
+              Need access? Contact <Link href="mailto:contact@mitugym.ro" className="underline text-primary hover:text-primary/80 transition-colors duration-300 relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-primary after:transition-all after:duration-300 hover:after:w-full">contact@mitugym.ro</Link>
             </p>
           </CardContent>
         </Card>
@@ -367,22 +342,22 @@ export function LoginForm() {
           background: var(--background);
         }
         
-        /* Animated Label Styles */
-        .ds-label {
-          letter-spacing: 0.1em;
-          transition: 0.5s;
-          position: relative;
-          font-size: 17px;
-          background: #333;
-          border: none;
-          color: #fff;
-          display: block;
-          width: 100%;
-          padding: 5px 8px 5px 10px;
-          text-align: left;
-          transition: all 0.5s ease;
-          border-radius: 0.5rem;
-        }
+         /* Animated Label Styles */
+         .ds-label {
+           letter-spacing: 0.1em;
+           transition: 0.5s;
+           position: relative;
+           font-size: 17px;
+           background: #131818;
+           border: 1px solid #4dd4d4;
+           color: #fff;
+           display: block;
+           width: 100%;
+           padding: 5px 8px 5px 10px;
+           text-align: left;
+           transition: all 0.5s ease;
+           border-radius: 0.5rem;
+         }
 
         .ds-label:hover,
         .ds-label:focus-within {
@@ -392,13 +367,13 @@ export function LoginForm() {
           box-shadow: 0 0 45px #4dd4d4;
         }
 
-        .ds-label::before {
-          content: "";
-          position: absolute;
-          inset: 2px;
-          background: #222222;
-          border-radius: 0.375rem;
-        }
+         .ds-label::before {
+           content: "";
+           position: absolute;
+           inset: 2px;
+           background: #131818;
+           border-radius: 0.375rem;
+         }
 
         .ds-label span {
           position: relative;
@@ -411,18 +386,18 @@ export function LoginForm() {
           display: block;
         }
 
-        .ds-label i::before {
-          content: "";
-          position: absolute;
-          border: 2px solid #4dd4d4;
-          width: 7px;
-          height: 4px;
-          top: -3.5px;
-          left: 80%;
-          background: #222222;
-          transform: translateX(-50%);
-          transition: 0.5s;
-        }
+         .ds-label i::before {
+           content: "";
+           position: absolute;
+           border: 2px solid #4dd4d4;
+           width: 7px;
+           height: 4px;
+           top: -3.5px;
+           left: 80%;
+           background: #131818;
+           transform: translateX(-50%);
+           transition: 0.5s;
+         }
 
         .ds-label:hover i::before,
         .ds-label:focus-within i::before {
@@ -430,18 +405,18 @@ export function LoginForm() {
           left: 20%;
         }
 
-        .ds-label i::after {
-          content: "";
-          position: absolute;
-          border: 2px solid #4dd4d4;
-          width: 7px;
-          height: 4px;
-          bottom: -3.5px;
-          left: 20%;
-          background: #222222;
-          transform: translateX(-50%);
-          transition: 0.5s;
-        }
+         .ds-label i::after {
+           content: "";
+           position: absolute;
+           border: 2px solid #4dd4d4;
+           width: 7px;
+           height: 4px;
+           bottom: -3.5px;
+           left: 20%;
+           background: #131818;
+           transform: translateX(-50%);
+           transition: 0.5s;
+         }
 
         .ds-label:hover i::after,
         .ds-label:focus-within i::after {
