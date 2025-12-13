@@ -33,7 +33,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
       };
       return (
         <div className="flex justify-center max-w-[140px] mx-auto">
-          <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/30 whitespace-nowrap">
+          <Badge variant="default" className="whitespace-nowrap">
             {typeLabels[row.original.service_type as keyof typeof typeLabels] || row.original.service_type}
           </Badge>
         </div>
@@ -88,12 +88,7 @@ export const serviceColumns: ColumnDef<Service>[] = [
     cell: ({ row }) => (
       <div className="flex justify-center">
         <Badge 
-          variant={row.original.is_active ? "default" : "secondary"}
-          className={
-            row.original.is_active 
-              ? "bg-green-500/20 text-green-600 border-green-500/30" 
-              : "bg-red-500/20 text-red-600 border-red-500/30"
-          }
+          variant={row.original.is_active ? "success" : "destructive"}
         >
           {row.original.is_active ? "Active" : "Inactive"}
         </Badge>

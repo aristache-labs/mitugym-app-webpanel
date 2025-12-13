@@ -62,12 +62,7 @@ export const planColumns: ColumnDef<MembershipPlan>[] = [
     cell: ({ row }) => (
       <div className="flex justify-center">
         <Badge 
-          variant={row.original.is_active ? "default" : "secondary"}
-          className={
-            row.original.is_active 
-              ? "bg-green-500/20 text-green-600 border-green-500/30" 
-              : "bg-red-500/20 text-red-600 border-red-500/30"
-          }
+          variant={row.original.is_active ? "success" : "destructive"}
         >
           {row.original.is_active ? "Active" : "Inactive"}
         </Badge>

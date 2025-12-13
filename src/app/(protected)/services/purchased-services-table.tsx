@@ -142,28 +142,24 @@ export function PurchasedServicesTable({ purchasedServices, timeFormat = '24h' }
   const getStatusBadge = (status: string, compact: boolean = false) => {
     const sizeClasses = compact 
       ? "text-[10px] px-2 py-0.5" 
-      : "text-xs sm:text-sm";
-    const iconSize = compact ? "h-2.5 w-2.5" : "h-3 w-3";
+      : "";
     
     switch (status) {
       case "approved":
         return (
-          <Badge className={`bg-green-500/30 text-white border-0 rounded-full ${sizeClasses}`}>
-            <CheckCircle className={`${iconSize} mr-1`} />
+          <Badge variant="success" className={`rounded-full ${sizeClasses}`}>
             Approved
           </Badge>
         );
       case "pending":
         return (
-          <Badge className={`bg-yellow-500/30 text-white border-0 rounded-full ${sizeClasses}`}>
-            <Clock className={`${iconSize} mr-1`} />
+          <Badge variant="default" className={`rounded-full ${sizeClasses}`}>
             Pending
           </Badge>
         );
       case "cancelled":
         return (
-          <Badge className={`bg-red-500/30 text-white border-0 rounded-full ${sizeClasses}`}>
-            <XCircle className={`${iconSize} mr-1`} />
+          <Badge variant="destructive" className={`rounded-full ${sizeClasses}`}>
             Cancelled
           </Badge>
         );
