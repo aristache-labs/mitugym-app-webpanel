@@ -160,7 +160,7 @@ export function LoginForm() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] leading-tight sm:text-sm text-muted transition-colors duration-300">Email</FormLabel>
+                      <FormLabel className="text-[11px] leading-tight sm:text-sm text-muted/80 transition-colors duration-300 uppercase tracking-wider font-semibold ml-1">Email</FormLabel>
                       <label className="ds-label">
                         <span>
                           <input 
@@ -174,20 +174,15 @@ export function LoginForm() {
                               xmlns="http://www.w3.org/2000/svg"
                               width="38px"
                               height="38px"
-                              viewBox="0 0 38 38"
-                              version="1.1"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                             >
-                              <g>
-                                <path
-                                  style={{
-                                    stroke: 'none',
-                                    fillRule: 'nonzero',
-                                    fill: 'rgb(100%,100%,100%)',
-                                    fillOpacity: 1
-                                  }}
-                                  d="M 3 8 L 19 19 L 35 8 M 5 32 L 33 32 C 34.104 32 35 31.104 35 30 L 35 10 C 35 8.896 34.104 8 33 8 L 5 8 C 3.896 8 3 8.896 3 10 L 3 30 C 3 31.104 3.896 32 5 32 Z"
-                                />
-                              </g>
+                              <rect x="2" y="4" width="20" height="16" rx="2"/>
+                              <path d="m2 7 10 7 10-7"/>
                             </svg>
                           </div>
                         </span>
@@ -202,7 +197,7 @@ export function LoginForm() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] leading-tight sm:text-sm text-muted transition-colors duration-300">Password</FormLabel>
+                      <FormLabel className="text-[11px] leading-tight sm:text-sm text-muted/80 transition-colors duration-300 uppercase tracking-wider font-semibold ml-1">Password</FormLabel>
                       <label className="ds-label">
                         <span>
                           <input 
@@ -216,20 +211,15 @@ export function LoginForm() {
                               xmlns="http://www.w3.org/2000/svg"
                               width="38px"
                               height="38px"
-                              viewBox="0 0 38 38"
-                              version="1.1"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                             >
-                              <g>
-                                <path
-                                  style={{
-                                    stroke: 'none',
-                                    fillRule: 'nonzero',
-                                    fill: 'rgb(100%,100%,100%)',
-                                    fillOpacity: 1
-                                  }}
-                                  d="M 19 22 L 19 26 M 10 32 L 28 32 C 29.104 32 30 31.104 30 30 L 30 20 C 30 18.896 29.104 18 28 18 L 10 18 C 8.896 18 8 18.896 8 20 L 8 30 C 8 31.104 8.896 32 10 32 Z M 26 18 L 26 12 C 26 8.134 22.866 5 19 5 C 15.134 5 12 8.134 12 12 L 12 18 L 26 18 Z"
-                                />
-                              </g>
+                              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                             </svg>
                           </div>
                           <button
