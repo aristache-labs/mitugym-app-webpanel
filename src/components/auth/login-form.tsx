@@ -161,16 +161,38 @@ export function LoginForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-[10px] leading-tight sm:text-sm text-muted transition-colors duration-300">Email</FormLabel>
-                      <div className="relative">
-                        <Input 
-                          type="email" 
-                          placeholder="staff@mitugym.dev" 
-                          {...field}
-                          className="h-8 text-[11px] sm:h-10 sm:text-sm bg-surface/50 border-surface/60 focus:border-primary focus:bg-primary/5 focus:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 focus:-translate-y-0.5"
-                          style={{ fontSize: '16px' }}
-                        />
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-primary via-transparent to-primary rounded-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 -z-10 blur-sm"></div>
-                      </div>
+                      <label className="ds-label">
+                        <span>
+                          <input 
+                            type="email" 
+                            placeholder="staff@mitugym.dev" 
+                            {...field}
+                            className="ds_textinput"
+                          />
+                          <div className="ds-input-icon">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="38px"
+                              height="38px"
+                              viewBox="0 0 38 38"
+                              version="1.1"
+                            >
+                              <g>
+                                <path
+                                  style={{
+                                    stroke: 'none',
+                                    fillRule: 'nonzero',
+                                    fill: 'rgb(100%,100%,100%)',
+                                    fillOpacity: 1
+                                  }}
+                                  d="M 3 8 L 19 19 L 35 8 M 5 32 L 33 32 C 34.104 32 35 31.104 35 30 L 35 10 C 35 8.896 34.104 8 33 8 L 5 8 C 3.896 8 3 8.896 3 10 L 3 30 C 3 31.104 3.896 32 5 32 Z"
+                                />
+                              </g>
+                            </svg>
+                          </div>
+                        </span>
+                        <i></i>
+                      </label>
                       <FormMessage className="text-[9px] sm:text-xs text-error">{form.formState.errors.email?.message}</FormMessage>
                     </FormItem>
                   )}
@@ -181,57 +203,80 @@ export function LoginForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-[10px] leading-tight sm:text-sm text-muted transition-colors duration-300">Password</FormLabel>
-                      <div className="relative">
-                        <Input 
-                          type={showPassword ? "text" : "password"}
-                          placeholder="••••••••" 
-                          {...field}
-                          className="h-8 text-[11px] sm:h-10 sm:text-sm bg-surface/50 border-surface/60 focus:border-primary focus:bg-primary/5 focus:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all duration-300 focus:-translate-y-0.5 pr-10"
-                          style={{ fontSize: '16px' }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-primary transition-colors duration-300 focus:outline-none"
-                          aria-label={showPassword ? "Hide password" : "Show password"}
-                        >
-                          {showPassword ? (
-                            <svg 
-                              className="h-4 w-4 sm:h-5 sm:w-5" 
-                              fill="none" 
-                              stroke="currentColor" 
-                              viewBox="0 0 24 24"
+                      <label className="ds-label">
+                        <span>
+                          <input 
+                            type={showPassword ? "text" : "password"}
+                            placeholder="••••••••" 
+                            {...field}
+                            className="ds_textinput"
+                          />
+                          <div className="ds-input-icon">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="38px"
+                              height="38px"
+                              viewBox="0 0 38 38"
+                              version="1.1"
                             >
-                              <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth={2} 
-                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                              />
+                              <g>
+                                <path
+                                  style={{
+                                    stroke: 'none',
+                                    fillRule: 'nonzero',
+                                    fill: 'rgb(100%,100%,100%)',
+                                    fillOpacity: 1
+                                  }}
+                                  d="M 19 22 L 19 26 M 10 32 L 28 32 C 29.104 32 30 31.104 30 30 L 30 20 C 30 18.896 29.104 18 28 18 L 10 18 C 8.896 18 8 18.896 8 20 L 8 30 C 8 31.104 8.896 32 10 32 Z M 26 18 L 26 12 C 26 8.134 22.866 5 19 5 C 15.134 5 12 8.134 12 12 L 12 18 L 26 18 Z"
+                                />
+                              </g>
                             </svg>
-                          ) : (
-                            <svg 
-                              className="h-4 w-4 sm:h-5 sm:w-5" 
-                              fill="none" 
-                              stroke="currentColor" 
-                              viewBox="0 0 24 24"
-                            >
-                              <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth={2} 
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                              <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth={2} 
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                              />
-                            </svg>
-                          )}
-                        </button>
-                      </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted hover:text-primary transition-colors duration-300 focus:outline-none z-20"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                          >
+                            {showPassword ? (
+                              <svg 
+                                className="h-4 w-4 sm:h-5 sm:w-5" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                              >
+                                <path 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round" 
+                                  strokeWidth={2} 
+                                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                                />
+                              </svg>
+                            ) : (
+                              <svg 
+                                className="h-4 w-4 sm:h-5 sm:w-5" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                              >
+                                <path 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round" 
+                                  strokeWidth={2} 
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                                <path 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round" 
+                                  strokeWidth={2} 
+                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                />
+                              </svg>
+                            )}
+                          </button>
+                        </span>
+                        <i></i>
+                      </label>
                       <FormMessage className="text-[9px] sm:text-xs text-error">{form.formState.errors.password?.message}</FormMessage>
                     </FormItem>
                   )}
@@ -330,6 +375,134 @@ export function LoginForm() {
         /* Fix for iOS fixed background */
         html, body {
           background: var(--background);
+        }
+        
+        /* Animated Label Styles */
+        .ds-label {
+          letter-spacing: 0.1em;
+          transition: 0.5s;
+          position: relative;
+          font-size: 17px;
+          background: #333;
+          border: none;
+          color: #fff;
+          display: block;
+          width: 100%;
+          padding: 5px 8px 5px 10px;
+          text-align: left;
+          transition: all 0.5s ease;
+          border-radius: 0.5rem;
+        }
+
+        .ds-label:hover,
+        .ds-label:focus-within {
+          letter-spacing: 0.25em;
+          background: #4dd4d4;
+          color: #4dd4d4;
+          box-shadow: 0 0 45px #4dd4d4;
+        }
+
+        .ds-label::before {
+          content: "";
+          position: absolute;
+          inset: 2px;
+          background: #222222;
+          border-radius: 0.375rem;
+        }
+
+        .ds-label span {
+          position: relative;
+          z-index: 1;
+        }
+
+        .ds-label i {
+          position: absolute;
+          inset: 0;
+          display: block;
+        }
+
+        .ds-label i::before {
+          content: "";
+          position: absolute;
+          border: 2px solid #4dd4d4;
+          width: 7px;
+          height: 4px;
+          top: -3.5px;
+          left: 80%;
+          background: #222222;
+          transform: translateX(-50%);
+          transition: 0.5s;
+        }
+
+        .ds-label:hover i::before,
+        .ds-label:focus-within i::before {
+          width: 20px;
+          left: 20%;
+        }
+
+        .ds-label i::after {
+          content: "";
+          position: absolute;
+          border: 2px solid #4dd4d4;
+          width: 7px;
+          height: 4px;
+          bottom: -3.5px;
+          left: 20%;
+          background: #222222;
+          transform: translateX(-50%);
+          transition: 0.5s;
+        }
+
+        .ds-label:hover i::after,
+        .ds-label:focus-within i::after {
+          width: 20px;
+          left: 80%;
+        }
+
+        .ds-input-icon {
+          position: absolute;
+          top: 50%;
+          left: 20px;
+          transform: translate(-50%, -50%);
+          background-color: transparent;
+          padding: 0.3em;
+          border-radius: 6px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          width: 38px;
+          height: 38px;
+          opacity: 0.5;
+          transition: all 0.5s ease;
+          z-index: 10;
+        }
+
+        .icon {
+          background-size: cover;
+          height: 100%;
+          width: 100%;
+        }
+
+        .ds_textinput {
+          background-color: transparent;
+          border: none;
+          outline: none;
+          padding-left: 50px;
+          font-size: 16px;
+          padding-top: 15px;
+          padding-bottom: 15px;
+          padding-right: 10px;
+          width: 100%;
+          color: rgb(255, 255, 255);
+          pointer-events: auto;
+        }
+
+        .ds_textinput:focus ~ .ds-input-icon {
+          opacity: 1;
+        }
+
+        .ds_textinput:hover ~ .ds-input-icon {
+          opacity: 1;
         }
         
         .login-star {
