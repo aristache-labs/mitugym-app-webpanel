@@ -141,15 +141,6 @@ export default async function DashboardPage() {
                                  Walk-in
                                </p>
                              )}
-                             {isDenied && (
-                               <Badge 
-                                 variant="destructive" 
-                                 className="text-xs flex-shrink-0"
-                                 title={checkIn.denial_reason || 'Access denied'}
-                               >
-                                 Denied
-                               </Badge>
-                             )}
                            </div>
                            <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1">
                              <svg className="h-3 w-3 text-muted/60 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,10 +157,18 @@ export default async function DashboardPage() {
                                Latest
                              </span>
                            )}
-                           {!isDenied && (
+                           {isDenied ? (
+                             <Badge 
+                               variant="destructive" 
+                               className="flex-shrink-0"
+                               title={checkIn.denial_reason || 'Access denied'}
+                             >
+                               Denied
+                             </Badge>
+                           ) : (
                              <Badge 
                                variant="default" 
-                               className="capitalize bg-primary/20 text-primary border-primary/30 hover:bg-primary/30 transition-colors text-[10px] sm:text-xs"
+                               className="capitalize"
                              >
                                {checkIn.method ?? "manual"}
                              </Badge>
@@ -245,7 +244,6 @@ export default async function DashboardPage() {
                                     ? "warning"
                                     : "default"
                               }
-                              className="shadow-sm text-xs"
                             >
                               {item.priority}
                             </Badge>

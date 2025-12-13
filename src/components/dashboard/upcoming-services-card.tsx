@@ -14,14 +14,7 @@ interface UpcomingServicesCardProps {
 
 export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingServicesCardProps) {
   const getServiceTypeBadge = (type: string) => {
-    switch (type) {
-      case "personal_trainer":
-        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs">PT</Badge>;
-      case "professional_massage":
-        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">Massage</Badge>;
-      default:
-        return <Badge variant="outline" className="text-xs">{type}</Badge>;
-    }
+    return <Badge variant="default">{type === "personal_trainer" ? "PT" : "Massage"}</Badge>;
   };
 
   return (
@@ -135,8 +128,8 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
                       <div className="hidden sm:flex items-center gap-1.5">
                         <span className="text-xs text-muted/70">Status:</span>
                         <Badge 
-                          variant={booking.status === "confirmed" ? "success" : booking.status === "pending" ? "warning" : "default"}
-                          className="text-xs capitalize"
+                          variant={booking.status === "confirmed" || booking.status === "upcoming" ? "default" : booking.status === "pending" ? "default" : booking.status === "completed" ? "success" : "destructive"}
+                          className="capitalize"
                         >
                           {booking.status}
                         </Badge>
@@ -161,8 +154,8 @@ export function UpcomingServicesCard({ bookings, timeFormat = '24h' }: UpcomingS
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs text-muted/70">Status:</span>
                         <Badge 
-                          variant={booking.status === "confirmed" ? "success" : booking.status === "pending" ? "warning" : "default"}
-                          className="text-xs capitalize"
+                          variant={booking.status === "confirmed" || booking.status === "upcoming" ? "default" : booking.status === "pending" ? "default" : booking.status === "completed" ? "success" : "destructive"}
+                          className="capitalize"
                         >
                           {booking.status}
                         </Badge>
