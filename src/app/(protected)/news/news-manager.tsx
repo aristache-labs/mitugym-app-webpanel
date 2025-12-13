@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/data-table/data-table";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { AnimatedCreateButton } from "@/components/ui/animated-create-button";
 import { deleteNewsAction, toggleNewsActiveAction } from "@/app/(protected)/actions";
 import type { NewsItem } from "@/types";
@@ -98,19 +99,16 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
         header: () => <div className="text-center font-semibold">Priority</div>,
         cell: ({ row }) => {
           const priority = row.original.priority;
-          const styles = {
-            low: { bg: "bg-primary/10", text: "text-primary", border: "border-primary/30", dot: "bg-primary" },
-            medium: { bg: "bg-warning/10", text: "text-warning", border: "border-warning/30", dot: "bg-warning" },
-            high: { bg: "bg-error/10", text: "text-error", border: "border-error/30", dot: "bg-error" }
-          };
-          const style = styles[priority as keyof typeof styles];
+          
+          let variant: "default" | "warning" | "destructive" = "default";
+          if (priority === "medium") variant = "warning";
+          if (priority === "high") variant = "destructive";
           
           return (
             <div className="flex justify-center min-w-[100px] px-2">
-              <div className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold border ${style.bg} ${style.text} ${style.border}`}>
-                <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${style.dot}`}></div>
-              {priority.charAt(0).toUpperCase() + priority.slice(1)}
-              </div>
+              <Badge variant={variant}>
+                {priority.charAt(0).toUpperCase() + priority.slice(1)}
+              </Badge>
             </div>
           );
         },
@@ -123,14 +121,9 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
           
           return (
             <div className="flex justify-center min-w-[100px] px-2">
-              <div className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold border ${
-              isActive
-                ? "bg-success/10 text-success border-success/30"
-                : "bg-gray-500/10 text-gray-400 border-gray-500/30"
-            }`}>
-                <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${isActive ? "bg-success" : "bg-gray-500"}`}></div>
-              {isActive ? "Active" : "Inactive"}
-              </div>
+              <Badge variant={isActive ? "success" : "destructive"}>
+                {isActive ? "Active" : "Inactive"}
+              </Badge>
             </div>
           );
         },

@@ -77,7 +77,7 @@ export function CheckinsTable({ data, timeFormat = '24h' }: CheckinsTableProps) 
               {row.original.checked_out_at ? (
                 <Badge variant="secondary">Completed</Badge>
               ) : (
-                <Badge variant="default" className="bg-success/20 text-success border-success/30">Active</Badge>
+                <Badge variant="success">Active</Badge>
               )}
             </div>
           );

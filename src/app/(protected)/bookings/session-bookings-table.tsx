@@ -156,13 +156,13 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
-        return <Badge className="bg-yellow-500 text-white">Pending</Badge>;
+        return <Badge variant="default">Pending</Badge>;
       case "confirmed":
-        return <Badge className="bg-blue-500 text-white">Confirmed</Badge>;
+        return <Badge variant="default">Confirmed</Badge>;
       case "upcoming":
-        return <Badge className="bg-indigo-500 text-white">Upcoming</Badge>;
+        return <Badge className="bg-blue-500/20 text-blue-400 border border-blue-500/30 shadow-sm hover:bg-blue-500/30 transition-all duration-200">Upcoming</Badge>;
       case "completed":
-        return <Badge className="bg-green-500 text-white">Completed</Badge>;
+        return <Badge variant="success">Completed</Badge>;
       case "cancelled":
         return <Badge variant="destructive">Cancelled</Badge>;
       default:
