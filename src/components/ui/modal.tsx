@@ -84,8 +84,96 @@ export function Modal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-4 border-b border-surface/50 bg-surface sticky top-0 z-10">
+        <div className="px-6 py-4 border-b border-surface/50 bg-surface sticky top-0 z-10 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-text">{title}</h2>
+          
+          {/* Animated Close X Button */}
+          <button
+            onClick={onClose}
+            className="close-x-button"
+            aria-label="Close modal"
+            style={{ marginRight: '1rem', marginTop: '0.55rem' }}
+          >
+            <span className="x-line"></span>
+            <span className="y-line"></span>
+            <span className="close-tooltip">Close</span>
+          </button>
+
+          <style jsx>{`
+            .close-x-button {
+              position: relative;
+              width: 2.5em;
+              height: 2.5em;
+              border: none;
+              background: rgba(180, 83, 107, 0.11);
+              border-radius: 5px;
+              transition: background 0.5s;
+              cursor: pointer;
+              flex-shrink: 0;
+            }
+
+            .x-line {
+              content: "";
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              width: 1.5em;
+              height: 1.5px;
+              background-color: rgb(255, 255, 255);
+              transform: translateX(-50%) rotate(45deg);
+            }
+
+            .y-line {
+              content: "";
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              width: 1.5em;
+              height: 1.5px;
+              background-color: #fff;
+              transform: translateX(-50%) rotate(-45deg);
+            }
+
+            .close-tooltip {
+              position: absolute;
+              display: flex;
+              padding: 0.6rem 1rem;
+              align-items: center;
+              justify-content: center;
+              transform: translateX(-50%);
+              top: -60%;
+              left: 50%;
+              width: 3.5em;
+              height: 1.7em;
+              font-size: 11px;
+              background-color: rgb(19, 22, 24);
+              color: rgb(187, 229, 236);
+              border: none;
+              border-radius: 3px;
+              pointer-events: none;
+              opacity: 0;
+              white-space: nowrap;
+            }
+
+            .close-x-button:hover {
+              background-color: rgb(211, 21, 21);
+            }
+
+            .close-x-button:active {
+              background-color: rgb(130, 0, 0);
+              transform: scale(0.95);
+            }
+
+            .close-x-button:hover > .close-tooltip {
+              animation: close-fade 0.2s forwards 0.25s;
+            }
+
+            @keyframes close-fade {
+              100% {
+                opacity: 1;
+              }
+            }
+          `}</style>
         </div>
         
         {/* Content */}
