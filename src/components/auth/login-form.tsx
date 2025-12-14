@@ -465,6 +465,17 @@ export function LoginForm() {
           pointer-events: auto;
         }
 
+        /* Prevent autofill background color change */
+        .ds_textinput:-webkit-autofill,
+        .ds_textinput:-webkit-autofill:hover,
+        .ds_textinput:-webkit-autofill:focus,
+        .ds_textinput:-webkit-autofill:active {
+          -webkit-box-shadow: 0 0 0 30px #131818 inset !important;
+          -webkit-text-fill-color: rgb(255, 255, 255) !important;
+          background-color: transparent !important;
+          transition: background-color 5000s ease-in-out 0s;
+        }
+
         .ds_textinput:focus ~ .ds-input-icon {
           opacity: 1;
         }
