@@ -124,17 +124,17 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
             <Card key={day.weekday} className={`bg-card/90 border-surface/50 shadow-none transition-all duration-200 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 ${isToday ? 'ring-2 ring-primary/20' : ''}`}>
               <CardContent className="p-4 sm:p-6">
                 {/* Day Header */}
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    <h3 className="font-bold text-base sm:text-lg text-text">{label}</h3>
+                <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink min-w-0">
+                    <h3 className="font-bold text-base sm:text-lg text-text truncate">{label}</h3>
                     {isToday && (
-                      <Badge variant="default" className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1">
+                      <Badge variant="default" className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 flex-shrink-0">
                         Today
                       </Badge>
                     )}
                   </div>
                   <label
-                    className="switch"
+                    className="switch flex-shrink-0"
                     title={day.is_closed ? "Mark as open" : "Mark as closed"}
                   >
                     <input
@@ -257,17 +257,17 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
             <Card key={day.weekday} className={`bg-card/90 border-surface/50 shadow-none transition-all duration-200 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 ${isToday ? 'ring-2 ring-primary/20' : ''}`}>
               <CardContent className="p-4 sm:p-6">
                 {/* Day Header */}
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    <h3 className="font-bold text-base sm:text-lg text-text">{label}</h3>
+                <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink min-w-0">
+                    <h3 className="font-bold text-base sm:text-lg text-text truncate">{label}</h3>
                     {isToday && (
-                      <Badge variant="default" className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1">
+                      <Badge variant="default" className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 flex-shrink-0">
                         Today
                       </Badge>
                     )}
                   </div>
                   <label
-                    className="switch"
+                    className="switch flex-shrink-0"
                     title={day.is_closed ? "Mark as open" : "Mark as closed"}
                   >
                     <input
