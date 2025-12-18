@@ -583,12 +583,12 @@ export function SessionBookingsTable({ bookings, timeFormat = '24h' }: SessionBo
               </>
             )}
 
-            {/* Delete Button for cancelled bookings */}
-            {booking.status === "cancelled" && (
+            {/* Delete Button for cancelled and completed bookings */}
+            {(booking.status === "cancelled" || booking.status === "completed") && (
               <button
                 onClick={() => handleDeleteClick(booking)}
                 className="booking-delete-button"
-                title="Delete cancelled booking"
+                title={`Delete ${booking.status} booking`}
               >
                 <svg
                   className="booking-bin-top"

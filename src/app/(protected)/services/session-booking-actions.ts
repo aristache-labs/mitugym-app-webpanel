@@ -601,9 +601,9 @@ export async function deleteSessionBookingAction(formData: FormData): Promise<Ac
     return { success: false, error: "Session booking not found" };
   }
 
-  // Only allow deletion of cancelled bookings
-  if (existingBooking.status !== "cancelled") {
-    return { success: false, error: "Only cancelled bookings can be deleted" };
+  // Only allow deletion of cancelled or completed bookings
+  if (existingBooking.status !== "cancelled" && existingBooking.status !== "completed") {
+    return { success: false, error: "Only cancelled or completed bookings can be deleted" };
   }
 
   // Get member details for audit log
