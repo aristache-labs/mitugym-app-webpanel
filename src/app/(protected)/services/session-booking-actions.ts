@@ -171,9 +171,9 @@ export async function confirmSessionBookingAction(formData: FormData): Promise<A
     return { success: false, error: "Only pending bookings can be confirmed" };
   }
 
-  // Update the booking status to confirmed
+  // Update the booking status to upcoming
   const updateData = {
-    status: "confirmed",
+    status: "upcoming",
     notes: notes || booking.notes,
     updated_at: new Date().toISOString(),
   };
@@ -189,7 +189,7 @@ export async function confirmSessionBookingAction(formData: FormData): Promise<A
   }
 
   // Note: Session management is handled automatically by database trigger
-  // Trigger decrements sessions when status changes from pending to confirmed
+  // Trigger decrements sessions when status changes from pending to upcoming
 
   // Get member profile separately
   const { data: memberProfile } = await admin
@@ -220,7 +220,7 @@ export async function confirmSessionBookingAction(formData: FormData): Promise<A
     {
       booking_confirmed: {
         before: "Status: pending",
-        after: "Status: confirmed"
+        after: "Status: upcoming"
       }
     }
   );
@@ -399,7 +399,7 @@ export async function cancelSessionBookingAction(formData: FormData): Promise<Ac
   }
 
   // Note: Session management is handled automatically by database trigger
-  // Trigger increments sessions when status changes from confirmed to cancelled
+  // Trigger increments sessions when status changes from upcoming to cancelled
 
   // Get member profile separately
   const { data: memberProfile } = await admin

@@ -163,7 +163,7 @@ export async function cancelPurchasedServiceAction(formData: FormData): Promise<
     .from("session_bookings")
     .select("*", { count: "exact", head: true })
     .eq("purchased_service_id", id)
-    .in("status", ["pending", "confirmed"]);
+    .in("status", ["pending", "upcoming"]);
 
   if (bookingError) {
     console.error("Failed to check session bookings", bookingError);
