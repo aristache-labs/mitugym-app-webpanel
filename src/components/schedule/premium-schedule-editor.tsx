@@ -121,17 +121,41 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
           const isToday = new Date().getDay() === day.weekday;
 
           return (
-            <Card key={day.weekday} className={`bg-card/90 border-surface/50 shadow-none transition-all duration-200 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 ${isToday ? 'ring-2 ring-primary/20' : ''}`}>
+            <Card key={day.weekday} className={`bg-card/90 shadow-none transition-all duration-200 hover:shadow-md hover:shadow-primary/5 ${isToday ? 'ring-2 ring-primary/20' : ''} relative overflow-visible`}>
               <CardContent className="p-4 sm:p-6">
+                {/* Today Badge - Top Left Corner with Leaning Effect */}
+                {isToday && (
+                  <>
+                    <Badge 
+                      variant="default" 
+                      className="absolute top-3 left-1 text-[10px] sm:text-[15px] px-1.0sm:px-1.5 py-1.0 sm:py-1.0 shadow-lg z-10 today-badge-pulse"
+                      style={{ transform: 'rotate(-15deg)' }}
+                    >
+                      Today
+                    </Badge>
+                    <style jsx>{`
+                      @keyframes slow-pulse {
+                        0%, 100% {
+                          opacity: 1;
+                          transform: rotate(-15deg) scale(1);
+                        }
+                        50% {
+                          opacity: 0.8;
+                          transform: rotate(-15deg) scale(1.05);
+                        }
+                      }
+
+                      :global(.today-badge-pulse) {
+                        animation: slow-pulse 3s ease-in-out infinite;
+                      }
+                    `}</style>
+                  </>
+                )}
+                
                 {/* Day Header */}
                 <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
-                  <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink min-w-0">
-                    <h3 className="font-bold text-base sm:text-lg text-text truncate">{label}</h3>
-                    {isToday && (
-                      <Badge variant="default" className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 flex-shrink-0">
-                        Today
-                      </Badge>
-                    )}
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                    <h3 className="font-bold text-base sm:text-lg text-text">{label}</h3>
                   </div>
                   <label
                     className="switch flex-shrink-0"
@@ -254,17 +278,23 @@ export function PremiumScheduleEditor({ schedule, timeFormat = '24h' }: PremiumS
           const isToday = new Date().getDay() === day.weekday;
 
           return (
-            <Card key={day.weekday} className={`bg-card/90 border-surface/50 shadow-none transition-all duration-200 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 ${isToday ? 'ring-2 ring-primary/20' : ''}`}>
+            <Card key={day.weekday} className={`bg-card/90 border-surface/50 shadow-none transition-all duration-200 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 ${isToday ? 'ring-2 ring-primary/20' : ''} relative overflow-visible`}>
               <CardContent className="p-4 sm:p-6">
+                {/* Today Badge - Top Left Corner with Leaning Effect */}
+                {isToday && (
+                  <Badge 
+                    variant="default" 
+                    className="absolute -top-1 -left-1 text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 sm:py-1 shadow-lg z-10"
+                    style={{ transform: 'rotate(-8deg)' }}
+                  >
+                    Today
+                  </Badge>
+                )}
+                
                 {/* Day Header */}
                 <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
-                  <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink min-w-0">
-                    <h3 className="font-bold text-base sm:text-lg text-text truncate">{label}</h3>
-                    {isToday && (
-                      <Badge variant="default" className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 flex-shrink-0">
-                        Today
-                      </Badge>
-                    )}
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                    <h3 className="font-bold text-base sm:text-lg text-text">{label}</h3>
                   </div>
                   <label
                     className="switch flex-shrink-0"

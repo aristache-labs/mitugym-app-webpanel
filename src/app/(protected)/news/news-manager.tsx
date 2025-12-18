@@ -93,10 +93,10 @@ export function NewsManager({ items, timeFormat = '24h' }: NewsManagerProps) {
           const plainContent = stripHtml(row.original.content);
           
           return (
-            <div className="space-y-1 text-center md:text-left min-w-[180px] px-2">
-              <p className="font-semibold text-text">{row.original.title}</p>
+          <div className="space-y-1 text-center md:text-left min-w-[180px] px-2">
+            <p className="font-semibold text-text">{row.original.title}</p>
               <p className="text-xs text-muted/60 line-clamp-1">{plainContent.substring(0, 60)}{plainContent.length > 60 ? '...' : ''}</p>
-            </div>
+          </div>
           );
         },
       },
