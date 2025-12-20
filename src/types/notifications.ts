@@ -18,7 +18,6 @@ export type AdminNotification = {
   is_admin_only: boolean; // TRUE for admin-only notifications (not shown in mobile app)
   is_read: boolean;
   created_at: string;
-  read_at?: string | null;
 };
 
 export type NotificationCount = {

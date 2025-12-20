@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getSupabaseServerClient } from "@/lib/auth";
 
 // GET /api/notifications - Fetch admin notifications
@@ -23,11 +22,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const admin = getSupabaseAdmin();
-    if (!admin) {
+    // Verify user is staff
+    const { data: staffProfile } = await supabase
+      .from("staff_profiles")
+      .select("id")
+      .eq("id", user.id)
+      .single();
+
+    if (!staffProfile) {
       return NextResponse.json(
-        { error: "Database configuration error" },
-        { status: 500 }
+        { error: "Unauthorized - Staff access required" },
+        { status: 403 }
       );
     }
 
@@ -39,7 +44,7 @@ export async function GET(request: NextRequest) {
     // Build query for admin-only notifications from member actions
     // Only show service_purchase, session_booking, session_updated, and session_cancelled notifications
     // Filter by is_admin_only to ensure mobile app doesn't receive these
-    let query = admin
+    let query = supabase
       .from("notifications")
       .select("*")
       .is("member_id", null)
@@ -98,11 +103,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const admin = getSupabaseAdmin();
-    if (!admin) {
+    // Verify user is staff
+    const { data: staffProfile } = await supabase
+      .from("staff_profiles")
+      .select("id")
+      .eq("id", user.id)
+      .single();
+
+    if (!staffProfile) {
       return NextResponse.json(
-        { error: "Database configuration error" },
-        { status: 500 }
+        { error: "Unauthorized - Staff access required" },
+        { status: 403 }
       );
     }
 
@@ -111,11 +122,10 @@ export async function POST(request: NextRequest) {
 
     if (markAllAsRead) {
       // Mark all admin-only member action notifications as read
-      const { error } = await admin
+      const { error } = await supabase
         .from("notifications")
         .update({ 
-          is_read: true,
-          read_at: new Date().toISOString()
+          is_read: true
         })
         .is("member_id", null)
         .eq("is_global", true)
@@ -145,11 +155,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Mark specific admin-only member action notification as read
-    const { error } = await admin
+    const { error } = await supabase
       .from("notifications")
       .update({ 
-        is_read: true,
-        read_at: new Date().toISOString()
+        is_read: true
       })
       .eq("id", notificationId)
       .is("member_id", null)
@@ -199,11 +208,17 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const admin = getSupabaseAdmin();
-    if (!admin) {
+    // Verify user is staff
+    const { data: staffProfile } = await supabase
+      .from("staff_profiles")
+      .select("id")
+      .eq("id", user.id)
+      .single();
+
+    if (!staffProfile) {
       return NextResponse.json(
-        { error: "Database configuration error" },
-        { status: 500 }
+        { error: "Unauthorized - Staff access required" },
+        { status: 403 }
       );
     }
 
@@ -218,7 +233,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Delete the admin-only member action notification
-    const { error } = await admin
+    const { error } = await supabase
       .from("notifications")
       .delete()
       .eq("id", notificationId)
