@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Bell, Check, CheckCheck, Trash2, X } from "lucide-react";
 import { useSupabase } from "@/components/providers/supabase-provider";
+import { useToast } from "@/components/ui/toast";
 import { formatDistanceToNow } from "date-fns";
 import type { AdminNotification } from "@/types/notifications";
 
@@ -16,6 +17,7 @@ export function NotificationBell() {
   const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { supabase } = useSupabase();
+  const { addToast } = useToast();
 
   // Check if component is mounted (for portal)
   useEffect(() => {
@@ -162,41 +164,71 @@ export function NotificationBell() {
     fetchNotifications();
   }, []);
 
-  // Subscribe to real-time notifications
+  // Subscribe to real-time notifications using Broadcast (recommended for scale)
   useEffect(() => {
     if (!supabase) return;
 
-    const channel = supabase
-      .channel("admin-notifications")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: "is_global=eq.true",
-        },
-        (payload) => {
-          const newNotification = payload.new as AdminNotification;
-          // Only add if it's a member action notification (service purchase, session booking, updates, or cancellations)
-          if (
-            newNotification.member_id === null &&
-            (newNotification.type === "service_purchase" || 
-             newNotification.type === "session_booking" ||
-             newNotification.type === "session_updated" ||
-             newNotification.type === "session_cancelled")
-          ) {
+    console.log("🔌 Setting up Supabase Realtime Broadcast subscription...");
+
+    // Set up the channel as a private channel for broadcast
+    const setupChannel = async () => {
+      // Get the current session for auth
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Set auth for private channel if we have a session
+      if (session?.access_token) {
+        await supabase.realtime.setAuth(session.access_token);
+      }
+
+      const channel = supabase
+        .channel("admin-notifications", {
+          config: { private: true }, // Private channel for broadcast
+        })
+        .on("broadcast", { event: "INSERT" }, (payload) => {
+          console.log("🔔 Real-time broadcast received:", payload);
+          
+          // The payload structure from broadcast_changes uses 'record' for new data
+          const newNotification = payload.payload.record as AdminNotification;
+          
+          if (newNotification) {
+            console.log("✅ Adding notification to state and showing toast", newNotification);
             setNotifications((prev) => [newNotification, ...prev]);
             setUnreadCount((prev) => prev + 1);
+            
+            // Display toast notification
+            addToast({
+              type: getToastType(newNotification.type),
+              title: newNotification.title,
+              description: newNotification.message,
+              duration: 6000, // 6 seconds for admin notifications
+            });
+          } else {
+            console.log("❌ No notification found in payload");
           }
-        }
-      )
-      .subscribe();
+        })
+        .subscribe((status, err) => {
+          if (err) {
+            console.error("❌ Supabase Realtime error:", err);
+          }
+          console.log("📡 Supabase Realtime Broadcast status:", status);
+        });
+
+      return channel;
+    };
+
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    setupChannel().then((ch) => {
+      channel = ch;
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        console.log("🔌 Cleaning up Supabase Realtime subscription");
+        supabase.removeChannel(channel);
+      }
     };
-  }, [supabase]);
+  }, [supabase, addToast]);
 
   // Get notification icon based on type
   const getNotificationIcon = (type: string) => {
@@ -215,6 +247,21 @@ export function NotificationBell() {
         return "🕐";
       default:
         return "🔔";
+    }
+  };
+
+  // Helper function to determine toast type based on notification type
+  const getToastType = (notificationType: string): "success" | "warning" | "error" => {
+    switch (notificationType) {
+      case "service_purchase":
+      case "session_booking":
+        return "success";
+      case "session_updated":
+        return "warning";
+      case "session_cancelled":
+        return "error";
+      default:
+        return "success";
     }
   };
 

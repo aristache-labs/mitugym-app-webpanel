@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Topbar } from "@/components/layout/topbar";
 import { BackToTopButton } from "@/components/ui/back-to-top-button";
-import { ToastDemo } from "@/components/ui/toast-demo";
 import { useMobileNav } from "@/hooks/use-mobile-nav";
 import type { StaffContext } from "@/lib/auth";
 import type { TimeFormat } from "@/lib/settings";
@@ -65,9 +64,6 @@ export function ProtectedLayoutClient({
 
       {/* Back to Top Button */}
       <BackToTopButton />
-      
-      {/* Toast Demo - Remove after testing */}
-      <ToastDemo />
     </div>
   );
 }

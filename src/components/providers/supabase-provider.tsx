@@ -25,7 +25,20 @@ export default function SupabaseProvider({
       return null;
     }
 
-    return createBrowserClient(url, anonKey);
+    console.log("🔧 Creating Supabase client with Realtime enabled");
+    
+    return createBrowserClient(url, anonKey, {
+      realtime: {
+        params: {
+          eventsPerSecond: 10,
+        },
+      },
+      global: {
+        headers: {
+          "x-client-info": "mitugym-admin-panel",
+        },
+      },
+    });
   });
 
   const router = useRouter();
