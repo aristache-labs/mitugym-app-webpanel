@@ -198,140 +198,248 @@ export function NotificationBell() {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* Bell Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative rounded-xl p-2 text-text transition-all duration-200 hover:bg-primary/10 active:scale-95"
-        aria-label="Notifications"
-      >
-        <Bell className="h-5 w-5" />
-        {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-background shadow-lg">
-            {unreadCount > 9 ? "9+" : unreadCount}
-          </span>
-        )}
-      </button>
+    <>
+      <div className="relative" ref={dropdownRef}>
+        {/* Bell Button */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="relative rounded-xl p-2.5 text-text transition-all duration-200 hover:bg-primary/10 active:scale-95"
+          aria-label="Notifications"
+        >
+          <Bell className="h-5 w-5" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gradient-to-br from-accent to-accent/80 px-1.5 text-[10px] font-bold text-white shadow-lg ring-2 ring-background">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
+        </button>
+      </div>
 
-      {/* Dropdown */}
+      {/* Dropdown - Rendered outside relative container */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-96 max-w-[calc(100vw-2rem)] rounded-xl border border-surface/40 bg-surface/95 shadow-2xl backdrop-blur-xl z-50">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-surface/40 px-4 py-3">
-            <h3 className="text-sm font-semibold text-text">Notifications</h3>
-            <div className="flex items-center gap-2">
-              {notifications.length > 0 && (
-                <>
-                  {unreadCount > 0 && (
-                    <button
-                      onClick={markAllAsRead}
-                      disabled={isLoading}
-                      className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
-                      title="Mark all as read"
-                    >
-                      <CheckCheck className="h-3 w-3" />
-                      <span className="hidden sm:inline">All read</span>
-                    </button>
-                  )}
-                  <button
-                    onClick={deleteAllNotifications}
-                    disabled={isLoading}
-                    className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
-                    title="Delete all notifications"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                    <span className="hidden sm:inline">Delete all</span>
-                  </button>
-                </>
-              )}
+        <>
+          {/* Mobile Overlay - only on mobile, starts below topbar */}
+          <div 
+            className="fixed left-0 right-0 bottom-0 bg-black/70 z-[60] lg:hidden"
+            style={{
+              top: 'calc(env(safe-area-inset-top) + 4rem)',
+              WebkitBackdropFilter: 'blur(0px)',
+              backdropFilter: 'blur(0px)',
+            }}
+            onClick={() => setIsOpen(false)}
+          />
+          
+          {/* Dropdown Panel */}
+          <div 
+            className="fixed left-3 right-3 lg:left-auto lg:right-4 lg:top-[4.5rem] w-auto lg:w-[420px] max-w-full lg:max-w-[420px] rounded-2xl border border-primary/30 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] lg:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] z-[70] overflow-hidden lg:max-h-[600px] flex flex-col"
+            style={{
+              top: 'calc(env(safe-area-inset-top) + 4.25rem)',
+              maxHeight: 'calc(100vh - env(safe-area-inset-top) - 5.5rem)',
+              backgroundColor: '#141a1a',
+              WebkitBackfaceVisibility: 'hidden',
+              backfaceVisibility: 'hidden',
+              transform: 'translateZ(0)',
+              willChange: 'transform',
+            }}
+          >
+            {/* Mobile Header with Close */}
+            <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-primary/10 bg-gradient-to-r from-primary/10 to-transparent"
+              style={{
+                backgroundColor: 'rgba(20, 26, 26, 0.95)',
+              }}
+            >
+              <div>
+                <h3 className="text-base font-bold text-text">Notifications</h3>
+                {notifications.length > 0 && (
+                  <p className="text-xs text-muted mt-0.5">
+                    {unreadCount > 0 ? `${unreadCount} unread` : "All caught up"}
+                  </p>
+                )}
+              </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="rounded-lg p-1 text-muted hover:bg-surface/60 transition-colors"
+                className="rounded-lg p-2 text-muted hover:text-text hover:bg-primary/10 transition-all duration-200"
                 aria-label="Close"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             </div>
-          </div>
 
-          {/* Notifications List */}
-          <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
-            {notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 px-4">
-                <Bell className="h-12 w-12 text-muted/30 mb-3" />
-                <p className="text-sm text-muted">No notifications yet</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-surface/40">
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className={`group px-4 py-3 transition-colors hover:bg-surface/60 ${
-                      !notification.is_read ? "bg-primary/5" : ""
-                    }`}
+            {/* Desktop Header */}
+            <div className="hidden lg:block bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-5 py-4 border-b border-primary/10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-bold text-text">Notifications</h3>
+                  {notifications.length > 0 && (
+                    <p className="text-xs text-muted mt-0.5">
+                      {unreadCount > 0 ? `${unreadCount} unread` : "All caught up"}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {notifications.length > 0 && (
+                    <>
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={markAllAsRead}
+                          disabled={isLoading}
+                          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-primary bg-primary/10 hover:bg-primary/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Mark all as read"
+                        >
+                          <CheckCheck className="h-3.5 w-3.5" />
+                          <span>Mark all</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={deleteAllNotifications}
+                        disabled={isLoading}
+                        className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Delete all notifications"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        <span>Clear all</span>
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="rounded-lg p-1.5 text-muted hover:text-text hover:bg-surface/80 transition-all duration-200 ml-1"
+                    aria-label="Close"
                   >
-                    <div className="flex gap-3">
-                      {/* Icon */}
-                      <div className="flex-shrink-0 text-2xl">
-                        {getNotificationIcon(notification.type)}
-                      </div>
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
 
-                      {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-semibold text-text truncate">
-                              {notification.title}
-                            </h4>
-                            <p className="text-xs text-muted mt-0.5 line-clamp-2">
-                              {notification.message}
-                            </p>
-                            <p className="text-[10px] text-muted/70 mt-1">
-                              {formatDistanceToNow(new Date(notification.created_at), {
-                                addSuffix: true,
-                              })}
-                            </p>
+            {/* Mobile Action Buttons */}
+            {notifications.length > 0 && (
+              <div className="lg:hidden flex items-center gap-2 px-4 py-2 border-b border-primary/5 bg-surface/30">
+                {unreadCount > 0 && (
+                  <button
+                    onClick={markAllAsRead}
+                    disabled={isLoading}
+                    className="flex-1 flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-primary bg-primary/10 hover:bg-primary/20 active:bg-primary/30 transition-all duration-200 disabled:opacity-50"
+                    title="Mark all as read"
+                  >
+                    <CheckCheck className="h-3.5 w-3.5" />
+                    <span>Mark all</span>
+                  </button>
+                )}
+                <button
+                  onClick={deleteAllNotifications}
+                  disabled={isLoading}
+                  className="flex-1 flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-red-400 bg-red-500/10 hover:bg-red-500/20 active:bg-red-500/30 transition-all duration-200 disabled:opacity-50"
+                  title="Delete all notifications"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  <span>Clear all</span>
+                </button>
+              </div>
+            )}
+
+            {/* Notifications List */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+              {notifications.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 lg:py-16 px-6">
+                  <div className="rounded-full bg-primary/10 p-4 mb-4">
+                    <Bell className="h-8 w-8 text-primary/40" />
+                  </div>
+                  <p className="text-sm font-medium text-text mb-1">No notifications</p>
+                  <p className="text-xs text-muted text-center">
+                    You're all caught up! New notifications will appear here.
+                  </p>
+                </div>
+              ) : (
+                <div className="divide-y divide-primary/5">
+                  {notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className={`group relative px-4 lg:px-5 py-3 lg:py-4 transition-all duration-200 hover:bg-primary/5 active:bg-primary/10 ${
+                        !notification.is_read ? "bg-primary/[0.03]" : ""
+                      }`}
+                    >
+                      {/* Unread indicator */}
+                      {!notification.is_read && (
+                        <div className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-accent shadow-lg shadow-accent/50" />
+                      )}
+
+                      <div className="flex gap-3 lg:gap-3.5">
+                        {/* Icon */}
+                        <div className="flex-shrink-0 mt-0.5">
+                          <div className={`w-9 h-9 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center text-lg lg:text-xl ${
+                            !notification.is_read 
+                              ? "bg-gradient-to-br from-primary/20 to-primary/10 ring-1 ring-primary/20" 
+                              : "bg-surface/60"
+                          }`}>
+                            {getNotificationIcon(notification.type)}
                           </div>
+                        </div>
 
-                          {/* Actions */}
-                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            {!notification.is_read && (
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2 lg:gap-3">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-sm font-semibold text-text mb-1 leading-tight">
+                                {notification.title}
+                              </h4>
+                              <p className="text-xs text-muted leading-relaxed mb-2">
+                                {notification.message}
+                              </p>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <p className="text-[10px] font-medium text-muted/70 uppercase tracking-wide">
+                                  {formatDistanceToNow(new Date(notification.created_at), {
+                                    addSuffix: true,
+                                  })}
+                                </p>
+                                {!notification.is_read && (
+                                  <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-accent/10 text-accent">
+                                    New
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-0.5 lg:gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
+                              {!notification.is_read && (
+                                <button
+                                  onClick={() => markAsRead(notification.id)}
+                                  className="rounded-lg p-1.5 lg:p-2 text-primary hover:bg-primary/10 active:bg-primary/20 transition-all duration-200"
+                                  title="Mark as read"
+                                >
+                                  <Check className="h-4 w-4" />
+                                </button>
+                              )}
                               <button
-                                onClick={() => markAsRead(notification.id)}
-                                className="rounded p-1 text-primary hover:bg-primary/10 transition-colors"
-                                title="Mark as read"
+                                onClick={() => deleteNotification(notification.id)}
+                                className="rounded-lg p-1.5 lg:p-2 text-red-400 hover:bg-red-500/10 active:bg-red-500/20 transition-all duration-200"
+                                title="Delete"
                               >
-                                <Check className="h-3.5 w-3.5" />
+                                <Trash2 className="h-4 w-4" />
                               </button>
-                            )}
-                            <button
-                              onClick={() => deleteNotification(notification.id)}
-                              className="rounded p-1 text-red-400 hover:bg-red-500/10 transition-colors"
-                              title="Delete"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            {notifications.length > 0 && (
+              <div className="bg-gradient-to-r from-transparent via-primary/5 to-transparent border-t border-primary/10 px-4 lg:px-5 py-2.5 lg:py-3 flex-shrink-0">
+                <p className="text-[11px] text-muted text-center font-medium">
+                  Showing {notifications.length} notification{notifications.length !== 1 ? "s" : ""}
+                </p>
               </div>
             )}
           </div>
-
-          {/* Footer */}
-          {notifications.length > 0 && (
-            <div className="border-t border-surface/40 px-4 py-2 text-center">
-              <p className="text-xs text-muted">
-                {notifications.length} notification{notifications.length !== 1 ? "s" : ""}
-              </p>
-            </div>
-          )}
-        </div>
+        </>
       )}
-    </div>
+    </>
   );
 }
 
