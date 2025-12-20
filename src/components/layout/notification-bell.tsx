@@ -259,12 +259,14 @@ export function NotificationBell() {
           
           {/* Dropdown Panel */}
           <div 
-            className="fixed left-3 right-3 lg:left-auto lg:right-4 lg:top-[4.5rem] w-auto lg:w-[420px] max-w-full lg:max-w-[420px] rounded-2xl border border-primary/30 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] lg:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden lg:max-h-[600px] flex flex-col"
+            className="fixed left-3 right-3 lg:left-auto lg:right-100 w-auto lg:w-[520px] max-w-full lg:max-w-[520px] rounded-2xl overflow-hidden lg:max-h-[600px] flex flex-col"
             style={{
-              top: 'calc(env(safe-area-inset-top) + 4.25rem)',
+              top: isMobile ? 'calc(env(safe-area-inset-top) + 4.00rem)' : 'calc(env(safe-area-inset-top) + 2.5rem)',
               maxHeight: 'calc(100vh - env(safe-area-inset-top) - 5.5rem)',
               backgroundColor: '#141a1a',
               zIndex: 9999,
+              border: '1px solid rgba(77, 212, 212, 0.15)',
+              boxShadow: '0 0 0 1px rgba(77, 212, 212, 0.1), 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 60px rgba(77, 212, 212, 0.08)',
               WebkitBackfaceVisibility: 'hidden',
               backfaceVisibility: 'hidden',
               transform: 'translateZ(0)',
