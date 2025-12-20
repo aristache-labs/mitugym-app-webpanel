@@ -24,8 +24,6 @@ export default function SupabaseProvider({
       console.warn("Supabase is not configured. Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY.");
       return null;
     }
-
-    console.log("🔧 Creating Supabase client with Realtime enabled");
     
     return createBrowserClient(url, anonKey, {
       realtime: {

@@ -16,6 +16,7 @@ export function NotificationBell() {
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownContentRef = useRef<HTMLDivElement>(null); // Add ref for portal content
   const { supabase } = useSupabase();
   const { addToast } = useToast();
 
@@ -142,9 +143,14 @@ export function NotificationBell() {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      
+      // Check if click is outside both the button and the dropdown content
       if (
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
+        !dropdownRef.current.contains(target) &&
+        dropdownContentRef.current &&
+        !dropdownContentRef.current.contains(target)
       ) {
         setIsOpen(false);
       }
@@ -168,8 +174,6 @@ export function NotificationBell() {
   useEffect(() => {
     if (!supabase) return;
 
-    console.log("🔌 Setting up Supabase Realtime Broadcast subscription...");
-
     // Set up the channel as a private channel for broadcast
     const setupChannel = async () => {
       // Get the current session for auth
@@ -185,13 +189,10 @@ export function NotificationBell() {
           config: { private: true }, // Private channel for broadcast
         })
         .on("broadcast", { event: "INSERT" }, (payload) => {
-          console.log("🔔 Real-time broadcast received:", payload);
-          
           // The payload structure from broadcast_changes uses 'record' for new data
           const newNotification = payload.payload.record as AdminNotification;
           
           if (newNotification) {
-            console.log("✅ Adding notification to state and showing toast", newNotification);
             setNotifications((prev) => [newNotification, ...prev]);
             setUnreadCount((prev) => prev + 1);
             
@@ -202,16 +203,9 @@ export function NotificationBell() {
               description: newNotification.message,
               duration: 6000, // 6 seconds for admin notifications
             });
-          } else {
-            console.log("❌ No notification found in payload");
           }
         })
-        .subscribe((status, err) => {
-          if (err) {
-            console.error("❌ Supabase Realtime error:", err);
-          }
-          console.log("📡 Supabase Realtime Broadcast status:", status);
-        });
+        .subscribe();
 
       return channel;
     };
@@ -224,7 +218,6 @@ export function NotificationBell() {
 
     return () => {
       if (channel) {
-        console.log("🔌 Cleaning up Supabase Realtime subscription");
         supabase.removeChannel(channel);
       }
     };
@@ -306,6 +299,7 @@ export function NotificationBell() {
           
           {/* Dropdown Panel */}
           <div 
+            ref={dropdownContentRef}
             className="fixed left-3 right-3 lg:left-auto lg:right-100 w-auto lg:w-[620px] max-w-full lg:max-w-[620px] rounded-2xl overflow-hidden flex flex-col"
             style={{
               top: isMobile ? 'calc(env(safe-area-inset-top) + 4.00rem)' : 'calc(env(safe-area-inset-top) + 2.5rem)',
