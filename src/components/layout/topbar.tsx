@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Globe, Menu } from "lucide-react";
 import type { TimeFormat } from "@/lib/settings";
+import { NotificationBell } from "./notification-bell";
 
 type TopbarProps = {
   staff: StaffContext;
@@ -86,18 +87,24 @@ export function Topbar({ staff, timezone, timeFormat, onMenuClick }: TopbarProps
           </div>
         </div>
 
-        {/* Right: Date and Time with Timezone */}
-        <div className="text-right">
-          {/* Full date - hidden on mobile */}
-          <div className="hidden text-xs text-muted/70 font-medium lg:block">{dateString}</div>
-          
-          <div className="flex items-center justify-end gap-2">
-            <div className="text-base font-semibold text-text tabular-nums lg:text-lg">
-              {mounted ? timeString : '--:--'}
-            </div>
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20">
-              <Globe className="w-3 h-3 text-primary/70" />
-              <span className="text-[10px] font-medium text-primary/70 uppercase tracking-wider">{timezoneAbbr}</span>
+        {/* Right: Notifications, Date and Time with Timezone */}
+        <div className="flex items-center gap-3">
+          {/* Notifications Bell */}
+          <NotificationBell />
+
+          {/* Date and Time */}
+          <div className="text-right">
+            {/* Full date - hidden on mobile */}
+            <div className="hidden text-xs text-muted/70 font-medium lg:block">{dateString}</div>
+            
+            <div className="flex items-center justify-end gap-2">
+              <div className="text-base font-semibold text-text tabular-nums lg:text-lg">
+                {mounted ? timeString : '--:--'}
+              </div>
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20">
+                <Globe className="w-3 h-3 text-primary/70" />
+                <span className="text-[10px] font-medium text-primary/70 uppercase tracking-wider">{timezoneAbbr}</span>
+              </div>
             </div>
           </div>
         </div>

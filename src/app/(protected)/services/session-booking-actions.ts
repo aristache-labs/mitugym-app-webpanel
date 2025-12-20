@@ -85,6 +85,7 @@ export async function createSessionBookingAction(formData: FormData): Promise<Ac
       booking_date: isoBookingDate,
       status,
       notes: notes || null,
+      created_by_staff: true, // Admin is creating this booking
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
@@ -385,6 +386,7 @@ export async function cancelSessionBookingAction(formData: FormData): Promise<Ac
     status: "cancelled",
     notes: reason,
     cancelled_date: new Date().toISOString(),
+    created_by_staff: true, // Admin is cancelling from web panel
     updated_at: new Date().toISOString(),
   };
 
@@ -532,6 +534,7 @@ export async function updateSessionBookingAction(formData: FormData): Promise<Ac
   }
 
   updateData.updated_at = new Date().toISOString();
+  updateData.created_by_staff = true; // Mark as admin update for notification trigger
 
   // Update the session booking
   const { error: updateError } = await admin

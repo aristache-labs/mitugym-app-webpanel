@@ -393,6 +393,7 @@ export async function createPurchasedServiceAction(formData: FormData): Promise<
     sessions_remaining: sessions_total,
     purchase_date: new Date().toISOString(),
     notes: notes || null,
+    created_by_staff: true, // Admin is creating this purchase
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
