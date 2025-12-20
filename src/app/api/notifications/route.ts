@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE /api/notifications - Delete a notification
+// DELETE /api/notifications - Delete a notification or all notifications
 export async function DELETE(request: NextRequest) {
   try {
     // Verify authentication
@@ -222,6 +222,36 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    // Check if this is a delete all request
+    const contentType = request.headers.get("content-type");
+    if (contentType?.includes("application/json")) {
+      const body = await request.json();
+      if (body.deleteAll) {
+        // Delete all admin-only member action notifications
+        const { error } = await supabase
+          .from("notifications")
+          .delete()
+          .is("member_id", null)
+          .eq("is_global", true)
+          .eq("is_admin_only", true)
+          .in("type", ["service_purchase", "session_booking", "session_updated", "session_cancelled"]);
+
+        if (error) {
+          console.error("Failed to delete all notifications:", error);
+          return NextResponse.json(
+            { error: "Failed to delete notifications" },
+            { status: 500 }
+          );
+        }
+
+        return NextResponse.json({ 
+          success: true, 
+          message: "All notifications deleted" 
+        });
+      }
+    }
+
+    // Single notification deletion
     const searchParams = request.nextUrl.searchParams;
     const notificationId = searchParams.get("id");
 

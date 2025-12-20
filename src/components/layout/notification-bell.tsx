@@ -95,6 +95,27 @@ export function NotificationBell() {
     }
   };
 
+  // Delete all notifications
+  const deleteAllNotifications = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/notifications", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deleteAll: true }),
+      });
+
+      if (response.ok) {
+        setNotifications([]);
+        setUnreadCount(0);
+      }
+    } catch (error) {
+      console.error("Failed to delete all notifications:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -199,16 +220,29 @@ export function NotificationBell() {
           <div className="flex items-center justify-between border-b border-surface/40 px-4 py-3">
             <h3 className="text-sm font-semibold text-text">Notifications</h3>
             <div className="flex items-center gap-2">
-              {unreadCount > 0 && (
-                <button
-                  onClick={markAllAsRead}
-                  disabled={isLoading}
-                  className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
-                  title="Mark all as read"
-                >
-                  <CheckCheck className="h-3 w-3" />
-                  <span className="hidden sm:inline">All read</span>
-                </button>
+              {notifications.length > 0 && (
+                <>
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={markAllAsRead}
+                      disabled={isLoading}
+                      className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-primary hover:bg-primary/10 transition-colors disabled:opacity-50"
+                      title="Mark all as read"
+                    >
+                      <CheckCheck className="h-3 w-3" />
+                      <span className="hidden sm:inline">All read</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={deleteAllNotifications}
+                    disabled={isLoading}
+                    className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                    title="Delete all notifications"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    <span className="hidden sm:inline">Delete all</span>
+                  </button>
+                </>
               )}
               <button
                 onClick={() => setIsOpen(false)}
