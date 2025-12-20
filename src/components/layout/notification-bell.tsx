@@ -411,7 +411,14 @@ export function NotificationBell() {
                           {!notification.is_read && (
                             <span 
                               className="absolute -top-0.5 left-1.0 px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider bg-accent text-background shadow-lg"
-                              style={{ transform: 'rotate(-12deg)' }}
+                              style={{ 
+                                transform: 'rotate(-12deg)',
+                                zIndex: 10,
+                                WebkitTransform: 'rotate(-12deg) translateZ(0)',
+                                WebkitBackfaceVisibility: 'hidden',
+                                backfaceVisibility: 'hidden',
+                                willChange: 'transform',
+                              }}
                             >
                               New
                             </span>
