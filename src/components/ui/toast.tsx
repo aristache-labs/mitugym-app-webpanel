@@ -59,15 +59,30 @@ function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
 
   return (
     <div 
-      className="fixed right-4 z-[9999] space-y-3 max-w-[420px] w-full pointer-events-none px-4 sm:px-0"
+      className="fixed right-2 sm:right-4 z-[9999] space-y-2 sm:space-y-3 w-auto pointer-events-none"
       style={{
-        top: 'calc(env(safe-area-inset-top) + 5rem)',
-        bottom: 'auto',
+        top: 'calc(env(safe-area-inset-top) + 4.5rem)',
+        left: '0.5rem',
+        right: '0.5rem',
+        maxWidth: 'calc(100vw - 1rem)',
       }}
     >
-      {toasts.map((toast) => (
-        <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
-      ))}
+      <style jsx global>{`
+        @media (min-width: 640px) {
+          .toast-container-responsive {
+            left: auto !important;
+            right: 1rem !important;
+            max-width: 420px !important;
+          }
+        }
+      `}</style>
+      <div className="toast-container-responsive max-w-full sm:max-w-[420px] ml-auto">
+        {toasts.map((toast) => (
+          <div key={toast.id} className="mb-2 sm:mb-3">
+            <ToastItem toast={toast} onRemove={onRemove} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -233,7 +248,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       className={cn(
-        "relative group backdrop-blur-xl rounded-2xl overflow-hidden pointer-events-auto transition-all duration-500 ease-out",
+        "relative group backdrop-blur-xl rounded-xl sm:rounded-2xl overflow-hidden pointer-events-auto transition-all duration-500 ease-out w-full",
         isVisible && !isLeaving 
           ? "translate-x-0 opacity-100 scale-100" 
           : "translate-x-[120%] opacity-0 scale-95",
@@ -242,9 +257,13 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
       style={{
         background: styles.bgGradient,
         border: `1px solid ${styles.borderColor}`,
-        boxShadow: `0 10px 40px ${styles.shadowColor}, 0 0 1px ${styles.borderColor}`,
+        boxShadow: `0 8px 32px ${styles.shadowColor}, 0 0 1px ${styles.borderColor}`,
         transform: isSwiping ? `translateX(${touchOffset}px)` : undefined,
         transition: isSwiping ? 'none' : 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        WebkitTransform: isSwiping ? `translateX(${touchOffset}px)` : undefined,
+        WebkitBackfaceVisibility: 'hidden',
+        backfaceVisibility: 'hidden',
+        willChange: 'transform',
       }}
     >
       {/* Top subtle glow */}
@@ -264,47 +283,49 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
       />
 
       {/* Main content */}
-      <div className="relative z-10 px-4 pt-3.5 pb-3">
-        <div className="flex items-start gap-3.5">
+      <div className="relative z-10 px-3 sm:px-4 pt-3 sm:pt-3.5 pb-2.5 sm:pb-3">
+        <div className="flex items-start gap-2.5 sm:gap-3.5">
           {/* Icon */}
           <div className="flex-shrink-0 relative mt-0.5">
             <div 
-              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md relative"
               style={{
-                backgroundColor: `${styles.iconBgColor}15`,
-                border: `1.5px solid ${styles.iconBgColor}30`,
+                backgroundColor: `${styles.iconBgColor}18`,
+                border: `1.5px solid ${styles.iconBgColor}35`,
+                WebkitBackfaceVisibility: 'hidden',
+                backfaceVisibility: 'hidden',
+                transform: 'translateZ(0)',
+                WebkitTransform: 'translateZ(0)',
               }}
             >
-              {/* Icon glow background */}
-              <div 
-                className="absolute inset-0 opacity-20"
-                style={{
-                  background: `radial-gradient(circle at center, ${styles.iconBgColor}, transparent 70%)`,
-                }}
-              />
               <Icon 
-                className={cn("w-5 h-5 relative z-10", styles.iconColor)} 
+                className={cn("w-4.5 h-4.5 sm:w-5 sm:h-5", styles.iconColor)} 
                 strokeWidth={2.5}
+                style={{
+                  filter: `drop-shadow(0 0 4px ${styles.iconBgColor}40)`,
+                }}
               />
             </div>
             
             {/* Animated pulse ring */}
             <div 
-              className="absolute inset-0 rounded-xl animate-ping opacity-20"
+              className="absolute inset-0 rounded-lg sm:rounded-xl animate-ping opacity-15"
               style={{
-                backgroundColor: `${styles.iconBgColor}40`,
+                backgroundColor: styles.iconBgColor,
                 animationDuration: '2s',
+                WebkitBackfaceVisibility: 'hidden',
+                backfaceVisibility: 'hidden',
               }}
             />
           </div>
 
           {/* Text content */}
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-bold text-text leading-tight tracking-tight mb-1">
+            <h4 className="text-xs sm:text-sm font-bold text-text leading-tight tracking-tight mb-0.5 sm:mb-1">
               {toast.title}
             </h4>
             {toast.description && (
-              <p className="text-xs text-muted/80 leading-relaxed font-medium">
+              <p className="text-[11px] sm:text-xs text-muted/80 leading-relaxed font-medium">
                 {toast.description}
               </p>
             )}
@@ -313,10 +334,10 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
           {/* Close button */}
           <button
             onClick={handleRemove}
-            className="flex-shrink-0 p-1.5 rounded-lg transition-all duration-200 hover:bg-surface/50 active:scale-90 opacity-50 hover:opacity-100 -mt-0.5"
+            className="flex-shrink-0 p-1 sm:p-1.5 rounded-lg transition-all duration-200 hover:bg-surface/50 active:scale-90 opacity-50 hover:opacity-100 -mt-0.5"
             aria-label="Close notification"
           >
-            <X className="w-4 h-4 text-text" strokeWidth={2} />
+            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text" strokeWidth={2} />
           </button>
         </div>
       </div>
