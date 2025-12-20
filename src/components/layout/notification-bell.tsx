@@ -372,8 +372,8 @@ export function NotificationBell() {
             )}
 
             {/* Notifications List */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar"
-              style={{ backgroundColor: '#141a1a' }}
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-0"
+              style={{ backgroundColor: '#0f1414' }}
             >
               {notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 lg:py-16 px-6">
@@ -386,28 +386,31 @@ export function NotificationBell() {
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-primary/5">
+                <div className="space-y-1 m-0 p-0 -ml-1">
                   {notifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className={`group relative px-4 lg:px-5 py-2 lg:py-1.0 transition-all duration-200 hover:bg-primary/5 active:bg-primary/10 ${
-                        !notification.is_read ? "bg-primary/[0.03] border border-primary/20 rounded-lg my-0.5" : ""
+                      className={`group relative w-full transition-all duration-300 ease-in-out ${
+                        !notification.is_read 
+                          ? "bg-gradient-to-br from-primary/8 to-primary/4 border-l-[3px] border-primary/50 hover:border-primary/80 shadow-sm hover:shadow-md hover:from-primary/10 hover:to-primary/5" 
+                          : "bg-surface/40 border-l-[3px] border-transparent hover:border-primary/40 hover:bg-surface/50"
                       }`}
+                      style={{ marginRight: 0 }}
                     >
-                      <div className="flex gap-3 lg:gap-3.5 items-center">
+                      <div className="flex gap-1.5 lg:gap-1.5 items-center py-1 lg:py-1 pl-1 lg:pl-1 pr-1 lg:pr-1">
                         {/* Icon - Centered vertically */}
-                        <div className="flex-shrink-0 relative">
-                          <div className={`w-9 h-9 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center text-lg lg:text-xl ${
+                        <div className="flex-shrink-0 relative ml-0">
+                          <div className={`w-10 h-10 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center text-lg lg:text-xl ${
                             !notification.is_read 
-                              ? "bg-gradient-to-br from-primary/20 to-primary/10 ring-1 ring-primary/20" 
-                              : "bg-surface/60"
+                              ? "bg-gradient-to-br from-primary/30 to-primary/15" 
+                              : "bg-surface/80"
                           }`}>
                             {getNotificationIcon(notification.type)}
                           </div>
                           {/* NEW badge - positioned on top left corner */}
                           {!notification.is_read && (
                             <span 
-                              className="absolute -top-1 -left-1 px-1.5 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-wider bg-accent text-background shadow-lg"
+                              className="absolute -top-0.5 left-1.0 px-1 py-0.5 rounded text-[7px] font-bold uppercase tracking-wider bg-accent text-background shadow-lg"
                               style={{ transform: 'rotate(-12deg)' }}
                             >
                               New
@@ -415,24 +418,24 @@ export function NotificationBell() {
                           )}
                         </div>
 
-                          {/* Content */}
-                          <div className="flex-1 min-w-0">
-                            {/* Title and time on same line */}
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <h4 className="text-sm font-semibold text-text leading-tight">
-                                {notification.title}
-                              </h4>
-                              <span className="text-muted/50">•</span>
-                              <p className="text-[10px] font-medium text-muted/70 uppercase tracking-wide whitespace-nowrap">
-                                {formatDistanceToNow(new Date(notification.created_at), {
-                                  addSuffix: true,
-                                })}
-                              </p>
-                            </div>
-                            <p className="text-xs text-muted leading-snug">
-                              {notification.message}
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          {/* Title and time on same line */}
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <h4 className="text-sm font-semibold text-text leading-tight">
+                              {notification.title}
+                            </h4>
+                            <span className="text-muted/50">•</span>
+                            <p className="text-[10px] font-medium text-muted/70 uppercase tracking-wide whitespace-nowrap">
+                              {formatDistanceToNow(new Date(notification.created_at), {
+                                addSuffix: true,
+                              })}
                             </p>
                           </div>
+                          <p className="text-xs text-muted leading-snug">
+                            {notification.message}
+                          </p>
+                        </div>
 
                         {/* Actions - Centered vertically */}
                         <div className="flex items-center gap-0.5 lg:gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
