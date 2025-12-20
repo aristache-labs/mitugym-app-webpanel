@@ -393,7 +393,7 @@ export function NotificationBell() {
                       className={`group relative w-full transition-all duration-300 ease-in-out ${
                         !notification.is_read 
                           ? "bg-gradient-to-br from-primary/8 to-primary/4 border-l-[3px] border-primary/50 hover:border-primary/80 shadow-sm hover:shadow-md hover:from-primary/10 hover:to-primary/5" 
-                          : "bg-surface/40 border-l-[3px] border-transparent hover:border-primary/40 hover:bg-surface/50"
+                          : "bg-surface/95 border-l-[3px] border-muted/50 hover:border-primary/50 hover:bg-surface shadow-sm"
                       }`}
                       style={{ marginRight: 0 }}
                     >
@@ -403,7 +403,7 @@ export function NotificationBell() {
                           <div className={`w-10 h-10 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center text-lg lg:text-xl ${
                             !notification.is_read 
                               ? "bg-gradient-to-br from-primary/30 to-primary/15" 
-                              : "bg-surface/80"
+                              : "bg-gradient-to-br from-surface to-card ring-1 ring-primary/20"
                           }`}>
                             {getNotificationIcon(notification.type)}
                           </div>
