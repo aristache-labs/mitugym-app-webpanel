@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Bell, Check, CheckCheck, Trash2, X } from "lucide-react";
 import { useSupabase } from "@/components/providers/supabase-provider";
 import { formatDistanceToNow } from "date-fns";
@@ -11,8 +12,28 @@ export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { supabase } = useSupabase();
+
+  // Check if component is mounted (for portal)
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  // Check if mobile/responsive view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Fetch notifications
   const fetchNotifications = async () => {
@@ -215,27 +236,35 @@ export function NotificationBell() {
         </button>
       </div>
 
-      {/* Dropdown - Rendered outside relative container */}
-      {isOpen && (
+      {/* Dropdown - Rendered via Portal to escape parent containers */}
+      {isOpen && mounted && createPortal(
         <>
-          {/* Mobile Overlay - only on mobile, starts below topbar */}
-          <div 
-            className="fixed left-0 right-0 bottom-0 bg-black/70 z-[60] lg:hidden"
-            style={{
-              top: 'calc(env(safe-area-inset-top) + 4rem)',
-              WebkitBackdropFilter: 'blur(0px)',
-              backdropFilter: 'blur(0px)',
-            }}
-            onClick={() => setIsOpen(false)}
-          />
+          {/* Background Overlay - ONLY ON MOBILE */}
+          {isMobile && (
+            <div 
+              className="fixed inset-0"
+              style={{
+                top: 'calc(env(safe-area-inset-top) + 4rem)',
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 9998,
+                backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+              }}
+              onClick={() => setIsOpen(false)}
+            />
+          )}
           
           {/* Dropdown Panel */}
           <div 
-            className="fixed left-3 right-3 lg:left-auto lg:right-4 lg:top-[4.5rem] w-auto lg:w-[420px] max-w-full lg:max-w-[420px] rounded-2xl border border-primary/30 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] lg:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] z-[70] overflow-hidden lg:max-h-[600px] flex flex-col"
+            className="fixed left-3 right-3 lg:left-auto lg:right-4 lg:top-[4.5rem] w-auto lg:w-[420px] max-w-full lg:max-w-[420px] rounded-2xl border border-primary/30 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] lg:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden lg:max-h-[600px] flex flex-col"
             style={{
               top: 'calc(env(safe-area-inset-top) + 4.25rem)',
               maxHeight: 'calc(100vh - env(safe-area-inset-top) - 5.5rem)',
               backgroundColor: '#141a1a',
+              zIndex: 9999,
               WebkitBackfaceVisibility: 'hidden',
               backfaceVisibility: 'hidden',
               transform: 'translateZ(0)',
@@ -245,7 +274,7 @@ export function NotificationBell() {
             {/* Mobile Header with Close */}
             <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-primary/10 bg-gradient-to-r from-primary/10 to-transparent"
               style={{
-                backgroundColor: 'rgba(20, 26, 26, 0.95)',
+                backgroundColor: '#141a1a',
               }}
             >
               <div>
@@ -314,7 +343,9 @@ export function NotificationBell() {
 
             {/* Mobile Action Buttons */}
             {notifications.length > 0 && (
-              <div className="lg:hidden flex items-center gap-2 px-4 py-2 border-b border-primary/5 bg-surface/30">
+              <div className="lg:hidden flex items-center gap-2 px-4 py-2 border-b border-primary/5"
+                style={{ backgroundColor: '#141a1a' }}
+              >
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllAsRead}
@@ -339,7 +370,9 @@ export function NotificationBell() {
             )}
 
             {/* Notifications List */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar">
+            <div className="flex-1 overflow-y-auto custom-scrollbar"
+              style={{ backgroundColor: '#141a1a' }}
+            >
               {notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 lg:py-16 px-6">
                   <div className="rounded-full bg-primary/10 p-4 mb-4">
@@ -437,7 +470,8 @@ export function NotificationBell() {
               </div>
             )}
           </div>
-        </>
+        </>,
+        document.body
       )}
     </>
   );
