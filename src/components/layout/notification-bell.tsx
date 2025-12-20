@@ -259,7 +259,7 @@ export function NotificationBell() {
           
           {/* Dropdown Panel */}
           <div 
-            className="fixed left-3 right-3 lg:left-auto lg:right-100 w-auto lg:w-[520px] max-w-full lg:max-w-[520px] rounded-2xl overflow-hidden lg:max-h-[600px] flex flex-col"
+            className="fixed left-3 right-3 lg:left-auto lg:right-100 w-auto lg:w-[620px] max-w-full lg:max-w-[620px] rounded-2xl overflow-hidden lg:max-h-[600px] flex flex-col"
             style={{
               top: isMobile ? 'calc(env(safe-area-inset-top) + 4.00rem)' : 'calc(env(safe-area-inset-top) + 2.5rem)',
               maxHeight: 'calc(100vh - env(safe-area-inset-top) - 5.5rem)',
@@ -390,18 +390,13 @@ export function NotificationBell() {
                   {notifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className={`group relative px-4 lg:px-5 py-3 lg:py-4 transition-all duration-200 hover:bg-primary/5 active:bg-primary/10 ${
-                        !notification.is_read ? "bg-primary/[0.03]" : ""
+                      className={`group relative px-4 lg:px-5 py-2 lg:py-1.0 transition-all duration-200 hover:bg-primary/5 active:bg-primary/10 ${
+                        !notification.is_read ? "bg-primary/[0.03] border border-primary/20 rounded-lg my-0.5" : ""
                       }`}
                     >
-                      {/* Unread indicator */}
-                      {!notification.is_read && (
-                        <div className="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-accent shadow-lg shadow-accent/50" />
-                      )}
-
-                      <div className="flex gap-3 lg:gap-3.5">
-                        {/* Icon */}
-                        <div className="flex-shrink-0 mt-0.5">
+                      <div className="flex gap-3 lg:gap-3.5 items-center">
+                        {/* Icon - Centered vertically */}
+                        <div className="flex-shrink-0 relative">
                           <div className={`w-9 h-9 lg:w-10 lg:h-10 rounded-xl flex items-center justify-center text-lg lg:text-xl ${
                             !notification.is_read 
                               ? "bg-gradient-to-br from-primary/20 to-primary/10 ring-1 ring-primary/20" 
@@ -409,52 +404,54 @@ export function NotificationBell() {
                           }`}>
                             {getNotificationIcon(notification.type)}
                           </div>
+                          {/* NEW badge - positioned on top left corner */}
+                          {!notification.is_read && (
+                            <span 
+                              className="absolute -top-1 -left-1 px-1.5 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-wider bg-accent text-background shadow-lg"
+                              style={{ transform: 'rotate(-12deg)' }}
+                            >
+                              New
+                            </span>
+                          )}
                         </div>
 
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2 lg:gap-3">
-                            <div className="flex-1 min-w-0">
-                              <h4 className="text-sm font-semibold text-text mb-1 leading-tight">
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            {/* Title and time on same line */}
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <h4 className="text-sm font-semibold text-text leading-tight">
                                 {notification.title}
                               </h4>
-                              <p className="text-xs text-muted leading-relaxed mb-2">
-                                {notification.message}
+                              <span className="text-muted/50">•</span>
+                              <p className="text-[10px] font-medium text-muted/70 uppercase tracking-wide whitespace-nowrap">
+                                {formatDistanceToNow(new Date(notification.created_at), {
+                                  addSuffix: true,
+                                })}
                               </p>
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <p className="text-[10px] font-medium text-muted/70 uppercase tracking-wide">
-                                  {formatDistanceToNow(new Date(notification.created_at), {
-                                    addSuffix: true,
-                                  })}
-                                </p>
-                                {!notification.is_read && (
-                                  <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-accent/10 text-accent">
-                                    New
-                                  </span>
-                                )}
-                              </div>
                             </div>
-
-                            {/* Actions */}
-                            <div className="flex items-center gap-0.5 lg:gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
-                              {!notification.is_read && (
-                                <button
-                                  onClick={() => markAsRead(notification.id)}
-                                  className="rounded-lg p-1.5 lg:p-2 text-primary hover:bg-primary/10 active:bg-primary/20 transition-all duration-200"
-                                  title="Mark as read"
-                                >
-                                  <Check className="h-4 w-4" />
-                                </button>
-                              )}
-                              <button
-                                onClick={() => deleteNotification(notification.id)}
-                                className="rounded-lg p-1.5 lg:p-2 text-red-400 hover:bg-red-500/10 active:bg-red-500/20 transition-all duration-200"
-                                title="Delete"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
+                            <p className="text-xs text-muted leading-snug">
+                              {notification.message}
+                            </p>
                           </div>
+
+                        {/* Actions - Centered vertically */}
+                        <div className="flex items-center gap-0.5 lg:gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
+                          {!notification.is_read && (
+                            <button
+                              onClick={() => markAsRead(notification.id)}
+                              className="rounded-lg p-1.5 lg:p-2 text-primary hover:bg-primary/10 active:bg-primary/20 transition-all duration-200"
+                              title="Mark as read"
+                            >
+                              <Check className="h-4 w-4" />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => deleteNotification(notification.id)}
+                            className="rounded-lg p-1.5 lg:p-2 text-red-400 hover:bg-red-500/10 active:bg-red-500/20 transition-all duration-200"
+                            title="Delete"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
                         </div>
                       </div>
                     </div>
