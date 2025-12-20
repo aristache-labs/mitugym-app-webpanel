@@ -259,17 +259,16 @@ export function NotificationBell() {
           
           {/* Dropdown Panel */}
           <div 
-            className="fixed left-3 right-3 lg:left-auto lg:right-100 w-auto lg:w-[620px] max-w-full lg:max-w-[620px] rounded-2xl overflow-hidden lg:max-h-[600px] flex flex-col"
+            className="fixed left-3 right-3 lg:left-auto lg:right-100 w-auto lg:w-[620px] max-w-full lg:max-w-[620px] rounded-2xl overflow-hidden flex flex-col"
             style={{
               top: isMobile ? 'calc(env(safe-area-inset-top) + 4.00rem)' : 'calc(env(safe-area-inset-top) + 2.5rem)',
-              bottom: isMobile ? 'calc(env(safe-area-inset-bottom) + 1rem)' : 'auto',
               maxHeight: isMobile 
                 ? 'calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 5.5rem)' 
                 : 'calc(100vh - env(safe-area-inset-top) - 5.5rem)',
               backgroundColor: '#141a1a',
               zIndex: 9999,
-              border: '1px solid rgba(77, 212, 212, 0.15)',
-              boxShadow: '0 0 0 1px rgba(77, 212, 212, 0.1), 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 60px rgba(77, 212, 212, 0.08)',
+              border: '1px solid rgba(77, 212, 212, 0.08)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(77, 212, 212, 0.02)',
               WebkitBackfaceVisibility: 'hidden',
               backfaceVisibility: 'hidden',
               transform: 'translateZ(0)',
