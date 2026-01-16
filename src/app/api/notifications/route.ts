@@ -1,39 +1,64 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseServerClient } from "@/lib/auth";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 // GET /api/notifications - Fetch admin notifications
 export async function GET(request: NextRequest) {
   try {
-    // Verify authentication
-    const supabase = await getSupabaseServerClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: "Authentication service unavailable" },
-        { status: 503 }
-      );
-    }
+    // Check for API key authentication (for desktop app)
+    const apiKey = request.headers.get('x-api-key');
+    let supabase;
+    
+    if (apiKey) {
+      // Desktop app authentication via API key
+      const validApiKey = process.env.CHECKIN_API_KEY;
+      if (!validApiKey || apiKey !== validApiKey) {
+        return NextResponse.json(
+          { error: "Invalid API key" },
+          { status: 401 }
+        );
+      }
+      
+      // Use admin client for API key authentication
+      supabase = getSupabaseAdmin();
+      if (!supabase) {
+        return NextResponse.json(
+          { error: "Database service unavailable" },
+          { status: 503 }
+        );
+      }
+    } else {
+      // Web app authentication via session
+      supabase = await getSupabaseServerClient();
+      if (!supabase) {
+        return NextResponse.json(
+          { error: "Authentication service unavailable" },
+          { status: 503 }
+        );
+      }
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+      if (authError || !user) {
+        return NextResponse.json(
+          { error: "Unauthorized" },
+          { status: 401 }
+        );
+      }
 
-    // Verify user is staff
-    const { data: staffProfile } = await supabase
-      .from("staff_profiles")
-      .select("id")
-      .eq("id", user.id)
-      .single();
+      // Verify user is staff
+      const { data: staffProfile } = await supabase
+        .from("staff_profiles")
+        .select("id")
+        .eq("id", user.id)
+        .single();
 
-    if (!staffProfile) {
-      return NextResponse.json(
-        { error: "Unauthorized - Staff access required" },
-        { status: 403 }
-      );
+      if (!staffProfile) {
+        return NextResponse.json(
+          { error: "Unauthorized - Staff access required" },
+          { status: 403 }
+        );
+      }
     }
 
     // Get query parameters
@@ -85,36 +110,60 @@ export async function GET(request: NextRequest) {
 // POST /api/notifications - Mark notification as read
 export async function POST(request: NextRequest) {
   try {
-    // Verify authentication
-    const supabase = await getSupabaseServerClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: "Authentication service unavailable" },
-        { status: 503 }
-      );
-    }
+    // Check for API key authentication (for desktop app)
+    const apiKey = request.headers.get('x-api-key');
+    let supabase;
+    
+    if (apiKey) {
+      // Desktop app authentication via API key
+      const validApiKey = process.env.CHECKIN_API_KEY;
+      if (!validApiKey || apiKey !== validApiKey) {
+        return NextResponse.json(
+          { error: "Invalid API key" },
+          { status: 401 }
+        );
+      }
+      
+      // Use admin client for API key authentication
+      supabase = getSupabaseAdmin();
+      if (!supabase) {
+        return NextResponse.json(
+          { error: "Database service unavailable" },
+          { status: 503 }
+        );
+      }
+    } else {
+      // Web app authentication via session
+      supabase = await getSupabaseServerClient();
+      if (!supabase) {
+        return NextResponse.json(
+          { error: "Authentication service unavailable" },
+          { status: 503 }
+        );
+      }
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+      if (authError || !user) {
+        return NextResponse.json(
+          { error: "Unauthorized" },
+          { status: 401 }
+        );
+      }
 
-    // Verify user is staff
-    const { data: staffProfile } = await supabase
-      .from("staff_profiles")
-      .select("id")
-      .eq("id", user.id)
-      .single();
+      // Verify user is staff
+      const { data: staffProfile } = await supabase
+        .from("staff_profiles")
+        .select("id")
+        .eq("id", user.id)
+        .single();
 
-    if (!staffProfile) {
-      return NextResponse.json(
-        { error: "Unauthorized - Staff access required" },
-        { status: 403 }
-      );
+      if (!staffProfile) {
+        return NextResponse.json(
+          { error: "Unauthorized - Staff access required" },
+          { status: 403 }
+        );
+      }
     }
 
     const body = await request.json();
@@ -190,36 +239,60 @@ export async function POST(request: NextRequest) {
 // DELETE /api/notifications - Delete a notification or all notifications
 export async function DELETE(request: NextRequest) {
   try {
-    // Verify authentication
-    const supabase = await getSupabaseServerClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: "Authentication service unavailable" },
-        { status: 503 }
-      );
-    }
+    // Check for API key authentication (for desktop app)
+    const apiKey = request.headers.get('x-api-key');
+    let supabase;
+    
+    if (apiKey) {
+      // Desktop app authentication via API key
+      const validApiKey = process.env.CHECKIN_API_KEY;
+      if (!validApiKey || apiKey !== validApiKey) {
+        return NextResponse.json(
+          { error: "Invalid API key" },
+          { status: 401 }
+        );
+      }
+      
+      // Use admin client for API key authentication
+      supabase = getSupabaseAdmin();
+      if (!supabase) {
+        return NextResponse.json(
+          { error: "Database service unavailable" },
+          { status: 503 }
+        );
+      }
+    } else {
+      // Web app authentication via session
+      supabase = await getSupabaseServerClient();
+      if (!supabase) {
+        return NextResponse.json(
+          { error: "Authentication service unavailable" },
+          { status: 503 }
+        );
+      }
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+      if (authError || !user) {
+        return NextResponse.json(
+          { error: "Unauthorized" },
+          { status: 401 }
+        );
+      }
 
-    // Verify user is staff
-    const { data: staffProfile } = await supabase
-      .from("staff_profiles")
-      .select("id")
-      .eq("id", user.id)
-      .single();
+      // Verify user is staff
+      const { data: staffProfile } = await supabase
+        .from("staff_profiles")
+        .select("id")
+        .eq("id", user.id)
+        .single();
 
-    if (!staffProfile) {
-      return NextResponse.json(
-        { error: "Unauthorized - Staff access required" },
-        { status: 403 }
-      );
+      if (!staffProfile) {
+        return NextResponse.json(
+          { error: "Unauthorized - Staff access required" },
+          { status: 403 }
+        );
+      }
     }
 
     // Check if this is a delete all request
