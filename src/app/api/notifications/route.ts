@@ -295,68 +295,73 @@ export async function DELETE(request: NextRequest) {
       }
     }
 
-    // Check if this is a delete all request
-    const contentType = request.headers.get("content-type");
-    if (contentType?.includes("application/json")) {
-      const body = await request.json();
-      if (body.deleteAll) {
-        // Delete all admin-only member action notifications
-        const { error } = await supabase
-          .from("notifications")
-          .delete()
-          .is("member_id", null)
-          .eq("is_global", true)
-          .eq("is_admin_only", true)
-          .in("type", ["service_purchase", "session_booking", "session_updated", "session_cancelled"]);
-
-        if (error) {
-          console.error("Failed to delete all notifications:", error);
-          return NextResponse.json(
-            { error: "Failed to delete notifications" },
-            { status: 500 }
-          );
-        }
-
-        return NextResponse.json({ 
-          success: true, 
-          message: "All notifications deleted" 
-        });
-      }
-    }
-
-    // Single notification deletion
+    // Check query params first for single notification deletion
     const searchParams = request.nextUrl.searchParams;
     const notificationId = searchParams.get("id");
 
-    if (!notificationId) {
-      return NextResponse.json(
-        { error: "Notification ID is required" },
-        { status: 400 }
-      );
+    if (notificationId) {
+      // Single notification deletion
+      console.log("Attempting to delete notification:", notificationId);
+
+      const { error } = await supabase
+        .from("notifications")
+        .delete()
+        .eq("id", notificationId);
+
+      if (error) {
+        console.error("Failed to delete notification:", error);
+        return NextResponse.json(
+          { error: "Failed to delete notification", details: error.message },
+          { status: 500 }
+        );
+      }
+
+      console.log("Notification deleted successfully");
+
+      return NextResponse.json({ 
+        success: true, 
+        message: "Notification deleted" 
+      });
     }
 
-    // Delete the admin-only member action notification
-    const { error } = await supabase
-      .from("notifications")
-      .delete()
-      .eq("id", notificationId)
-      .is("member_id", null)
-      .eq("is_global", true)
-      .eq("is_admin_only", true)
-      .in("type", ["service_purchase", "session_booking", "session_updated", "session_cancelled"]);
+    // Check if this is a delete all request
+    const contentType = request.headers.get("content-type");
+    if (contentType?.includes("application/json")) {
+      try {
+        const body = await request.json();
+        if (body.deleteAll) {
+          // Delete all admin-only member action notifications
+          const { error } = await supabase
+            .from("notifications")
+            .delete()
+            .is("member_id", null)
+            .eq("is_global", true)
+            .eq("is_admin_only", true)
+            .in("type", ["service_purchase", "session_booking", "session_updated", "session_cancelled"]);
 
-    if (error) {
-      console.error("Failed to delete notification:", error);
-      return NextResponse.json(
-        { error: "Failed to delete notification" },
-        { status: 500 }
-      );
+          if (error) {
+            console.error("Failed to delete all notifications:", error);
+            return NextResponse.json(
+              { error: "Failed to delete notifications" },
+              { status: 500 }
+            );
+          }
+
+          return NextResponse.json({ 
+            success: true, 
+            message: "All notifications deleted" 
+          });
+        }
+      } catch (e) {
+        // Body parsing failed, continue
+        console.error("Error parsing request body:", e);
+      }
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: "Notification deleted" 
-    });
+    return NextResponse.json(
+      { error: "Invalid request - provide notification ID or deleteAll flag" },
+      { status: 400 }
+    );
   } catch (error) {
     console.error("Notifications API error:", error);
     return NextResponse.json(
